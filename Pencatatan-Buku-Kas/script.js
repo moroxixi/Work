@@ -1,7 +1,6 @@
-const ENDPOINT_URL = "https://script.google.com/macros/s/AKfycbxQV9SiURK5bKibxzoUOr0pm1OdFFdUsoW1kQdiA4TVcJ6baGqgc6lhJIB9XYZ7cRjj/exec";
+const ENDPOINT_URL = "https://script.google.com/macros/s/AKfycbyb1CKqugFPTbbyWel04x77d75oQplJ5zCtnc__2xnsgZPYmu-7DGETu1KT7A16uNC7/exec";
 
 const KATEGORI_MASUK = [
-  "Penjualan",
   "Setoran Cabang Tempura",
   "Setoran Cabang Babakan",
   "Setoran Cabang Leweung Gajah",
@@ -87,7 +86,6 @@ form.addEventListener("submit", async (e) => {
   const now = new Date();
   const payload = {
     timestamp: now.toISOString(),
-    tanggal: now.toISOString().slice(0, 10),
     keterangan: document.getElementById("keterangan").value.trim(),
     kategori: kategori,
     belanjaDi: belanjaDi,
