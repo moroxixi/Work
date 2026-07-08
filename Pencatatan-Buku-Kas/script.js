@@ -1,5 +1,4 @@
-// ==== GANTI URL INI dengan URL Web App hasil deploy Apps Script kamu ====
-const ENDPOINT_URL = "https://script.google.com/macros/s/AKfycbxQV9SiURK5bKibxzoUOr0pm1OdFFdUsoW1kQdiA4TVcJ6baGqgc6lhJIB9XYZ7cRjj/exec"
+const ENDPOINT_URL = "https://script.google.com/macros/s/AKfycbxQV9SiURK5bKibxzoUOr0pm1OdFFdUsoW1kQdiA4TVcJ6baGqgc6lhJIB9XYZ7cRjj/exec";
 
 const KATEGORI_MASUK = [
   "Penjualan",
@@ -10,33 +9,33 @@ const KATEGORI_MASUK = [
 ];
 
 const form = document.getElementById("cashForm");
-const kategoriEl = document.getElementById("kategori");
 const belanjaDiWrap = document.getElementById("belanjaDiWrap");
-const belanjaDiEl = document.getElementById("belanjaDi");
-const belanjaDiLainnyaEl = document.getElementById("belanjaDiLainnya");
+const belanjaDiLainnyaInput = document.getElementById("belanjaDiLainnyaInput");
+const tokoLainnyaRadio = document.getElementById("tokoLainnya");
 const jumlahEl = document.getElementById("jumlah");
 const submitBtn = document.getElementById("submitBtn");
 const statusMsg = document.getElementById("statusMsg");
 
-// Tampilkan field "Belanja di" hanya kalau kategori = Belanja
-kategoriEl.addEventListener("change", () => {
-  const isBelanja = kategoriEl.value === "Belanja";
-  belanjaDiWrap.hidden = !isBelanja;
-  belanjaDiEl.required = isBelanja;
-  if (!isBelanja) {
-    belanjaDiEl.value = "";
-    belanjaDiLainnyaEl.hidden = true;
-    belanjaDiLainnyaEl.value = "";
-    belanjaDiLainnyaEl.required = false;
-  }
+// Tampilkan/sembunyikan section "Belanja di" berdasarkan kategori yang dicentang
+document.querySelectorAll('input[name="kategori"]').forEach((radio) => {
+  radio.addEventListener("change", () => {
+    const isBelanja = radio.value === "Belanja";
+    belanjaDiWrap.hidden = !isBelanja;
+    if (!isBelanja) {
+      document.querySelectorAll('input[name="belanjaDi"]').forEach((r) => (r.checked = false));
+      belanjaDiLainnyaInput.hidden = true;
+      belanjaDiLainnyaInput.value = "";
+    }
+  });
 });
 
-// Tampilkan input manual kalau pilih "Toko lain"
-belanjaDiEl.addEventListener("change", () => {
-  const isLainnya = belanjaDiEl.value === "__lainnya__";
-  belanjaDiLainnyaEl.hidden = !isLainnya;
-  belanjaDiLainnyaEl.required = isLainnya;
-  if (isLainnya) belanjaDiLainnyaEl.focus();
+// Tampilkan input manual kalau pilih "Toko lain…"
+document.querySelectorAll('input[name="belanjaDi"]').forEach((radio) => {
+  radio.addEventListener("change", () => {
+    const isLainnya = radio.value === "__lainnya__";
+    belanjaDiLainnyaInput.hidden = !isLainnya;
+    if (isLainnya) belanjaDiLainnyaInput.focus();
+  });
 });
 
 // Format angka jumlah pakai titik ribuan saat mengetik
@@ -50,18 +49,29 @@ function setStatus(text, type) {
   statusMsg.className = "status" + (type ? " " + type : "");
 }
 
+function getSelectedKategori() {
+  const el = document.querySelector('input[name="kategori"]:checked');
+  return el ? el.value : "";
+}
+
+function getSelectedBelanjaDi() {
+  const el = document.querySelector('input[name="belanjaDi"]:checked');
+  if (!el) return "";
+  return el.value === "__lainnya__" ? belanjaDiLainnyaInput.value.trim() : el.value;
+}
+
 form.addEventListener("submit", async (e) => {
   e.preventDefault();
 
-  if (ENDPOINT_URL.startsWith("PASTE_URL")) {
-    setStatus("Belum diatur: isi ENDPOINT_URL di script.js dengan URL Web App Apps Script.", "err");
+  const kategori = getSelectedKategori();
+  if (!kategori) {
+    setStatus("Pilih salah satu kategori dulu (Uang Masuk atau Uang Keluar).", "err");
     return;
   }
 
-  const kategori = kategoriEl.value;
   let belanjaDi = "";
   if (kategori === "Belanja") {
-    belanjaDi = belanjaDiEl.value === "__lainnya__" ? belanjaDiLainnyaEl.value.trim() : belanjaDiEl.value;
+    belanjaDi = getSelectedBelanjaDi();
     if (!belanjaDi) {
       setStatus("Pilih atau isi nama toko dulu.", "err");
       return;
@@ -102,7 +112,7 @@ form.addEventListener("submit", async (e) => {
     setStatus("Tersimpan ✓", "ok");
     form.reset();
     belanjaDiWrap.hidden = true;
-    belanjaDiLainnyaEl.hidden = true;
+    belanjaDiLainnyaInput.hidden = true;
   } catch (err) {
     setStatus("Gagal mengirim. Cek koneksi internet lalu coba lagi.", "err");
   } finally {
