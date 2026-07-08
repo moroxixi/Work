@@ -1,6 +1,7 @@
 const ENDPOINT_URL = "https://script.google.com/macros/s/AKfycbyb1CKqugFPTbbyWel04x77d75oQplJ5zCtnc__2xnsgZPYmu-7DGETu1KT7A16uNC7/exec";
 
 const KATEGORI_MASUK = [
+  "Transfer ke BRI",
   "Setoran Cabang Tempura",
   "Setoran Cabang Babakan",
   "Setoran Cabang Leweung Gajah",
