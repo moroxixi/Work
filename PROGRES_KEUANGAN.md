@@ -109,3 +109,18 @@ Checklist yang sudah disusun kalau form bilang "Tersimpan ✓" tapi data tidak m
 - [x] Pastikan `script.js` versi terbaru (tanpa field `tanggal`, Keterangan tidak wajib) sudah dipakai di form yang aktif.
 - [x] Verifikasi end-to-end: submit dari form → cek data masuk ke sheet Input → cek Buku Kas Harian & Rekap Bulanan terhitung benar.
 - [ ] Setelah pencatatan harian jadi kebiasaan (~2-4 minggu), evaluasi apakah sudah siap naik ke Opsi 2/3 (pemisahan biaya per cabang, sistem piutang untuk cabang eksternal).
+
+## 10. Update — Redesign Form & Simplifikasi Sheet
+
+- **Form input dirombak total**: dari dropdown jadi checklist chip, dipisah 2 kartu terpisah
+  (Uang Masuk aksen hijau, Uang Keluar aksen terracotta) — minim klik, lebih nyaman dipakai
+  satu tangan di iPhone.
+- **Kolom Tanggal dihapus** dari sheet Input — dianggap redundan karena Timestamp sudah
+  mengandung tanggal. Sheet Buku Kas Harian sekarang pakai formula `INT(Timestamp)` untuk
+  ambil tanggal saja.
+- **Field Keterangan jadi opsional** — kategori transaksi sudah cukup jelas sebagai identitas,
+  jadi tidak wajib diisi lagi.
+- **Endpoint Apps Script sudah aktif dan terpasang** di `script.js`, form siap dites langsung
+  ke sheet.
+- **Version control**: dibuat `work-push.sh` untuk auto commit & push folder kerja ke GitHub,
+  plus setup SSH key supaya push tidak perlu password manual.
