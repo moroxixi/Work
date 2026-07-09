@@ -3,10 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Setoran Tempura</title>
+    <title>Setoran Wonton</title>
     <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
     <style>
-        :root { --primary: #d35400; --bg: #f8f9fa; --success: #27ae60; }
+        :root { --primary: #2980b9; --bg: #f4f7f6; --success: #27ae60; }
         body { font-family: 'Segoe UI', sans-serif; background: var(--bg); margin: 0; padding: 10px; color: #333; }
         .container { max-width: 450px; margin: auto; background: white; padding: 20px; border-radius: 15px; box-shadow: 0 5px 15px rgba(0,0,0,0.1); }
         h2 { text-align: center; color: var(--primary); margin-bottom: 20px; }
@@ -20,10 +20,10 @@
         #reportModal { display: none; background: white; padding: 20px; border-radius: 10px; border: 2px solid #ddd; margin-top: 20px; }
         .report-table { width: 100%; border-collapse: collapse; font-size: 0.85em; margin-bottom: 15px; }
         .report-table th, .report-table td { border: 1px solid #eee; padding: 8px; text-align: left; }
-        .report-table th { background: #fdf2e9; }
+        .report-table th { background: #eaf2f8; }
         .total-highlight { font-weight: bold; color: var(--primary); font-size: 1.1em; }
 
-        /* Rincian keuangan */
+        /* Rincian keuangan (samakan gaya dengan Tempura) */
         .rincian-box { background: #f9f9f9; padding: 10px; border-radius: 5px; font-size: 0.9em; }
         .rincian-row { display: flex; justify-content: space-between; padding: 3px 0; }
         .rincian-row.tambah span:last-child { color: var(--success); }
@@ -34,15 +34,15 @@
         .btn-submit { width: 100%; padding: 15px; background: var(--primary); color: white; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; margin-top: 10px; display: none; }
         .btn-ss { width: 100%; padding: 12px; background: var(--success); color: white; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; margin-top: 10px; display: none; }
         #status { text-align: center; font-weight: bold; color: var(--primary); margin-top: 10px; }
-		.status-pas { color: #27ae60; font-weight: bold; }
-		.status-kurang { color: #e74c3c; font-weight: bold; }
-		.status-lebih { color: #f1c40f; font-weight: bold; }
+        .status-pas { color: #27ae60; font-weight: bold; }
+        .status-kurang { color: #e74c3c; font-weight: bold; }
+        .status-lebih { color: #f1c40f; font-weight: bold; }
     </style>
 </head>
 <body>
 
 <div class="container" id="mainArea">
-    <h2>MAO TEMPURA</h2>
+    <h2>MAO WONTON & MIE JEBEW</h2>
 
     <div class="form-group">
         <label>Cabang :</label>
@@ -63,10 +63,12 @@
     <span class="section-title">Keuangan</span>
     <div class="grid">
         <div class="form-group"><label>QRIS</label><input type="number" id="qris" placeholder="0"></div>
+        <div class="form-group"><label>Gofood</label><input type="number" id="gofood" placeholder="0"></div>
         <div class="form-group"><label>Gaji</label><input type="number" id="gaji" placeholder="0"></div>
         <div class="form-group"><label>Pengeluaran</label><input type="number" id="pengeluaran" placeholder="0"></div>
+        <div class="form-group"><label>Uang Jajan</label><input type="number" id="uangJajan" placeholder="0"></div>
+        <div class="form-group"><label>Dimakan</label><input type="number" id="dimakan" placeholder="0"></div>
         <div class="form-group"><label>Uang Modal</label><input type="number" id="uModal" placeholder="0"></div>
-        <div class="form-group"><label>Sterofoam</label><input type="number" id="sterofoam" placeholder="0"></div>
         <div class="form-group"><label>Uang Tunai</label><input type="number" id="uTunai" placeholder="0"></div>
     </div>
 
@@ -74,26 +76,24 @@
 
     <div id="reportModal">
         <div id="captureArea">
-            <h3 style="text-align:center; color: #d35400;">LAPORAN PENJUALAN v.1</h3>
+            <h3 style="text-align:center; color: #2980b9;">LAPORAN WONTON v.2</h3>
             <p id="rep_info" style="font-size:0.8em; text-align:center;"></p>
-            <table class="report-table" id="tableDetail">
-				<thead>
-					<tr>
-				        <th>Item</th>
-				        <th>Sisa</th> <th>Laku</th>
-				        <th>Subtotal</th>
-				    </tr>
-				</thead>
-			<tbody id="reportContent"></tbody>
+            <table class="report-table">
+                <thead>
+                    <tr><th>Item</th><th>Sisa</th><th>Laku</th><th>Subtotal</th></tr>
+                </thead>
+                <tbody id="reportContent"></tbody>
             </table>
             <div class="total-highlight" style="margin-bottom:8px;">Omset: <span id="rep_kotor"></span></div>
 
             <div class="rincian-box">
                 <div class="rincian-row tambah"><span>+ Uang Modal</span><span id="rep_modal"></span></div>
-                <div class="rincian-row tambah"><span>+ Sterofoam</span><span id="rep_sterofoam"></span></div>
                 <div class="rincian-row kurang"><span>- QRIS</span><span id="rep_qris"></span></div>
+                <div class="rincian-row kurang"><span>- Gofood</span><span id="rep_gofood"></span></div>
                 <div class="rincian-row kurang"><span>- Gaji</span><span id="rep_gaji"></span></div>
                 <div class="rincian-row kurang"><span>- Pengeluaran</span><span id="rep_pengeluaran"></span></div>
+                <div class="rincian-row kurang"><span>- Uang Jajan</span><span id="rep_uangJajan"></span></div>
+                <div class="rincian-row kurang"><span>- Dimakan</span><span id="rep_dimakan"></span></div>
                 <div class="rincian-divider"></div>
                 <div class="rincian-row"><strong>Wajib Setor</strong><strong id="rep_bersih"></strong></div>
                 <div class="rincian-row"><span>Uang Tunai</span><span id="rep_tunai"></span></div>
@@ -102,32 +102,23 @@
                 </div>
             </div>
         </div>
-
         <button class="btn-submit" id="btnKirim" onclick="kirimLaporan()">2. KIRIM KE DATABASE</button>
         <button class="btn-ss" id="btnSS" onclick="ambilScreenshot()">3. AMBIL SCREENSHOT</button>
     </div>
-
     <p id="status"></p>
 </div>
 
 <script>
+
     const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyW7BN3t9H2yVzthBDtC2xvP6y9FIqO5rrZxYiW-k0rTx79wQeHS5eeVN-WF1Pqlqeb/exec";
 
-    const items = [
-        "Scallop", "Tempura", "Sukoi", "Bintang", "Basreng", "Otak", "NagetOren", "Sosis",
-        "Cireng", "Puyam", "Chelsy", "TahuBulat", "Dimsum", "Kornet", "NagetAyam", "BasoSapi",
-        "Wonton", "Fishroll", "Bolado", "Kentang"
-    ];
+    const items = ["Wonton", "WontonLebih", "Mie", "Creamy", "Cirawang", "Baso", "Pilus", "Balungan"];
 
-    // DEFINISI HARGA (Silakan ubah angka di sini sesuai harga jualmu)
     const daftarHarga = {
-        "Scallop": 1000, "Tempura": 1000, "Sukoi": 1000, "Bintang": 1000, "Basreng": 1000,
-        "Otak": 1000, "NagetOren": 1000, "Sosis": 1000, "Cireng": 1000, "Puyam": 1000,
-        "Chelsy": 1000, "TahuBulat": 1000, "Dimsum": 1500, "Kornet": 1500, "NagetAyam": 1500,
-        "BasoSapi": 1500, "Wonton": 2000, "Fishroll": 2000, "Bolado": 2500, "Kentang": 5000
+        "Wonton": 10000, "WontonLebih": 2500, "Mie": 10000, "Creamy": 5000, "Cirawang": 2000,
+        "Baso": 5000, "Pilus": 1000, "Balungan": 2000
     };
 
-    // Render Input Otomatis
     window.onload = () => {
         const b = document.getElementById('inputs_berangkat');
         const p = document.getElementById('inputs_pulang');
@@ -137,118 +128,94 @@
         });
     };
 
-    let globalPayload = {}; // Untuk menyimpan data yang siap kirim
+    let globalPayload = {};
 
- function hitungReport() {
-    let totalKotor = 0;
-    let htmlContent = "";
-    let detailData = {};
+    function hitungReport() {
+        let totalKotor = 0;
+        let htmlContent = "";
+        let detailData = {};
 
-    // 1. Hitung Laku per Item
-	 items.forEach(item => {
-	    let berangkat = parseInt(document.getElementById(`b_${item}`).value) || 0;
-	    let pulang = parseInt(document.getElementById(`p_${item}`).value) || 0; // Ini adalah Sisa
-	    let laku = berangkat - pulang;
-	    if (laku < 0) laku = 0;
+        items.forEach(item => {
+            let berangkat = parseInt(document.getElementById(`b_${item}`).value) || 0;
+            let pulang = parseInt(document.getElementById(`p_${item}`).value) || 0; // Sisa
+            let laku = berangkat - pulang;
+            if (laku < 0) laku = 0;
 
-	    let harga = daftarHarga[item] || 0;
-	    let subtotal = laku * harga;
-	    totalKotor += subtotal;
+            let harga = daftarHarga[item] || 0;
+            let subtotal = laku * harga;
+            totalKotor += subtotal;
 
-	    // Tambahkan variabel 'pulang' ke dalam kolom tabel
-	    if (berangkat > 0) { // Menampilkan item jika ada stok berangkat
-	        htmlContent += `
-	            <tr>
-	                <td>${item}</td>
-	                <td>${pulang}</td>
-	                <td>${laku}</td>
-	                <td>Rp ${subtotal.toLocaleString()}</td>
-	            </tr>`;
-	    }
-		 // Di dalam items.forEach di fungsi hitungReport()
-// Gunakan .replace(/\s/g, '') untuk menghilangkan spasi seperti "Naget Oren" menjadi "nagetoren"
+            if (berangkat > 0) {
+                htmlContent += `<tr><td>${item}</td><td>${pulang}</td><td>${laku}</td><td>Rp ${subtotal.toLocaleString()}</td></tr>`;
+            }
 
-		let keyLaku = `t_${item.toLowerCase().replace(/\s/g, '')}`;
-		let keySisa = `s_${item.toLowerCase().replace(/\s/g, '')}`;
-		detailData[keyLaku] = laku;
-		detailData[keySisa] = pulang;
-	});
+            // Samakan pola key dengan Tempura: laku (w_) dan sisa (sw_)
+            let keyLaku = `w_${item.toLowerCase().replace(/\s/g, '')}`;
+            let keySisa = `sw_${item.toLowerCase().replace(/\s/g, '')}`;
+            detailData[keyLaku] = laku;
+            detailData[keySisa] = pulang;
+        });
 
-	 // 2. Ambil Nilai Keuangan
-    const qris = parseInt(document.getElementById('qris').value) || 0;
-    const gaji = parseInt(document.getElementById('gaji').value) || 0;
-    const pengeluaran = parseInt(document.getElementById('pengeluaran').value) || 0;
-    const tunaiModal = parseInt(document.getElementById('uModal').value) || 0;
-    const sterofoam = parseInt(document.getElementById('sterofoam').value) || 0;
-    const tunaiFisik = parseInt(document.getElementById('uTunai').value) || 0;
+        const qris = parseInt(document.getElementById('qris').value) || 0;
+        const gofood = parseInt(document.getElementById('gofood').value) || 0;
+        const gaji = parseInt(document.getElementById('gaji').value) || 0;
+        const pengeluaran = parseInt(document.getElementById('pengeluaran').value) || 0;
+        const dimakan = parseInt(document.getElementById('dimakan').value) || 0;
+        const uangJajan = parseInt(document.getElementById('uangJajan').value) || 0;
+        const tunaiModal = parseInt(document.getElementById('uModal').value) || 0;
+        const tunaiFisik = parseInt(document.getElementById('uTunai').value) || 0;
 
-    // Pengurang: yang bikin kas berkurang (sudah dibayar via metode lain / keluar)
-    const totalPengurang = qris + gaji + pengeluaran;
-    // Penambah: uang tambahan yang wajib ada di laci (bukan dari hasil jualan tempura)
-    const totalPenambah = tunaiModal + sterofoam;
+        // Formula tetap seperti versi Wonton sebelumnya (tidak diubah)
+        const totalPotongan = qris + gofood + gaji + pengeluaran + dimakan + uangJajan;
+        const wajibSetor = totalKotor - totalPotongan + tunaiModal;
+        const omsetKotor = totalKotor - dimakan;
 
-    const wajibSetor = totalKotor - totalPengurang + totalPenambah;
+        const selisih = tunaiFisik - wajibSetor;
+        let statusText = (selisih === 0) ? "PAS" : (selisih > 0) ? "LEBIH Rp " + selisih.toLocaleString() : "KURANG Rp " + Math.abs(selisih).toLocaleString();
+        let statusClass = (selisih === 0) ? "status-pas" : (selisih > 0) ? "status-lebih" : "status-kurang";
 
-    // 3. Logika Selisih (Uang Fisik vs Sistem)
-    const selisih = tunaiFisik - wajibSetor;
-    let statusText = "";
-    let statusClass = "";
+        document.getElementById('reportContent').innerHTML = htmlContent;
+        document.getElementById('rep_kotor').innerText = "Rp " + omsetKotor.toLocaleString();
+        document.getElementById('rep_modal').innerText = "Rp " + tunaiModal.toLocaleString();
+        document.getElementById('rep_qris').innerText = "Rp " + qris.toLocaleString();
+        document.getElementById('rep_gofood').innerText = "Rp " + gofood.toLocaleString();
+        document.getElementById('rep_gaji').innerText = "Rp " + gaji.toLocaleString();
+        document.getElementById('rep_pengeluaran').innerText = "Rp " + pengeluaran.toLocaleString();
+        document.getElementById('rep_uangJajan').innerText = "Rp " + uangJajan.toLocaleString();
+        document.getElementById('rep_dimakan').innerText = "Rp " + dimakan.toLocaleString();
+        document.getElementById('rep_bersih').innerText = "Rp " + wajibSetor.toLocaleString();
+        document.getElementById('rep_tunai').innerText = "Rp " + tunaiFisik.toLocaleString();
 
-    if (selisih === 0) {
-        statusText = "PAS";
-        statusClass = "status-pas";
-    } else if (selisih > 0) {
-        statusText = "LEBIH Rp " + selisih.toLocaleString();
-        statusClass = "status-lebih";
-    } else {
-        statusText = "KURANG Rp " + Math.abs(selisih).toLocaleString();
-        statusClass = "status-kurang";
+        const statusEl = document.getElementById('rep_status');
+        statusEl.innerText = statusText;
+        statusEl.className = statusClass;
+
+        document.getElementById('rep_info').innerText = `Cabang: ${document.getElementById('cabang').value} | ${new Date().toLocaleString('id-ID')}`;
+        document.getElementById('reportModal').style.display = 'block';
+        document.getElementById('btnKirim').style.display = 'block';
+        document.getElementById('btnSS').style.display = 'block';
+
+        // Payload lengkap untuk audit, samakan pola dengan Tempura
+        globalPayload = {
+            cabang: document.getElementById('cabang').value,
+            tipe: "Wonton",
+            omsetWonton: omsetKotor,
+            uTunai: tunaiFisik,
+            qris: qris, gofood: gofood, gaji: gaji,
+            pengeluaran: pengeluaran, dimakan: dimakan,
+            uangJajan: uangJajan, uModal: tunaiModal,
+            wajibSetor: wajibSetor, selisih: selisih, status: statusText,
+            ...detailData
+        };
     }
-
-    // 4. Tampilkan ke UI
-    document.getElementById('reportContent').innerHTML = htmlContent;
-    document.getElementById('rep_kotor').innerText = "Rp " + totalKotor.toLocaleString();
-    document.getElementById('rep_modal').innerText = "Rp " + tunaiModal.toLocaleString();
-    document.getElementById('rep_sterofoam').innerText = "Rp " + sterofoam.toLocaleString();
-    document.getElementById('rep_qris').innerText = "Rp " + qris.toLocaleString();
-    document.getElementById('rep_gaji').innerText = "Rp " + gaji.toLocaleString();
-    document.getElementById('rep_pengeluaran').innerText = "Rp " + pengeluaran.toLocaleString();
-    document.getElementById('rep_bersih').innerText = "Rp " + wajibSetor.toLocaleString();
-    document.getElementById('rep_tunai').innerText = "Rp " + tunaiFisik.toLocaleString();
-
-    // Tampilkan Status Selisih
-    const statusEl = document.getElementById('rep_status');
-    statusEl.innerText = statusText;
-    statusEl.className = statusClass;
-
-    document.getElementById('rep_info').innerText = `Cabang: ${document.getElementById('cabang').value} | ${new Date().toLocaleString('id-ID')}`;
-
-    document.getElementById('reportModal').style.display = 'block';
-    document.getElementById('btnKirim').style.display = 'block';
-    document.getElementById('btnSS').style.display = 'block';
-
-    // 5. Siapkan Payload
-    globalPayload = {
-        cabang: document.getElementById('cabang').value,
-        tipe: "Tempura",
-        omsetTempura: totalKotor, // Kita kirim nilai bersih sistem ke sheet
-        uTunai: tunaiFisik,       // Kita kirim nilai fisik juga untuk audit
-        qris: qris, gaji: gaji, pengeluaran: pengeluaran,
-        uModal: tunaiModal, sterofoam: sterofoam,
-        wajibSetor: wajibSetor, selisih: selisih, status: statusText,
-        ...detailData
-    };
-}
 
     function kirimLaporan() {
         const status = document.getElementById('status');
         status.innerText = "Tunggu, jangan tutup halaman ini. Data sedang di simpan...";
-        fetch(SCRIPT_URL, {
-            method: 'POST',
-            body: JSON.stringify(globalPayload)
-        })
-        .then(res => {
-			alert("✅ DATA BERHASIL TERSIMPAN!");
+
+        fetch(SCRIPT_URL, { method: 'POST', body: JSON.stringify(globalPayload) })
+        .then(() => {
+            alert("✅ DATA BERHASIL TERSIMPAN!");
             status.innerText = "Oke. Data sudah tersimpan di DB.";
             document.getElementById('btnKirim').style.backgroundColor = "#95a5a6";
             document.getElementById('btnKirim').disabled = true;
@@ -260,15 +227,13 @@
     }
 
     function ambilScreenshot() {
-        const area = document.getElementById('captureArea');
-        html2canvas(area).then(canvas => {
+        html2canvas(document.getElementById('captureArea')).then(canvas => {
             const link = document.createElement('a');
-            link.download = `SETORAN_${document.getElementById('cabang').value}_${new Date().getTime()}.png`;
+            link.download = `WONTON_${document.getElementById('cabang').value}_${new Date().getTime()}.png`;
             link.href = canvas.toDataURL();
             link.click();
         });
     }
 </script>
-
 </body>
 </html>
