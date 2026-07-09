@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Formulir Karyawan Baru</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@500;600;700&family=Public+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="page">
+  <div class="ticket">
+
+    <div class="ticket-header">
+      <span class="stamp">FORMULIR &middot; KARYAWAN BARU</span>
+      <h1>Selamat Bergabung 👋</h1>
+      <p class="subtitle">Isi data di bawah dengan lengkap dan jujur ya. Butuh sekitar 5 menit.</p>
+    </div>
+
+    <div class="perforation" aria-hidden="true"></div>
+
+    <form id="employeeForm" novalidate>
+
+      <!-- SECTION 1: DATA PRIBADI -->
+      <section class="form-section">
+        <h2><span class="section-num">01</span>Data Pribadi</h2>
+
+        <div class="field">
+          <label for="namaLengkap">Nama Lengkap <span class="req">*</span></label>
+          <input type="text" id="namaLengkap" name="namaLengkap" placeholder="Sesuai KTP" required>
+        </div>
+
+        <div class="field">
+          <label for="namaPanggilan">Nama Panggilan <span class="req">*</span></label>
+          <input type="text" id="namaPanggilan" name="namaPanggilan" placeholder="Biasa dipanggil apa" required>
+        </div>
+
+        <div class="field">
+          <label for="noHp">Nomor HP / WhatsApp Aktif <span class="req">*</span></label>
+          <input type="tel" id="noHp" name="noHp" placeholder="08xxxxxxxxxx" inputmode="numeric" required>
+        </div>
+
+        <div class="field">
+          <label for="tanggalLahir">Tanggal Lahir <span class="req">*</span></label>
+          <input type="date" id="tanggalLahir" name="tanggalLahir" required>
+        </div>
+
+        <div class="field">
+          <label for="alamat">Alamat Domisili <span class="req">*</span></label>
+          <textarea id="alamat" name="alamat" rows="2" placeholder="Alamat lengkap tempat tinggal saat ini" required></textarea>
+        </div>
+
+        <div class="field">
+          <label>Upload Foto KTP <span class="req">*</span></label>
+          <div class="upload-box" data-target="fotoKtp">
+            <input type="file" id="fotoKtp" name="fotoKtp" accept="image/*" capture="environment" required>
+            <div class="upload-placeholder">
+              <span class="upload-icon">🪪</span>
+              <span>Tap untuk ambil / pilih foto KTP</span>
+            </div>
+            <img class="upload-preview hidden" id="previewKtp" alt="Preview KTP">
+          </div>
+        </div>
+
+        <div class="field">
+          <label>Upload Foto Diri (bebas, tidak perlu formal) <span class="req">*</span></label>
+          <div class="upload-box" data-target="fotoDiri">
+            <input type="file" id="fotoDiri" name="fotoDiri" accept="image/*" capture="user" required>
+            <div class="upload-placeholder">
+              <span class="upload-icon">🙂</span>
+              <span>Tap untuk ambil / pilih foto diri</span>
+            </div>
+            <img class="upload-preview hidden" id="previewDiri" alt="Preview foto diri">
+          </div>
+        </div>
+      </section>
+
+      <!-- SECTION 2: CERITA KAMU -->
+      <section class="form-section">
+        <h2><span class="section-num">02</span>Cerita Kamu</h2>
+        <p class="section-hint">Jawab pakai kata-katamu sendiri, sesantai ngobrol biasa.</p>
+
+        <div class="field">
+          <label for="motivasi">Apa motivasi kamu bekerja? <span class="req">*</span></label>
+          <textarea id="motivasi" name="motivasi" rows="3" placeholder="Ceritakan dengan jujur..." required></textarea>
+        </div>
+
+        <div class="field">
+          <label for="alasanPekerjaan">Kenapa memilih pekerjaan ini dibanding yang lain? <span class="req">*</span></label>
+          <textarea id="alasanPekerjaan" name="alasanPekerjaan" rows="3" placeholder="Ceritakan dengan jujur..." required></textarea>
+        </div>
+
+        <div class="field">
+          <label for="harapan">Apa harapan kamu terhadap pekerjaan ini? <span class="req">*</span></label>
+          <textarea id="harapan" name="harapan" rows="3" placeholder="Ceritakan dengan jujur..." required></textarea>
+        </div>
+
+        <div class="field">
+          <label for="rencanaLama">Apakah kamu punya rencana sampai kapan bekerja di sini? <span class="req">*</span></label>
+          <textarea id="rencanaLama" name="rencanaLama" rows="2" placeholder="Ceritakan dengan jujur, misalnya 'belum tahu', 'sampai lulus kuliah', dst." required></textarea>
+        </div>
+      </section>
+
+      <!-- SECTION 3: KONTAK DARURAT -->
+      <section class="form-section">
+        <h2><span class="section-num">03</span>Kontak Darurat</h2>
+
+        <div class="field">
+          <label for="namaKontak">Nama Kontak Darurat <span class="req">*</span></label>
+          <input type="text" id="namaKontak" name="namaKontak" placeholder="Nama orang yang bisa dihubungi" required>
+        </div>
+
+        <div class="field">
+          <label for="noHpKontak">Nomor HP Kontak Darurat <span class="req">*</span></label>
+          <input type="tel" id="noHpKontak" name="noHpKontak" placeholder="08xxxxxxxxxx" inputmode="numeric" required>
+        </div>
+
+        <div class="field">
+          <label>Hubungan dengan Kamu <span class="req">*</span></label>
+          <div class="chip-group" id="hubunganChips">
+            <button type="button" class="chip" data-value="Orang Tua">Orang Tua</button>
+            <button type="button" class="chip" data-value="Pasangan">Pasangan</button>
+            <button type="button" class="chip" data-value="Saudara">Saudara</button>
+            <button type="button" class="chip" data-value="Lainnya">Lainnya…</button>
+          </div>
+          <input type="text" id="hubunganLainnya" class="hidden" placeholder="Sebutkan hubungannya">
+          <input type="hidden" id="hubungan" name="hubungan" required>
+        </div>
+      </section>
+
+      <button type="submit" id="submitBtn">
+        <span id="submitLabel">Kirim Data</span>
+      </button>
+
+    </form>
+
+    <div id="successMsg" class="success-msg hidden">
+      <span class="success-icon">✓</span>
+      <p>Data berhasil dikirim. Terima kasih!</p>
+    </div>
+
+  </div>
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>
