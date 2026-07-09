@@ -1,0 +1,327 @@
+:root {
+  --bg: #f6f1e7;
+  --card: #fffdf9;
+  --ink: #2b2620;
+  --ink-soft: #746a5c;
+  --teal: #2f5d50;
+  --teal-dark: #234840;
+  --mustard: #e8a33d;
+  --brick: #b5533c;
+  --border: #e4dbc9;
+  --shadow: rgba(43, 38, 32, 0.12);
+}
+
+* {
+  box-sizing: border-box;
+  -webkit-tap-highlight-color: transparent;
+}
+
+body {
+  margin: 0;
+  background: var(--bg);
+  background-image:
+    radial-gradient(circle at 15% 10%, rgba(47, 93, 80, 0.06), transparent 40%),
+    radial-gradient(circle at 85% 90%, rgba(232, 163, 61, 0.08), transparent 40%);
+  font-family: 'Public Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+  color: var(--ink);
+  min-height: 100vh;
+  padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
+}
+
+.page {
+  display: flex;
+  justify-content: center;
+  padding: 32px 16px calc(48px + env(safe-area-inset-bottom));
+}
+
+.ticket {
+  width: 100%;
+  max-width: 460px;
+  background: var(--card);
+  border-radius: 20px;
+  box-shadow: 0 20px 50px var(--shadow);
+  overflow: hidden;
+  position: relative;
+}
+
+.ticket-header {
+  background: var(--teal);
+  color: #fdf8ee;
+  padding: 28px 24px 34px;
+  position: relative;
+}
+
+.stamp {
+  display: inline-block;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  background: rgba(253, 248, 238, 0.14);
+  border: 1px solid rgba(253, 248, 238, 0.35);
+  padding: 5px 10px;
+  border-radius: 999px;
+  margin-bottom: 14px;
+}
+
+.ticket-header h1 {
+  font-family: 'Fraunces', serif;
+  font-weight: 600;
+  font-size: 28px;
+  margin: 0 0 8px;
+  line-height: 1.15;
+}
+
+.ticket-header .subtitle {
+  margin: 0;
+  font-size: 14px;
+  line-height: 1.5;
+  color: rgba(253, 248, 238, 0.85);
+}
+
+/* perforated ticket edge between header and form */
+.perforation {
+  height: 16px;
+  background:
+    repeating-radial-gradient(circle at 0 8px, transparent 0 5px, var(--bg) 5px 6px) ,
+    var(--teal);
+  background-size: 16px 16px, 100% 100%;
+  background-position: 0 -8px;
+  position: relative;
+  margin-top: -1px;
+}
+.perforation::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image: radial-gradient(circle 8px at 8px 0, var(--bg) 8px, transparent 8.5px);
+  background-repeat: repeat-x;
+  background-size: 16px 16px;
+}
+
+form {
+  padding: 8px 24px 24px;
+}
+
+.form-section {
+  padding: 22px 0;
+  border-bottom: 1px dashed var(--border);
+}
+.form-section:last-of-type {
+  border-bottom: none;
+}
+
+.form-section h2 {
+  font-family: 'Fraunces', serif;
+  font-size: 18px;
+  font-weight: 600;
+  margin: 0 0 4px;
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  color: var(--teal-dark);
+}
+
+.section-num {
+  font-family: 'Public Sans', sans-serif;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--mustard);
+  background: rgba(232, 163, 61, 0.15);
+  padding: 3px 8px;
+  border-radius: 6px;
+  letter-spacing: 0.05em;
+}
+
+.section-hint {
+  font-size: 13px;
+  color: var(--ink-soft);
+  margin: 4px 0 14px;
+}
+
+.field {
+  margin-top: 14px;
+}
+
+.field label {
+  display: block;
+  font-size: 13px;
+  font-weight: 600;
+  margin-bottom: 6px;
+  color: var(--ink);
+}
+
+.req {
+  color: var(--brick);
+}
+
+input[type="text"],
+input[type="tel"],
+input[type="date"],
+textarea {
+  width: 100%;
+  font-size: 16px; /* prevents iOS auto-zoom */
+  font-family: inherit;
+  padding: 12px 14px;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: #fffefb;
+  color: var(--ink);
+  min-height: 44px;
+  resize: vertical;
+}
+
+input:focus,
+textarea:focus {
+  outline: none;
+  border-color: var(--teal);
+  box-shadow: 0 0 0 3px rgba(47, 93, 80, 0.15);
+}
+
+/* file upload boxes */
+.upload-box {
+  position: relative;
+  border: 1.5px dashed var(--border);
+  border-radius: 14px;
+  background: #fffefb;
+  min-height: 88px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  cursor: pointer;
+}
+
+.upload-box input[type="file"] {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  cursor: pointer;
+  width: 100%;
+  height: 100%;
+}
+
+.upload-placeholder {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  padding: 16px;
+  color: var(--ink-soft);
+  font-size: 13px;
+  text-align: center;
+}
+
+.upload-icon {
+  font-size: 26px;
+}
+
+.upload-preview {
+  width: 100%;
+  height: 160px;
+  object-fit: cover;
+  display: block;
+}
+
+.upload-box.has-image .upload-placeholder {
+  display: none;
+}
+
+.hidden {
+  display: none !important;
+}
+
+/* chips */
+.chip-group {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 4px;
+}
+
+.chip {
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 600;
+  padding: 10px 16px;
+  min-height: 40px;
+  border-radius: 999px;
+  border: 1.5px solid var(--border);
+  background: #fffefb;
+  color: var(--ink);
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.chip.selected {
+  background: var(--mustard);
+  border-color: var(--mustard);
+  color: #382508;
+}
+
+#hubunganLainnya {
+  margin-top: 10px;
+}
+
+/* submit button */
+button[type="submit"] {
+  width: 100%;
+  margin-top: 24px;
+  padding: 15px;
+  min-height: 48px;
+  border: none;
+  border-radius: 14px;
+  background: var(--teal);
+  color: #fdf8ee;
+  font-family: inherit;
+  font-size: 16px;
+  font-weight: 700;
+  letter-spacing: 0.01em;
+  cursor: pointer;
+  transition: transform 0.1s ease, background 0.15s ease;
+}
+
+button[type="submit"]:active {
+  transform: scale(0.98);
+  background: var(--teal-dark);
+}
+
+button[type="submit"]:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.success-msg {
+  padding: 40px 24px 48px;
+  text-align: center;
+}
+
+.success-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background: var(--teal);
+  color: #fdf8ee;
+  font-size: 26px;
+  margin-bottom: 16px;
+}
+
+.success-msg p {
+  font-family: 'Fraunces', serif;
+  font-size: 18px;
+  color: var(--teal-dark);
+  margin: 0;
+}
+
+.field-error {
+  border-color: var(--brick) !important;
+}
+
+@media (min-width: 480px) {
+  .ticket {
+    max-width: 460px;
+  }
+}
