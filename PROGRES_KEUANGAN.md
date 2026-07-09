@@ -157,3 +157,51 @@ Selain sistem Buku Kas Gabungan (bulanan/lintas cabang), dibuat form khusus hari
 - [x] Asumsi Gaji & Pengeluaran **selalu** dibayar tunai dari laci hari itu (kalau kadang via transfer, seharusnya tidak dikurangi dari kas fisik).
 - [x] Asumsi Sterofoam **selalu** dibayar tunai terpisah, tidak pernah tergabung dalam pembayaran QRIS — kalau bisa campur, berpotensi dihitung dobel (masuk QRIS + ditambahkan lagi sebagai Sterofoam) sehingga selisih "LEBIH" jadi palsu.
 - [x] Konfirmasi ulang logika Uang Modal: diasumsikan modal yang harus dikembalikan utuh bareng hasil jualan (makanya ditambahkan ke Wajib Setor).
+
+## 12. Sistem Terpisah untuk Setoran Wonton & Mie Jebew (`setoran-wonton.html`)
+
+Mengikuti pola yang sama dengan Tempura (bagian 11), form khusus harian dibuat juga
+untuk cabang **Wonton & Mie Jebew** yang menghitung penjualan per item, lalu
+mengecek kecocokan uang fisik vs sistem.
+
+### Perubahan pada Form
+- Rincian keuangan diubah dari "Total Potongan" satu baris menjadi rincian per
+  komponen (`+ Uang Modal`, `- QRIS`, `- Gofood`, `- Gaji`, `- Pengeluaran`,
+  `- Uang Jajan`, `- Dimakan`), lalu baru total `Wajib Setor` — mengikuti gaya
+  tampilan Tempura, supaya semua angka terlihat sebelum total akhir.
+- Payload dilengkapi: sebelumnya cuma kirim `laku` per item (`w_namaitem`) —
+  sekarang juga kirim `sisa` per item (`sw_namaitem`), plus `wajibSetor`,
+  `selisih`, dan `status`, supaya semua angka di laporan tersimpan utuh untuk
+  audit (sama seperti Tempura).
+- Field & formula milik Wonton (Gofood, Uang Jajan, Dimakan) **tetap dipertahankan
+  sesuai aslinya** — ini memang beda dari Tempura karena beda karakteristik
+  penjualan, bukan disamakan begitu saja.
+- Formula: `Wajib Setor = Omset Kotor - (QRIS + Gofood + Gaji + Pengeluaran +
+  Uang Jajan + Dimakan) + Uang Modal`.
+- **Selisih** = Uang Tunai fisik - Wajib Setor → status otomatis **PAS / KURANG / LEBIH**.
+
+### Perubahan Apps Script (`Code.gs`)
+- `Code.gs` sekarang **satu file gabungan** yang menangani dua tipe data lewat
+  `doPost`: `tipe: "Tempura"` → sheet `Input_Tempura`, `tipe: "Wonton"` → sheet
+  **`Input_Wonton`** (baru, terpisah total dari Tempura).
+- Kalau sheet `Input_Wonton` belum ada, **dibuat otomatis** lengkap dengan header
+  otomatis (`Wonton (Sisa)`, `Wonton (Laku)`, dst, sesuai urutan item di
+  `ITEMS_WONTON`).
+- Struktur kolom `Input_Wonton`: Timestamp, Cabang, lalu Sisa+Laku tiap item,
+  kemudian QRIS, Gofood, Gaji, Pengeluaran, Uang Jajan, Dimakan, Uang Modal,
+  Omset Kotor, Wajib Setor, Uang Tunai, Selisih, Status.
+- Kedua sheet (`Input_Tempura` & `Input_Wonton`) berbagi satu Web App / satu
+  `SCRIPT_URL` yang sama — dibedakan lewat field `tipe` di payload, bukan lewat
+  endpoint terpisah.
+
+### Hal yang Masih Perlu Dicek/Divalidasi (belum tentu bug, tapi asumsi yang perlu dikonfirmasi pemilik)
+- [x] "Omset" yang ditampilkan di laporan Wonton sudah dikurangi `Dimakan`,
+  sedangkan "Omset" di laporan Tempura masih kotor mentah — perlu diingat saat
+  membandingkan angka omset lintas cabang di rekap nanti (dua definisi berbeda).
+- [x] Asumsi Gofood **selalu** settle terpisah dari kas fisik (tidak pernah
+  dipegang tunai) — sama seperti asumsi QRIS di Tempura.
+- [x] Asumsi Uang Jajan & Dimakan **selalu** tunai dari laci hari itu.
+- [x] Konfirmasi kenapa tidak ada field **Sterofoam** di Wonton (beda karakter
+  penjualan dari Tempura, atau memang belum ditambahkan).
+- [x] Harga per item di `daftarHarga` (Wonton, WontonLebih, Mie, dst.) perlu
+  dicek ulang apakah sudah sesuai harga jual aktual.
