@@ -104,8 +104,8 @@ Checklist yang sudah disusun kalau form bilang "Tersimpan ✓" tapi data tidak m
 
 ## 9. Yang Masih Perlu Dikerjakan / Dipantau
 
-- [ ] Pastikan hasil rebuild sheet (kolom Tanggal dihapus dari Input) sudah di-upload ulang ke Google Sheets, dan data lama (kalau ada) dipindahkan/dibackup dulu.
-- [ ] Pastikan `Code.gs` versi terbaru sudah di-deploy ulang di Apps Script.
-- [ ] Pastikan `script.js` versi terbaru (tanpa field `tanggal`, Keterangan tidak wajib) sudah dipakai di form yang aktif.
-- [ ] Verifikasi end-to-end: submit dari form → cek data masuk ke sheet Input → cek Buku Kas Harian & Rekap Bulanan terhitung benar.
+- [x] Pastikan hasil rebuild sheet (kolom Tanggal dihapus dari Input) sudah di-upload ulang ke Google Sheets, dan data lama (kalau ada) dipindahkan/dibackup dulu.
+- [x] Pastikan `Code.gs` versi terbaru sudah di-deploy ulang di Apps Script.
+- [x] Pastikan `script.js` versi terbaru (tanpa field `tanggal`, Keterangan tidak wajib) sudah dipakai di form yang aktif.
+- [x] Verifikasi end-to-end: submit dari form → cek data masuk ke sheet Input → cek Buku Kas Harian & Rekap Bulanan terhitung benar.
 - [ ] Setelah pencatatan harian jadi kebiasaan (~2-4 minggu), evaluasi apakah sudah siap naik ke Opsi 2/3 (pemisahan biaya per cabang, sistem piutang untuk cabang eksternal).
