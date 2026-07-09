@@ -124,3 +124,36 @@ Checklist yang sudah disusun kalau form bilang "Tersimpan ✓" tapi data tidak m
   ke sheet.
 - **Version control**: dibuat `work-push.sh` untuk auto commit & push folder kerja ke GitHub,
   plus setup SSH key supaya push tidak perlu password manual.
+
+## 11. Sistem Terpisah untuk Setoran Tempura (`setoran-tempura.html`)
+
+Selain sistem Buku Kas Gabungan (bulanan/lintas cabang), dibuat form khusus harian untuk cabang **Tempura** yang menghitung penjualan per item (bukan cuma total nominal), lalu mengecek kecocokan uang fisik vs sistem.
+
+### Alur Form
+- Input **Berangkat** (stok dibawa) dan **Pulang** (sisa) per item → otomatis hitung **Laku** = Berangkat - Pulang, dikali harga per item (`daftarHarga`) → jadi **Omset Kotor**.
+- Input Keuangan: **QRIS, Gaji, Pengeluaran** (pengurang kas), **Uang Modal, Sterofoam** (penambah kas), **Uang Tunai** (uang fisik di laci).
+- Tombol **"CEK HASIL PENJUALAN"** menampilkan laporan rinci sebelum data dikirim, supaya bisa dicek dulu sebelum submit ke database.
+- Ada tombol **"AMBIL SCREENSHOT"** (pakai `html2canvas`) untuk simpan laporan sebagai gambar, terpisah dari kirim ke database.
+
+### Perubahan Logika Perhitungan
+- **Total Potongan (1 baris) dihapus**, diganti rincian lengkap tiap komponen: `+ Uang Modal`, `+ Sterofoam`, `- QRIS`, `- Gaji`, `- Pengeluaran`, baru total `Wajib Setor`. Tujuannya supaya semua angka kelihatan, bukan cuma total gabungan.
+- **Field baru: Sterofoam** — dianggap seperti "kantong plastik berbayar" (uang tambahan yang dipungut dari pembeli di luar harga makanan), sehingga nilainya **ditambahkan** ke Wajib Setor (bukan dikurangi), sama seperti Uang Modal.
+- Rumus akhir: `Wajib Setor = Omset Kotor - (QRIS + Gaji + Pengeluaran) + (Uang Modal + Sterofoam)`.
+- **Selisih** = Uang Tunai fisik - Wajib Setor → status otomatis **PAS / KURANG / LEBIH**.
+
+### Perubahan Payload (data yang dikirim ke sheet)
+- Sebelumnya cuma kirim `laku` per item (`t_namaitem`) dan omset — sekarang juga kirim `sisa` per item (`s_namaitem`), plus `wajibSetor`, `selisih`, dan `status` supaya semua angka di laporan tersimpan utuh untuk audit (bukan cuma hasil akhirnya).
+
+### Perubahan Apps Script (`Code.gs`)
+- **`doGet` (dashboard baca data harian) dihapus total** — sudah tidak dipakai lagi.
+- **`doPost` ditulis ulang khusus untuk data Tempura**:
+  - Menulis ke sheet baru **`Input_Tempura`** (terpisah dari sheet `Input` yang dipakai Buku Kas Gabungan).
+  - Kalau sheet `Input_Tempura` belum ada, **dibuat otomatis** lengkap dengan **header otomatis** (nama kolom sesuai isinya, misal `Scallop (Sisa)`, `Scallop (Laku)`, `QRIS`, `Wajib Setor`, dst) — jadi tidak perlu bikin header manual.
+  - Struktur kolom: Timestamp, Cabang, lalu Sisa+Laku tiap item (urut sesuai daftar item di HTML), lalu QRIS, Gaji, Pengeluaran, Uang Modal, Sterofoam, Omset Kotor, Wajib Setor, Uang Tunai, Selisih, Status.
+- Direncanakan sheet **`Input_Wonton`** menyusul dengan pola serupa (form & `Code.gs` terpisah dari Tempura), belum dikerjakan.
+
+### Hal yang Masih Perlu Dicek/Divalidasi (belum tentu bug, tapi asumsi yang perlu dikonfirmasi pemilik)
+- [x] Harga per item di `daftarHarga` masih banyak placeholder (`1000` untuk sebagian besar item) — perlu diisi harga jual asli.
+- [x] Asumsi Gaji & Pengeluaran **selalu** dibayar tunai dari laci hari itu (kalau kadang via transfer, seharusnya tidak dikurangi dari kas fisik).
+- [x] Asumsi Sterofoam **selalu** dibayar tunai terpisah, tidak pernah tergabung dalam pembayaran QRIS — kalau bisa campur, berpotensi dihitung dobel (masuk QRIS + ditambahkan lagi sebagai Sterofoam) sehingga selisih "LEBIH" jadi palsu.
+- [x] Konfirmasi ulang logika Uang Modal: diasumsikan modal yang harus dikembalikan utuh bareng hasil jualan (makanya ditambahkan ke Wajib Setor).
