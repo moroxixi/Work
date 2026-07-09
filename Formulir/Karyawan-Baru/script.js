@@ -1,5 +1,5 @@
 // ==== GANTI dengan URL Web App Apps Script kamu ====
-const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwlNtB6cYHLdrR2vOmkTngebju7gjNjjHlGQBNhf3gJZyCklOBUmkWCKIvLpJRbctRk_Q/exec";
+const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxe_RItbyRh3g2VDLjsIWUgxN5WqdBynENxjyANsvjd-EaaZ2BDsj0FcUPkRWsDAzjjOA/exec";
 
 const form = document.getElementById("employeeForm");
 const submitBtn = document.getElementById("submitBtn");
@@ -36,16 +36,21 @@ hubunganLainnya.addEventListener("input", () => {
 // ---------- Upload preview + compress to base64 ----------
 const uploadedImages = {}; // { fotoKtp: "data:image/jpeg;base64,...", fotoDiri: "..." }
 
-function compressImage(file, maxWidth = 1280, quality = 0.7) {
+// Google Sheets insertImage() punya batas: maks 1 juta piksel & 2 MB per gambar.
+// Kita batasi berdasarkan TOTAL piksel (lebar x tinggi), bukan cuma lebar,
+// supaya foto potret (lebih tinggi dari lebar) juga tetap aman di bawah limit.
+function compressImage(file, maxPixels = 900000, quality = 0.7) {
   return new Promise((resolve, reject) => {
     const reader = new FileReader();
     reader.onload = (e) => {
       const img = new Image();
       img.onload = () => {
-        const scale = Math.min(1, maxWidth / img.width);
+        const totalPixels = img.width * img.height;
+        const scale = totalPixels > maxPixels ? Math.sqrt(maxPixels / totalPixels) : 1;
+
         const canvas = document.createElement("canvas");
-        canvas.width = img.width * scale;
-        canvas.height = img.height * scale;
+        canvas.width = Math.round(img.width * scale);
+        canvas.height = Math.round(img.height * scale);
         const ctx = canvas.getContext("2d");
         ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
         resolve(canvas.toDataURL("image/jpeg", quality));
