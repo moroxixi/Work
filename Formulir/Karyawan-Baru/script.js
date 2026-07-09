@@ -1,5 +1,5 @@
 // ==== GANTI dengan URL Web App Apps Script kamu ====
-const SCRIPT_URL = "PASTE_URL_WEB_APP_DI_SINI";
+const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwUMEYH_ECrd3Qz7y5yy8Ihs1fDJqVjhA2JjZoIPN7fXhc02MhAhRO1zNmafzXwGDLGxQ/exec";
 
 const form = document.getElementById("employeeForm");
 const submitBtn = document.getElementById("submitBtn");
