@@ -1,4 +1,4 @@
-# Progres Sistem Pencatatan Keuangan — Wonton, Mie Jebew & Tempura
+# Progres Business — Wonton, Mie Jebew & Tempura
 
 Dokumen ini merangkum apa yang sudah dikerjakan sejauh ini sebagai referensi progres proyek.
 
