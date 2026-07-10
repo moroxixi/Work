@@ -33,7 +33,7 @@ File: `Buku_Kas_Harian_Gabungan.xlsx` (dipakai sebagai Google Sheet setelah di-u
 | **Petunjuk** | Panduan pemakaian & penjelasan kategori |
 | **Input** | Log mentah, terisi otomatis dari form HTML lewat Apps Script. Kolom: Timestamp, Keterangan, Kategori, Belanja Di, Jumlah (Rp) |
 | **Buku Kas Harian** | Otomatis membaca dari sheet Input via formula. Tanggal diambil dari `INT(Timestamp)` — tidak ada kolom Tanggal terpisah. Kolom Saldo terhitung otomatis (running balance) |
-| **Rekap Bulanan** | Otomatis merangkum total Uang Masuk, Uang Keluar, dan Laba/Rugi Kotor per bulan dari sheet Buku Kas Harian (pakai `SUMIFS` dengan rentang tanggal, bukan `SUMPRODUCT`+`MONTH`/`YEAR` supaya tidak error kalau ada baris kosong) |
+| **Rekap Bulanan** | Otomatis merangkum total Uang Masuk, Uang Keluar, Laba/Rugi Bersih Usaha, Dividen Owner (Prive), Sisa Kas/Laba Ditahan per bulan dari sheet Buku Kas Harian (pakai `SUMIFS` dengan rentang tanggal, bukan `SUMPRODUCT`+`MONTH`/`YEAR` supaya tidak error kalau ada baris kosong)  |
 
 ### Kategori Transaksi
 **Uang Masuk:**
