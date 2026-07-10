@@ -37,7 +37,8 @@ File: `Buku_Kas_Harian_Gabungan.xlsx` (dipakai sebagai Google Sheet setelah di-u
 
 ### Kategori Transaksi
 **Uang Masuk:**
-- Penjualan
+- Transfer ke BRI
+- Penjualan Cirawang
 - Setoran Cabang Tempura
 - Setoran Cabang Babakan
 - Setoran Cabang Leweung Gajah
@@ -49,6 +50,8 @@ File: `Buku_Kas_Harian_Gabungan.xlsx` (dipakai sebagai Google Sheet setelah di-u
 - Sewa Tempat
 - Tunjangan
 - Bonus
+- Parkir
+- Dividen
 
 ## 4. Form Input (HTML/CSS/JS)
 

@@ -2,6 +2,7 @@ const ENDPOINT_URL = "https://script.google.com/macros/s/AKfycbyb1CKqugFPTbbyWel
 
 const KATEGORI_MASUK = [
   "Transfer ke BRI",
+  "Penjualan Cirawang",
   "Setoran Cabang Tempura",
   "Setoran Cabang Babakan",
   "Setoran Cabang Leweung Gajah",
