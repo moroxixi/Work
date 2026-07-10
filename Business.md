@@ -205,3 +205,72 @@ mengecek kecocokan uang fisik vs sistem.
   penjualan dari Tempura, atau memang belum ditambahkan).
 - [x] Harga per item di `daftarHarga` (Wonton, WontonLebih, Mie, dst.) perlu
   dicek ulang apakah sudah sesuai harga jual aktual.
+
+## 13. Formulir Onboarding Karyawan Baru
+
+Selain sistem setoran harian (Tempura, Wonton & Mie Jebew), dibuat form terpisah
+untuk **onboarding karyawan baru** — diisi sendiri oleh karyawan sekali di awal,
+bukan oleh pemilik. Tujuannya mengumpulkan data dasar karyawan yang selama ini
+tidak tercatat lengkap, karena pemilik sudah mengenal semua karyawan secara
+personal (sehingga field seperti cabang & posisi sengaja **tidak** dimasukkan
+ke form ini — dianggap sudah diketahui pemilik).
+
+### Struktur Form (`formulir-karyawan.html`)
+
+**Data Pribadi:**
+- Nama Lengkap, Nama Panggilan, No HP/WhatsApp, Tanggal Lahir
+- Alamat (wajib diisi, bukan opsional)
+- Upload Foto KTP
+- Upload Foto Diri (santai/non-formal, tidak perlu foto resmi)
+
+**Cerita Kamu** (menggantikan pertanyaan Data Pekerjaan standar — pemilik lebih
+tertarik menggali motivasi & karakter karyawan daripada data administratif):
+- Apa motivasi kamu bekerja?
+- Mengapa memilih pekerjaan ini dibanding yang lain?
+- Apa harapan kamu terhadap pekerjaan ini?
+- Apakah kamu punya rencana sampai kapan bekerja di sini?
+
+**Kontak Darurat:**
+- Nama, No HP, Hubungan (chip select: Orang Tua/Pasangan/Saudara/Lainnya)
+
+### Upload Foto: Perjalanan Teknis
+
+- **Percobaan 1 — foto ditempel langsung ke sel sheet** (`sheet.insertImage()`):
+  supaya pemilik tidak perlu buka aplikasi/link lain. Gagal karena Google Sheets
+  membatasi gambar yang di-*embed* langsung ke sel maksimal **1 juta piksel dan
+  2 MB** — jauh di bawah resolusi foto HP modern meski sudah dikompresi di
+  browser.
+- **Solusi final — kembali ke Google Drive + link di sheet**: foto disimpan ke
+  folder Drive `Foto_Karyawan`, lalu kolom `Foto KTP`/`Foto Diri` di sheet berisi
+  formula `=HYPERLINK(...)` berlabel "Lihat Foto" (bukan link mentah) supaya
+  tetap rapi dan bisa diklik langsung dari sheet.
+- **Penamaan file dibuat unik & deskriptif**: format
+  `NamaLengkap_KTP_yyyyMMdd_HHmmss_SSS` dan `NamaLengkap_Foto_yyyyMMdd_HHmmss_SSS`
+  — supaya file mudah dicari manual di Drive dan tidak pernah bentrok nama
+  walau ada submit di waktu yang berdekatan.
+- **Kompresi gambar di sisi browser** (client-side, sebelum dikirim ke Apps
+  Script): pakai `<canvas>`, dibatasi berdasarkan **total piksel** (lebar ×
+  tinggi), bukan cuma lebar — penting untuk foto potret (KTP/selfie) yang
+  biasanya lebih tinggi daripada lebar.
+- **Pilihan kamera vs galeri**: awalnya field upload foto pakai atribut
+  `capture` yang memaksa browser langsung buka kamera. Dihapus supaya browser
+  menampilkan pilihan "Ambil Foto" atau "Pilih dari Galeri".
+
+### Apps Script (`Code.gs`) — Sengaja Terpisah dari Tempura/Wonton
+
+- **Keputusan desain**: form karyawan pakai `Code.gs` & deployment Web App
+  **sendiri**, terpisah total dari `Code.gs` gabungan Tempura/Wonton (yang
+  pakai pola percabangan `tipe`). Alasannya: tujuan datanya beda karakter
+  (data SDM vs data keuangan harian), jadi tidak digabung ke satu endpoint
+  meski secara teknis bisa.
+- Sheet tujuan: **`Data_Karyawan`** — dibuat otomatis lengkap dengan header
+  kalau belum ada (pola sama seperti `Input_Tempura`/`Input_Wonton`).
+- **Error handling per-foto**: kalau upload salah satu foto gagal, pesan
+  error ditulis langsung ke sel kolom foto terkait (misal `GAGAL: ...`) —
+  bukan cuma gagal diam-diam — supaya masalah kelihatan langsung dari sheet
+  tanpa perlu buka log Executions di Apps Script.
+
+### Status
+
+- [x] Form, styling, dan Apps Script sudah selesai dan diverifikasi
+  end-to-end oleh pemilik — berjalan lancar dan normal.
