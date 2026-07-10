@@ -1,4 +1,4 @@
-const ENDPOINT_URL = "https://script.google.com/macros/s/AKfycbyb1CKqugFPTbbyWel04x77d75oQplJ5zCtnc__2xnsgZPYmu-7DGETu1KT7A16uNC7/exec";
+const ENDPOINT_URL = "https://script.google.com/macros/s/AKfycbwi3YRNhswloBIvbVZhANCopG2xMUN_-Q8ZnEQHhqhdqXkcnTVCUJ5bZO-v_EDDfA_Y/exec";
 
 const KATEGORI_MASUK = [
   "Transfer ke BRI",
@@ -86,8 +86,19 @@ form.addEventListener("submit", async (e) => {
   }
 
   const now = new Date();
+  const timestampWIB = now.toLocaleString('id-ID', {
+    timeZone: 'Asia/Jakarta',
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+    hour: '2-digit',
+    minute: '2-digit',
+    second: '2-digit',
+    hour12: false
+  }).replace(',', ''); // hasil: "10/07/2026 14:35:20"
+  
   const payload = {
-    timestamp: now.toISOString(),
+    timestamp: timestampWIB,
     keterangan: document.getElementById("keterangan").value.trim(),
     kategori: kategori,
     belanjaDi: belanjaDi,
