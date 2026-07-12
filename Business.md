@@ -277,3 +277,102 @@ tertarik menggali motivasi & karakter karyawan daripada data administratif):
 
 - [x] Form, styling, dan Apps Script sudah selesai dan diverifikasi
   end-to-end oleh pemilik — berjalan lancar dan normal.
+
+## 14. Integrasi Otomatis: Setoran Harian → Buku Kas Gabungan
+
+Sebelumnya, hasil setoran harian (Tempura, Wonton & Mie Jebew) yang sudah masuk ke
+`Input_Tempura`/`Input_Wonton` masih harus dicatat manual oleh pemilik ke Buku Kas
+Gabungan (sheet `Input` di spreadsheet yang berbeda). Sekarang proses ini otomatis:
+begitu karyawan submit form setoran, data langsung diteruskan juga ke Buku Kas
+Gabungan secara real-time — tanpa input manual.
+
+### Keputusan Skema: Gross, bukan Net
+
+Sempat dipertimbangkan dua opsi:
+- **Net** — cuma kirim `Wajib Setor` (uang tunai fisik yang sampai ke pemilik) sebagai
+  satu baris "Penjualan".
+- **Gross** — kirim rincian: Omset penuh sebagai Masuk, lalu Gaji/Pengeluaran/dll
+  sebagai Keluar terpisah.
+
+**Dipilih Gross**, karena kalau cuma pakai Wajib Setor, penjualan yang dibayar lewat
+QRIS/Gofood jadi tidak pernah tercatat sama sekali di Buku Kas Gabungan (Wajib Setor
+sudah mengurangi QRIS/Gofood, karena itu memang tidak pernah dipegang tunai) —
+datanya jadi kurang akurat untuk melihat omset & biaya asli usaha.
+
+**Catatan penting supaya tidak dobel hitung**: `Omset Kotor`/`Omset Wonton` yang
+dihitung form (Laku × Harga per item) **sudah termasuk** penjualan yang dibayar
+QRIS/Gofood di dalamnya — field `qris`/`gofood` di form cuma dipakai untuk tahu
+berapa yang tidak masuk laci fisik (dipakai di rumus Wajib Setor), bukan pendapatan
+tambahan di luar Omset. Jadi QRIS/Gofood **tidak** dikirim sebagai baris terpisah ke
+Buku Kas — sudah terhitung dalam Omset.
+
+### Apa yang dikirim, apa yang tidak
+
+| Data dari form setoran | Dikirim ke Buku Kas? | Kategori |
+|---|---|---|
+| Omset Tempura (`omsetTempura`) | ✅ Masuk | `Setoran Cabang Tempura` |
+| Sterofoam (`sterofoam`, khusus Tempura) | ✅ Masuk | `Sterofoam Tempura` |
+| Omset Wonton (`omsetWonton`, sudah dikurangi Dimakan) | ✅ Masuk | `Setoran Cabang Babakan` / `Setoran Cabang Leweung Gajah` (dipilih otomatis dari huruf pertama field `cabang`) |
+| Gaji (`gaji`) | ✅ Keluar | `Gaji/Upah` |
+| Pengeluaran (`pengeluaran`) | ✅ Keluar | `Pengeluaran Operasional` *(kategori baru)* |
+| Uang Jajan (`uangJajan`, khusus Wonton) | ✅ Keluar | `Uang Jajan Karyawan` *(kategori baru)* |
+| Uang Modal (`uModal`) | ❌ tidak dikirim | Netral, sesuai aturan modal kembalian yang sudah disepakati sebelumnya — jangan dicatat sama sekali |
+| Dimakan (`dimakan`) | ❌ tidak dikirim | Bukan transaksi kas (barang habis tanpa pembayaran), sudah dikeluarkan dari `omsetWonton` |
+| QRIS, Gofood | ❌ tidak dikirim terpisah | Sudah termasuk dalam nilai Omset — kalau dikirim lagi jadi dobel hitung |
+| Uang Tunai, Wajib Setor, Selisih, Status | ❌ tidak dikirim | Alat rekonsiliasi kas fisik harian, bukan transaksi — tetap tersimpan lengkap di `Input_Tempura`/`Input_Wonton` untuk audit |
+
+Cabang Depan RS (dikelola eksternal) tidak pakai form setoran ini — setorannya masih
+dicatat manual oleh pemilik (cuma total uang tunai) seperti biasa.
+
+### Kenapa kategori "Sterofoam Tempura", bukan cuma "Sterofoam"
+
+Formula klasifikasi Masuk/Keluar di sheet `Buku Kas Harian` bersifat **whitelist**
+(kolom Uang Masuk pakai `REGEXMATCH` terhadap kata kunci: `Transfer ke BRI|Penjualan
+Cirawang|Tempura|Babakan|Leweung Gajah|RS`; selain itu otomatis dianggap Keluar).
+Supaya Sterofoam (yang sebenarnya pendapatan) otomatis kehitung sebagai Masuk **tanpa
+perlu ubah formula sama sekali**, nama kategorinya sengaja dibuat mengandung kata
+kunci `Tempura` yang sudah dikenali formula. Kategori Keluar baru
+(`Pengeluaran Operasional`, `Uang Jajan Karyawan`) sudah dicek aman — tidak mengandung
+kata kunci apa pun di whitelist, jadi otomatis jatuh ke kolom Keluar seperti
+seharusnya.
+
+### Implementasi Teknis
+
+- `Input_Tempura`/`Input_Wonton` berada di spreadsheet **terpisah** dari Buku Kas
+  Gabungan. Penulisan lintas-spreadsheet pakai `SpreadsheetApp.openById()` dengan ID
+  Buku Kas Gabungan: `15MZYZOhqY2dTGBeZoAe1yqwJWTh43e9qPdgotM4DuCM`, sheet target
+  `Input`.
+- Ditambahkan fungsi baru di `Code.gs` (gabungan Tempura/Wonton): `kirimKeBukuKas()`
+  (helper generik, batch-write pakai `setValues` bukan `appendRow` berkali-kali),
+  `kirimSetoranTempuraKeBukuKas()`, `kirimSetoranWontonKeBukuKas()`,
+  `kategoriSetoranWonton()` (deteksi cabang dari huruf pertama), dan
+  `formatTimestampWIB()` (format timestamp konsisten dengan yang dipakai form Buku
+  Kas Gabungan, `dd/MM/yyyy HH:mm:ss` WIB, supaya cocok dengan formula `INT(VALUE(...))`
+  di kolom Tanggal `Buku Kas Harian`).
+- Baris dengan nominal 0 tidak dikirim (skip), supaya tidak mengotori Buku Kas dengan
+  entri kosong.
+- Kalau cabang Wonton tidak terdeteksi (bukan huruf B/L, kemungkinan salah ketik atau
+  memang cabang RS yang nyasar pakai form ini), sistem **tidak menebak** kategorinya
+  — omset tidak dikirim otomatis, dan alert dikirim ke Telegram supaya pemilik input
+  manual.
+- Kegagalan kirim ke Buku Kas Gabungan (misalnya masalah izin akses) tidak
+  menggagalkan penyimpanan ke `Input_Tempura`/`Input_Wonton` — errornya ditangkap
+  terpisah dan dikirim sebagai alert Telegram.
+
+### Setup Sekali Jalan (Belum/Sudah Dilakukan)
+
+- [x] Deploy ulang Web App setelah `Code.gs` diupdate (New version).
+- [x] Jalankan salah satu fungsi baru sekali secara manual dari Apps Script editor
+  untuk approve izin akses ke spreadsheet Buku Kas Gabungan (beda file dari
+  `Input_Tempura`/`Input_Wonton`, perlu otorisasi tambahan).
+- [x] Pastikan formula kolom A–F di `Buku Kas Harian` sudah ditarik ke bawah cukup
+  jauh (misal 1000+ baris) — sekarang satu kali submit form bisa menambah 2–4 baris
+  sekaligus ke `Input`, jadi baris terpakai lebih cepat dari sebelumnya.
+- [x] Verifikasi end-to-end: submit form Tempura & Wonton → cek baris baru muncul
+  benar di sheet `Input` Buku Kas Gabungan (kategori & nominal sesuai tabel di atas).
+
+### Dipertimbangkan tapi tidak dikerjakan
+
+- Rekap Bulanan tidak perlu diubah — begitu data baru masuk ke `Input` dan terhitung
+  di `Buku Kas Harian` (asal formula sudah ditarik cukup jauh), SUMIFS di Rekap
+  Bulanan otomatis ikut menangkap tanpa perubahan apa pun.

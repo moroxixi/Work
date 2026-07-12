@@ -110,7 +110,7 @@
 
 <script>
 
-    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbx6jjG9GF-5eLxJy56bDP6-aRjNGBEsyTXpa5wlHcVEgt_gdEo9yxmUBFMLYy3Df6mO/exec";
+    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzmrNr-fknMz8NMMNfmJhykC7N7wd6I0-0fqProygS-lMG8qE7hD9lXbEScUf2BTBA7/exec";
 
     const items = ["Wonton", "WontonLebih", "Mie", "Creamy", "Cirawang", "Baso", "Pilus", "Balungan"];
 
@@ -209,20 +209,33 @@
         };
     }
 
-    function kirimLaporan() {
-        const status = document.getElementById('status');
-        status.innerText = "Tunggu, jangan tutup halaman ini. Data sedang di simpan...";
+    let sedangMengirim = false; // guard tambahan, jaga-jaga
 
+    function kirimLaporan() {
+        if (sedangMengirim) return; // sudah dalam proses kirim, abaikan tap tambahan
+        sedangMengirim = true;
+    
+        const btnKirim = document.getElementById('btnKirim');
+        const status = document.getElementById('status');
+    
+        // Disable LANGSUNG saat diklik, sebelum fetch jalan
+        btnKirim.disabled = true;
+        btnKirim.style.backgroundColor = "#95a5a6";
+        status.innerText = "Tunggu, jangan tutup halaman ini. Data sedang di simpan...";
+    
         fetch(SCRIPT_URL, { method: 'POST', body: JSON.stringify(globalPayload) })
         .then(() => {
             alert("✅ DATA BERHASIL TERSIMPAN!");
             status.innerText = "Oke. Data sudah tersimpan di DB.";
-            document.getElementById('btnKirim').style.backgroundColor = "#95a5a6";
-            document.getElementById('btnKirim').disabled = true;
+            // tetap disabled permanen -> mencegah kirim laporan yang sama 2x
         })
         .catch(err => {
             alert("❌ GAGAL KIRIM.");
             status.innerText = "Gagal kirim ke database.";
+            // gagal -> izinkan coba lagi
+            btnKirim.disabled = false;
+            btnKirim.style.backgroundColor = "";
+            sedangMengirim = false;
         });
     }
 

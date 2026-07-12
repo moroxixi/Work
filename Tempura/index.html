@@ -240,25 +240,39 @@
     };
 }
 
+    let sedangMengirim = false; // guard tambahan, jaga-jaga
+
     function kirimLaporan() {
+        if (sedangMengirim) return; // sudah dalam proses kirim, abaikan tap tambahan
+        sedangMengirim = true;
+    
         const status = document.getElementById('status');
+        const btnKirim = document.getElementById('btnKirim');
+    
+        // Disable LANGSUNG saat diklik, sebelum fetch jalan
+        btnKirim.disabled = true;
+        btnKirim.style.backgroundColor = "#95a5a6";
         status.innerText = "Tunggu, jangan tutup halaman ini. Data sedang di simpan...";
+    
         fetch(SCRIPT_URL, {
             method: 'POST',
             body: JSON.stringify(globalPayload)
         })
         .then(res => {
-			alert("✅ DATA BERHASIL TERSIMPAN!");
+            alert("✅ DATA BERHASIL TERSIMPAN!");
             status.innerText = "Oke. Data sudah tersimpan di DB.";
-            document.getElementById('btnKirim').style.backgroundColor = "#95a5a6";
-            document.getElementById('btnKirim').disabled = true;
+            // tetap disabled permanen -> mencegah kirim laporan yang sama 2x
         })
         .catch(err => {
             alert("❌ GAGAL KIRIM.");
             status.innerText = "Gagal kirim ke database.";
+            // gagal -> izinkan coba lagi
+            btnKirim.disabled = false;
+            btnKirim.style.backgroundColor = "";
+            sedangMengirim = false;
         });
     }
-
+    
     function ambilScreenshot() {
         const area = document.getElementById('captureArea');
         html2canvas(area).then(canvas => {
