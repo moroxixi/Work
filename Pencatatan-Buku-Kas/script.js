@@ -1,4 +1,4 @@
-const ENDPOINT_URL = "https://script.google.com/macros/s/AKfycbwi3YRNhswloBIvbVZhANCopG2xMUN_-Q8ZnEQHhqhdqXkcnTVCUJ5bZO-v_EDDfA_Y/exec";
+const ENDPOINT_URL = "https://script.google.com/macros/s/AKfycbxuQEhiTVTNRTuyHBaoA_oRrYmZaGywKNkYrXURXXkx7TOcONKKIGdQGawci13IKrQ7/exec";
 
 const KATEGORI_MASUK = [
   "Transfer ke BRI",
