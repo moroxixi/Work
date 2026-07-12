@@ -86,23 +86,15 @@ form.addEventListener("submit", async (e) => {
   }
 
   const now = new Date();
-  const timestampWIB = now.toLocaleString('id-ID', {
-    timeZone: 'Asia/Jakarta',
-    year: 'numeric',
-    month: '2-digit',
-    day: '2-digit',
-    hour: '2-digit',
-    minute: '2-digit',
-    second: '2-digit',
-    hour12: false
-  }).replace(',', ''); // hasil: "10/07/2026 14.35.20"
-  // Mengubah titik (.) menjadi (:) khusus untuk bagian waktu
-  timestampWIB = timestampWIB.replace(/\.(\d{2})\.(\d{2})$/, ':$1:$2');
-  // Atau jika semua pemisah waktu terlanjur jadi titik:
-  timestampWIB = timestampWIB.replace(/(\d{2})\.(\d{2})\.(\d{2})/, '$1:$2:$3');
+
+  const options = { timeZone: 'Asia/Jakarta', year: 'numeric', month: '2-digit', day: '2-digit' };
+  const timeOptions = { timeZone: 'Asia/Jakarta', hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false };
   
-  console.log(timestampWIB); // Hasil: "10/07/2026 20:07:03"
+  const dateStr = now.toLocaleDateString('id-ID', options); // Hasil: 10/07/2026
+  const timeStr = now.toLocaleTimeString('en-US', timeOptions); // Menggunakan en-US agar pasti pakai ":"
   
+  const timestampWIB = `${dateStr} ${timeStr}`;
+  console.log(timestampWIB); // Hasil pasti: "10/07/2026 20:07:03"
   const payload = {
     timestamp: timestampWIB,
     keterangan: document.getElementById("keterangan").value.trim(),
