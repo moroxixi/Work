@@ -17,9 +17,9 @@ const submitBtn = document.getElementById("submitBtn");
 const statusMsg = document.getElementById("statusMsg");
 
 // Menandai apakah isi field Keterangan saat ini adalah hasil auto-fill dari
-// pilihan Outlet (bukan ketikan manual owner). Dipakai supaya auto-fill tidak
-// menimpa catatan manual yang sudah diketik, tapi tetap update kalau owner
-// ganti-ganti pilihan cabang Outlet.
+// pilihan Outlet ATAU pilihan toko Belanja (bukan ketikan manual owner).
+// Dipakai supaya auto-fill tidak menimpa catatan manual yang sudah diketik,
+// tapi tetap update kalau owner ganti-ganti pilihan cabang Outlet / toko Belanja.
 let keteranganAutoFilled = false;
 
 // ============================================================
@@ -64,6 +64,10 @@ function updateVisibility() {
     resetRadioGroup("belanjaDi");
     belanjaDiLainnyaInput.hidden = true;
     belanjaDiLainnyaInput.value = "";
+    if (keteranganAutoFilled) {
+      keteranganEl.value = "";
+      keteranganAutoFilled = false;
+    }
   }
 
   // --- Lainnya (Uang Keluar) ---
@@ -101,13 +105,39 @@ keteranganEl.addEventListener("input", () => {
   keteranganAutoFilled = false;
 });
 
+// Pilih toko di dalam kategori "Belanja" -> otomatis isi Keterangan
+// (mis. "Belanja di Ayam Ma'mun"), tapi tidak menimpa kalau owner sudah
+// ketik catatan manual sendiri. Sama polanya dengan auto-fill Outlet.
+function applyBelanjaKeterangan(tokoName) {
+  if (!tokoName) return;
+  const autoText = `Belanja di ${tokoName}`;
+  if (keteranganEl.value === "" || keteranganAutoFilled) {
+    keteranganEl.value = autoText;
+    keteranganAutoFilled = true;
+  }
+}
+
 // Tampilkan input manual kalau pilih "Lainnya…" di daftar toko
 document.querySelectorAll('input[name="belanjaDi"]').forEach((radio) => {
   radio.addEventListener("change", () => {
     const isLainnya = radio.value === "__lainnya__";
     belanjaDiLainnyaInput.hidden = !isLainnya;
-    if (isLainnya) belanjaDiLainnyaInput.focus();
+    if (isLainnya) {
+      belanjaDiLainnyaInput.focus();
+      // Belum ada nama toko manual yang diketik -> tunggu input berikutnya,
+      // jangan auto-fill Keterangan dengan string kosong dulu.
+    } else {
+      applyBelanjaKeterangan(radio.value);
+    }
   });
+});
+
+// Kalau owner pilih "Lainnya…" lalu ketik nama toko manual, update
+// Keterangan mengikuti ketikan tersebut (selama masih berstatus auto-fill).
+belanjaDiLainnyaInput.addEventListener("input", () => {
+  if (tokoLainnyaRadio.checked) {
+    applyBelanjaKeterangan(belanjaDiLainnyaInput.value.trim());
+  }
 });
 
 // Tampilkan input manual kalau pilih "Lainnya…" di sub-kategori pengeluaran
