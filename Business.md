@@ -36,13 +36,20 @@ File: `Buku_Kas_Harian_Gabungan.xlsx` (dipakai sebagai Google Sheet setelah di-u
 | **Rekap Bulanan** | Otomatis merangkum total Uang Masuk, Uang Keluar, Laba/Rugi Bersih Usaha, Dividen Owner (Prive), Sisa Kas/Laba Ditahan per bulan dari sheet Buku Kas Harian (pakai `SUMIFS` dengan rentang tanggal, bukan `SUMPRODUCT`+`MONTH`/`YEAR` supaya tidak error kalau ada baris kosong)  |
 
 ### Kategori Transaksi
+
 **Uang Masuk:**
-- Transfer ke BRI
-- Penjualan Cirawang
-- Setoran Cabang Tempura
-- Setoran Cabang Babakan
-- Setoran Cabang Leweung Gajah
-- Setoran Cabang Depan RS
+- Setoran Cabang Tempura *(otomatis via form setoran, lihat Section 14)*
+- Setoran Cabang Babakan *(otomatis via form setoran, lihat Section 14)*
+- Setoran Cabang Leweung Gajah *(otomatis via form setoran, lihat Section 14)*
+- Setoran Cabang Depan RS *(manual, cabang eksternal — tidak ada form setoran)*
+- Sterofoam Tempura *(otomatis via form setoran, lihat Section 14)*
+- MAO Frozen — pesanan custom produk frozen di luar stok outlet harian (input manual)
+- MAO Instan — pesanan custom produk instan di luar stok outlet harian (input manual)
+- Outlet — **KHUSUS fallback darurat**, dipakai manual hanya kalau sistem
+  kirim-otomatis (`kirimKeBukuKas`) sedang bermasalah. Lihat aturan wajib di
+  Section 14 sebelum pakai kategori ini.
+- Lainnya — placeholder sementara untuk pendapatan yang belum sempat
+  dikategorikan; reklasifikasi ke kategori yang benar begitu sempat.
 
 **Uang Keluar:**
 - Belanja
@@ -52,6 +59,9 @@ File: `Buku_Kas_Harian_Gabungan.xlsx` (dipakai sebagai Google Sheet setelah di-u
 - Bonus
 - Parkir
 - Dividen
+- Tunjangan
+- Pengeluaran Operasional *(otomatis via form setoran, lihat Section 14)*
+- Uang Jajan Karyawan *(otomatis via form setoran, lihat Section 14)*
 
 ## 4. Form Input (HTML/CSS/JS)
 
@@ -376,3 +386,42 @@ seharusnya.
 - Rekap Bulanan tidak perlu diubah — begitu data baru masuk ke `Input` dan terhitung
   di `Buku Kas Harian` (asal formula sudah ditarik cukup jauh), SUMIFS di Rekap
   Bulanan otomatis ikut menangkap tanpa perubahan apa pun.
+
+### Dua Jalur Entri ke Sheet `Input` (Buku Kas Gabungan)
+
+Penting dipahami: sheet `Input` menerima data dari **dua sumber berbeda**, jangan
+disamakan:
+
+1. **Otomatis** — dikirim sistem lewat `kirimKeBukuKas()` begitu karyawan submit
+   form setoran Tempura/Wonton. Kategori yang lahir dari jalur ini:
+   `Setoran Cabang Tempura`, `Sterofoam Tempura`, `Setoran Cabang Babakan`,
+   `Setoran Cabang Leweung Gajah`, `Gaji/Upah`, `Pengeluaran Operasional`,
+   `Uang Jajan Karyawan`. **Tidak perlu — dan tidak boleh — diinput ulang manual.**
+
+2. **Manual** — diinput pemilik sendiri lewat form chip Buku Kas Gabungan
+   (`index.html`). Dipakai untuk kategori yang memang tidak ada form
+   setoran otomatisnya:
+   `MAO Frozen`, `MAO Instan`, `Setoran Cabang Depan RS` (cabang eksternal,
+   belum ada form), `Lainnya`, `Dividen`, `Sewa Tempat`, `Bonus`, `Parkir`,
+   `Belanja`.
+
+### Kategori "Outlet" — Fallback Darurat, BUKAN Kategori Reguler
+
+`Outlet` di form manual **bukan** pengganti setoran otomatis Tempura/Babakan/
+Leweung Gajah. Ini cuma jaring pengaman kalau `kirimKeBukuKas()` gagal (misalnya
+error izin akses spreadsheet). **Sebelum input manual pakai kategori `Outlet`,
+wajib cek dulu:**
+
+1. Buka `Input_Tempura` / `Input_Wonton` untuk tanggal & cabang yang sama.
+2. Kalau baris setoran hari itu **sudah ada** di sana — cek juga apakah baris
+   itu **sudah berhasil** terkirim ke `Input` Buku Kas Gabungan (lihat kolom
+   Timestamp yang matching, atau cek notifikasi Telegram alert kegagalan).
+3. Kalau sudah berhasil terkirim otomatis → **jangan** input manual lagi, akan
+   dobel hitung.
+4. Kalau memang gagal (ada alert Telegram error, atau baris tidak ketemu di
+   `Input`) → baru input manual pakai `Outlet`, dengan nominal & tanggal yang
+   sesuai baris di `Input_Tempura`/`Input_Wonton` yang gagal terkirim tadi.
+
+Kategori `Outlet` tetap dikenali sebagai Uang Masuk oleh formula `REGEXMATCH` di
+`Buku Kas Harian` — *(isi whitelist lengkap menyusul setelah formula terbaru
+dikonfirmasi)*.
