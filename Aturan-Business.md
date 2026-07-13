@@ -1,49 +1,314 @@
-# Aturan Konteks Proyek — Business
+# Progres Business — Wonton, Mie Jebew & Tempura
 
+Dokumen ini merangkum apa yang sudah dikerjakan sejauh ini sebagai referensi progres proyek.
 
-## Peran & Gaya
-- Bertindak sebagai partner teknis untuk sistem bisnis seperti pencatatan keuangan 4 cabang street food (Wonton & Mie Jebew, Tempura).
-- Jawaban singkat, langsung ke praktik (kode/rumus/langkah), bukan penjelasan konsep dasar akuntansi.
-- Bahasa default: Indonesia, kecuali diminta lain.
-- Jika claude perlu membuat kode bertanya terlebih dahulu untuk detail kode yang akan dibuat untuk menghindari banyaknnya revisi.
-- Ingatkan user untuk buat chat baru dengan menambahkan format untuk melanjutkan chat serta file yang dibutuhkan (jika ada) diakhir respon. SETIAP sesi chat sudah tidak efisien lagi (boros token)
+## 1. Konteks Bisnis
 
-## Fakta Tetap (jangan tanya ulang / jangan asumsi beda)
-- 4 cabang: Wonto (Babakan), Wonton & Mie Jebew (Leweung Gajah), Wonton & Mie Jebew (dikelola pihak eksternal, hanya terima setoran), Tempura.
-- Tahap akuntansi saat ini: **Opsi 1 — Buku Kas Gabungan** (belum pisah performa per cabang). Jangan sarankan pindah ke Opsi 2/3 kecuali diminta eksplisit — itu keputusan pemilik setelah pencatatan harian jadi kebiasaan.
-- Modal kembalian (±Rp200rb/hari) = **bukan pendapatan**, tidak dicatat sama sekali di Buku Kas Gabungan (netral).
-- "Penjualan" di Buku Kas Gabungan = omset bersih (uang dibawa pulang − modal kembalian), bukan omset kotor.
+- 4 cabang street food: 2x Wonton & Mie Jebew, 1x Wonton, 1x Tempura.
+- Satu cabang Wonton & Mie Jebew dikelola pihak eksternal — pemilik hanya menerima total setoran hasil penjualan, tanpa visibilitas operasional.
+- Semua belanja bahan baku dilakukan terpusat oleh pemilik dalam transaksi gabungan (tidak dipisah per cabang saat belanja).
+- Pemilik punya waktu terbatas untuk pencatatan detail, sehingga sistem harus low-maintenance.
 
-## Formula Wajib Setor — JANGAN DISAMAKAN antar cabang
-Dua form ini punya definisi berbeda, jangan pakai formula satu untuk cabang lain:
+## 2. Pendekatan Akuntansi yang Dipilih
 
-**Tempura:**
-`Wajib Setor = Omset Kotor − (QRIS + Gaji + Pengeluaran) + (Uang Modal + Sterofoam)`
-- Sterofoam = penambah (seperti Uang Modal), bukan pengurang.
-- "Omset" di laporan Tempura = **kotor mentah** (belum dikurangi apa pun).
+Dari beberapa opsi yang dibahas, disepakati mulai dari **Opsi 1: Buku Kas Gabungan**:
 
-**Wonton & Mie Jebew:**
-`Wajib Setor = Omset Kotor − (QRIS + Gofood + Gaji + Pengeluaran + Uang Jajan + Dimakan) + Uang Modal`
-- Tidak ada field Sterofoam di Wonton.
-- "Omset" di laporan Wonton **sudah dikurangi Dimakan** — beda definisi dari Tempura, jangan dibandingkan langsung tanpa catatan ini.
+- Semua cabang (termasuk cabang eksternal) diperlakukan sementara sebagai **satu kesatuan kas**.
+- Uang masuk = semua penjualan cabang yang dikelola sendiri + setoran dari cabang eksternal.
+- Uang keluar = semua belanja & biaya operasional, tanpa dipilah per cabang.
+- Kelemahan: belum bisa lihat performa per cabang. Ini disadari dan diterima untuk tahap awal.
+- Opsi lanjutan (alokasi belanja per cabang via piutang/talangan) didokumentasikan untuk dipakai nanti setelah pencatatan harian jadi kebiasaan (~2-4 minggu).
 
-**Semua form:** `Selisih = Uang Tunai fisik − Wajib Setor` → status PAS/KURANG/LEBIH.
+### Catatan penting: Modal Kembalian (Floating Cash)
+- Modal kembalian ±Rp200.000 yang disiapkan tiap pagi untuk karyawan **bukan pendapatan** dan tidak dicatat sebagai Uang Masuk.
+- Karena modal ini ditarik balik tiap hari (diberi pagi, ditarik sore), pergerakannya **tidak perlu dicatat sama sekali** di buku kas — dampaknya netral (keluar-masuk sama besar).
+- Yang dicatat sebagai kategori "Penjualan" adalah **omset bersih** = uang tunai dibawa pulang dikurangi modal kembalian.
 
-## Struktur Data (jangan restrukturisasi tanpa alasan kuat)
-- Sheet `Input` (Buku Kas Gabungan) → kolom: Timestamp, Keterangan, Kategori, Belanja Di, Jumlah (Rp). **Tidak ada kolom Tanggal terpisah** — tanggal selalu diturunkan dari `INT(Timestamp)`.
-- Sheet `Input_Tempura` dan `Input_Wonton` → sheet terpisah, tapi **satu Web App/`SCRIPT_URL` yang sama**, dibedakan lewat field `tipe` di payload saat POST. Jangan buat endpoint baru untuk cabang baru — tambahkan lewat percabangan `tipe` di `doPost`.
-- Rekap Bulanan pakai `SUMIFS` dengan rentang tanggal — **jangan** ganti ke `SUMPRODUCT`+`MONTH`/`YEAR` (pernah bermasalah saat ada baris kosong).
+## 3. Struktur Spreadsheet (Google Sheets)
 
-## Kebiasaan Teknis
-- Setiap edit `Code.gs` → **wajib** ingatkan user untuk Deploy ulang (New version), URL lama tidak otomatis update.
-- Fetch dari form pakai `mode: "no-cors"` → form akan **selalu** tampil "Tersimpan ✓" walau request gagal di server. Kalau debugging "data tidak masuk", arahkan ke: cek Executions log di Apps Script, bukan ke pesan sukses di form.
-- Form dioptimalkan untuk iPhone: font input 16px (cegah auto-zoom), touch target ≥40px, `env(safe-area-inset)`. Pertahankan constraint ini di semua perubahan UI form.
+File: `Buku_Kas_Harian_Gabungan.xlsx` (dipakai sebagai Google Sheet setelah di-upload & dibuka dengan Google Sheets).
 
-## Asumsi yang Sudah Dikonfirmasi Pemilik
-- Gaji, Pengeluaran, Uang Jajan, Dimakan → diasumsikan selalu tunai dari laci hari itu.
-- QRIS (Tempura) & Gofood (Wonton) → diasumsikan selalu settle terpisah, tidak pernah dipegang tunai.
-- Sterofoam → diasumsikan selalu tunai terpisah, tidak campur ke QRIS (risiko dihitung dobel kalau campur).
-- Harga di `daftarHarga` → masih ada kemungkinan belum 100% sesuai harga jual aktual, cek ulang kalau ada perubahan menu/harga.
+| Sheet | Fungsi |
+|---|---|
+| **Petunjuk** | Panduan pemakaian & penjelasan kategori |
+| **Input** | Log mentah, terisi otomatis dari form HTML lewat Apps Script. Kolom: Timestamp, Keterangan, Kategori, Belanja Di, Jumlah (Rp) |
+| **Buku Kas Harian** | Otomatis membaca dari sheet Input via formula. Tanggal diambil dari `INT(Timestamp)` — tidak ada kolom Tanggal terpisah. Kolom Saldo terhitung otomatis (running balance) |
+| **Rekap Bulanan** | Otomatis merangkum total Uang Masuk, Uang Keluar, Laba/Rugi Bersih Usaha, Dividen Owner (Prive), Sisa Kas/Laba Ditahan per bulan dari sheet Buku Kas Harian (pakai `SUMIFS` dengan rentang tanggal, bukan `SUMPRODUCT`+`MONTH`/`YEAR` supaya tidak error kalau ada baris kosong)  |
 
-## Kalau Ada Konflik dengan `Business.md`
-Dokumen `Business.md` adalah histori — kalau ada perubahan baru yang belum sempat diupdate di sana, prioritaskan instruksi terbaru dari pemilik di percakapan, lalu ingatkan untuk update `Business.md` juga.
+### Kategori Transaksi (versi awal — lihat Section 14 untuk revisi terbaru)
+**Uang Masuk:**
+- Transfer ke BRI
+- Penjualan Cirawang
+- Setoran Cabang Tempura
+- Setoran Cabang Babakan
+- Setoran Cabang Leweung Gajah
+- Setoran Cabang Depan RS
+
+**Uang Keluar:**
+- Belanja
+- Gaji/Upah
+- Sewa Tempat
+- Tunjangan
+- Bonus
+- Parkir
+- Dividen
+
+## 4. Form Input (HTML/CSS/JS)
+
+Tiga file terpisah: `index.html`, `style.css`, `script.js`.
+
+**Desain:**
+- Dua kartu terpisah: **Uang Masuk** (aksen hijau) dan **Uang Keluar** (aksen terracotta), masing-masing berisi kategori dalam bentuk **chip/checklist** (bukan dropdown) — minim klik. (Layout Uang Keluar direvisi jadi list vertikal di Section 14.)
+- Field **"Belanja di"** muncul otomatis hanya saat kategori "Belanja" dipilih, berupa daftar chip toko + opsi "Toko lain…" untuk input manual.
+- Field **Keterangan** bersifat **opsional** (kategori sudah cukup jelas sebagai identitas transaksi).
+- Field **Jumlah (Rp)** dengan format ribuan otomatis saat mengetik.
+- Timestamp tercatat otomatis saat submit — tidak perlu diisi manual.
+- Dioptimalkan untuk iPhone: `viewport-fit=cover`, `env(safe-area-inset)`, font input 16px (mencegah auto-zoom iOS), touch target ≥40px.
+- Tetap nyaman dipakai di laptop (max-width 460px, center-aligned).
+
+## 5. Integrasi Google Apps Script (`Code.gs`)
+
+- Berfungsi sebagai backend penerima data dari form, di-deploy sebagai **Web App** dari dalam Google Sheet (Extensions → Apps Script).
+- `doPost(e)` menerima JSON dari form, lalu `appendRow()` ke sheet **Input**.
+- Deployment: Execute as **Me**, Who has access **Anyone**.
+- Endpoint aktif: `https://script.google.com/macros/s/AKfycbxuQEhiTVTNRTuyHBaoA_oRrYmZaGywKNkYrXURXXkx7TOcONKKIGdQGawci13IKrQ7/exec`
+- **Penting:** setiap edit `Code.gs`, harus **Deploy ulang** (Manage deployments → Edit → New version → Deploy) supaya perubahan aktif di URL yang sama.
+
+### Catatan Teknis: `mode: "no-cors"`
+- Fetch dari form ke Apps Script pakai `mode: "no-cors"` karena Apps Script tidak mengirim header CORS di responsnya.
+- Konsekuensi: browser **selalu** menampilkan pesan sukses di form, walau sebenarnya request bisa saja gagal di sisi server.
+- Cara verifikasi data benar-benar masuk: cek langsung sheet **Input**, atau cek log **Executions** di Apps Script editor.
+
+## 6. Troubleshooting Data Tidak Masuk ke Sheet
+
+Checklist yang sudah disusun kalau form bilang "Tersimpan ✓" tapi data tidak muncul di sheet:
+1. Buka URL Web App langsung di browser — harus muncul "Form endpoint aktif...", bukan halaman login Google.
+2. Cek menu **Executions** di Apps Script editor untuk lihat log error (atau ketiadaan log = request tidak sampai).
+3. Pastikan sudah **Deploy ulang** (New version) setelah edit kode — URL lama tidak otomatis ambil kode baru.
+4. Pastikan `SHEET_NAME` di `Code.gs` sama persis dengan nama tab di spreadsheet (case-sensitive).
+5. Pastikan Apps Script dibuka dari **dalam** spreadsheet (Extensions → Apps Script), bukan project standalone terpisah — karena kode pakai `SpreadsheetApp.getActiveSpreadsheet()`.
+
+## 7. Perubahan Struktur: Menghapus Kolom Tanggal Terpisah
+
+- Awalnya sheet Input punya kolom Tanggal terpisah dari Timestamp — dianggap mubazir.
+- **Fix:** kolom Tanggal dihapus dari sheet Input. Sheet Buku Kas Harian sekarang mengambil tanggal dengan formula `INT(Timestamp)` untuk membuang bagian jam.
+- `Code.gs` dan `script.js` disesuaikan — payload form tidak lagi mengirim field `tanggal` terpisah, cukup `timestamp`.
+
+## 8. Version Control (GitHub)
+
+- Folder kerja: `/home/moroxixi/HomeLab/Work`.
+- Dibuatkan script `work-push.sh` (adaptasi dari `homelab-push.sh` yang sudah ada sebelumnya) untuk auto commit & push:
+  - Cek SSH agent aktif.
+  - Cek syntax semua file `.py` sebelum commit (push dibatalkan kalau ada `SyntaxError`).
+  - Skip kalau tidak ada perubahan.
+  - `git add -A` → commit → `git push origin main`.
+  - Log ke `push.log` + notifikasi desktop via `notify-send`.
+- Panduan setup SSH key (`ssh-keygen`, `ssh-agent`, daftar public key ke GitHub, ganti remote ke URL SSH) sudah diberikan supaya push tidak perlu password manual tiap kali.
+
+## 9. Yang Masih Perlu Dikerjakan / Dipantau
+
+- [x] Pastikan hasil rebuild sheet (kolom Tanggal dihapus dari Input) sudah di-upload ulang ke Google Sheets, dan data lama (kalau ada) dipindahkan/dibackup dulu.
+- [x] Pastikan `Code.gs` versi terbaru sudah di-deploy ulang di Apps Script.
+- [x] Pastikan `script.js` versi terbaru (tanpa field `tanggal`, Keterangan tidak wajib) sudah dipakai di form yang aktif.
+- [x] Verifikasi end-to-end: submit dari form → cek data masuk ke sheet Input → cek Buku Kas Harian & Rekap Bulanan terhitung benar.
+- [ ] Setelah pencatatan harian jadi kebiasaan (~2-4 minggu), evaluasi apakah sudah siap naik ke Opsi 2/3 (pemisahan biaya per cabang, sistem piutang untuk cabang eksternal).
+- [ ] Upload & deploy ulang 4 file hasil revisi Section 14 (`index.html`, `script.js`, `style.css`, `Code.gs`), lalu verifikasi end-to-end lagi.
+
+## 10. Update — Redesign Form & Simplifikasi Sheet
+
+- **Form input dirombak total**: dari dropdown jadi checklist chip, dipisah 2 kartu terpisah
+  (Uang Masuk aksen hijau, Uang Keluar aksen terracotta) — minim klik, lebih nyaman dipakai
+  satu tangan di iPhone.
+- **Kolom Tanggal dihapus** dari sheet Input — dianggap redundan karena Timestamp sudah
+  mengandung tanggal. Sheet Buku Kas Harian sekarang pakai formula `INT(Timestamp)` untuk
+  ambil tanggal saja.
+- **Field Keterangan jadi opsional** — kategori transaksi sudah cukup jelas sebagai identitas,
+  jadi tidak wajib diisi lagi.
+- **Endpoint Apps Script sudah aktif dan terpasang** di `script.js`, form siap dites langsung
+  ke sheet.
+- **Version control**: dibuat `work-push.sh` untuk auto commit & push folder kerja ke GitHub,
+  plus setup SSH key supaya push tidak perlu password manual.
+
+## 11. Sistem Terpisah untuk Setoran Tempura (`setoran-tempura.html`)
+
+Selain sistem Buku Kas Gabungan (bulanan/lintas cabang), dibuat form khusus harian untuk cabang **Tempura** yang menghitung penjualan per item (bukan cuma total nominal), lalu mengecek kecocokan uang fisik vs sistem.
+
+### Alur Form
+- Input **Berangkat** (stok dibawa) dan **Pulang** (sisa) per item → otomatis hitung **Laku** = Berangkat - Pulang, dikali harga per item (`daftarHarga`) → jadi **Omset Kotor**.
+- Input Keuangan: **QRIS, Gaji, Pengeluaran** (pengurang kas), **Uang Modal, Sterofoam** (penambah kas), **Uang Tunai** (uang fisik di laci).
+- Tombol **"CEK HASIL PENJUALAN"** menampilkan laporan rinci sebelum data dikirim, supaya bisa dicek dulu sebelum submit ke database.
+- Ada tombol **"AMBIL SCREENSHOT"** (pakai `html2canvas`) untuk simpan laporan sebagai gambar, terpisah dari kirim ke database.
+
+### Perubahan Logika Perhitungan
+- **Total Potongan (1 baris) dihapus**, diganti rincian lengkap tiap komponen: `+ Uang Modal`, `+ Sterofoam`, `- QRIS`, `- Gaji`, `- Pengeluaran`, baru total `Wajib Setor`. Tujuannya supaya semua angka kelihatan, bukan cuma total gabungan.
+- **Field baru: Sterofoam** — dianggap seperti "kantong plastik berbayar" (uang tambahan yang dipungut dari pembeli di luar harga makanan), sehingga nilainya **ditambahkan** ke Wajib Setor (bukan dikurangi), sama seperti Uang Modal.
+- Rumus akhir: `Wajib Setor = Omset Kotor - (QRIS + Gaji + Pengeluaran) + (Uang Modal + Sterofoam)`.
+- **Selisih** = Uang Tunai fisik - Wajib Setor → status otomatis **PAS / KURANG / LEBIH**.
+
+### Perubahan Payload (data yang dikirim ke sheet)
+- Sebelumnya cuma kirim `laku` per item (`t_namaitem`) dan omset — sekarang juga kirim `sisa` per item (`s_namaitem`), plus `wajibSetor`, `selisih`, dan `status` supaya semua angka di laporan tersimpan utuh untuk audit (bukan cuma hasil akhirnya).
+
+### Perubahan Apps Script (`Code.gs`)
+- **`doGet` (dashboard baca data harian) dihapus total** — sudah tidak dipakai lagi.
+- **`doPost` ditulis ulang khusus untuk data Tempura**:
+  - Menulis ke sheet baru **`Input_Tempura`** (terpisah dari sheet `Input` yang dipakai Buku Kas Gabungan).
+  - Kalau sheet `Input_Tempura` belum ada, **dibuat otomatis** lengkap dengan **header otomatis** (nama kolom sesuai isinya, misal `Scallop (Sisa)`, `Scallop (Laku)`, `QRIS`, `Wajib Setor`, dst) — jadi tidak perlu bikin header manual.
+  - Struktur kolom: Timestamp, Cabang, lalu Sisa+Laku tiap item (urut sesuai daftar item di HTML), lalu QRIS, Gaji, Pengeluaran, Uang Modal, Sterofoam, Omset Kotor, Wajib Setor, Uang Tunai, Selisih, Status.
+- Direncanakan sheet **`Input_Wonton`** menyusul dengan pola serupa (form & `Code.gs` terpisah dari Tempura), belum dikerjakan.
+
+### Hal yang Masih Perlu Dicek/Divalidasi (belum tentu bug, tapi asumsi yang perlu dikonfirmasi pemilik)
+- [x] Harga per item di `daftarHarga` masih banyak placeholder (`1000` untuk sebagian besar item) — perlu diisi harga jual asli.
+- [x] Asumsi Gaji & Pengeluaran **selalu** dibayar tunai dari laci hari itu (kalau kadang via transfer, seharusnya tidak dikurangi dari kas fisik).
+- [x] Asumsi Sterofoam **selalu** dibayar tunai terpisah, tidak pernah tergabung dalam pembayaran QRIS — kalau bisa campur, berpotensi dihitung dobel (masuk QRIS + ditambahkan lagi sebagai Sterofoam) sehingga selisih "LEBIH" jadi palsu.
+- [x] Konfirmasi ulang logika Uang Modal: diasumsikan modal yang harus dikembalikan utuh bareng hasil jualan (makanya ditambahkan ke Wajib Setor).
+
+## 12. Sistem Terpisah untuk Setoran Wonton & Mie Jebew (`setoran-wonton.html`)
+
+Mengikuti pola yang sama dengan Tempura (bagian 11), form khusus harian dibuat juga
+untuk cabang **Wonton & Mie Jebew** yang menghitung penjualan per item, lalu
+mengecek kecocokan uang fisik vs sistem.
+
+### Perubahan pada Form
+- Rincian keuangan diubah dari "Total Potongan" satu baris menjadi rincian per
+  komponen (`+ Uang Modal`, `- QRIS`, `- Gofood`, `- Gaji`, `- Pengeluaran`,
+  `- Uang Jajan`, `- Dimakan`), lalu baru total `Wajib Setor` — mengikuti gaya
+  tampilan Tempura, supaya semua angka terlihat sebelum total akhir.
+- Payload dilengkapi: sebelumnya cuma kirim `laku` per item (`w_namaitem`) —
+  sekarang juga kirim `sisa` per item (`sw_namaitem`), plus `wajibSetor`,
+  `selisih`, dan `status`, supaya semua angka di laporan tersimpan utuh untuk
+  audit (sama seperti Tempura).
+- Field & formula milik Wonton (Gofood, Uang Jajan, Dimakan) **tetap dipertahankan
+  sesuai aslinya** — ini memang beda dari Tempura karena beda karakteristik
+  penjualan, bukan disamakan begitu saja.
+- Formula: `Wajib Setor = Omset Kotor - (QRIS + Gofood + Gaji + Pengeluaran +
+  Uang Jajan + Dimakan) + Uang Modal`.
+- **Selisih** = Uang Tunai fisik - Wajib Setor → status otomatis **PAS / KURANG / LEBIH**.
+
+### Perubahan Apps Script (`Code.gs`)
+- `Code.gs` sekarang **satu file gabungan** yang menangani dua tipe data lewat
+  `doPost`: `tipe: "Tempura"` → sheet `Input_Tempura`, `tipe: "Wonton"` → sheet
+  **`Input_Wonton`** (baru, terpisah total dari Tempura).
+- Kalau sheet `Input_Wonton` belum ada, **dibuat otomatis** lengkap dengan header
+  otomatis (`Wonton (Sisa)`, `Wonton (Laku)`, dst, sesuai urutan item di
+  `ITEMS_WONTON`).
+- Struktur kolom `Input_Wonton`: Timestamp, Cabang, lalu Sisa+Laku tiap item,
+  kemudian QRIS, Gofood, Gaji, Pengeluaran, Uang Jajan, Dimakan, Uang Modal,
+  Omset Kotor, Wajib Setor, Uang Tunai, Selisih, Status.
+- Kedua sheet (`Input_Tempura` & `Input_Wonton`) berbagi satu Web App / satu
+  `SCRIPT_URL` yang sama — dibedakan lewat field `tipe` di payload, bukan lewat
+  endpoint terpisah.
+
+### Hal yang Masih Perlu Dicek/Divalidasi (belum tentu bug, tapi asumsi yang perlu dikonfirmasi pemilik)
+- [x] "Omset" yang ditampilkan di laporan Wonton sudah dikurangi `Dimakan`,
+  sedangkan "Omset" di laporan Tempura masih kotor mentah — perlu diingat saat
+  membandingkan angka omset lintas cabang di rekap nanti (dua definisi berbeda).
+- [x] Asumsi Gofood **selalu** settle terpisah dari kas fisik (tidak pernah
+  dipegang tunai) — sama seperti asumsi QRIS di Tempura.
+- [x] Asumsi Uang Jajan & Dimakan **selalu** tunai dari laci hari itu.
+- [x] Konfirmasi kenapa tidak ada field **Sterofoam** di Wonton (beda karakter
+  penjualan dari Tempura, atau memang belum ditambahkan).
+- [x] Harga per item di `daftarHarga` (Wonton, WontonLebih, Mie, dst.) perlu
+  dicek ulang apakah sudah sesuai harga jual aktual.
+
+## 13. Formulir Onboarding Karyawan Baru
+
+Selain sistem setoran harian (Tempura, Wonton & Mie Jebew), dibuat form terpisah
+untuk **onboarding karyawan baru** — diisi sendiri oleh karyawan sekali di awal,
+bukan oleh pemilik. Tujuannya mengumpulkan data dasar karyawan yang selama ini
+tidak tercatat lengkap, karena pemilik sudah mengenal semua karyawan secara
+personal (sehingga field seperti cabang & posisi sengaja **tidak** dimasukkan
+ke form ini — dianggap sudah diketahui pemilik).
+
+### Struktur Form (`formulir-karyawan.html`)
+
+**Data Pribadi:**
+- Nama Lengkap, Nama Panggilan, No HP/WhatsApp, Tanggal Lahir
+- Alamat (wajib diisi, bukan opsional)
+- Upload Foto KTP
+- Upload Foto Diri (santai/non-formal, tidak perlu foto resmi)
+
+**Cerita Kamu** (menggantikan pertanyaan Data Pekerjaan standar — pemilik lebih
+tertarik menggali motivasi & karakter karyawan daripada data administratif):
+- Apa motivasi kamu bekerja?
+- Mengapa memilih pekerjaan ini dibanding yang lain?
+- Apa harapan kamu terhadap pekerjaan ini?
+- Apakah kamu punya rencana sampai kapan bekerja di sini?
+
+**Kontak Darurat:**
+- Nama, No HP, Hubungan (chip select: Orang Tua/Pasangan/Saudara/Lainnya)
+
+### Upload Foto: Perjalanan Teknis
+
+- **Percobaan 1 — foto ditempel langsung ke sel sheet** (`sheet.insertImage()`):
+  supaya pemilik tidak perlu buka aplikasi/link lain. Gagal karena Google Sheets
+  membatasi gambar yang di-*embed* langsung ke sel maksimal **1 juta piksel dan
+  2 MB** — jauh di bawah resolusi foto HP modern meski sudah dikompresi di
+  browser.
+- **Solusi final — kembali ke Google Drive + link di sheet**: foto disimpan ke
+  folder Drive `Foto_Karyawan`, lalu kolom `Foto KTP`/`Foto Diri` di sheet berisi
+  formula `=HYPERLINK(...)` berlabel "Lihat Foto" (bukan link mentah) supaya
+  tetap rapi dan bisa diklik langsung dari sheet.
+- **Penamaan file dibuat unik & deskriptif**: format
+  `NamaLengkap_KTP_yyyyMMdd_HHmmss_SSS` dan `NamaLengkap_Foto_yyyyMMdd_HHmmss_SSS`
+  — supaya file mudah dicari manual di Drive dan tidak pernah bentrok nama
+  walau ada submit di waktu yang berdekatan.
+- **Kompresi gambar di sisi browser** (client-side, sebelum dikirim ke Apps
+  Script): pakai `<canvas>`, dibatasi berdasarkan **total piksel** (lebar ×
+  tinggi), bukan cuma lebar — penting untuk foto potret (KTP/selfie) yang
+  biasanya lebih tinggi daripada lebar.
+- **Pilihan kamera vs galeri**: awalnya field upload foto pakai atribut
+  `capture` yang memaksa browser langsung buka kamera. Dihapus supaya browser
+  menampilkan pilihan "Ambil Foto" atau "Pilih dari Galeri".
+
+### Apps Script (`Code.gs`) — Sengaja Terpisah dari Tempura/Wonton
+
+- **Keputusan desain**: form karyawan pakai `Code.gs` & deployment Web App
+  **sendiri**, terpisah total dari `Code.gs` gabungan Tempura/Wonton (yang
+  pakai pola percabangan `tipe`). Alasannya: tujuan datanya beda karakter
+  (data SDM vs data keuangan harian), jadi tidak digabung ke satu endpoint
+  meski secara teknis bisa.
+- Sheet tujuan: **`Data_Karyawan`** — dibuat otomatis lengkap dengan header
+  kalau belum ada (pola sama seperti `Input_Tempura`/`Input_Wonton`).
+- **Error handling per-foto**: kalau upload salah satu foto gagal, pesan
+  error ditulis langsung ke sel kolom foto terkait (misal `GAGAL: ...`) —
+  bukan cuma gagal diam-diam — supaya masalah kelihatan langsung dari sheet
+  tanpa perlu buka log Executions di Apps Script.
+
+### Status
+
+- [x] Form, styling, dan Apps Script sudah selesai dan diverifikasi
+  end-to-end oleh pemilik — berjalan lancar dan normal.
+
+## 14. Revisi Kategori & Layout Form Kas Harian Gabungan (`index.html`, `script.js`, `style.css`, `Code.gs`)
+
+Sesi ini merevisi form **Kas Harian Gabungan** (form utama, bukan setoran Tempura/Wonton) — kategori Uang Masuk dirombak, layout Uang Keluar diubah, daftar toko Belanja Di diperbarui.
+
+### Uang Masuk — kategori dirombak
+- **Dihapus**: "Transfer ke BRI" (bukan sumber pemasukan), "Penjualan Cirawang" (diserap jadi "MAO Frozen" karena Cirawang dijual dalam bentuk frozen food), "Setoran Cabang Tempura/Babakan/Leweung Gajah/Depan RS" (4 chip terpisah, digabung jadi 1 kategori).
+- **Kategori baru** (urut A-Z, "Lainnya" selalu di posisi terakhir): `MAO Frozen`, `MAO Instan`, `Outlet`, `Lainnya`.
+- **Kategori "Outlet"** berpola sama seperti "Belanja" — pilih Outlet → muncul subsection sub-chip cabang: Babakan, Depan RS, Leweung Gajah, Tempura (termasuk cabang eksternal, digabung jadi 1 opsi seperti cabang lain).
+- **Kategori "Lainnya"** ditambahkan sebagai jaring pengaman kalau ada sumber pemasukan yang belum tercakup kategori lain. Tidak ada field tambahan wajib untuk kategori ini — Keterangan tetap opsional.
+
+### Uang Keluar — layout diubah dari chip-grid jadi list vertikal
+- Alasan: mempercepat pemilihan (1 baris = 1 klik langsung terpilih), tidak perlu susun ulang tata letak pill yang wrap.
+- Urutan (A-Z, "Lainnya" selalu di posisi terakhir): Belanja, Bonus, Dividen, Gaji/Upah, Parkir, Sewa Tempat, Tunjangan, **Lainnya** (baru — jaring pengaman sama seperti di Uang Masuk).
+- Secara teknis, radio group `name="kategori"` tetap satu grup yang sama dengan Uang Masuk (dibagi ke 2 elemen visual berbeda: chip-grid untuk Masuk, list untuk Keluar) — logika `arah: Masuk/Keluar` di `script.js` tetap ditentukan lewat array `KATEGORI_MASUK`, bukan lewat posisi visual.
+
+### Belanja Di (sub-list toko, muncul saat kategori = Belanja) — diperbarui & diurutkan A-Z
+- **Ditambahkan**: Baso Adib, Telor.
+- **Diganti nama**: "Abah" → "Gas Abah".
+- Seluruh daftar toko disusun ulang alfabetis; opsi **"Toko lain…"** (input manual) tetap selalu di posisi paling akhir, di luar urutan alfabetis.
+
+### Keputusan struktur data (tidak restrukturisasi sheet)
+- Value dari sub-chip "Outlet" (nama cabang) dikirim lewat field payload **`belanjaDi`** yang sama dipakai untuk toko — bukan bikin kolom baru di sheet Input. Kolom "Belanja Di" di sheet sekarang berfungsi ganda: nama toko (kalau kategori Belanja) atau nama outlet (kalau kategori Outlet). Ini sengaja supaya kolom sheet Input (Timestamp, Keterangan, Kategori, Belanja Di, Jumlah) tetap sama seperti sebelumnya.
+
+### Keterangan — default value ditambahkan
+- Field Keterangan di form tetap opsional (atribut `required` yang sebelumnya masih menempel di HTML — padahal seharusnya sudah opsional sejak versi lama — sudah dihapus, jadi konsisten).
+- **`Code.gs` direvisi**: kalau `keterangan` kosong/hanya spasi saat `doPost`, otomatis diisi `"-"` sebelum `appendRow`, supaya sel di sheet Input tidak pernah kosong.
+
+### Status
+- [x] Konsep didiskusikan & dikonfirmasi pemilik sebelum coding (pola spec-first).
+- [x] 4 file hasil revisi (`index.html`, `script.js`, `style.css`, `Code.gs`) sudah dibuat.
+- [x] Upload & **Deploy ulang** `Code.gs` di Apps Script (New version) — wajib supaya endpoint aktif pakai kode baru.
+- [x] Upload 3 file form (`index.html`, `script.js`, `style.css`) ke hosting yang dipakai.
+- [ ] Verifikasi end-to-end: kategori baru & "Outlet" muncul benar di form, submit tersimpan ke sheet Input dengan kolom Belanja Di terisi sesuai (toko/outlet), Keterangan kosong otomatis jadi "-".
