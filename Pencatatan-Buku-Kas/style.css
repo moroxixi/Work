@@ -125,6 +125,10 @@ body {
   border-color: var(--masuk);
 }
 
+.chip-keluar {
+  background: var(--keluar-soft);
+  border-color: transparent;
+}
 .chip-keluar input:checked + span { color: #fff; }
 .chip-keluar:has(input:checked) {
   background: var(--keluar);
@@ -162,78 +166,67 @@ body {
   border-radius: var(--radius-pill);
 }
 
-/* ===== Uang Keluar: list vertikal (1 klik langsung terpilih) ===== */
-.list-keluar {
+/* ===== Uang Keluar: segmented tabs (Belanja / Lainnya) ===== */
+.seg-tabs {
   display: flex;
-  flex-direction: column;
-  gap: 8px;
+  gap: 6px;
+  padding: 4px;
+  background: var(--keluar-soft);
+  border-radius: var(--radius-pill);
+  margin-bottom: 16px;
 }
 
-.list-row {
+.seg-tab {
   position: relative;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 12px;
-  padding: 13px 16px;
-  border-radius: var(--radius-md);
-  border: 1.5px solid var(--line);
-  background: #fbfaf6;
+  flex: 1;
+  text-align: center;
+  padding: 11px 12px;
+  border-radius: var(--radius-pill);
   font-size: 14.5px;
-  font-weight: 500;
-  color: var(--ink);
+  font-weight: 600;
+  color: var(--keluar);
   cursor: pointer;
   user-select: none;
-  min-height: 44px;
-  transition: background 0.12s ease, border-color 0.12s ease, transform 0.06s ease;
+  transition: background 0.12s ease, color 0.12s ease, box-shadow 0.12s ease;
 }
 
-.list-row input {
+.seg-tab input {
   position: absolute;
   opacity: 0;
   width: 0;
   height: 0;
 }
 
-.list-row:active { transform: scale(0.99); }
-
-.list-row .radio-dot {
-  width: 18px;
-  height: 18px;
-  border-radius: 50%;
-  border: 1.5px solid var(--line);
-  flex-shrink: 0;
-  position: relative;
-  transition: border-color 0.12s ease;
+.seg-tab:has(input:checked) {
+  background: var(--card);
+  color: var(--keluar);
+  box-shadow: 0 1px 3px rgba(181, 82, 46, 0.25);
 }
 
-.list-row input:checked ~ .radio-dot {
-  border-color: var(--keluar);
+.seg-tab:not(:has(input:checked)) {
+  color: #9c7360;
 }
 
-.list-row input:checked ~ .radio-dot::after {
-  content: "";
-  position: absolute;
-  inset: 3px;
-  border-radius: 50%;
-  background: var(--keluar);
-}
-
-.list-row:has(input:checked) {
-  background: var(--keluar-soft);
-  border-color: var(--keluar);
-}
-
-.list-row input:focus-visible ~ .radio-dot {
-  outline: 2px solid var(--ink);
+.seg-tab input:focus-visible ~ span {
+  outline: 2px solid var(--keluar);
   outline-offset: 2px;
+  border-radius: var(--radius-pill);
 }
 
-/* ===== Subsection (Belanja di / Outlet) ===== */
+/* ===== Subsection (Belanja di / Outlet / Lainnya) ===== */
 .subsection {
   margin-top: 14px;
   padding-top: 14px;
   border-top: 1px dashed var(--line);
+}
+
+/* Subsection utama di bawah tab Uang Keluar (Belanja/Lainnya) --
+   tampil langsung sebagai bagian inti, bukan tambahan opsional,
+   jadi tanpa garis putus-putus di atasnya. */
+.subsection-primary {
+  margin-top: 0;
+  padding-top: 0;
+  border-top: none;
 }
 
 .subsection-label {
@@ -286,7 +279,8 @@ body {
   font-size: 20px;
 }
 
-#belanjaDiLainnyaInput { margin-top: 10px; }
+#belanjaDiLainnyaInput,
+#kategoriLainnyaInput { margin-top: 10px; }
 
 /* ===== Submit ===== */
 .submit-btn {
@@ -332,5 +326,5 @@ body {
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .chip, .submit-btn, .list-row { transition: none; }
+  .chip, .submit-btn, .list-row, .seg-tab { transition: none; }
 }

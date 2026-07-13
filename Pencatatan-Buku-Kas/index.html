@@ -22,21 +22,21 @@
         <span class="dot dot-masuk"></span>
         <h2>Uang Masuk</h2>
       </div>
-      <div class="chip-grid" data-group="kategori">
+      <div class="chip-grid" data-group="kategoriUtama-masuk">
         <label class="chip chip-masuk">
-          <input type="radio" name="kategori" value="MAO Frozen">
+          <input type="radio" name="kategoriUtama" value="MAO Frozen" data-arah="masuk">
           <span>MAO Frozen</span>
         </label>
         <label class="chip chip-masuk">
-          <input type="radio" name="kategori" value="MAO Instan">
+          <input type="radio" name="kategoriUtama" value="MAO Instan" data-arah="masuk">
           <span>MAO Instan</span>
         </label>
         <label class="chip chip-masuk">
-          <input type="radio" name="kategori" value="Outlet" id="katOutlet">
+          <input type="radio" name="kategoriUtama" value="Outlet" data-arah="masuk" id="katOutlet">
           <span>Outlet</span>
         </label>
         <label class="chip chip-masuk">
-          <input type="radio" name="kategori" value="Lainnya">
+          <input type="radio" name="kategoriUtama" value="Lainnya" data-arah="masuk" id="katLainnyaMasuk">
           <span>Lainnya</span>
         </label>
       </div>
@@ -59,19 +59,21 @@
         <span class="dot dot-keluar"></span>
         <h2>Uang Keluar</h2>
       </div>
-      <div class="list-keluar" data-group="kategori">
-        <label class="list-row"><input type="radio" name="kategori" value="Belanja" id="katBelanja"><span>Belanja</span><span class="radio-dot"></span></label>
-        <label class="list-row"><input type="radio" name="kategori" value="Bonus"><span>Bonus</span><span class="radio-dot"></span></label>
-        <label class="list-row"><input type="radio" name="kategori" value="Dividen"><span>Dividen</span><span class="radio-dot"></span></label>
-        <label class="list-row"><input type="radio" name="kategori" value="Gaji/Upah"><span>Gaji/Upah</span><span class="radio-dot"></span></label>
-        <label class="list-row"><input type="radio" name="kategori" value="Parkir"><span>Parkir</span><span class="radio-dot"></span></label>
-        <label class="list-row"><input type="radio" name="kategori" value="Sewa Tempat"><span>Sewa Tempat</span><span class="radio-dot"></span></label>
-        <label class="list-row"><input type="radio" name="kategori" value="Tunjangan"><span>Tunjangan</span><span class="radio-dot"></span></label>
-        <label class="list-row"><input type="radio" name="kategori" value="Lainnya"><span>Lainnya</span><span class="radio-dot"></span></label>
+
+      <!-- Tab: Belanja (fokus utama, default aktif) vs Lainnya -->
+      <div class="seg-tabs" data-group="kategoriUtama-keluar">
+        <label class="seg-tab">
+          <input type="radio" name="kategoriUtama" value="Belanja" data-arah="keluar" id="tabBelanja" checked>
+          <span>Belanja</span>
+        </label>
+        <label class="seg-tab">
+          <input type="radio" name="kategoriUtama" value="__lainnyaKeluar__" data-arah="keluar" id="tabLainnyaKeluar">
+          <span>Lainnya</span>
+        </label>
       </div>
 
-      <!-- Muncul hanya kalau kategori = Belanja -->
-      <div class="subsection" id="belanjaDiWrap" hidden>
+      <!-- Belanja: daftar toko, tampil langsung (default) -->
+      <div class="subsection subsection-primary" id="belanjaDiWrap">
         <p class="subsection-label">Belanja di</p>
         <div class="chip-grid chip-grid-toko" data-group="belanjaDi">
           <label class="chip chip-toko"><input type="radio" name="belanjaDi" value="Ayam Bi Warsih"><span>Ayam Bi Warsih</span></label>
@@ -90,7 +92,22 @@
           <label class="chip chip-toko"><input type="radio" name="belanjaDi" value="Telor"><span>Telor</span></label>
           <label class="chip chip-toko"><input type="radio" name="belanjaDi" value="__lainnya__" id="tokoLainnya"><span>Lainnya…</span></label>
         </div>
-        <input type="text" id="belanjaDiLainnyaInput" class="text-input" placeholder="Lainnya" hidden>
+        <input type="text" id="belanjaDiLainnyaInput" class="text-input" placeholder="Nama toko" hidden>
+      </div>
+
+      <!-- Lainnya: kategori keluar non-belanja -->
+      <div class="subsection subsection-primary" id="kategoriLainWrap" hidden>
+        <p class="subsection-label">Jenis pengeluaran</p>
+        <div class="chip-grid" data-group="kategoriLain">
+          <label class="chip chip-keluar"><input type="radio" name="kategoriLain" value="Bonus"><span>Bonus</span></label>
+          <label class="chip chip-keluar"><input type="radio" name="kategoriLain" value="Dividen"><span>Dividen</span></label>
+          <label class="chip chip-keluar"><input type="radio" name="kategoriLain" value="Gaji/Upah"><span>Gaji/Upah</span></label>
+          <label class="chip chip-keluar"><input type="radio" name="kategoriLain" value="Parkir"><span>Parkir</span></label>
+          <label class="chip chip-keluar"><input type="radio" name="kategoriLain" value="Sewa Tempat"><span>Sewa Tempat</span></label>
+          <label class="chip chip-keluar"><input type="radio" name="kategoriLain" value="Tunjangan"><span>Tunjangan</span></label>
+          <label class="chip chip-keluar"><input type="radio" name="kategoriLain" value="__lainnya__" id="kategoriLainnyaRadio"><span>Lainnya…</span></label>
+        </div>
+        <input type="text" id="kategoriLainnyaInput" class="text-input" placeholder="Nama pengeluaran baru" hidden>
       </div>
     </section>
 
