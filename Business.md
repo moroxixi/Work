@@ -41,25 +41,30 @@ File: `Buku_Kas_Harian_Gabungan.xlsx` (dipakai sebagai Google Sheet setelah di-u
 - Setoran Cabang Tempura *(otomatis via form setoran, lihat Section 14)*
 - Setoran Cabang Babakan *(otomatis via form setoran, lihat Section 14)*
 - Setoran Cabang Leweung Gajah *(otomatis via form setoran, lihat Section 14)*
-- Setoran Cabang Depan RS *(manual, cabang eksternal — tidak ada form setoran)*
 - Sterofoam Tempura *(otomatis via form setoran, lihat Section 14)*
 - MAO Frozen — pesanan custom produk frozen di luar stok outlet harian (input manual)
 - MAO Instan — pesanan custom produk instan di luar stok outlet harian (input manual)
-- Outlet — **KHUSUS fallback darurat**, dipakai manual hanya kalau sistem
-  kirim-otomatis (`kirimKeBukuKas`) sedang bermasalah. Lihat aturan wajib di
-  Section 14 sebelum pakai kategori ini.
+- Outlet — **kategori ganda**, dipakai untuk dua kondisi berbeda:
+  1. **Fallback darurat** kalau sistem kirim-otomatis (`kirimKeBukuKas`) sedang bermasalah. Lihat aturan wajib di Section 14 sebelum pakai untuk kondisi ini.
+  2. **Jalur reguler** untuk **Setoran Cabang Depan RS** (cabang eksternal, tidak ada form setoran otomatis sama sekali) — lihat Section 14.
+
+  Di form `index.html`, memilih kategori "Outlet" memunculkan sub-pilihan cabang
+  (Babakan / Depan RS / Leweung Gajah / Tempura). Kategori yang tersimpan di sheet
+  tetap **"Outlet"** (bukan "Setoran Cabang Depan RS" atau nama cabang lain), kolom
+  **Belanja Di** diisi nama cabang yang dipilih (untuk audit), dan kolom **Keterangan**
+  otomatis terisi `"Setoran Outlet - <cabang>"` (bisa ditimpa manual kalau owner
+  ketik catatan sendiri).
 - Lainnya — placeholder sementara untuk pendapatan yang belum sempat
   dikategorikan; reklasifikasi ke kategori yang benar begitu sempat.
 
 **Uang Keluar:**
 - Belanja
-- Gaji/Upah
+- Gaji/Upah *(juga tersedia manual di form untuk kasus di luar form setoran, mis. gaji karyawan non-cabang — lihat Section 14)*
 - Sewa Tempat
-- Tunjangan
+- Tunjangan *(juga tersedia manual di form untuk kasus di luar form setoran)*
 - Bonus
 - Parkir
 - Dividen
-- Tunjangan
 - Pengeluaran Operasional *(otomatis via form setoran, lihat Section 14)*
 - Uang Jajan Karyawan *(otomatis via form setoran, lihat Section 14)*
 
@@ -69,8 +74,11 @@ Tiga file terpisah: `index.html`, `style.css`, `script.js`.
 
 **Desain:**
 - Dua kartu terpisah: **Uang Masuk** (aksen hijau) dan **Uang Keluar** (aksen terracotta), masing-masing berisi kategori dalam bentuk **chip/checklist** (bukan dropdown) — minim klik.
-- Field **"Belanja di"** muncul otomatis hanya saat kategori "Belanja" dipilih, berupa daftar chip toko (Ayam Ma'mun, Ayam Depan Pasar, Ayam Bi Warsih, Kulit Pangsit, Plastik Pasar, Plastik DA, Sayur, Mini Frozen, Ngena-Q Frozen, Mega Frozen) + opsi "Toko lain…" untuk input manual.
-- Field **Keterangan** bersifat **opsional** (kategori sudah cukup jelas sebagai identitas transaksi).
+- **Uang Masuk**: chip MAO Frozen, MAO Instan, Outlet (dengan sub-pilihan cabang), Lainnya.
+- **Uang Keluar**: pakai segmented tab **Belanja** (default aktif, tampil daftar toko) vs **Lainnya** (tampil sub-kategori: Bonus, Dividen, Gaji/Upah, Parkir, Sewa Tempat, Tunjangan, + input manual "Lainnya…").
+- **Arsitektur radio tunggal**: seluruh kategori (Masuk & Keluar) berada dalam **satu grup radio `kategoriUtama`** lintas kedua kartu, dibedakan lewat `data-arah="masuk"/"keluar"` di tiap input. Ini perbaikan dari desain awal yang pakai beberapa grup radio terpisah — grup terpisah pernah menyebabkan subsection (mis. daftar toko atau sub-cabang Outlet) tidak sinkron dengan kategori yang benar-benar aktif.
+- Field **"Belanja di"** muncul otomatis hanya saat kategori "Belanja" dipilih, berupa daftar chip toko: Ayam Ma'mun, Ayam Depan Pasar, Ayam Bi Warsih, **Baso Adib, Gas Abah**, Kulit Pangsit, Mega Frozen, Mini Frozen, Ngena-Q Frozen, Plastik DA, Plastik Pasar, Sayur, **Surya, Telor** + opsi "Toko lain…" untuk input manual.
+- Field **Keterangan** bersifat **opsional** secara umum, tapi otomatis terisi saat kategori "Outlet" dipilih (lihat Section 3).
 - Field **Jumlah (Rp)** dengan format ribuan otomatis saat mengetik.
 - Timestamp tercatat otomatis saat submit — tidak perlu diisi manual.
 - Dioptimalkan untuk iPhone: `viewport-fit=cover`, `env(safe-area-inset)`, font input 16px (mencegah auto-zoom iOS), touch target ≥40px.
@@ -79,9 +87,9 @@ Tiga file terpisah: `index.html`, `style.css`, `script.js`.
 ## 5. Integrasi Google Apps Script (`Code.gs`)
 
 - Berfungsi sebagai backend penerima data dari form, di-deploy sebagai **Web App** dari dalam Google Sheet (Extensions → Apps Script).
-- `doPost(e)` menerima JSON dari form, lalu `appendRow()` ke sheet **Input**.
+- `doPost(e)` menerima JSON dari form, lalu `appendRow()` ke sheet **Input**. Kalau field `keterangan` kosong, server otomatis isi `"-"` supaya sel tidak kosong (memudahkan baca & filter data nanti).
 - Deployment: Execute as **Me**, Who has access **Anyone**.
-- Endpoint sudah aktif: `https://script.google.com/macros/s/AKfycbxQV9SiURK5bKibxzoUOr0pm1OdFFdUsoW1kQdiA4TVcJ6baGqgc6lhJIB9XYZ7cRjj/exec`
+- Endpoint aktif saat ini: `https://script.google.com/macros/s/AKfycbzxGbX_ptTbEbze7rk2NMTCfq5wnNqkv3MuhBX6wIZbjQA8sNSK0Ucp8gp45HXMbl7B/exec`
 - **Penting:** setiap edit `Code.gs`, harus **Deploy ulang** (Manage deployments → Edit → New version → Deploy) supaya perubahan aktif di URL yang sama.
 
 ### Catatan Teknis: `mode: "no-cors"`
@@ -132,7 +140,7 @@ Checklist yang sudah disusun kalau form bilang "Tersimpan ✓" tapi data tidak m
   mengandung tanggal. Sheet Buku Kas Harian sekarang pakai formula `INT(Timestamp)` untuk
   ambil tanggal saja.
 - **Field Keterangan jadi opsional** — kategori transaksi sudah cukup jelas sebagai identitas,
-  jadi tidak wajib diisi lagi.
+  jadi tidak wajib diisi lagi (kecuali kategori "Outlet", yang otomatis terisi — lihat Section 3).
 - **Endpoint Apps Script sudah aktif dan terpasang** di `script.js`, form siap dites langsung
   ke sheet.
 - **Version control**: dibuat `work-push.sh` untuk auto commit & push folder kerja ke GitHub,
@@ -332,7 +340,10 @@ Buku Kas — sudah terhitung dalam Omset.
 | Uang Tunai, Wajib Setor, Selisih, Status | ❌ tidak dikirim | Alat rekonsiliasi kas fisik harian, bukan transaksi — tetap tersimpan lengkap di `Input_Tempura`/`Input_Wonton` untuk audit |
 
 Cabang Depan RS (dikelola eksternal) tidak pakai form setoran ini — setorannya masih
-dicatat manual oleh pemilik (cuma total uang tunai) seperti biasa.
+dicatat manual oleh pemilik lewat form `index.html`, kategori **"Outlet"** dengan
+sub-pilihan cabang "Depan RS" (lihat Section 3). Ini bukan pemakaian "Outlet" sebagai
+fallback darurat, tapi memang jalur reguler satu-satunya untuk cabang ini karena tidak
+ada form setoran otomatis (`setoran-tempura.html`/`setoran-wonton.html`) untuknya.
 
 ### Kenapa kategori "Sterofoam Tempura", bukan cuma "Sterofoam"
 
@@ -396,21 +407,30 @@ disamakan:
    form setoran Tempura/Wonton. Kategori yang lahir dari jalur ini:
    `Setoran Cabang Tempura`, `Sterofoam Tempura`, `Setoran Cabang Babakan`,
    `Setoran Cabang Leweung Gajah`, `Gaji/Upah`, `Pengeluaran Operasional`,
-   `Uang Jajan Karyawan`. **Tidak perlu — dan tidak boleh — diinput ulang manual.**
+   `Uang Jajan Karyawan`. **Tidak perlu — dan tidak boleh — diinput ulang manual
+   untuk transaksi yang sama.**
 
 2. **Manual** — diinput pemilik sendiri lewat form chip Buku Kas Gabungan
    (`index.html`). Dipakai untuk kategori yang memang tidak ada form
-   setoran otomatisnya:
-   `MAO Frozen`, `MAO Instan`, `Setoran Cabang Depan RS` (cabang eksternal,
-   belum ada form), `Lainnya`, `Dividen`, `Sewa Tempat`, `Bonus`, `Parkir`,
-   `Belanja`.
+   setoran otomatisnya, atau kasus di luar cakupan form setoran:
+   `MAO Frozen`, `MAO Instan`, `Outlet` (fallback darurat **dan** jalur reguler
+   Setoran Cabang Depan RS), `Lainnya`, `Dividen`, `Sewa Tempat`, `Bonus`,
+   `Parkir`, `Belanja`, serta `Gaji/Upah` & `Tunjangan` untuk kasus yang tidak
+   lewat form setoran (mis. gaji karyawan non-cabang).
 
-### Kategori "Outlet" — Fallback Darurat, BUKAN Kategori Reguler
+   **Perhatian:** karena `Gaji/Upah` bisa masuk lewat jalur otomatis (setoran
+   cabang) *maupun* manual, pastikan tidak input manual untuk gaji yang sudah
+   otomatis terkirim lewat form setoran — cek dulu di `Input_Tempura`/
+   `Input_Wonton` kalau ragu.
 
-`Outlet` di form manual **bukan** pengganti setoran otomatis Tempura/Babakan/
-Leweung Gajah. Ini cuma jaring pengaman kalau `kirimKeBukuKas()` gagal (misalnya
-error izin akses spreadsheet). **Sebelum input manual pakai kategori `Outlet`,
-wajib cek dulu:**
+### Kategori "Outlet" — Dua Kegunaan, Jangan Tertukar
+
+`Outlet` di form manual punya **dua fungsi berbeda**, penting untuk tidak
+mencampur prosedurnya:
+
+**A. Fallback darurat** (setoran Tempura/Babakan/Leweung Gajah yang harusnya lewat
+form setoran otomatis, tapi `kirimKeBukuKas()` gagal). **Sebelum input manual untuk
+kasus ini, wajib cek dulu:**
 
 1. Buka `Input_Tempura` / `Input_Wonton` untuk tanggal & cabang yang sama.
 2. Kalau baris setoran hari itu **sudah ada** di sana — cek juga apakah baris
@@ -421,6 +441,12 @@ wajib cek dulu:**
 4. Kalau memang gagal (ada alert Telegram error, atau baris tidak ketemu di
    `Input`) → baru input manual pakai `Outlet`, dengan nominal & tanggal yang
    sesuai baris di `Input_Tempura`/`Input_Wonton` yang gagal terkirim tadi.
+
+**B. Jalur reguler untuk Setoran Cabang Depan RS** — cabang ini **tidak punya**
+form setoran otomatis sama sekali, jadi **tidak perlu** cek prosedur di atas
+(poin 1–4 tidak berlaku, karena memang tidak ada `Input_Tempura`/`Input_Wonton`
+untuk cabang ini). Setiap setoran Depan RS memang selalu manual lewat kategori
+`Outlet` + sub-pilihan cabang "Depan RS", tanpa perlu validasi kegagalan sistem.
 
 Kategori `Outlet` tetap dikenali sebagai Uang Masuk oleh formula `REGEXMATCH` di
 `Buku Kas Harian` — *(isi whitelist lengkap menyusul setelah formula terbaru

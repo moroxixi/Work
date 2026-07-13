@@ -12,8 +12,15 @@ const kategoriLainnyaInput = document.getElementById("kategoriLainnyaInput");
 const kategoriLainnyaRadio = document.getElementById("kategoriLainnyaRadio");
 
 const jumlahEl = document.getElementById("jumlah");
+const keteranganEl = document.getElementById("keterangan");
 const submitBtn = document.getElementById("submitBtn");
 const statusMsg = document.getElementById("statusMsg");
+
+// Menandai apakah isi field Keterangan saat ini adalah hasil auto-fill dari
+// pilihan Outlet (bukan ketikan manual owner). Dipakai supaya auto-fill tidak
+// menimpa catatan manual yang sudah diketik, tapi tetap update kalau owner
+// ganti-ganti pilihan cabang Outlet.
+let keteranganAutoFilled = false;
 
 // ============================================================
 // Semua kategori (Uang Masuk & Uang Keluar) sekarang ada dalam
@@ -43,7 +50,13 @@ function updateVisibility() {
 
   // --- Outlet (Uang Masuk) ---
   outletWrap.hidden = !isOutlet;
-  if (!isOutlet) resetRadioGroup("outletDari");
+  if (!isOutlet) {
+    resetRadioGroup("outletDari");
+    if (keteranganAutoFilled) {
+      keteranganEl.value = "";
+      keteranganAutoFilled = false;
+    }
+  }
 
   // --- Belanja (Uang Keluar, default) ---
   belanjaDiWrap.hidden = !isBelanja;
@@ -68,6 +81,25 @@ document.querySelectorAll('input[name="kategoriUtama"]').forEach((radio) => {
 
 // Set tampilan awal sesuai default (tab "Belanja" sudah checked di HTML)
 updateVisibility();
+
+// Pilih cabang di dalam kategori "Outlet" -> otomatis isi Keterangan
+// (mis. "Setoran Outlet - Babakan"), tapi tidak menimpa kalau owner sudah
+// ketik catatan manual sendiri.
+document.querySelectorAll('input[name="outletDari"]').forEach((radio) => {
+  radio.addEventListener("change", () => {
+    const autoText = `Setoran Outlet - ${radio.value}`;
+    if (keteranganEl.value === "" || keteranganAutoFilled) {
+      keteranganEl.value = autoText;
+      keteranganAutoFilled = true;
+    }
+  });
+});
+
+// Kalau owner ketik manual di Keterangan, berhenti anggap sebagai auto-fill
+// supaya tidak ketimpa lagi kalau ganti-ganti pilihan cabang Outlet.
+keteranganEl.addEventListener("input", () => {
+  keteranganAutoFilled = false;
+});
 
 // Tampilkan input manual kalau pilih "Lainnya…" di daftar toko
 document.querySelectorAll('input[name="belanjaDi"]').forEach((radio) => {
@@ -206,6 +238,7 @@ form.addEventListener("submit", async (e) => {
     kategoriLainWrap.hidden = true;
     kategoriLainnyaInput.hidden = true;
     kategoriLainnyaInput.value = "";
+    keteranganAutoFilled = false;
 
     // Kembalikan ke default: tab "Belanja" aktif
     document.getElementById("tabBelanja").checked = true;
