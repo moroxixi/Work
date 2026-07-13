@@ -23,30 +23,33 @@
         <h2>Uang Masuk</h2>
       </div>
       <div class="chip-grid" data-group="kategori">
-	<label class="chip chip-masuk">
-          <input type="radio" name="kategori" value="Transfer ke BRI">
-          <span>Transfer ke BRI</span>
-        </label>
-	<label class="chip chip-masuk">
-          <input type="radio" name="kategori" value="Penjualan Cirawang">
-          <span>Penjualan Cirawang</span>
+        <label class="chip chip-masuk">
+          <input type="radio" name="kategori" value="MAO Frozen">
+          <span>MAO Frozen</span>
         </label>
         <label class="chip chip-masuk">
-          <input type="radio" name="kategori" value="Setoran Cabang Tempura">
-          <span>Setoran Tempura</span>
+          <input type="radio" name="kategori" value="MAO Instan">
+          <span>MAO Instan</span>
         </label>
         <label class="chip chip-masuk">
-          <input type="radio" name="kategori" value="Setoran Cabang Babakan">
-          <span>Setoran Babakan</span>
+          <input type="radio" name="kategori" value="Outlet" id="katOutlet">
+          <span>Outlet</span>
         </label>
         <label class="chip chip-masuk">
-          <input type="radio" name="kategori" value="Setoran Cabang Leweung Gajah">
-          <span>Setoran Leweung Gajah</span>
+          <input type="radio" name="kategori" value="Lainnya">
+          <span>Lainnya</span>
         </label>
-        <label class="chip chip-masuk">
-          <input type="radio" name="kategori" value="Setoran Cabang Depan RS">
-          <span>Setoran Depan RS</span>
-        </label>
+      </div>
+
+      <!-- Muncul hanya kalau kategori = Outlet -->
+      <div class="subsection" id="outletWrap" hidden>
+        <p class="subsection-label">Outlet mana?</p>
+        <div class="chip-grid chip-grid-outlet" data-group="outletDari">
+          <label class="chip chip-outlet"><input type="radio" name="outletDari" value="Babakan"><span>Babakan</span></label>
+          <label class="chip chip-outlet"><input type="radio" name="outletDari" value="Depan RS"><span>Depan RS</span></label>
+          <label class="chip chip-outlet"><input type="radio" name="outletDari" value="Leweung Gajah"><span>Leweung Gajah</span></label>
+          <label class="chip chip-outlet"><input type="radio" name="outletDari" value="Tempura"><span>Tempura</span></label>
+        </div>
       </div>
     </section>
 
@@ -56,53 +59,35 @@
         <span class="dot dot-keluar"></span>
         <h2>Uang Keluar</h2>
       </div>
-      <div class="chip-grid" data-group="kategori">
-        <label class="chip chip-keluar">
-          <input type="radio" name="kategori" value="Belanja" id="katBelanja">
-          <span>Belanja</span>
-        </label>
-	<label class="chip chip-keluar">
-          <input type="radio" name="kategori" value="Parkir">
-          <span>Parkir</span>
-        </label>
-        <label class="chip chip-keluar">
-          <input type="radio" name="kategori" value="Gaji/Upah">
-          <span>Gaji/Upah</span>
-        </label>
-        <label class="chip chip-keluar">
-          <input type="radio" name="kategori" value="Sewa Tempat">
-          <span>Sewa Tempat</span>
-        </label>
-        <label class="chip chip-keluar">
-          <input type="radio" name="kategori" value="Tunjangan">
-          <span>Tunjangan</span>
-        </label>
-        <label class="chip chip-keluar">
-          <input type="radio" name="kategori" value="Bonus">
-          <span>Bonus</span>
-        </label>
-	<label class="chip chip-keluar">
-          <input type="radio" name="kategori" value="Dividen">
-          <span>Dividen</span>
-        </label>
+      <div class="list-keluar" data-group="kategori">
+        <label class="list-row"><input type="radio" name="kategori" value="Belanja" id="katBelanja"><span>Belanja</span><span class="radio-dot"></span></label>
+        <label class="list-row"><input type="radio" name="kategori" value="Bonus"><span>Bonus</span><span class="radio-dot"></span></label>
+        <label class="list-row"><input type="radio" name="kategori" value="Dividen"><span>Dividen</span><span class="radio-dot"></span></label>
+        <label class="list-row"><input type="radio" name="kategori" value="Gaji/Upah"><span>Gaji/Upah</span><span class="radio-dot"></span></label>
+        <label class="list-row"><input type="radio" name="kategori" value="Parkir"><span>Parkir</span><span class="radio-dot"></span></label>
+        <label class="list-row"><input type="radio" name="kategori" value="Sewa Tempat"><span>Sewa Tempat</span><span class="radio-dot"></span></label>
+        <label class="list-row"><input type="radio" name="kategori" value="Tunjangan"><span>Tunjangan</span><span class="radio-dot"></span></label>
+        <label class="list-row"><input type="radio" name="kategori" value="Lainnya"><span>Lainnya</span><span class="radio-dot"></span></label>
       </div>
 
       <!-- Muncul hanya kalau kategori = Belanja -->
       <div class="subsection" id="belanjaDiWrap" hidden>
         <p class="subsection-label">Belanja di</p>
         <div class="chip-grid chip-grid-toko" data-group="belanjaDi">
-          <label class="chip chip-toko"><input type="radio" name="belanjaDi" value="Ayam Ma'mun"><span>Ayam Ma'mun</span></label>
-          <label class="chip chip-toko"><input type="radio" name="belanjaDi" value="Ayam Depan Pasar"><span>Ayam Depan Pasar</span></label>
           <label class="chip chip-toko"><input type="radio" name="belanjaDi" value="Ayam Bi Warsih"><span>Ayam Bi Warsih</span></label>
+          <label class="chip chip-toko"><input type="radio" name="belanjaDi" value="Ayam Depan Pasar"><span>Ayam Depan Pasar</span></label>
+          <label class="chip chip-toko"><input type="radio" name="belanjaDi" value="Ayam Ma'mun"><span>Ayam Ma'mun</span></label>
+          <label class="chip chip-toko"><input type="radio" name="belanjaDi" value="Baso Adib"><span>Baso Adib</span></label>
+          <label class="chip chip-toko"><input type="radio" name="belanjaDi" value="Gas Abah"><span>Gas Abah</span></label>
           <label class="chip chip-toko"><input type="radio" name="belanjaDi" value="Kulit Pangsit"><span>Kulit Pangsit</span></label>
-          <label class="chip chip-toko"><input type="radio" name="belanjaDi" value="Plastik Pasar"><span>Plastik Pasar</span></label>
-          <label class="chip chip-toko"><input type="radio" name="belanjaDi" value="Plastik DA"><span>Plastik DA</span></label>
-          <label class="chip chip-toko"><input type="radio" name="belanjaDi" value="Sayur"><span>Sayur</span></label>
+          <label class="chip chip-toko"><input type="radio" name="belanjaDi" value="Mega Frozen"><span>Mega Frozen</span></label>
           <label class="chip chip-toko"><input type="radio" name="belanjaDi" value="Mini Frozen"><span>Mini Frozen</span></label>
           <label class="chip chip-toko"><input type="radio" name="belanjaDi" value="Ngena-Q Frozen"><span>Ngena-Q Frozen</span></label>
-          <label class="chip chip-toko"><input type="radio" name="belanjaDi" value="Mega Frozen"><span>Mega Frozen</span></label>
-          <label class="chip chip-toko"><input type="radio" name="belanjaDi" value="Abah"><span>Abah</span></label>
+          <label class="chip chip-toko"><input type="radio" name="belanjaDi" value="Plastik DA"><span>Plastik DA</span></label>
+          <label class="chip chip-toko"><input type="radio" name="belanjaDi" value="Plastik Pasar"><span>Plastik Pasar</span></label>
+          <label class="chip chip-toko"><input type="radio" name="belanjaDi" value="Sayur"><span>Sayur</span></label>
           <label class="chip chip-toko"><input type="radio" name="belanjaDi" value="Surya"><span>Surya</span></label>
+          <label class="chip chip-toko"><input type="radio" name="belanjaDi" value="Telor"><span>Telor</span></label>
           <label class="chip chip-toko"><input type="radio" name="belanjaDi" value="__lainnya__" id="tokoLainnya"><span>Lainnya…</span></label>
         </div>
         <input type="text" id="belanjaDiLainnyaInput" class="text-input" placeholder="Lainnya" hidden>
@@ -112,8 +97,8 @@
     <!-- ===== DETAIL TRANSAKSI ===== -->
     <section class="card card-detail">
       <div class="field">
-        <label for="keterangan">Keterangan</label>
-        <input type="text" id="keterangan" class="text-input" placeholder="Contoh: Setoran hari ini" required>
+        <label for="keterangan">Keterangan <span class="optional-tag">(opsional)</span></label>
+        <input type="text" id="keterangan" class="text-input" placeholder="Contoh: Setoran hari ini">
       </div>
       <div class="field">
         <label for="jumlah">Jumlah (Rp)</label>

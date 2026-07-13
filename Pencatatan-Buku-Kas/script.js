@@ -1,31 +1,39 @@
-const ENDPOINT_URL = "https://script.google.com/macros/s/AKfycbxuQEhiTVTNRTuyHBaoA_oRrYmZaGywKNkYrXURXXkx7TOcONKKIGdQGawci13IKrQ7/exec";
+const ENDPOINT_URL = "https://script.google.com/macros/s/AKfycbzxGbX_ptTbEbze7rk2NMTCfq5wnNqkv3MuhBX6wIZbjQA8sNSK0Ucp8gp45HXMbl7B/exec";
 
 const KATEGORI_MASUK = [
-  "Transfer ke BRI",
-  "Penjualan Cirawang",
-  "Setoran Cabang Tempura",
-  "Setoran Cabang Babakan",
-  "Setoran Cabang Leweung Gajah",
-  "Setoran Cabang Depan RS"
+  "MAO Frozen",
+  "MAO Instan",
+  "Outlet",
+  "Lainnya"
 ];
 
 const form = document.getElementById("cashForm");
 const belanjaDiWrap = document.getElementById("belanjaDiWrap");
 const belanjaDiLainnyaInput = document.getElementById("belanjaDiLainnyaInput");
 const tokoLainnyaRadio = document.getElementById("tokoLainnya");
+const outletWrap = document.getElementById("outletWrap");
 const jumlahEl = document.getElementById("jumlah");
 const submitBtn = document.getElementById("submitBtn");
 const statusMsg = document.getElementById("statusMsg");
 
-// Tampilkan/sembunyikan section "Belanja di" berdasarkan kategori yang dicentang
+// Tampilkan/sembunyikan section "Belanja di" atau "Outlet" berdasarkan kategori yang dicentang
+// (kategori "Lainnya" muncul di Uang Masuk & Uang Keluar, tapi keduanya punya value yang sama
+// "Lainnya" -- tidak masalah karena arah ditentukan lewat KATEGORI_MASUK, bukan lewat teks)
 document.querySelectorAll('input[name="kategori"]').forEach((radio) => {
   radio.addEventListener("change", () => {
     const isBelanja = radio.value === "Belanja";
+    const isOutlet = radio.value === "Outlet";
+
     belanjaDiWrap.hidden = !isBelanja;
     if (!isBelanja) {
       document.querySelectorAll('input[name="belanjaDi"]').forEach((r) => (r.checked = false));
       belanjaDiLainnyaInput.hidden = true;
       belanjaDiLainnyaInput.value = "";
+    }
+
+    outletWrap.hidden = !isOutlet;
+    if (!isOutlet) {
+      document.querySelectorAll('input[name="outletDari"]').forEach((r) => (r.checked = false));
     }
   });
 });
@@ -61,6 +69,11 @@ function getSelectedBelanjaDi() {
   return el.value === "__lainnya__" ? belanjaDiLainnyaInput.value.trim() : el.value;
 }
 
+function getSelectedOutlet() {
+  const el = document.querySelector('input[name="outletDari"]:checked');
+  return el ? el.value : "";
+}
+
 form.addEventListener("submit", async (e) => {
   e.preventDefault();
 
@@ -70,11 +83,21 @@ form.addEventListener("submit", async (e) => {
     return;
   }
 
-  let belanjaDi = "";
+  // "belanjaDi" dipakai sebagai kolom detail tambahan di sheet Input.
+  // Untuk kategori "Belanja" -> isinya nama toko.
+  // Untuk kategori "Outlet"  -> isinya nama cabang/outlet.
+  // Kolom sheet TIDAK diubah/ditambah supaya struktur Input tetap sama.
+  let detailTambahan = "";
   if (kategori === "Belanja") {
-    belanjaDi = getSelectedBelanjaDi();
-    if (!belanjaDi) {
+    detailTambahan = getSelectedBelanjaDi();
+    if (!detailTambahan) {
       setStatus("Pilih atau isi nama toko dulu.", "err");
+      return;
+    }
+  } else if (kategori === "Outlet") {
+    detailTambahan = getSelectedOutlet();
+    if (!detailTambahan) {
+      setStatus("Pilih outlet-nya dulu.", "err");
       return;
     }
   }
@@ -89,17 +112,17 @@ form.addEventListener("submit", async (e) => {
 
   const options = { timeZone: 'Asia/Jakarta', year: 'numeric', month: '2-digit', day: '2-digit' };
   const timeOptions = { timeZone: 'Asia/Jakarta', hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false };
-  
+
   const dateStr = now.toLocaleDateString('id-ID', options); // Hasil: 10/07/2026
   const timeStr = now.toLocaleTimeString('en-US', timeOptions); // Menggunakan en-US agar pasti pakai ":"
-  
+
   const timestampWIB = `${dateStr} ${timeStr}`;
-  console.log(timestampWIB); // Hasil pasti: "10/07/2026 20:07:03"
+
   const payload = {
     timestamp: timestampWIB,
     keterangan: document.getElementById("keterangan").value.trim(),
     kategori: kategori,
-    belanjaDi: belanjaDi,
+    belanjaDi: detailTambahan,
     jumlah: jumlahAngka,
     arah: KATEGORI_MASUK.includes(kategori) ? "Masuk" : "Keluar"
   };
@@ -122,6 +145,7 @@ form.addEventListener("submit", async (e) => {
     form.reset();
     belanjaDiWrap.hidden = true;
     belanjaDiLainnyaInput.hidden = true;
+    outletWrap.hidden = true;
   } catch (err) {
     setStatus("Gagal mengirim. Cek koneksi internet lalu coba lagi.", "err");
   } finally {
