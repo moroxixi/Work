@@ -1,0 +1,566 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>Scan Struk Belanja</title>
+<style>
+  :root{
+    --cream:#FAF6EF;
+    --paper:#FFFFFF;
+    --ink:#2B2420;
+    --ink-soft:#7A6F63;
+    --terracotta:#B5542A;
+    --terracotta-dark:#8F4220;
+    --line:#E7DFD3;
+    --good:#3E7A4C;
+    --bad:#B23A3A;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    background:var(--cream);
+    color:var(--ink);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
+    padding:env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
+    display:flex;
+    justify-content:center;
+  }
+  .wrap{
+    width:100%;
+    max-width:460px;
+    padding:20px 16px 48px;
+  }
+  header{
+    margin-bottom:18px;
+  }
+  .eyebrow{
+    font-size:12px;
+    letter-spacing:0.08em;
+    text-transform:uppercase;
+    color:var(--terracotta-dark);
+    font-weight:700;
+    margin:0 0 4px;
+  }
+  h1{
+    font-size:22px;
+    margin:0 0 4px;
+    font-weight:800;
+  }
+  .sub{
+    font-size:13px;
+    color:var(--ink-soft);
+    margin:0;
+    line-height:1.4;
+  }
+
+  .card{
+    background:var(--paper);
+    border-radius:14px;
+    padding:18px;
+    margin-bottom:16px;
+    box-shadow:0 1px 3px rgba(43,36,32,0.08);
+  }
+
+  .label{
+    font-size:12px;
+    font-weight:700;
+    color:var(--ink-soft);
+    text-transform:uppercase;
+    letter-spacing:0.04em;
+    margin-bottom:8px;
+    display:block;
+  }
+
+  .chips{
+    display:flex;
+    flex-wrap:wrap;
+    gap:8px;
+  }
+  .chip{
+    border:1.5px solid var(--line);
+    background:var(--cream);
+    border-radius:20px;
+    padding:9px 14px;
+    font-size:14px;
+    min-height:40px;
+    display:flex;
+    align-items:center;
+    cursor:pointer;
+    user-select:none;
+  }
+  .chip.active{
+    background:var(--terracotta);
+    border-color:var(--terracotta);
+    color:#fff;
+    font-weight:600;
+  }
+  input.toko-lain{
+    width:100%;
+    margin-top:10px;
+    padding:11px 12px;
+    font-size:16px;
+    border:1.5px solid var(--line);
+    border-radius:10px;
+    display:none;
+  }
+
+  .photo-zone{
+    border:2px dashed var(--line);
+    border-radius:12px;
+    padding:22px 16px;
+    text-align:center;
+    color:var(--ink-soft);
+    font-size:14px;
+  }
+  .photo-zone img{
+    max-width:100%;
+    border-radius:8px;
+    margin-top:10px;
+  }
+  .btn{
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    gap:6px;
+    border:none;
+    border-radius:10px;
+    padding:12px 18px;
+    font-size:15px;
+    font-weight:700;
+    cursor:pointer;
+    min-height:44px;
+  }
+  .btn-terracotta{
+    background:var(--terracotta);
+    color:#fff;
+    width:100%;
+  }
+  .btn-terracotta:disabled{
+    background:#D9BBA8;
+    cursor:not-allowed;
+  }
+  .btn-ghost{
+    background:transparent;
+    color:var(--terracotta-dark);
+    border:1.5px solid var(--terracotta);
+    width:100%;
+    margin-top:8px;
+  }
+  label.file-btn{
+    display:inline-block;
+    background:var(--ink);
+    color:#fff;
+    padding:11px 18px;
+    border-radius:10px;
+    font-size:14px;
+    font-weight:600;
+    cursor:pointer;
+    min-height:40px;
+  }
+  input[type=file]{display:none;}
+
+  /* --- Receipt-style preview --- */
+  .receipt{
+    font-family:"SFMono-Regular",Consolas,"Liberation Mono",Menlo,monospace;
+    background:var(--paper);
+    border-radius:14px;
+    padding:18px 16px 8px;
+    position:relative;
+    box-shadow:0 1px 3px rgba(43,36,32,0.08);
+  }
+  .receipt::after{
+    content:"";
+    display:block;
+    height:10px;
+    margin:12px -16px -8px;
+    background:
+      linear-gradient(-45deg, var(--cream) 6px, transparent 0) 0 4px,
+      linear-gradient(45deg, var(--cream) 6px, transparent 0) 0 4px;
+    background-size:12px 12px;
+    background-repeat:repeat-x;
+  }
+  .receipt-title{
+    font-family:-apple-system,BlinkMacSystemFont,sans-serif;
+    font-size:12px;
+    font-weight:700;
+    text-transform:uppercase;
+    letter-spacing:0.06em;
+    color:var(--ink-soft);
+    margin-bottom:10px;
+  }
+  .item-row{
+    border-top:1px dashed var(--line);
+    padding:10px 0;
+  }
+  .item-row:first-of-type{border-top:none;}
+  .item-row.removed{opacity:0.35;}
+  .item-top{
+    display:flex;
+    justify-content:space-between;
+    align-items:flex-start;
+    gap:8px;
+  }
+  .item-name{
+    flex:1;
+    font-size:14px;
+    border:none;
+    background:transparent;
+    font-family:inherit;
+    font-weight:700;
+    color:var(--ink);
+    padding:2px 0;
+  }
+  .item-remove{
+    font-family:-apple-system,BlinkMacSystemFont,sans-serif;
+    font-size:12px;
+    color:var(--bad);
+    background:none;
+    border:none;
+    cursor:pointer;
+    padding:2px 4px;
+  }
+  .item-fields{
+    display:flex;
+    gap:8px;
+    margin-top:6px;
+    font-size:13px;
+  }
+  .item-fields .f{
+    flex:1;
+  }
+  .item-fields label{
+    display:block;
+    font-family:-apple-system,BlinkMacSystemFont,sans-serif;
+    font-size:10px;
+    color:var(--ink-soft);
+    margin-bottom:2px;
+  }
+  .item-fields input{
+    width:100%;
+    border:1px solid var(--line);
+    border-radius:6px;
+    padding:6px 7px;
+    font-size:14px;
+    font-family:inherit;
+  }
+  .item-total{
+    text-align:right;
+    font-size:13px;
+    color:var(--ink-soft);
+    margin-top:4px;
+  }
+  .receipt-total{
+    display:flex;
+    justify-content:space-between;
+    font-size:14px;
+    font-weight:700;
+    padding:12px 0 4px;
+    border-top:1px dashed var(--line);
+    margin-top:4px;
+  }
+
+  .status{
+    text-align:center;
+    font-size:13px;
+    margin-top:10px;
+    min-height:18px;
+  }
+  .status.ok{color:var(--good);font-weight:700;}
+  .status.err{color:var(--bad);font-weight:700;}
+
+  .back-link{
+    display:inline-block;
+    margin-bottom:14px;
+    font-size:13px;
+    color:var(--ink-soft);
+    text-decoration:none;
+  }
+
+  .spinner{
+    width:16px;height:16px;
+    border:2px solid rgba(255,255,255,0.4);
+    border-top-color:#fff;
+    border-radius:50%;
+    animation:spin 0.7s linear infinite;
+    display:inline-block;
+  }
+  @keyframes spin{to{transform:rotate(360deg);}}
+  .hidden{display:none !important;}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <a class="back-link" href="index.html">&larr; Kembali ke Buku Kas</a>
+
+  <header>
+    <p class="eyebrow">Riwayat Harga · Terpisah dari Kas</p>
+    <h1>Scan Struk Belanja</h1>
+    <p class="sub">Foto struk, cek hasilnya, simpan. Data di sini murni untuk pantau harga barang — tidak masuk ke pencatatan kas harian.</p>
+  </header>
+
+  <div class="card">
+    <span class="label">Belanja di toko</span>
+    <div class="chips" id="tokoChips">
+      <div class="chip" data-toko="Ayam Ma'mun">Ayam Ma'mun</div>
+      <div class="chip" data-toko="Ayam Depan Pasar">Ayam Depan Pasar</div>
+      <div class="chip" data-toko="Ayam Bi Warsih">Ayam Bi Warsih</div>
+      <div class="chip" data-toko="Baso Adib">Baso Adib</div>
+      <div class="chip" data-toko="Gas Abah">Gas Abah</div>
+      <div class="chip" data-toko="Kulit Pangsit">Kulit Pangsit</div>
+      <div class="chip" data-toko="Mega Frozen">Mega Frozen</div>
+      <div class="chip" data-toko="Mini Frozen">Mini Frozen</div>
+      <div class="chip" data-toko="Ngena-Q Frozen">Ngena-Q Frozen</div>
+      <div class="chip" data-toko="Plastik DA">Plastik DA</div>
+      <div class="chip" data-toko="Plastik Pasar">Plastik Pasar</div>
+      <div class="chip" data-toko="Sayur">Sayur</div>
+      <div class="chip" data-toko="Surya">Surya</div>
+      <div class="chip" data-toko="Telor">Telor</div>
+      <div class="chip" data-toko="__lain__">Toko lain…</div>
+    </div>
+    <input type="text" class="toko-lain" id="tokoLainInput" placeholder="Nama toko lain" />
+  </div>
+
+  <div class="card">
+    <span class="label">Foto struk</span>
+    <div class="photo-zone" id="photoZone">
+      <label class="file-btn" for="fileInput">Pilih Foto Struk</label>
+      <input type="file" id="fileInput" accept="image/*" />
+      <div id="photoPreviewWrap"></div>
+    </div>
+    <button class="btn btn-terracotta" id="scanBtn" style="margin-top:14px;" disabled>Scan Struk</button>
+    <div class="status" id="scanStatus"></div>
+  </div>
+
+  <div class="receipt hidden" id="receiptCard">
+    <div class="receipt-title">Hasil Scan — cek &amp; edit dulu</div>
+    <div id="itemList"></div>
+    <div class="receipt-total">
+      <span>Total (<span id="itemCount">0</span> barang)</span>
+      <span id="grandTotal">Rp 0</span>
+    </div>
+  </div>
+
+  <div id="saveZone" class="hidden">
+    <button class="btn btn-ghost" id="addRowBtn">+ Tambah Baris Manual</button>
+    <button class="btn btn-terracotta" id="saveBtn" style="margin-top:8px;">Simpan ke Riwayat Harga</button>
+    <div class="status" id="saveStatus"></div>
+  </div>
+
+</div>
+
+<script>
+// ============================================================
+// GANTI dengan URL Web App dari deployment Code.gs scan struk
+// ============================================================
+const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxHyu0TlhTZ8lWQAyet4iYtDqIzspSWNMqpHBnOuC2iBTkLeTqjzF-Y-StVgomedheM/exec";
+
+let selectedToko = null;
+let compressedBase64 = null;
+let compressedMime = "image/jpeg";
+let items = []; // {nama, qty, satuan, harga_satuan, removed}
+
+// --- Toko chip selection ---
+document.getElementById("tokoChips").addEventListener("click", (e) => {
+  const chip = e.target.closest(".chip");
+  if (!chip) return;
+  document.querySelectorAll("#tokoChips .chip").forEach(c => c.classList.remove("active"));
+  chip.classList.add("active");
+  const lainInput = document.getElementById("tokoLainInput");
+  if (chip.dataset.toko === "__lain__") {
+    lainInput.style.display = "block";
+    lainInput.focus();
+    selectedToko = lainInput.value.trim();
+  } else {
+    lainInput.style.display = "none";
+    selectedToko = chip.dataset.toko;
+  }
+  updateScanBtnState();
+});
+document.getElementById("tokoLainInput").addEventListener("input", (e) => {
+  selectedToko = e.target.value.trim();
+  updateScanBtnState();
+});
+
+// --- Photo select + compress ---
+document.getElementById("fileInput").addEventListener("change", async (e) => {
+  const file = e.target.files[0];
+  if (!file) return;
+  const { base64, mime } = await compressImage(file, 1_200_000); // ~1.2MP budget
+  compressedBase64 = base64;
+  compressedMime = mime;
+  document.getElementById("photoPreviewWrap").innerHTML =
+    `<img src="data:${mime};base64,${base64}" alt="preview struk" />`;
+  updateScanBtnState();
+});
+
+function updateScanBtnState() {
+  document.getElementById("scanBtn").disabled = !(selectedToko && compressedBase64);
+}
+
+function compressImage(file, maxPixels) {
+  return new Promise((resolve, reject) => {
+    const img = new Image();
+    const reader = new FileReader();
+    reader.onload = () => { img.src = reader.result; };
+    reader.onerror = reject;
+    img.onload = () => {
+      let { width, height } = img;
+      const pixels = width * height;
+      if (pixels > maxPixels) {
+        const scale = Math.sqrt(maxPixels / pixels);
+        width = Math.round(width * scale);
+        height = Math.round(height * scale);
+      }
+      const canvas = document.createElement("canvas");
+      canvas.width = width; canvas.height = height;
+      canvas.getContext("2d").drawImage(img, 0, 0, width, height);
+      const dataUrl = canvas.toDataURL("image/jpeg", 0.82);
+      resolve({ base64: dataUrl.split(",")[1], mime: "image/jpeg" });
+    };
+    img.onerror = reject;
+    reader.readAsDataURL(file);
+  });
+}
+
+// --- Scan struk ---
+document.getElementById("scanBtn").addEventListener("click", async () => {
+  const btn = document.getElementById("scanBtn");
+  const status = document.getElementById("scanStatus");
+  btn.disabled = true;
+  btn.innerHTML = '<span class="spinner"></span> Membaca struk…';
+  status.textContent = "";
+  status.className = "status";
+
+  try {
+    const res = await fetch(SCRIPT_URL, {
+      method: "POST",
+      headers: { "Content-Type": "text/plain;charset=utf-8" }, // hindari CORS preflight
+      body: JSON.stringify({
+        action: "scan",
+        imageBase64: compressedBase64,
+        mimeType: compressedMime
+      })
+    });
+    const data = await res.json();
+    if (!data.ok) throw new Error(data.error || "Gagal scan.");
+
+    items = data.items.map(it => ({
+      nama: it.nama || "",
+      qty: it.qty || 0,
+      satuan: it.satuan || "",
+      harga_satuan: it.harga_satuan || 0,
+      removed: false
+    }));
+    renderItems();
+    document.getElementById("receiptCard").classList.remove("hidden");
+    document.getElementById("saveZone").classList.remove("hidden");
+    status.textContent = `${items.length} barang terbaca. Cek & edit di bawah sebelum simpan.`;
+    status.className = "status ok";
+  } catch (err) {
+    status.textContent = "Gagal: " + err.message;
+    status.className = "status err";
+  } finally {
+    btn.disabled = false;
+    btn.textContent = "Scan Struk";
+  }
+});
+
+// --- Render editable receipt list ---
+function renderItems() {
+  const list = document.getElementById("itemList");
+  list.innerHTML = "";
+  let total = 0;
+
+  items.forEach((item, i) => {
+    if (!item.removed) total += (Number(item.qty) || 0) * (Number(item.harga_satuan) || 0);
+
+    const row = document.createElement("div");
+    row.className = "item-row" + (item.removed ? " removed" : "");
+    row.innerHTML = `
+      <div class="item-top">
+        <input class="item-name" data-i="${i}" data-f="nama" value="${escapeAttr(item.nama)}" />
+        <button class="item-remove" data-i="${i}">${item.removed ? "batal" : "hapus"}</button>
+      </div>
+      <div class="item-fields">
+        <div class="f"><label>Qty</label><input type="number" step="any" data-i="${i}" data-f="qty" value="${item.qty}" /></div>
+        <div class="f"><label>Satuan</label><input data-i="${i}" data-f="satuan" value="${escapeAttr(item.satuan)}" /></div>
+        <div class="f"><label>Harga satuan</label><input type="number" step="any" data-i="${i}" data-f="harga_satuan" value="${item.harga_satuan}" /></div>
+      </div>
+      <div class="item-total">${formatRp((item.qty||0) * (item.harga_satuan||0))}</div>
+    `;
+    list.appendChild(row);
+  });
+
+  document.getElementById("itemCount").textContent = items.filter(it => !it.removed).length;
+  document.getElementById("grandTotal").textContent = formatRp(total);
+
+  list.querySelectorAll("input").forEach(inp => {
+    inp.addEventListener("input", (e) => {
+      const i = Number(e.target.dataset.i);
+      const f = e.target.dataset.f;
+      items[i][f] = (f === "qty" || f === "harga_satuan") ? Number(e.target.value) : e.target.value;
+      renderItems();
+    });
+  });
+  list.querySelectorAll(".item-remove").forEach(btn => {
+    btn.addEventListener("click", (e) => {
+      const i = Number(e.target.dataset.i);
+      items[i].removed = !items[i].removed;
+      renderItems();
+    });
+  });
+}
+
+document.getElementById("addRowBtn").addEventListener("click", () => {
+  items.push({ nama: "", qty: 1, satuan: "", harga_satuan: 0, removed: false });
+  document.getElementById("receiptCard").classList.remove("hidden");
+  renderItems();
+});
+
+// --- Save ---
+document.getElementById("saveBtn").addEventListener("click", async () => {
+  const btn = document.getElementById("saveBtn");
+  const status = document.getElementById("saveStatus");
+  const toSave = items.filter(it => !it.removed && it.nama.trim() !== "");
+
+  if (toSave.length === 0) {
+    status.textContent = "Tidak ada baris untuk disimpan.";
+    status.className = "status err";
+    return;
+  }
+
+  btn.disabled = true;
+  btn.innerHTML = '<span class="spinner"></span> Menyimpan…';
+  status.textContent = "";
+
+  try {
+    const res = await fetch(SCRIPT_URL, {
+      method: "POST",
+      headers: { "Content-Type": "text/plain;charset=utf-8" },
+      body: JSON.stringify({ action: "save", toko: selectedToko, items: toSave })
+    });
+    const data = await res.json();
+    if (!data.ok) throw new Error(data.error || "Gagal simpan.");
+
+    status.textContent = `Tersimpan ✓ (${data.saved} baris ditambahkan ke Riwayat Harga).`;
+    status.className = "status ok";
+  } catch (err) {
+    status.textContent = "Gagal: " + err.message;
+    status.className = "status err";
+  } finally {
+    btn.disabled = false;
+    btn.textContent = "Simpan ke Riwayat Harga";
+  }
+});
+
+function formatRp(n) {
+  return "Rp " + Math.round(n || 0).toLocaleString("id-ID");
+}
+function escapeAttr(s) {
+  return String(s || "").replace(/"/g, "&quot;");
+}
+</script>
+</body>
+</html>
