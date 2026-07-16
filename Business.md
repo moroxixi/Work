@@ -122,6 +122,9 @@ Checklist yang sudah disusun kalau form bilang "Tersimpan ✓" tapi data tidak m
   - `git add -A` → commit → `git push origin main`.
   - Log ke `push.log` + notifikasi desktop via `notify-send`.
 - Panduan setup SSH key (`ssh-keygen`, `ssh-agent`, daftar public key ke GitHub, ganti remote ke URL SSH) sudah diberikan supaya push tidak perlu password manual tiap kali.
+- **Repo di-serve juga lewat GitHub Pages**, folder kerja `Work` bisa diakses sebagai web statis di
+  `https://moroxixi.github.io/Work/...` — inilah yang dipakai untuk hosting form-form HTML
+  (`index.html`, `Scan-Struk/index.html`, dsb) supaya bisa dibuka langsung dari HP tanpa server sendiri.
 
 ## 9. Yang Masih Perlu Dikerjakan / Dipantau
 
@@ -130,6 +133,7 @@ Checklist yang sudah disusun kalau form bilang "Tersimpan ✓" tapi data tidak m
 - [x] Pastikan `script.js` versi terbaru (tanpa field `tanggal`, Keterangan tidak wajib) sudah dipakai di form yang aktif.
 - [x] Verifikasi end-to-end: submit dari form → cek data masuk ke sheet Input → cek Buku Kas Harian & Rekap Bulanan terhitung benar.
 - [ ] Setelah pencatatan harian jadi kebiasaan (~2-4 minggu), evaluasi apakah sudah siap naik ke Opsi 2/3 (pemisahan biaya per cabang, sistem piutang untuk cabang eksternal).
+- [ ] Fitur Scan Struk Belanja (Section 15) baru selesai dibangun, **belum diverifikasi end-to-end** oleh pemilik — perlu didebug/dites dulu (lihat checklist di Section 15).
 
 ## 10. Update — Redesign Form & Simplifikasi Sheet
 
@@ -451,3 +455,103 @@ untuk cabang ini). Setiap setoran Depan RS memang selalu manual lewat kategori
 Kategori `Outlet` tetap dikenali sebagai Uang Masuk oleh formula `REGEXMATCH` di
 `Buku Kas Harian` — *(isi whitelist lengkap menyusul setelah formula terbaru
 dikonfirmasi)*.
+
+## 15. Fitur Baru: Scan Struk Belanja → Riwayat Harga (`Scan-Struk/index.html`)
+
+Fitur **terpisah total** dari Buku Kas Gabungan/Kas harian — tujuannya murni
+mendata harga barang per toko dari foto struk, supaya ke depannya bisa dipantau
+kalau ada perubahan harga. **Tidak menyentuh sheet `Input` (kas) sama sekali.**
+
+### Alasan & Konteks
+- Selama ini input harga bahan baku manual satu-satu, tidak ada histori harga
+  per barang per toko.
+- Dipilih pendekatan foto struk → OCR pakai **Gemini API** (model
+  `gemini-2.5-flash`) untuk ekstrak daftar barang (nama, qty, satuan, harga
+  satuan) langsung jadi JSON, alih-alih OCR teks mentah yang masih perlu
+  di-parse manual.
+- **Sengaja dipisah dari form kas** (`index.html`) — beda tujuan data (riwayat
+  harga vs transaksi kas), jadi dibuatkan halaman, `Code.gs`, dan deployment
+  Web App sendiri (pola sama seperti alasan pemisahan `formulir-karyawan.html`
+  di Section 13).
+- **Rekap/deteksi otomatis "harga berubah atau tidak" sengaja DITUNDA** — fokus
+  dulu memastikan alur scan & simpan berjalan sempurna. Semua baris yang
+  dikonfirmasi user saat ini langsung tersimpan apa adanya, belum ada logika
+  bandingkan dengan harga sebelumnya per barang.
+
+### Alur Kerja
+1. Pemilik buka halaman scan (link dari `index.html`), pilih toko (pakai daftar
+   chip yang sama dengan field "Belanja di" di form kas — Ayam Ma'mun, Ayam
+   Depan Pasar, Ayam Bi Warsih, Baso Adib, Gas Abah, Kulit Pangsit, Mega Frozen,
+   Mini Frozen, Ngena-Q Frozen, Plastik DA, Plastik Pasar, Sayur, Surya, Telor,
+   + "Toko lain…").
+2. Foto struk dipilih (bebas kamera/galeri, tidak dipaksa `capture`), dikompres
+   di browser via `<canvas>` (dibatasi total piksel, sama seperti pola di
+   `formulir-karyawan.html`) sebelum dikirim.
+3. Tombol **"Scan Struk"** kirim foto (base64) ke Apps Script → Apps Script
+   panggil Gemini API → dapat JSON list barang.
+4. Hasil ditampilkan sebagai **preview bergaya struk (editable)** — tiap baris
+   bisa diedit nama/qty/satuan/harga, dihapus, atau ditambah manual — supaya
+   dicek dulu sebelum tersimpan (mengikuti pola "CEK HASIL" di form Tempura,
+   Section 11).
+5. Tombol **"Simpan ke Riwayat Harga"** kirim baris yang sudah dikonfirmasi →
+   Apps Script `appendRow` (batch, `setValues`) ke sheet.
+
+### Struktur Data
+- Spreadsheet baru, terpisah dari Buku Kas Gabungan: **"Data Harga Belanja"**.
+- Sheet/tab dibuat otomatis (kalau belum ada, sama pola seperti
+  `Input_Tempura`/`Input_Wonton`): **`Input Harga Belanja`**.
+- Kolom: `Timestamp, Toko, Nama Barang, Qty, Satuan, Harga Satuan (Rp), Harga
+  Total (Rp)`.
+
+### Implementasi Teknis
+- **Backend**: `Code.gs` baru & terpisah, dua action lewat `doPost`:
+  - `action: "scan"` → terima base64 gambar, panggil Gemini
+    (`generateContent`), parse balikan jadi JSON array `{nama, qty, satuan,
+    harga_satuan}`, kembalikan ke client.
+  - `action: "save"` → terima `toko` + array item yang sudah dikonfirmasi user,
+    `appendRow` batch ke sheet `Input Harga Belanja`.
+  - API key Gemini disimpan di **Script Properties** (`GEMINI_API_KEY`), tidak
+    pernah ada di kode client/HTML.
+- **CORS**: karena butuh baca response (beda dari form kas yang pakai
+  `no-cors`), fetch dari HTML pakai `Content-Type: text/plain;charset=utf-8`
+  supaya browser tidak trigger CORS preflight (`OPTIONS`) yang tidak didukung
+  Apps Script — bukan `application/json`.
+- **Frontend**: satu file HTML mandiri (chip toko + upload foto + preview
+  struk editable), font monospace untuk list item (gaya struk), aksen
+  terracotta konsisten dengan tema Uang Keluar/Belanja di form kas.
+
+### Hosting (GitHub Pages)
+- Form kas (`index.html`) dan fitur scan struk sekarang di-*host* lewat GitHub
+  Pages dari repo `Work`, folder `Pencatatan-Buku-Kas`:
+  - Form kas: `https://moroxixi.github.io/Work/Pencatatan-Buku-Kas/index.html`
+  - Scan struk: `https://moroxixi.github.io/Work/Pencatatan-Buku-Kas/Scan-Struk/index.html`
+  - Artinya file `scan-struk.html` yang dibuat Claude **diganti nama jadi
+    `index.html`** dan ditaruh di subfolder `Scan-Struk/` di dalam folder
+    `Pencatatan-Buku-Kas/`.
+  - Link balik dari halaman scan ke form kas (`<a href="index.html">`) perlu
+    dicek ulang path-nya — karena sekarang beda folder (`Scan-Struk/` vs
+    root `Pencatatan-Buku-Kas/`), link relatif `index.html` di halaman scan
+    akan mengarah ke `Scan-Struk/index.html` itu sendiri (salah), seharusnya
+    `../index.html`.
+
+### Status & Yang Perlu Didebug
+- [x] **Belum diverifikasi end-to-end.** Baru dibuatkan kode & panduan setup,
+  pemilik belum sempat coba jalan penuh (isi API key, deploy Apps Script,
+  scan struk asli, cek data masuk ke sheet).
+- [x] Cek `SCRIPT_URL` di `Scan-Struk/index.html` sudah diisi URL Web App yang
+  benar (bukan placeholder `PASTE_URL_WEB_APP_DI_SINI`).
+- [x] Cek `GEMINI_API_KEY` sudah diset di Script Properties project Apps
+  Script yang benar (project punya spreadsheet "Data Harga Belanja", bukan
+  project kas/Tempura/Wonton).
+- [ ] Cek fetch `text/plain` tidak kena CORS error di browser HP (beda
+  behaviour dari `no-cors` yang dipakai form kas — kalau gagal, biasanya error
+  muncul jelas di response, bukan diam-diam sukses palsu seperti form kas).
+- [x] **Perbaiki link relatif** `<a href="index.html">` di halaman scan supaya
+  jadi `<a href="../index.html">` (lihat catatan hosting di atas).
+- [ ] Cek nama model Gemini (`gemini-2.5-flash`) masih valid — kalau error 404
+  model not found, cek nama model terbaru di aistudio.google.com.
+- [ ] Kalau hasil OCR sering salah baca nama/harga barang, evaluasi apakah
+  perlu prompt lebih spesifik atau kompresi foto diturunkan (kualitas gambar
+  vs ukuran payload).
+- [ ] Rekap/deteksi perubahan harga per barang (ditunda sengaja) — belum
+  dikerjakan, menyusul setelah alur scan-simpan stabil.
