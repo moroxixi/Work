@@ -314,6 +314,14 @@ body {
 .status.ok { color: var(--masuk); }
 .status.err { color: var(--keluar); }
 
+.back-link{
+    display:inline-block;
+    margin-bottom:14px;
+    font-size:13px;
+    color:var(--ink-soft);
+    text-decoration:none;
+  }
+
 .footnote {
   text-align: center;
   color: var(--muted);
