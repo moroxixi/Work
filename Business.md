@@ -555,3 +555,56 @@ kalau ada perubahan harga. **Tidak menyentuh sheet `Input` (kas) sama sekali.**
   vs ukuran payload).
 - [ ] Rekap/deteksi perubahan harga per barang (ditunda sengaja) — belum
   dikerjakan, menyusul setelah alur scan-simpan stabil.
+
+
+  ## 16. Update — Fix Model Gemini Deprecated & Multi-API-Key Fallback (`Scan-Struk/Code.gs`)
+
+### Masalah yang Ditemukan
+- Setelah percobaan pertama scan struk, muncul error: `models/gemini-2.5-flash is no longer
+  available to new users` — model di `GEMINI_MODEL` sudah di-deprecate Google.
+- Setelah ganti model, muncul error kedua: `This model is currently experiencing high demand` —
+  ini bukan bug, tapi overload sementara di sisi server Gemini (mirip HTTP 503), sifatnya
+  temporary spike, bisa hilang sendiri kalau dicoba ulang.
+
+### Fix 1 — Ganti Model
+- `GEMINI_MODEL` diganti dari `"gemini-2.5-flash"` (deprecated) ke `"gemini-3.5-flash"` (GA/stable,
+  bukan preview, jadi tidak akan tiba-tiba di-shutdown dalam waktu dekat).
+- Dipertimbangkan juga `gemini-2.5-flash-lite` tapi **tidak dipilih** karena EOL-nya sudah dekat
+  (22 Juli 2026) — berpotensi error lagi dalam waktu singkat kalau dipakai.
+
+### Fix 2 — Multi-API-Key dengan Fallback (untuk kasus overload/limit)
+- Pemilik punya **6 API key Gemini** (idealnya dari akun/project Google berbeda-beda supaya kuota
+  benar-benar terpisah, bukan digabung).
+- **Strategi: Fallback**, bukan round-robin — key ke-1 selalu dicoba duluan di tiap request; kalau
+  gagal karena kondisi *retryable* (HTTP 429/503, atau response mengandung `"high demand"`,
+  `"quota"`, `"RESOURCE_EXHAUSTED"`, `"UNAVAILABLE"`), otomatis lanjut coba key ke-2, dst sampai
+  key ke-6.
+- Kalau error yang muncul **bukan** soal overload/limit (misal API key salah/invalid, request
+  salah format) — sistem **tidak** buang waktu coba key lain, langsung lempar error apa adanya.
+- Kalau **semua 6 key** gagal dicoba, baru dilempar error final ke `doPost` (ditangkap `try/catch`
+  yang sudah ada, dikirim balik ke form sebagai `{ok: false, error: ...}`).
+
+### Perubahan Struktur Script Properties
+- **Sebelumnya**: satu property `GEMINI_API_KEY`.
+- **Sekarang**: enam property `GEMINI_API_KEY_1` s/d `GEMINI_API_KEY_6` — wajib diisi semua di
+  Script Properties project Apps Script "Data Harga Belanja" (bukan project kas/Tempura/Wonton).
+- Property lama `GEMINI_API_KEY` boleh dihapus (opsional, sudah tidak dipakai lagi, tidak
+  mengganggu kalau dibiarkan).
+
+### Perubahan Kode (`Code.gs` Scan Struk)
+- Fungsi baru `getGeminiApiKeys_()` — kumpulkan semua key `GEMINI_API_KEY_1..6` yang terisi dari
+  Script Properties jadi array.
+- Fungsi baru `callGeminiGenerateContent_(payload)` — bungkus `UrlFetchApp.fetch` ke Gemini
+  dengan loop fallback di atas, menggantikan pemanggilan fetch langsung yang sebelumnya ada di
+  `callGeminiOCR_()`.
+- `callGeminiOCR_()` disesuaikan supaya manggil `callGeminiGenerateContent_()` — bagian
+  prompt & parsing JSON hasil OCR **tidak berubah**.
+- Fungsi `doGet`, `doPost`, `jsonResponse_`, `saveItems_`, `formatTimestampWIB_` **tidak diubah**.
+
+### Belum Dikerjakan / Dipertimbangkan
+- Alert Telegram untuk kasus "semua 6 key gagal" **belum ditambahkan** — project Scan Struk
+  sengaja terpisah dari project Tempura/Wonton yang sudah punya integrasi Telegram
+  (`TELEGRAM_BOT_TOKEN`/`TELEGRAM_CHAT_ID`). Bisa ditambahkan kalau dibutuhkan, tinggal pakai pola
+  Script Properties yang sama.
+- [ ] **Belum ditest end-to-end** dengan 6 key yang sebenarnya — perlu diisi semua 6 property lalu
+  dicoba scan struk asli untuk pastikan fallback jalan dan model baru tidak error lagi.
