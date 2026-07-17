@@ -481,13 +481,10 @@ document.getElementById("scanBtn").addEventListener("click", async () => {
 function renderItems() {
   const list = document.getElementById("itemList");
   list.innerHTML = "";
-  let total = 0;
-
   items.forEach((item, i) => {
-    if (!item.removed) total += (Number(item.qty) || 0) * (Number(item.harga_satuan) || 0);
-
     const row = document.createElement("div");
     row.className = "item-row" + (item.removed ? " removed" : "");
+    row.dataset.i = i;
     row.innerHTML = `
       <div class="item-top">
         <input class="item-name" data-i="${i}" data-f="nama" value="${escapeAttr(item.nama)}" />
@@ -502,25 +499,41 @@ function renderItems() {
     `;
     list.appendChild(row);
   });
+  updateTotals(); // hitung count & grand total tanpa rebuild input
 
-  document.getElementById("itemCount").textContent = items.filter(it => !it.removed).length;
-  document.getElementById("grandTotal").textContent = formatRp(total);
-
+  // Listener input: update data + angka total SAJA, TIDAK rebuild DOM
   list.querySelectorAll("input").forEach(inp => {
     inp.addEventListener("input", (e) => {
       const i = Number(e.target.dataset.i);
       const f = e.target.dataset.f;
       items[i][f] = (f === "qty" || f === "harga_satuan") ? Number(e.target.value) : e.target.value;
-      renderItems();
+
+      // update total per-baris tanpa re-render seluruh list
+      const row = e.target.closest(".item-row");
+      const totalEl = row.querySelector(".item-total");
+      totalEl.textContent = formatRp((items[i].qty||0) * (items[i].harga_satuan||0));
+
+      updateTotals(); // update grand total & count saja
     });
   });
+
+  // Listener hapus/batal: ini BOLEH rebuild karena struktur baris berubah (class removed)
   list.querySelectorAll(".item-remove").forEach(btn => {
     btn.addEventListener("click", (e) => {
       const i = Number(e.target.dataset.i);
       items[i].removed = !items[i].removed;
-      renderItems();
+      renderItems(); // aman di-rebuild, tidak sedang fokus mengetik
     });
   });
+}
+
+function updateTotals() {
+  let total = 0;
+  items.forEach(item => {
+    if (!item.removed) total += (Number(item.qty) || 0) * (Number(item.harga_satuan) || 0);
+  });
+  document.getElementById("itemCount").textContent = items.filter(it => !it.removed).length;
+  document.getElementById("grandTotal").textContent = formatRp(total);
 }
 
 document.getElementById("addRowBtn").addEventListener("click", () => {
