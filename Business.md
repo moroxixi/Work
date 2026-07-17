@@ -709,3 +709,48 @@ pembanding).
 - [ ] Pertimbangan lanjutan (belum dikerjakan): tampilkan info "X item
   dilewati karena harga sudah tercatat" di preview `index.html` — tinggal
   pakai field `skipped` yang sudah dikirim backend.
+
+## 19. Fitur Baru — Rekap Riwayat & Katalog Harga (`Riwayat Harga`, `Katalog Toko`)
+
+### Tujuan
+Data mentah di `Input Harga Belanja` (hasil scan struk) dirapikan jadi 2 tab rekap
+baru, murni pakai formula (link langsung, tidak ada input manual/appendRow baru).
+Tujuannya: (1) bisa lihat riwayat & tren perubahan harga per barang per toko dari
+waktu ke waktu, (2) bisa lihat "katalog" barang apa saja yang pernah dibeli di
+tiap toko.
+
+### Sheet `Riwayat Harga`
+- Log lengkap semua transaksi dari `Input Harga Belanja`, urut tanggal (`QUERY`).
+- Kolom tambahan otomatis: **Harga Sebelumnya** (harga terakhir sebelum baris ini
+  untuk kombinasi Toko+Barang yang sama, pakai `SUMIFS`+`MAXIFS`), **Status**
+  (Baru/Naik/Turun/Tetap), **Selisih (Rp)**, **Selisih (%)**.
+- Bisa dipasang filter di kolom Status untuk cuma lihat baris "Naik"/"Turun" kalau
+  mau fokus ke barang yang harganya berubah saja (filter view, data tetap utuh).
+
+### Sheet `Katalog Toko`
+- Rekap 1 baris per kombinasi Toko+Barang (`QUERY` dengan `group by`): Jumlah
+  Beli, Tanggal Pertama, Tanggal Terakhir, Harga Terakhir, Harga Pertama, Jumlah
+  Kali Harga Berubah (dihitung dari kolom Status di `Riwayat Harga`), Tren (naik/
+  turun/stabil dari harga pertama ke terakhir).
+- Fungsi seperti "katalog" — bisa lihat barang apa saja yang biasa dijual/dibeli
+  di toko tertentu, tanpa perlu scroll data mentah.
+
+### Catatan Penting: Locale Formula Pakai Titik Koma (`;`), Bukan Koma (`,`)
+- Spreadsheet ini pakai locale yang menganggap `;` sebagai pemisah argumen
+  formula (bukan `,` seperti default umum). Semua formula di kedua sheet baru
+  ini **wajib** ditulis pakai `;` sebagai pemisah argumen.
+- **Pengecualian:** koma **di dalam tanda kutip** (bagian query string function
+  `QUERY`, misal `"select B, C, count(C)..."`) tetap pakai koma biasa — itu
+  bahasa internal QUERY, bukan pemisah argumen Sheets, jangan ikut diganti jadi
+  `;`.
+- **Gejala kalau salah pemisah**: muncul error "Error mengurai formula" (parse
+  error), bukan `#REF!` — jangan salah duga sebagai masalah spasi di nama sheet.
+- **Perhatian saat copy-paste formula dari luar (misal dari chat/dokumen)**:
+  tanda kutip ganda (`"`) kadang ikut ter-convert jadi *smart quotes* (`" "`)
+  yang terlihat sama tapi beda karakter, bikin formula gagal di-parse. Solusi
+  paling aman: ketik ulang manual di formula bar untuk bagian tanda kutipnya,
+  bukan paste langsung.
+
+### Status
+- [x] Kedua sheet & semua formula sudah ditest end-to-end oleh pemilik — berjalan
+  normal, otomatis update tiap ada data baru masuk ke `Input Harga Belanja`.
