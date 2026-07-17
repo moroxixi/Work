@@ -331,6 +331,7 @@
     </div>
     <button class="btn btn-terracotta" id="scanBtn" style="margin-top:14px;" disabled>Scan Struk</button>
     <div class="status" id="scanStatus"></div>
+    <div class="status" id="scanStatus" style="color:var(--ink-soft);">Pilih toko &amp; foto struk dulu untuk mengaktifkan tombol.</div>
   </div>
 
   <div class="receipt hidden" id="receiptCard">
@@ -387,11 +388,20 @@ document.getElementById("tokoLainInput").addEventListener("input", (e) => {
 document.getElementById("fileInput").addEventListener("change", async (e) => {
   const file = e.target.files[0];
   if (!file) return;
-  const { base64, mime } = await compressImage(file, 1_200_000); // ~1.2MP budget
-  compressedBase64 = base64;
-  compressedMime = mime;
-  document.getElementById("photoPreviewWrap").innerHTML =
-    `<img src="data:${mime};base64,${base64}" alt="preview struk" />`;
+  const status = document.getElementById("scanStatus");
+  status.textContent = "";
+  status.className = "status";
+  try {
+    const { base64, mime } = await compressImage(file, 1_200_000);
+    compressedBase64 = base64;
+    compressedMime = mime;
+    document.getElementById("photoPreviewWrap").innerHTML =
+      `<img src="data:${mime};base64,${base64}" alt="preview struk" />`;
+  } catch (err) {
+    compressedBase64 = null;
+    status.textContent = "Gagal proses foto (coba format JPEG/PNG, atau ambil langsung dari kamera).";
+    status.className = "status err";
+  }
   updateScanBtnState();
 });
 
