@@ -608,3 +608,51 @@ kalau ada perubahan harga. **Tidak menyentuh sheet `Input` (kas) sama sekali.**
   Script Properties yang sama.
 - [ ] **Belum ditest end-to-end** dengan 6 key yang sebenarnya — perlu diisi semua 6 property lalu
   dicoba scan struk asli untuk pastikan fallback jalan dan model baru tidak error lagi.
+
+
+## 17. Fix Bug — Tombol Scan Struk Tidak Bisa Ditekan & Keyboard Turun Saat Edit (`Scan-Struk/index.html`)
+
+### Bug 1 — Tombol "Scan Struk" tetap disabled setelah pilih foto
+- **Penyebab**: `compressImage()` bisa reject (promise gagal) tanpa ada `try/catch`
+  di handler `fileInput`, paling sering kalau foto diambil dari **galeri iPhone**
+  dalam format **HEIC** (bukan JPEG) — `<img>` gagal decode, `img.onerror` fire,
+  promise reject, sisa kode (update preview + `updateScanBtnState()`) tidak
+  pernah jalan. Efeknya foto kelihatan "terpilih" tapi tombol tetap abu-abu
+  tanpa pesan error apa pun.
+- **Fix**: tambahkan `try/catch` di handler `fileInput` — kalau gagal, tampilkan
+  pesan di `#scanStatus` ("Gagal proses foto...") supaya kelihatan, bukan gagal
+  diam-diam.
+- **Solusi tambahan untuk pemilik**: kalau masih gagal karena HEIC, ambil foto
+  langsung dari kamera (auto-JPEG), atau ubah Settings → Camera → Formats →
+  "Most Compatible" di iPhone supaya hasil galeri jadi JPEG.
+- Ditambahkan juga hint teks di bawah tombol: "Pilih toko & foto struk dulu
+  untuk mengaktifkan tombol" — supaya kalau tombol disabled karena toko belum
+  dipilih (bukan soal foto), user tidak bingung.
+
+### Bug 2 — Keyboard turun tiap 1 karakter saat edit nama/qty/harga di preview struk
+- **Penyebab**: setiap event `input` pada field edit (nama/qty/satuan/harga)
+  memanggil `renderItems()` yang **membangun ulang seluruh DOM list** lewat
+  `list.innerHTML = ""`. Ini menghancurkan `<input>` yang sedang difokus dan
+  membuat elemen baru — Safari/Chrome iOS membaca ini sebagai fokus hilang,
+  jadi keyboard turun tiap 1 huruf diketik.
+- **Fix**: pisahkan tanggung jawab render:
+  - `renderItems()` (rebuild penuh DOM) hanya dipanggil di titik yang memang
+    butuh struktur baru: setelah hasil scan pertama kali, setelah "Tambah
+    Baris Manual", dan setelah klik hapus/batal baris — situasi ini user
+    tidak sedang fokus mengetik di input lain, jadi aman di-rebuild.
+  - Event `input` pada field edit **tidak lagi** memanggil `renderItems()`.
+    Sebagai gantinya cuma update `items[i][f]` di data, lalu update teks
+    total per-baris (`.item-total`) dan panggil fungsi baru `updateTotals()`
+    (hitung ulang count & grand total) — tanpa menyentuh/rebuild elemen
+    `<input>` itu sendiri, jadi fokus & keyboard tetap stabil.
+- Fungsi baru: `updateTotals()` — cuma update `#itemCount` & `#grandTotal`,
+  dipisah dari logika rebuild DOM di `renderItems()`.
+- **Catatan**: fix ini murni di file HTML (frontend), tidak menyentuh
+  `Code.gs` sama sekali — jadi cukup commit/push ulang HTML ke GitHub Pages,
+  **tidak perlu** deploy ulang Apps Script.
+
+### Status
+- [x] Kedua bug sudah diperbaiki di `Scan-Struk/index.html`.
+- [ ] Belum ada laporan lanjutan dari pemilik apakah HEIC memang jadi
+  penyebab pasti Bug 1 (baru dugaan kuat berdasarkan pola iPhone + galeri) —
+  perlu dikonfirmasi kalau muncul lagi.
