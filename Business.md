@@ -656,3 +656,56 @@ kalau ada perubahan harga. **Tidak menyentuh sheet `Input` (kas) sama sekali.**
 - [ ] Belum ada laporan lanjutan dari pemilik apakah HEIC memang jadi
   penyebab pasti Bug 1 (baru dugaan kuat berdasarkan pola iPhone + galeri) —
   perlu dikonfirmasi kalau muncul lagi.
+
+
+
+## 18. Fitur Baru — Deteksi Duplikat Harga di Scan Struk (`Scan-Struk/Code.gs`)
+
+### Tujuan
+Mencegah sheet `Input Harga Belanja` dipenuhi baris duplikat untuk kombinasi
+barang yang harganya belum berubah — supaya riwayat harga tetap bersih tanpa
+perlu bersih-bersih manual.
+
+### Kriteria Duplikat
+Dua baris dianggap **kombinasi yang sama** kalau `Toko + Nama Barang + Harga
+Satuan` cocok persis (dinormalisasi: `trim()` + lowercase, tapi data yang
+tersimpan ke sheet tetap teks asli, normalisasi cuma dipakai untuk
+pembanding).
+
+### Aturan
+- Kalau kombinasi **sudah pernah ada** di sheet (kapan pun sebelumnya, dicek
+  dari histori total, bukan cuma dalam satu sesi scan) → **tidak disimpan
+  lagi**, dilewati begitu saja.
+- Tidak ada ambang batas jumlah (awalnya sempat dipertimbangkan skip setelah
+  3x duplikat, tapi diputuskan skip sejak duplikat pertama — lebih aman dari
+  risiko dobel yang tidak disadari).
+- Kalau harga berubah, itu otomatis jadi kombinasi baru (karena harga adalah
+  bagian dari kriteria "sama") — tidak perlu logika reset terpisah, cukup
+  aturan skip di atas saja sudah menghasilkan perilaku itu dengan sendirinya.
+- Duplikat **dalam satu batch scan yang sama** (misal Gemini kebaca dobel di
+  satu struk) juga ikut ke-detect, tidak cuma dibandingkan ke data lama.
+- Pengecekan berjalan **diam-diam di backend** (action `"save"`), tidak
+  ditampilkan ke user di layar preview HP.
+
+### Implementasi Teknis
+- Fungsi `saveItems_()` diubah: sebelum `appendRow`, baca dulu seluruh data
+  existing di sheet lewat fungsi baru `getExistingKeys_()` (baca kolom B–F,
+  bikin `Set` kombinasi `toko|nama|harga`), lalu tiap item baru dicek ke
+  situ sebelum disimpan.
+- Fungsi baru `normalizeKey_(toko, nama, harga)` — bikin key pembanding yang
+  konsisten (trim + lowercase + angka murni untuk harga).
+- Return value `saveItems_()` berubah dari sekadar angka (`count`) jadi objek
+  `{ saved, skipped }` — field `skipped` sudah dikirim balik lewat response
+  JSON (`{ok:true, saved, skipped}`), tapi **belum dipakai di
+  `Scan-Struk/index.html`** (sengaja diam-diam sesuai keputusan, tapi field-nya
+  sudah tersedia kalau nanti mau ditampilkan).
+- Fungsi lain (`doGet`, `callGeminiGenerateContent_`, `callGeminiOCR_`,
+  `formatTimestampWIB_`) **tidak diubah**.
+
+### Status
+- [x] Kode sudah direvisi & siap deploy.
+- [ ] Belum ditest end-to-end dengan data riil (scan struk yang barangnya
+  sudah pernah tercatat sebelumnya, pastikan benar ke-skip dan tidak dobel).
+- [ ] Pertimbangan lanjutan (belum dikerjakan): tampilkan info "X item
+  dilewati karena harga sudah tercatat" di preview `index.html` — tinggal
+  pakai field `skipped` yang sudah dikirim backend.
