@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Sisa Stok</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="wrap">
+  <a class="back-link" href="../index.html">&larr; Kembali ke Input Kas</a>
+
+  <header class="topbar">
+    <h1>Sisa Stok</h1>
+    <p class="subtitle" id="tanggalLabel">Memuat tanggal...</p>
+  </header>
+
+  <div class="tab-bar" id="tabBar">
+    <button type="button" class="tab-btn active" data-cabang="P">Tempura</button>
+    <button type="button" class="tab-btn" data-cabang="B">Babakan</button>
+    <button type="button" class="tab-btn" data-cabang="L">Leweung Gajah</button>
+    <button type="button" class="tab-btn" data-cabang="R">Depan RS</button>
+  </div>
+
+  <div class="nav-bar">
+    <button type="button" id="btnKemarin" class="nav-btn">&larr; Kemarin</button>
+    <button type="button" id="btnHariIni" class="nav-btn nav-btn-primary">Hari Ini</button>
+    <label class="nav-btn nav-btn-date" for="datePicker">
+      <span>Pilih Tanggal</span>
+      <input type="date" id="datePicker">
+    </label>
+  </div>
+
+  <div class="toolbar">
+    <button type="button" id="btnRefresh" class="refresh-btn">
+      <span id="refreshIcon" class="refresh-icon">&#8635;</span> Refresh
+    </button>
+  </div>
+
+  <div id="reportInfo" class="report-info" hidden></div>
+
+  <div id="listWrap" class="list-wrap">
+    <p class="loading-msg" id="loadingMsg">Memuat data...</p>
+    <p class="empty-msg" id="emptyMsg" hidden>Belum ada laporan untuk cabang & tanggal ini.</p>
+    <p class="error-msg" id="errorMsg" hidden></p>
+    <div id="itemList"></div>
+  </div>
+</div>
+
+<script src="https://moroxixi.github.io/Work/Pencatatan-Buku-Kas/config.js"></script>
+<script src="script.js"></script>
+</body>
+</html>
