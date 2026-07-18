@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dashboard</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.10.0/dist/tabler-icons.min.css">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="app">
+  <div class="topbar">
+    <div class="tb-dots">
+      <div class="dot dot-r"></div>
+      <div class="dot dot-y"></div>
+      <div class="dot dot-g"></div>
+    </div>
+    <span class="tb-path"><span>moroxixi</span>@archlinux <span>~/dashboard</span> [hyprland]</span>
+    <span class="tb-clock" id="clk">00:00:00</span>
+    <button class="tb-menu-btn" id="menuBtn" aria-label="Bookmarks">
+      <i class="ti ti-menu-2"></i>
+    </button>
+  </div>
+
+  <div class="body">
+    <!-- Desktop sidebar -->
+    <div class="sidebar">
+      <div class="sb-label">bookmarks</div>
+      <div id="bm-desktop">
+        <div class="bm-item"><div class="bm-dot"></div><span>loading<span class="ld">█</span></span></div>
+      </div>
+      <div class="sb-sep"></div>
+      <div class="sb-label">workspace</div>
+      <div class="ws-item active">1 › terminal</div>
+      <div class="ws-item">2 › browser</div>
+      <div class="ws-item">3 › sever</div>
+    </div>
+
+    <!-- Mobile drawer -->
+    <div class="drawer-overlay" id="overlay"></div>
+    <div class="drawer" id="drawer">
+      <div class="drawer-head">
+        <span class="drawer-title">bookmarks</span>
+        <button class="drawer-close" id="drawerClose"><i class="ti ti-x"></i></button>
+      </div>
+      <div id="bm-mobile">
+        <div class="bm-item"><div class="bm-dot"></div><span>loading<span class="ld">█</span></span></div>
+      </div>
+      <div class="sb-sep"></div>
+      <div class="sb-label" style="padding-left:14px;padding-top:10px">workspace</div>
+      <div class="ws-item active">1 › terminal</div>
+      <div class="ws-item">2 › browser</div>
+      <div class="ws-item">3 › work</div>
+    </div>
+
+    <div class="main">
+      <div class="toprow">
+        <span class="prompt">❯</span>
+        <input class="search-box" id="srch" placeholder="search apps...">
+      </div>
+      <div class="sec-label">projects</div>
+      <div class="grid" id="grid">
+        <div class="empty">fetching nodes<span class="ld">█</span></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="statusbar">
+    <span class="sb-pill">NORMAL</span>
+    <span>dashboard.html</span>
+    <span>·</span>
+    <span id="cnt">0 apps</span>
+    <div class="sb-r">
+      <span>Tokyo Night</span><span>·</span><span>UTF-8</span><span>·</span><span>LF</span>
+    </div>
+  </div>
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>
