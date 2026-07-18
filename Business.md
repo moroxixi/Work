@@ -52,6 +52,10 @@
 1. Otomatis via `kirimKeBukuKas()` saat submit form setoran.
 2. Manual via `index.html` — untuk kategori tanpa jalur otomatis. Hati-hati `Gaji/Upah` bisa lewat 2 jalur — cek dulu sebelum input manual supaya tidak dobel.
 
+**Formula whitelist REGEXMATCH aktif (dikonfirmasi dari Buku Kas Harian):**
+`MAO Frozen|MAO Instan|Outlet|Tempura|Babakan|Leweung Gajah|RS|Lainnya`
+Kategori `Lainnya` sudah termasuk whitelist Uang Masuk — aman dipakai sebagai kategori Saldo Awal saat reset Buku Kas.
+
 ## 6. Apa yang Dikirim dari Form Setoran → Buku Kas (skema Gross)
 
 | Data | Dikirim? | Kategori Buku Kas |
@@ -79,6 +83,9 @@ Nominal 0 tidak dikirim (skip). Cabang Wonton yang tidak terdeteksi (bukan huruf
   - Deteksi duplikat otomatis: skip kalau kombinasi Toko+Barang+Harga sudah pernah tersimpan.
 - **Riwayat Harga & Katalog Toko** — rekap formula dari `Input Harga Belanja`, sudah jalan normal.
 - **Riwayat Kas Harian** (`Riwayat/index.html`) — lihat/edit/hapus transaksi `Input` per tanggal dari HP. Live update via `onChange` trigger (polling 10 detik). Badge proteksi: merah = otomatis dari setoran (blokir/peringatan tegas), kuning = "cek dulu" (khusus Gaji/Upah).
+- **Riwayat Kas Harian** (`Riwayat/index.html`) — lihat/edit/hapus transaksi `Input` per tanggal dari HP. Live update via `onChange` trigger (polling 10 detik). Badge proteksi: merah = otomatis dari setoran (blokir/peringatan tegas), kuning = "cek dulu" (khusus Gaji/Upah). **Status: sudah ditest end-to-end, jalan normal.**
+  - Bug yang sempat ditemukan & sudah di-fix: modal edit/hapus tampil otomatis saat halaman dibuka (penyebab: CSS `.modal-overlay { display:flex }` menimpa atribut `hidden` bawaan browser — fix: tambah `.modal-overlay[hidden] { display:none; }`).
+  - Bug data tidak muncul di list (penyebab: Apps Script simpan Timestamp sebagai objek `Date`, `.toString()` hasilnya bukan `dd/MM/yyyy` — fix: helper `formatTimestampCell_()` di `Code.gs`, dipakai di `handleList_`, `handleEdit_`, `handleDelete_`).
 
 ## 8. Kebiasaan Teknis (Wajib Diingat)
 - Edit `Code.gs` → **selalu** ingatkan Deploy ulang (New version) — URL lama tidak auto-update.
@@ -86,13 +93,14 @@ Nominal 0 tidak dikirim (skip). Cabang Wonton yang tidak terdeteksi (bukan huruf
 - Form yang perlu baca response (Scan Struk, Riwayat) pakai `Content-Type: text/plain;charset=utf-8` (hindari CORS preflight yang tidak didukung Apps Script).
 - Semua form dioptimalkan iPhone: font input 16px (cegah auto-zoom), touch target ≥40px, `env(safe-area-inset)` — pertahankan di semua perubahan UI.
 - Hosting semua form: GitHub Pages repo `Work`, folder `Pencatatan-Buku-Kas/` (`index.html`, `Scan-Struk/`, `Riwayat/`). Push via `work-push.sh`.
+- Config URL terpusat: `ENDPOINT_URL` (Web App URL) sekarang satu sumber di `config.js` (di-host di root `Pencatatan-Buku-Kas/`), di-include via `<script src=".../config.js"></script>` sebelum `script.js` di ketiga halaman (Input Kas, Scan Struk, Riwayat). Ganti URL cukup edit 1 file. Halaman Scan Struk pakai nama variabel `SCRIPT_URL` (beda dari 2 halaman lain) — di-alias di `config.js`: `const SCRIPT_URL = ENDPOINT_URL;`.
+- Formula `Buku Kas Harian` (kolom Tanggal/Keterangan/Kategori/Uang Masuk/Uang Keluar) pakai pola `INDIRECT("Input!X"&ROW()-1)`, bukan referensi sel langsung — supaya baris terhapus di `Input` menghasilkan kosong/0, bukan `#REF!` yang merusak baris di bawahnya. Trade-off: `INDIRECT` volatile (recalculate terus), belum masalah di skala data sekarang, pantau kalau baris sudah ribuan.
 
 ## 9. Yang Masih Perlu Ditest/Dikerjakan
 - [x] Scan Struk: test fallback 6 API key end-to-end dengan key asli.
 - [x] Scan Struk: cek fetch `text/plain` tidak kena CORS error di HP.
 - [x] Scan Struk: cek model `gemini-3.5-flash` masih valid (kalau 404, cek nama model terbaru di aistudio.google.com).
 - [x] Deteksi duplikat harga: belum ditest dengan data riil.
-- [ ] Riwayat Kas Harian: belum ditest end-to-end — perlu deploy ulang `Code.gs`, jalankan `setupOnChangeTrigger()` sekali, upload ke GitHub Pages, lalu coba edit/hapus data asli.
-- [ ] Kas Harian form: bug Outlet sub-pilihan & Lainnya belum ke-fix, redesign Uang Keluar (Belanja fokus utama) belum jalan — masih nunggu jawaban 3 pertanyaan (lokasi nama custom Lainnya di sheet, Belanja auto-select atau tidak, apakah 6 sub-kategori Lainnya final).
+- [x] Riwayat Kas Harian: sudah ditest end-to-end (list/edit/hapus/live update jalan normal).
 
 
