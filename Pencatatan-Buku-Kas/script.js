@@ -1,4 +1,4 @@
-const ENDPOINT_URL = "https://script.google.com/macros/s/AKfycbzxGbX_ptTbEbze7rk2NMTCfq5wnNqkv3MuhBX6wIZbjQA8sNSK0Ucp8gp45HXMbl7B/exec";
+const ENDPOINT_URL = "https://script.google.com/macros/s/AKfycbw_xEVOdcxehdm1yUHmT6TK2zAgbcYG2m-7mlvQW1QlIkKzctWhMgwL248kfq23jQpB/exec";
 
 const form = document.getElementById("cashForm");
 
