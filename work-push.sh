@@ -2,11 +2,13 @@
 # work-push.sh — Auto commit & push HomeLab/Work ke GitHub
 # Simpan ke: /home/moroxixi/HomeLab/Work/work-push.sh (atau lokasi lain)
 # chmod +x work-push.sh
-
 HOMELAB_DIR="/home/moroxixi/HomeLab/Work"
 LOG="$HOMELAB_DIR/push.log"
-
 cd "$HOMELAB_DIR" || exit 1
+
+# ── Pastikan strategi pull sudah diset (merge biasa, tanpa nanya-nanya) ────
+git config pull.rebase false >/dev/null 2>&1
+git config core.editor "true" >/dev/null 2>&1   # "true" = no-op, biar gak nyangkut nunggu editor kalau ada merge commit tanpa -m
 
 # ── Cari SSH agent yang aktif ──────────────────────────────────────────────
 # Kalau SSH_AUTH_SOCK sudah ke-set & valid (biasanya otomatis di sesi desktop normal),
@@ -26,7 +28,6 @@ while IFS= read -r -d '' pyfile; do
         SYNTAX_ERRORS+="$pyfile: $ERR\n"
     fi
 done < <(find "$HOMELAB_DIR" -name "*.py" -not -path "*/.git/*" -print0)
-
 if [ -n "$SYNTAX_ERRORS" ]; then
     echo "$(date '+%H:%M') [Syntax] ERROR ditemukan:" >> "$LOG"
     echo -e "$SYNTAX_ERRORS" >> "$LOG"
@@ -46,15 +47,33 @@ if [ -z "$(git status --porcelain)" ]; then
     exit 0
 fi
 
-# ── Commit & push ─────────────────────────────────────────────────────────
+# ── Commit ──────────────────────────────────────────────────────────────
 git add -A
 COMMIT_MSG="${1:-auto: $(date '+%Y-%m-%d %H:%M')}"
 git commit -m "$COMMIT_MSG"
 
+# ── Pull dulu sebelum push, biar gak ketolak karena remote lebih maju ─────
+PULL_OUTPUT=$(git pull origin main --no-edit 2>&1)
+PULL_STATUS=$?
+echo "$PULL_OUTPUT" >> "$LOG"
+
+if [ $PULL_STATUS -ne 0 ]; then
+    # Biasanya ini kejadian kalau ada conflict beneran (bukan cuma editor issue)
+    echo "$(date '+%H:%M') [Git] Pull GAGAL / ada konflik:" >> "$LOG"
+    echo ""
+    echo "❌ Pull gagal / ada konflik — push dibatalkan:"
+    echo "$PULL_OUTPUT"
+    echo ""
+    echo "👉 Beresin manual dulu: cek 'git status', selesaikan konflik di file yang ditandai,"
+    echo "   lalu 'git add <file>' dan 'git commit', baru jalankan script ini lagi."
+    notify-send "Work" "❌ Konflik saat pull! Perlu beresin manual" --urgency=critical 2>/dev/null
+    exit 1
+fi
+
+# ── Push ────────────────────────────────────────────────────────────────
 PUSH_OUTPUT=$(git push origin main 2>&1)
 PUSH_STATUS=$?
 echo "$PUSH_OUTPUT" >> "$LOG"
-
 if [ $PUSH_STATUS -eq 0 ]; then
     echo "$(date '+%H:%M') [Git] Push berhasil: $COMMIT_MSG" >> "$LOG"
     echo "✅ Push berhasil: $COMMIT_MSG"
