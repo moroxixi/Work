@@ -1,6 +1,6 @@
 // Endpoint sama persis dengan form Kas Harian (Code.gs yang sudah diupdate
 // mendukung action=list / action=edit / action=delete / action=ping).
-const ENDPOINT_URL = "https://script.google.com/macros/s/AKfycbw_xEVOdcxehdm1yUHmT6TK2zAgbcYG2m-7mlvQW1QlIkKzctWhMgwL248kfq23jQpB/exec";
+const ENDPOINT_URL = "https://script.google.com/macros/s/AKfycbyQ--SfYAyntB3ei4RcwNvCs0It9D6Bou-HUmiNclEvanZv1aKNXAFYngQoTT-51OD8/exec";
 
 const PING_INTERVAL_MS = 10000; // cek penanda perubahan tiap 10 detik
 
