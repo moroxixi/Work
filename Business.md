@@ -30,6 +30,7 @@
 
 **Setoran Harian** (spreadsheet terpisah)
 - `Input_Tempura`, `Input_Wonton` — satu Web App/`SCRIPT_URL` sama, dibedakan field `tipe` di payload.
+- Endpoint yang sama juga melayani `action=stok` (dipakai halaman Sisa Stok) — beda dari `ENDPOINT_URL` milik Riwayat Kas Harian, yang mengarah ke Buku Kas Gabungan.
 
 **Data Harga Belanja** (spreadsheet terpisah, dari Scan Struk)
 - `Input Harga Belanja` — raw hasil scan.
@@ -83,9 +84,18 @@ Nominal 0 tidak dikirim (skip). Cabang Wonton yang tidak terdeteksi (bukan huruf
   - Deteksi duplikat otomatis: skip kalau kombinasi Toko+Barang+Harga sudah pernah tersimpan.
 - **Riwayat Harga & Katalog Toko** — rekap formula dari `Input Harga Belanja`, sudah jalan normal.
 - **Riwayat Kas Harian** (`Riwayat/index.html`) — lihat/edit/hapus transaksi `Input` per tanggal dari HP. Live update via `onChange` trigger (polling 10 detik). Badge proteksi: merah = otomatis dari setoran (blokir/peringatan tegas), kuning = "cek dulu" (khusus Gaji/Upah).
-- **Riwayat Kas Harian** (`Riwayat/index.html`) — lihat/edit/hapus transaksi `Input` per tanggal dari HP. Live update via `onChange` trigger (polling 10 detik). Badge proteksi: merah = otomatis dari setoran (blokir/peringatan tegas), kuning = "cek dulu" (khusus Gaji/Upah). **Status: sudah ditest end-to-end, jalan normal.**
+- **Riwayat Kas Harian** (`Riwayat/index.html`) 
+— lihat/edit/hapus transaksi `Input` per tanggal dari HP. Live update via `onChange` trigger (polling 10 detik). Badge proteksi: merah = otomatis dari setoran (blokir/peringatan tegas), kuning = "cek dulu" (khusus Gaji/Upah). 
+- **Sisa Stok** (`Stok/index.html`) — halaman read-only, tab switch cabang (Tempura/Babakan/Leweung Gajah/Depan RS) + navigasi hari (Kemarin/Hari Ini/Pilih Tanggal), tampilkan Laku & Sisa per item dari submission terakhir hari itu. Baca langsung dari `Input_Tempura`/`Input_Wonton` via endpoint setoran (`STOK_SCRIPT_URL`), bukan lewat `ENDPOINT_URL` Buku Kas Gabungan. Tidak ada edit/hapus dari sini — koreksi tetap lewat form setoran asli.
+**Status: sudah ditest end-to-end, jalan normal.**
   - Bug yang sempat ditemukan & sudah di-fix: modal edit/hapus tampil otomatis saat halaman dibuka (penyebab: CSS `.modal-overlay { display:flex }` menimpa atribut `hidden` bawaan browser — fix: tambah `.modal-overlay[hidden] { display:none; }`).
   - Bug data tidak muncul di list (penyebab: Apps Script simpan Timestamp sebagai objek `Date`, `.toString()` hasilnya bukan `dd/MM/yyyy` — fix: helper `formatTimestampCell_()` di `Code.gs`, dipakai di `handleList_`, `handleEdit_`, `handleDelete_`).
+
+## 7a. Deteksi Duplikat & Anomali (Input_Tempura / Input_Wonton)
+- Satu logika inti (`findDuplicateOrAnomaly_`) dipakai bareng untuk 2 kejadian:
+  1. **Saat submit** (`checkSubmissionAgainstSheet_`) — kalau ketemu baris lain hari yang sama, cabang yang sama, dalam window 1 jam, dan SEMUA kolom identik (kecuali Timestamp) → dianggap "Duplikat", **submission diblokir total** (tidak masuk sheet, tidak dikirim ke Buku Kas), alert Telegram.
+  2. **Checker berkala** (`checkDuplicatesAnomaliesForSheet`, tiap 30 menit) — jaring pengaman tambahan pakai logika sama; kalau ada kecocokan tapi ada kolom yang beda → ditandai "Anomali" di `Check_Status` + alert Telegram.
+- Window deteksi: 1 jam, same-day, per cabang — bukan lagi "5 baris terakhir/10 detik" seperti versi awal.
 
 ## 8. Kebiasaan Teknis (Wajib Diingat)
 - Edit `Code.gs` → **selalu** ingatkan Deploy ulang (New version) — URL lama tidak auto-update.
@@ -97,10 +107,7 @@ Nominal 0 tidak dikirim (skip). Cabang Wonton yang tidak terdeteksi (bukan huruf
 - Formula `Buku Kas Harian` (kolom Tanggal/Keterangan/Kategori/Uang Masuk/Uang Keluar) pakai pola `INDIRECT("Input!X"&ROW()-1)`, bukan referensi sel langsung — supaya baris terhapus di `Input` menghasilkan kosong/0, bukan `#REF!` yang merusak baris di bawahnya. Trade-off: `INDIRECT` volatile (recalculate terus), belum masalah di skala data sekarang, pantau kalau baris sudah ribuan.
 
 ## 9. Yang Masih Perlu Ditest/Dikerjakan
-- [x] Scan Struk: test fallback 6 API key end-to-end dengan key asli.
-- [x] Scan Struk: cek fetch `text/plain` tidak kena CORS error di HP.
-- [x] Scan Struk: cek model `gemini-3.5-flash` masih valid (kalau 404, cek nama model terbaru di aistudio.google.com).
-- [x] Deteksi duplikat harga: belum ditest dengan data riil.
-- [x] Riwayat Kas Harian: sudah ditest end-to-end (list/edit/hapus/live update jalan normal).
+- [x] Sisa Stok: test tampilan Babakan/Leweung Gajah/Depan RS (Tempura sudah oke).
+- [x] Duplikat: test submit 2 data identik dalam window 1 jam → pastikan submission kedua benar-benar diblokir (tidak masuk sheet & tidak dikirim ke Buku Kas).
 
 
