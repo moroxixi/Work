@@ -1,5 +1,3 @@
-const ENDPOINT_URL = "https://script.google.com/macros/s/AKfycbyQ--SfYAyntB3ei4RcwNvCs0It9D6Bou-HUmiNclEvanZv1aKNXAFYngQoTT-51OD8/exec";
-
 const form = document.getElementById("cashForm");
 
 const outletWrap = document.getElementById("outletWrap");
