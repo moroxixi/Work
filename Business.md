@@ -754,3 +754,93 @@ tiap toko.
 ### Status
 - [x] Kedua sheet & semua formula sudah ditest end-to-end oleh pemilik — berjalan
   normal, otomatis update tiap ada data baru masuk ke `Input Harga Belanja`.
+
+## 20. Fitur Baru — Halaman Riwayat Kas Harian: Lihat, Edit, Hapus (`Riwayat/index.html`)
+
+### Tujuan
+Sebelumnya, koreksi data yang salah/dobel input di sheet `Input` (Buku Kas Gabungan)
+harus dilakukan manual lewat Google Sheets. Dibuat halaman terpisah supaya pemilik
+bisa lihat, edit, dan hapus transaksi harian langsung dari HP tanpa buka Sheets.
+
+**Terpisah total dari form input (`index.html`)** — dihubungkan lewat link timbal
+balik, pola sama seperti pemisahan Scan Struk (Section 15).
+
+### Cakupan
+- Menampilkan transaksi sheet `Input` **per tanggal** (bukan semua data sekaligus).
+- Navigasi tanggal: tombol **Kemarin**, **Hari Ini** (selalu dihitung ulang dari
+  tanggal device saat itu, bukan hardcode), dan **Pilih Tanggal** (`<input type="date">`)
+  untuk lompat ke tanggal manapun.
+- Halaman selalu default buka **hari ini** tiap kali dibuka/refresh. Kalau dibiarkan
+  terbuka lewat tengah malam, **tidak** otomatis geser ke hari baru — harus klik
+  "Hari Ini" manual (keputusan sengaja, supaya tidak mengganggu kalau lagi baca data
+  tanggal lain).
+- Field yang bisa diedit: **Kategori, Belanja Di, Keterangan, Jumlah**. Timestamp
+  **tidak bisa diedit** dari halaman ini (kalau tanggal/jam salah total, tetap harus
+  dibenahi langsung dari Sheets).
+- Hapus baris pakai modal konfirmasi, dengan peringatan berjenjang (lihat bagian
+  "Proteksi Baris Otomatis" di bawah).
+- **Live update**: kalau ada data baru masuk (dari form manapun — form ini sendiri,
+  atau setoran Tempura/Wonton), tampilan otomatis refresh tanpa perlu klik apa-apa.
+  Kalau owner lagi buka modal edit/hapus, auto-refresh **ditunda** dulu sampai modal
+  ditutup, supaya perubahan yang lagi diketik tidak hilang tertimpa.
+- Tombol **Refresh** manual juga tetap ada sebagai cadangan.
+- **Tidak pakai PIN/password** — aksesnya sama seperti form kas lainnya (keputusan
+  sengaja oleh pemilik).
+
+### Proteksi Baris Otomatis (dari Setoran Tempura/Wonton)
+Karena sebagian baris di `Input` datang otomatis lewat `kirimKeBukuKas()` (Section 14),
+menghapus/mengedit baris itu di halaman Riwayat **tidak** ikut mengubah data di
+`Input_Tempura`/`Input_Wonton` — bisa bikin audit trail tidak cocok. Jadi tiap baris
+ditandai badge sesuai sumbernya:
+- **"Otomatis dari Setoran"** (badge merah) — kategori yang **pasti** otomatis:
+  `Setoran Cabang Tempura`, `Sterofoam Tempura`, `Setoran Cabang Babakan`,
+  `Setoran Cabang Leweung Gajah`, `Pengeluaran Operasional`, `Uang Jajan Karyawan`.
+  Peringatan tegas ditampilkan sebelum edit/hapus.
+- **"Cek dulu sebelum hapus"** (badge kuning) — khusus kategori `Gaji/Upah`, karena
+  bisa berasal dari jalur otomatis *maupun* manual (lihat Section 14). Peringatan
+  lebih soft, tidak blokir, cuma mengingatkan cek `Input_Tempura`/`Input_Wonton` dulu.
+- Kategori lain (manual) tidak dikasih badge.
+
+### Implementasi Teknis
+- **Backend**: fungsi baru ditambahkan ke `Code.gs` yang **sama** dengan form Kas
+  Harian (bukan project terpisah, karena target sheet-nya sama: `Input`). `doPost`
+  dan `doGet` yang lama **tidak berubah perilakunya** kalau tidak ada parameter
+  `action` — backward compatible penuh dengan form yang sudah jalan.
+  - `doGet(?action=list&tanggal=dd/MM/yyyy)` → baca sheet `Input`, filter baris
+    yang tanggalnya cocok (dari substring Timestamp), balikan JSON lengkap dengan
+    **nomor baris asli** di sheet (dipakai buat identifikasi saat edit/hapus, tidak
+    ditampilkan ke user) dan field `sumber` (`otomatis` / `cek-dulu` / `manual`)
+    serta `arah` (Masuk/Keluar, dari daftar kategori resmi di Section 3 — bukan dari
+    field `arah` di payload lama yang memang tidak pernah tersimpan).
+  - `doGet(?action=ping)` → balikan penanda waktu perubahan terakhir (lihat trigger
+    di bawah), dipakai buat live update yang ringan (bukan ambil semua data tiap
+    polling).
+  - `doPost({action:"edit", row, timestampCheck, ...})` → update baris tertentu.
+  - `doPost({action:"delete", row, timestampCheck})` → hapus baris tertentu.
+  - Validasi `timestampCheck`: sebelum edit/delete dieksekusi, server cek dulu apakah
+    Timestamp baris itu masih sama dengan yang terakhir diambil client — kalau beda
+    (baris sudah berubah/kehapus duluan oleh proses lain), request ditolak dengan
+    pesan minta refresh dulu. Mencegah salah edit/hapus baris akibat nomor baris yang
+    sudah tidak valid (misal karena ada baris lain dihapus duluan sehingga nomor
+    baris di bawahnya bergeser).
+- **Live update — trigger `onChange`**: dipasang **sekali** lewat fungsi
+  `setupOnChangeTrigger()` (dijalankan manual sekali dari Apps Script editor, bukan
+  tiap deploy). Trigger ini nulis penanda waktu ke Script Properties tiap kali sheet
+  berubah (dari sumber manapun, termasuk tulisan cross-spreadsheet dari
+  `kirimKeBukuKas()`). Halaman Riwayat polling penanda ini tiap 10 detik (ringan,
+  bukan ambil data penuh) — kalau berubah, baru ambil ulang data lengkap.
+- **CORS**: sama seperti Scan Struk (Section 15), fetch pakai
+  `Content-Type: text/plain;charset=utf-8` (bukan `application/json`) supaya tidak
+  kena CORS preflight yang tidak didukung Apps Script, karena di sini responsnya
+  memang perlu dibaca balik (beda dari form kas awal yang pakai `no-cors`).
+
+### Hosting
+- Folder baru di GitHub Pages: `Pencatatan-Buku-Kas/Riwayat/index.html`.
+- Link ditambahkan di `index.html` form Kas Harian (`Riwayat/index.html`) dan
+  sebaliknya (`../index.html` dari halaman Riwayat).
+
+### Status
+- [x] Kode sudah dibuat (`Code.gs` update + 3 file `Riwayat/`).
+- [ ] **Belum ditest end-to-end** oleh pemilik — perlu: deploy ulang `Code.gs`,
+  jalankan `setupOnChangeTrigger()` sekali, upload file ke GitHub Pages, lalu coba
+  edit & hapus data asli.
