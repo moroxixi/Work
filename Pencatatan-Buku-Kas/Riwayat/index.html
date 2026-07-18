@@ -1,1 +1,102 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Riwayat Kas Harian</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
 
+<div class="wrap">
+  <a class="back-link" href="../index.html">&larr; Kembali ke Input Kas</a>
+
+  <header class="topbar">
+    <h1>Riwayat Kas Harian</h1>
+    <p class="subtitle" id="tanggalLabel">Memuat tanggal...</p>
+  </header>
+
+  <div class="nav-bar">
+    <button type="button" id="btnKemarin" class="nav-btn">&larr; Kemarin</button>
+    <button type="button" id="btnHariIni" class="nav-btn nav-btn-primary">Hari Ini</button>
+    <label class="nav-btn nav-btn-date" for="datePicker">
+      <span>Pilih Tanggal</span>
+      <input type="date" id="datePicker">
+    </label>
+  </div>
+
+  <div class="toolbar">
+    <button type="button" id="btnRefresh" class="refresh-btn">
+      <span id="refreshIcon" class="refresh-icon">&#8635;</span> Refresh
+    </button>
+    <span id="liveStatus" class="live-status"></span>
+  </div>
+
+  <div id="summaryBar" class="summary-bar" hidden>
+    <div class="summary-item summary-masuk">
+      <span class="summary-label">Masuk</span>
+      <span class="summary-value" id="summaryMasuk">Rp 0</span>
+    </div>
+    <div class="summary-item summary-keluar">
+      <span class="summary-label">Keluar</span>
+      <span class="summary-value" id="summaryKeluar">Rp 0</span>
+    </div>
+  </div>
+
+  <div id="listWrap" class="list-wrap">
+    <p class="loading-msg" id="loadingMsg">Memuat data...</p>
+    <p class="empty-msg" id="emptyMsg" hidden>Belum ada transaksi di tanggal ini.</p>
+    <p class="error-msg" id="errorMsg" hidden></p>
+    <div id="cardList"></div>
+  </div>
+</div>
+
+<!-- Modal Edit -->
+<div id="editModal" class="modal-overlay" hidden>
+  <div class="modal-box">
+    <h3>Edit Transaksi</h3>
+    <p id="editWarning" class="edit-warning" hidden></p>
+
+    <div class="field">
+      <label for="editKategori">Kategori</label>
+      <select id="editKategori" class="text-input"></select>
+    </div>
+    <div class="field">
+      <label for="editBelanjaDi">Belanja Di / Detail</label>
+      <input type="text" id="editBelanjaDi" class="text-input" placeholder="Kosongkan kalau tidak relevan">
+    </div>
+    <div class="field">
+      <label for="editKeterangan">Keterangan</label>
+      <input type="text" id="editKeterangan" class="text-input">
+    </div>
+    <div class="field">
+      <label for="editJumlah">Jumlah (Rp)</label>
+      <input type="text" inputmode="numeric" id="editJumlah" class="text-input jumlah-input">
+    </div>
+
+    <p id="editStatus" class="status" role="status" aria-live="polite"></p>
+
+    <div class="modal-actions">
+      <button type="button" id="btnBatalEdit" class="btn-secondary">Batal</button>
+      <button type="button" id="btnSimpanEdit" class="btn-primary">Simpan</button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal Konfirmasi Hapus -->
+<div id="deleteModal" class="modal-overlay" hidden>
+  <div class="modal-box">
+    <h3>Hapus Transaksi?</h3>
+    <p id="deleteWarning" class="edit-warning" hidden></p>
+    <p id="deleteDetail" class="delete-detail"></p>
+    <p id="deleteStatus" class="status" role="status" aria-live="polite"></p>
+    <div class="modal-actions">
+      <button type="button" id="btnBatalHapus" class="btn-secondary">Batal</button>
+      <button type="button" id="btnKonfirmHapus" class="btn-danger">Ya, Hapus</button>
+    </div>
+  </div>
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>
