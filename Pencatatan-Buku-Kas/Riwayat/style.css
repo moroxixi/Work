@@ -262,6 +262,9 @@ select.text-input { appearance: none; }
   justify-content: center;
   z-index: 50;
 }
+.modal-overlay[hidden] {
+  display: none;
+}
 .modal-box {
   width: 100%;
   max-width: 460px;
