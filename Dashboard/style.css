@@ -47,7 +47,14 @@ html,body{background:#1a1b2e;height:100%}
 .sec-label::after{content:'';flex:1;height:1px;background:#24253a}
 
 /* GRID */
+.proj-wrap{display:flex;flex-direction:column;gap:16px}
+.proj-group{display:flex;flex-direction:column;gap:10px}
 .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:10px}
+
+/* BOOKMARK GROUPS */
+.bm-group{display:flex;flex-direction:column;margin-bottom:8px}
+.bm-group-label{font-family:'JetBrains Mono',monospace;font-size:9px;color:#3d4466;letter-spacing:2px;text-transform:uppercase;display:flex;align-items:center;gap:8px;padding:0 14px 8px}
+.bm-group-label::after{content:'';flex:1;height:1px;background:#24253a}
 
 .card{background:#1e2035;border:1px solid #2a2c42;border-radius:10px;padding:14px;cursor:pointer;display:flex;flex-direction:column;gap:10px;text-decoration:none;position:relative;overflow:hidden;-webkit-tap-highlight-color:transparent;transition:transform 0.15s,box-shadow 0.15s,border-color 0.15s}
 .card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;border-radius:10px 10px 0 0}

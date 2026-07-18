@@ -61,11 +61,9 @@ function catIcon(cat, title) {
   return 'ti-apps';
 }
 
-function render(projects) {
-  const grid = document.getElementById('grid');
-  document.getElementById('cnt').textContent = projects.length + ' apps';
-  if (!projects.length) { grid.innerHTML = '<div class="empty">no results found</div>'; return; }
-  grid.innerHTML = projects.map((p, i) => {
+function cardHTML(projects, offset) {
+  return projects.map((p, idx) => {
+    const i = offset + idx;
     const col = catColor(p.category, i);
     const ico = catIcon(p.category || '', p.title || '');
     return `<a class="card ${col}" href="${p.url || '#'}" target="_blank">
@@ -83,9 +81,42 @@ function render(projects) {
   }).join('');
 }
 
+function render(projects) {
+  const wrap = document.getElementById('projWrap');
+  document.getElementById('cnt').textContent = projects.length + ' apps';
+  if (!projects.length) { wrap.innerHTML = '<div class="empty">no results found</div>'; return; }
+
+  const business = projects.filter(p => isBusiness(p.category));
+  const others = projects.filter(p => !isBusiness(p.category));
+
+  let html = '';
+  if (business.length) {
+    html += `<div class="proj-group"><div class="sec-label">business</div><div class="grid">${cardHTML(business, 0)}</div></div>`;
+  }
+  if (others.length) {
+    html += `<div class="proj-group"><div class="sec-label">projects</div><div class="grid">${cardHTML(others, business.length)}</div></div>`;
+  }
+  wrap.innerHTML = html;
+}
+
+function bmGroupHTML(items) {
+  return items.map(b => `<a class="bm-item" href="${b.url}" target="_blank"><div class="bm-dot"></div><span>${b.title}</span></a>`).join('');
+}
+
 function bmHTML(bms) {
   if (!bms || !bms.length) return '<div class="bm-item"><div class="bm-dot"></div><span style="color:#3d4466">empty</span></div>';
-  return bms.map(b => `<a class="bm-item" href="${b.url}" target="_blank"><div class="bm-dot"></div><span>${b.title}</span></a>`).join('');
+
+  const business = bms.filter(b => isBusiness(b.category));
+  const others = bms.filter(b => !isBusiness(b.category));
+
+  let html = '';
+  if (business.length) {
+    html += `<div class="bm-group"><div class="bm-group-label">business</div>${bmGroupHTML(business)}</div>`;
+  }
+  if (others.length) {
+    html += `<div class="bm-group"><div class="bm-group-label">bookmark</div>${bmGroupHTML(others)}</div>`;
+  }
+  return html;
 }
 
 async function init() {
@@ -93,15 +124,14 @@ async function init() {
     const r = await fetch(GAS);
     const d = await r.json();
 
-    all = (d.projects || []).slice().sort((a, b) => isBusiness(b.category) - isBusiness(a.category));
+    all = d.projects || [];
     render(all);
 
-    const sortedBookmarks = (d.bookmarks || []).slice().sort((a, b) => isBusiness(b.category) - isBusiness(a.category));
-    const bm = bmHTML(sortedBookmarks);
+    const bm = bmHTML(d.bookmarks || []);
     document.getElementById('bm-desktop').innerHTML = bm;
     document.getElementById('bm-mobile').innerHTML = bm;
   } catch (e) {
-    document.getElementById('grid').innerHTML = '<div class="empty" style="color:#f7768e">error: connection refused</div>';
+    document.getElementById('projWrap').innerHTML = '<div class="empty" style="color:#f7768e">error: connection refused</div>';
   }
 }
 
