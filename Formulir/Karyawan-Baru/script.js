@@ -1,5 +1,5 @@
 // ==== GANTI dengan URL Web App Apps Script kamu ====
-const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwQWIacgKSVYwWtRZCNHXV1-n82bAZHnx5LK8viavFZlBe3ktbtekGjZtI1Eewf61Zwew/exec";
+const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxgFfwsmFerpVNNiBvw0pfv7L8az9HiB3Kpiz0yGizLxTdywwzLcrT6QJPTZ26HwbBquQ/exec";
 
 const form = document.getElementById("employeeForm");
 const submitBtn = document.getElementById("submitBtn");
@@ -121,6 +121,7 @@ form.addEventListener("submit", async (e) => {
     alasanPekerjaan: form.alasanPekerjaan.value.trim(),
     harapan: form.harapan.value.trim(),
     rencanaLama: form.rencanaLama.value.trim(),
+    pengalaman: form.pengalaman.value.trim(),
     namaKontak: form.namaKontak.value.trim(),
     noHpKontak: form.noHpKontak.value.trim(),
     hubungan: hubunganInput.value,
