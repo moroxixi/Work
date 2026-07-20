@@ -360,6 +360,8 @@ body {
 }
 
 /* Warna ikon per fungsi, konsisten sama aksen Masuk/Keluar yang sudah ada */
+.quicknav-kas .quicknav-icon { color: var(--ink); }
+
 .quicknav-scan .quicknav-icon { color: var(--keluar); }
 .quicknav-scan:active { background: var(--keluar-soft); border-color: var(--keluar); }
 
@@ -372,6 +374,14 @@ body {
 .quicknav-item:focus-visible {
   outline: 2px solid var(--ink);
   outline-offset: 2px;
+}
+
+/* Halaman yang sedang aktif: tampil redup & tidak bisa diklik */
+.quicknav-item.is-active {
+  opacity: 0.5;
+  cursor: default;
+  pointer-events: none;
+  transform: none !important;
 }
 
 @media (min-width: 380px) {
