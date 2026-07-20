@@ -140,5 +140,9 @@ btnRefresh.addEventListener("click", async () => {
   setTimeout(() => refreshIcon.classList.remove("spin"), 400);
 });
 
-// Init: buka di Tempura, tanggal hari ini
-goToDate(new Date());
+// Init: buka di Tempura, default ke tanggal kemarin
+// (laporan stok diinput malam hari, jadi saat dibuka pagi/siang
+// stok "hari ini" pasti masih kosong — defaultkan ke H-1)
+const initDate = new Date();
+initDate.setDate(initDate.getDate() - 1);
+goToDate(initDate);
