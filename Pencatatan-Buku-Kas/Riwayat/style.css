@@ -11,6 +11,14 @@
   --warn-bg: #fff4e0;
   --warn-ink: #8a5a00;
   --danger: #c1302e;
+  --muted: var(--ink-soft);
+  --card: var(--card-bg);
+  --line: var(--border);
+  --masuk: var(--green);
+  --masuk-soft: var(--green-bg);
+  --keluar: var(--terracotta);
+  --keluar-soft: var(--terracotta-bg);
+  --radius-md: 12px;
 }
 
 * { box-sizing: border-box; }
@@ -328,7 +336,7 @@ select.text-input { appearance: none; }
   margin-bottom: 18px;
   margin-top: env(safe-area-inset-top);
 }
- 
+
 .quicknav-item {
   flex: 1;
   display: flex;
@@ -345,43 +353,50 @@ select.text-input { appearance: none; }
   transition: background 0.12s ease, border-color 0.12s ease, transform 0.06s ease;
   min-height: 40px;
 }
- 
+
 .quicknav-item:active { transform: scale(0.96); }
- 
+
 .quicknav-icon {
   display: flex;
   width: 22px;
   height: 22px;
 }
- 
+
 .quicknav-icon svg {
   width: 100%;
   height: 100%;
 }
- 
+
 .quicknav-label {
   font-size: 11.5px;
   font-weight: 600;
   letter-spacing: 0.01em;
   white-space: nowrap;
 }
- 
-/* Warna ikon per fungsi, konsisten sama aksen Masuk/Keluar yang sudah ada */
+
+.quicknav-kas .quicknav-icon { color: var(--ink); }
+
 .quicknav-scan .quicknav-icon { color: var(--keluar); }
 .quicknav-scan:active { background: var(--keluar-soft); border-color: var(--keluar); }
- 
+
 .quicknav-riwayat .quicknav-icon { color: var(--muted); }
 .quicknav-riwayat:active { background: #f0eee6; border-color: var(--ink); }
- 
+
 .quicknav-stok .quicknav-icon { color: var(--masuk); }
 .quicknav-stok:active { background: var(--masuk-soft); border-color: var(--masuk); }
- 
+
 .quicknav-item:focus-visible {
   outline: 2px solid var(--ink);
   outline-offset: 2px;
 }
- 
+
+.quicknav-item.is-active {
+  opacity: 0.5;
+  cursor: default;
+  pointer-events: none;
+  transform: none !important;
+}
+
 @media (min-width: 380px) {
   .quicknav-label { font-size: 12.5px; }
 }
-
