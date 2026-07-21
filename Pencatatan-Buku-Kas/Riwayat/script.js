@@ -229,6 +229,7 @@ async function refreshCurrent({ silent = false } = {}) {
 
 function goToDate(date) {
   currentDate = date;
+  activeKategoriFilter = null; // ganti tanggal → filter balik ke "Semua"
   tanggalLabel.textContent = formatTanggalLabel(currentDate);
   datePicker.value = toDateInputValue(currentDate);
   refreshCurrent();
