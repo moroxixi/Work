@@ -220,6 +220,7 @@ currentRows.forEach((row) => {
 
     cardList.appendChild(card);
   });
+}
 
 function escapeHtml(str) {
   const div = document.createElement("div");
