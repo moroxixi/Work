@@ -208,7 +208,175 @@ function resolveKategori() {
   return { kategori: val, belanjaDi: "", arah };
 }
 
-form.addEventListener("submit", async (e) => {
+// ============================================================
+// ANTREAN PENGIRIMAN (queue)
+//
+// Tujuan: begitu tombol Simpan ditekan, form langsung kosong lagi
+// dan siap terima inputan berikutnya -- tidak perlu nunggu request
+// ke Apps Script selesai. Data yang menunggu/​sedang/​gagal dikirim
+// ditampilkan sebagai list di bawah tombol Simpan.
+//
+// Status tiap item: "pending" (menunggu giliran kirim),
+// "sending" (lagi dalam proses fetch), "failed" (gagal, nunggu user
+// pencet Kirim Ulang manual -- TIDAK auto-retry).
+//
+// Disimpan di localStorage supaya kalau HP di-lock / app ditutup /
+// halaman di-reload, antrean yang belum kekirim tidak hilang.
+// ============================================================
+
+const QUEUE_STORAGE_KEY = "kasHarianQueue";
+const queueSection = document.getElementById("queueSection");
+const queueListEl = document.getElementById("queueList");
+
+let queue = loadQueue();
+let isProcessingQueue = false;
+
+function loadQueue() {
+  let saved = [];
+  try {
+    saved = JSON.parse(localStorage.getItem(QUEUE_STORAGE_KEY)) || [];
+  } catch (err) {
+    saved = [];
+  }
+  // Item yang statusnya masih "sending" saat halaman terakhir ditutup
+  // berarti hasilnya tidak diketahui (request mungkin terputus).
+  // Dikembalikan ke "pending" supaya otomatis dicoba lagi, bukan
+  // dianggap "failed" yang butuh aksi manual.
+  saved.forEach((item) => {
+    if (item.status === "sending") item.status = "pending";
+  });
+  return saved;
+}
+
+function saveQueue() {
+  localStorage.setItem(QUEUE_STORAGE_KEY, JSON.stringify(queue));
+}
+
+function queueItemLabel(payload) {
+  return payload.belanjaDi ? `${payload.kategori} - ${payload.belanjaDi}` : payload.kategori;
+}
+
+function queueItemTime(payload) {
+  // payload.timestamp formatnya "dd/MM/yyyy HH:mm:ss" -> ambil jam:menit saja
+  const parts = payload.timestamp.split(" ");
+  return parts[1] ? parts[1].slice(0, 5) : "";
+}
+
+function renderQueue() {
+  queueSection.hidden = queue.length === 0;
+  queueListEl.innerHTML = "";
+
+  queue.forEach((item) => {
+    const row = document.createElement("div");
+    row.className = "queue-item";
+    row.dataset.id = item.id;
+
+    const info = document.createElement("div");
+    info.className = "queue-item-info";
+    info.innerHTML = `
+      <span class="queue-item-title">${queueItemLabel(item.payload)} · Rp ${item.payload.jumlah.toLocaleString("id-ID")}</span>
+      <span class="queue-item-time">${queueItemTime(item.payload)}</span>
+    `;
+
+    const right = document.createElement("div");
+    right.className = "queue-item-right";
+
+    if (item.status === "pending") {
+      right.innerHTML = `<span class="queue-badge queue-badge--pending">Menunggu…</span>`;
+    } else if (item.status === "sending") {
+      right.innerHTML = `<span class="queue-badge queue-badge--sending">Mengirim…</span>`;
+    } else if (item.status === "failed") {
+      right.innerHTML = `
+        <span class="queue-badge queue-badge--failed">Gagal</span>
+        <div class="queue-item-actions">
+          <button type="button" class="queue-btn queue-retry-btn" data-action="retry">Kirim Ulang</button>
+          <button type="button" class="queue-btn queue-delete-btn" data-action="delete">Hapus</button>
+        </div>
+      `;
+    }
+
+    row.appendChild(info);
+    row.appendChild(right);
+    queueListEl.appendChild(row);
+  });
+}
+
+// Klik tombol Kirim Ulang / Hapus di dalam list (delegasi event,
+// karena elemen list dibuat ulang tiap kali render)
+queueListEl.addEventListener("click", (e) => {
+  const btn = e.target.closest("button[data-action]");
+  if (!btn) return;
+
+  const row = btn.closest(".queue-item");
+  const id = row.dataset.id;
+  const item = queue.find((q) => q.id === id);
+  if (!item) return;
+
+  if (btn.dataset.action === "retry") {
+    item.status = "pending";
+    saveQueue();
+    renderQueue();
+    processQueue();
+  } else if (btn.dataset.action === "delete") {
+    queue = queue.filter((q) => q.id !== id);
+    saveQueue();
+    renderQueue();
+  }
+});
+
+function addToQueue(payload) {
+  const id = `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
+  queue.push({ id, payload, status: "pending" });
+  saveQueue();
+  renderQueue();
+  processQueue();
+}
+
+// Kirim antrean satu-satu (bukan bersamaan), supaya urutan ke sheet
+// tetap rapi dan gampang dilacak kalau ada yang gagal.
+async function processQueue() {
+  if (isProcessingQueue) return;
+  isProcessingQueue = true;
+
+  while (true) {
+    const item = queue.find((q) => q.status === "pending");
+    if (!item) break;
+
+    item.status = "sending";
+    saveQueue();
+    renderQueue();
+
+    try {
+      // mode "no-cors" dipakai karena Apps Script Web App tidak mengirim
+      // header CORS di responsnya. Data tetap terkirim & tersimpan meski
+      // respons tidak bisa dibaca balik oleh browser (ini normal).
+      await fetch(ENDPOINT_URL, {
+        method: "POST",
+        mode: "no-cors",
+        headers: { "Content-Type": "text/plain;charset=utf-8" },
+        body: JSON.stringify(item.payload)
+      });
+
+      queue = queue.filter((q) => q.id !== item.id);
+      saveQueue();
+      renderQueue();
+    } catch (err) {
+      item.status = "failed";
+      saveQueue();
+      renderQueue();
+      // Lanjut ke item pending berikutnya (kalau ada), item yang gagal
+      // ini nunggu ditekan "Kirim Ulang" manual.
+    }
+  }
+
+  isProcessingQueue = false;
+}
+
+// Coba lanjutkan antrean yang tersisa dari sesi sebelumnya (kalau ada)
+renderQueue();
+processQueue();
+
+form.addEventListener("submit", (e) => {
   e.preventDefault();
 
   const resolved = resolveKategori();
@@ -242,38 +410,23 @@ form.addEventListener("submit", async (e) => {
     arah: resolved.arah
   };
 
-  submitBtn.disabled = true;
-  setStatus("Menyimpan…", "");
+  // Langsung masuk antrean & form langsung kosong lagi -- tidak nunggu
+  // kirim selesai. Pengiriman sebenarnya ditangani processQueue().
+  addToQueue(payload);
 
-  try {
-    // mode "no-cors" dipakai karena Apps Script Web App tidak mengirim header
-    // CORS di responsnya. Data tetap terkirim & tersimpan meski respons
-    // tidak bisa dibaca balik oleh browser (ini normal, bukan error).
-    await fetch(ENDPOINT_URL, {
-      method: "POST",
-      mode: "no-cors",
-      headers: { "Content-Type": "text/plain;charset=utf-8" },
-      body: JSON.stringify(payload)
-    });
+  setStatus("Ditambahkan ke antrean ✓", "ok");
+  form.reset();
 
-    setStatus("Tersimpan ✓", "ok");
-    form.reset();
+  // Reset manual (form.reset() tidak trigger event "change")
+  outletWrap.hidden = true;
+  belanjaDiLainnyaInput.hidden = true;
+  belanjaDiLainnyaInput.value = "";
+  kategoriLainWrap.hidden = true;
+  kategoriLainnyaInput.hidden = true;
+  kategoriLainnyaInput.value = "";
+  keteranganAutoFilled = false;
 
-    // Reset manual (form.reset() tidak trigger event "change")
-    outletWrap.hidden = true;
-    belanjaDiLainnyaInput.hidden = true;
-    belanjaDiLainnyaInput.value = "";
-    kategoriLainWrap.hidden = true;
-    kategoriLainnyaInput.hidden = true;
-    kategoriLainnyaInput.value = "";
-    keteranganAutoFilled = false;
-
-    // Kembalikan ke default: tab "Belanja" aktif
-    document.getElementById("tabBelanja").checked = true;
-    updateVisibility();
-  } catch (err) {
-    setStatus("Gagal mengirim. Cek koneksi internet lalu coba lagi.", "err");
-  } finally {
-    submitBtn.disabled = false;
-  }
+  // Kembalikan ke default: tab "Belanja" aktif
+  document.getElementById("tabBelanja").checked = true;
+  updateVisibility();
 });

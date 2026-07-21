@@ -388,6 +388,118 @@ body {
   .quicknav-label { font-size: 12.5px; }
 }
 
+/* ===== Antrean Pengiriman ===== */
+.queue-section {
+  margin-top: 18px;
+  padding-top: 16px;
+  border-top: 1px dashed var(--line);
+}
+
+.queue-heading {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  margin: 0 0 10px;
+}
+
+.queue-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.queue-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 10px 12px;
+  background: #fbfaf6;
+  border: 1.5px solid var(--line);
+  border-radius: var(--radius-md);
+}
+
+.queue-item-info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.queue-item-title {
+  font-size: 13.5px;
+  font-weight: 600;
+  color: var(--ink);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.queue-item-time {
+  font-size: 11.5px;
+  color: var(--muted);
+}
+
+.queue-item-right {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.queue-badge {
+  font-size: 11.5px;
+  font-weight: 700;
+  padding: 5px 10px;
+  border-radius: var(--radius-pill);
+  white-space: nowrap;
+}
+
+.queue-badge--pending {
+  color: var(--muted);
+  background: #ece9de;
+}
+
+.queue-badge--sending {
+  color: #8a6d1f;
+  background: #f6ecd2;
+}
+
+.queue-badge--failed {
+  color: var(--keluar);
+  background: var(--keluar-soft);
+}
+
+.queue-item-actions {
+  display: flex;
+  gap: 6px;
+}
+
+.queue-btn {
+  border: none;
+  border-radius: var(--radius-pill);
+  font-size: 12px;
+  font-weight: 700;
+  padding: 7px 12px;
+  cursor: pointer;
+  min-height: 32px;
+}
+
+.queue-retry-btn {
+  background: var(--ink);
+  color: #fff;
+}
+
+.queue-delete-btn {
+  background: transparent;
+  color: var(--muted);
+  border: 1.5px solid var(--line);
+}
+
+.queue-btn:active { transform: scale(0.96); }
+
 .footnote {
   text-align: center;
   color: var(--muted);
