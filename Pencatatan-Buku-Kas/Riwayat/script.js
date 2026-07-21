@@ -493,6 +493,7 @@ btnKonfirmHapus.addEventListener("click", async () => {
     btnKonfirmHapus.disabled = false;
   }
 });
+}
 
 // ===== Init: buka halaman selalu di tanggal hari ini (dihitung ulang tiap load) =====
 goToDate(new Date());
