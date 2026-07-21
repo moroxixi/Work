@@ -122,6 +122,37 @@ body {
   min-height: 16px;
 }
 
+.kategori-filter-bar {
+  display: flex;
+  gap: 6px;
+  overflow-x: auto;
+  padding-bottom: 6px;
+  margin-bottom: 10px;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+}
+.kategori-filter-bar::-webkit-scrollbar { display: none; }
+
+.kategori-chip {
+  flex: 0 0 auto;
+  white-space: nowrap;
+  min-height: 34px;
+  padding: 0 14px;
+  border-radius: 999px;
+  border: 1.5px solid var(--border);
+  background: var(--card-bg);
+  color: var(--ink-soft);
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+}
+.kategori-chip:active { transform: scale(0.96); }
+.kategori-chip.is-active {
+  background: var(--ink);
+  border-color: var(--ink);
+  color: #fff;
+}
+
 /* ===== Ringkasan Masuk/Keluar ===== */
 .summary-bar {
   display: flex;

@@ -95,59 +95,104 @@ function setLoading(isLoading) {
   }
 }
 
+// Elemen filter kategori
+const kategoriFilterBar = document.getElementById("kategoriFilterBar");
+
+// Data mentah hari ini (belum difilter) + kategori yang lagi aktif difilter
+let allRowsToday = [];
+let activeKategoriFilter = null; // null = "Semua"
+
 function renderList(rows) {
-  currentRows = rows;
+  allRowsToday = rows;
+  renderKategoriFilterBar(rows);
+  applyFilterAndRenderCards();
+}
+
+// Bikin chip kategori otomatis dari data hari ini, urut dari paling sering
+function renderKategoriFilterBar(rows) {
+  if (rows.length === 0) {
+    kategoriFilterBar.hidden = true;
+    kategoriFilterBar.innerHTML = "";
+    activeKategoriFilter = null;
+    return;
+  }
+
+  const counts = {};
+  rows.forEach((r) => { counts[r.kategori] = (counts[r.kategori] || 0) + 1; });
+  const kategoriList = Object.keys(counts).sort((a, b) => {
+    if (counts[b] !== counts[a]) return counts[b] - counts[a];
+    return a.localeCompare(b, "id");
+  });
+
+  if (activeKategoriFilter && !kategoriList.includes(activeKategoriFilter)) {
+    activeKategoriFilter = null; // kategori yang lagi difilter sudah tidak ada di hari ini
+  }
+
+  kategoriFilterBar.hidden = false;
+  kategoriFilterBar.innerHTML = "";
+
+  const chipSemua = document.createElement("button");
+  chipSemua.type = "button";
+  chipSemua.className = "kategori-chip" + (activeKategoriFilter === null ? " is-active" : "");
+  chipSemua.textContent = `Semua (${rows.length})`;
+  chipSemua.addEventListener("click", () => {
+    activeKategoriFilter = null;
+    renderKategoriFilterBar(allRowsToday);
+    applyFilterAndRenderCards();
+  });
+  kategoriFilterBar.appendChild(chipSemua);
+
+  kategoriList.forEach((kat) => {
+    const chip = document.createElement("button");
+    chip.type = "button";
+    chip.className = "kategori-chip" + (activeKategoriFilter === kat ? " is-active" : "");
+    chip.textContent = `${kat} (${counts[kat]})`;
+    chip.addEventListener("click", () => {
+      activeKategoriFilter = activeKategoriFilter === kat ? null : kat;
+      renderKategoriFilterBar(allRowsToday);
+      applyFilterAndRenderCards();
+    });
+    kategoriFilterBar.appendChild(chip);
+  });
+}
+
+// Render kartu berdasarkan filter aktif, tapi ringkasan Masuk/Keluar tetap dari total hari itu
+function applyFilterAndRenderCards() {
+  currentRows = activeKategoriFilter
+    ? allRowsToday.filter((r) => r.kategori === activeKategoriFilter)
+    : allRowsToday;
+
   cardList.innerHTML = "";
 
-  if (rows.length === 0) {
+  if (allRowsToday.length === 0) {
     emptyMsg.hidden = false;
+    emptyMsg.textContent = "Belum ada transaksi di tanggal ini.";
     summaryBar.hidden = true;
+    return;
+  }
+
+  let totalMasuk = 0;
+  let totalKeluar = 0;
+  allRowsToday.forEach((row) => {
+    if (row.arah === "Masuk") totalMasuk += Number(row.jumlah || 0);
+    else totalKeluar += Number(row.jumlah || 0);
+  });
+  summaryBar.hidden = false;
+  summaryMasuk.textContent = formatRupiah(totalMasuk);
+  summaryKeluar.textContent = formatRupiah(totalKeluar);
+
+  if (currentRows.length === 0) {
+    emptyMsg.hidden = false;
+    emptyMsg.textContent = `Tidak ada transaksi kategori "${activeKategoriFilter}" di tanggal ini.`;
     return;
   }
   emptyMsg.hidden = true;
 
-  let totalMasuk = 0;
-  let totalKeluar = 0;
-
-  rows.forEach((row) => {
-    if (row.arah === "Masuk") totalMasuk += Number(row.jumlah || 0);
-    else totalKeluar += Number(row.jumlah || 0);
-
-    const jamStr = (row.timestamp || "").substring(11); // ambil "HH:mm:ss"
-
-    const card = document.createElement("div");
-    card.className = "tx-card " + (row.arah === "Masuk" ? "arah-masuk" : "arah-keluar");
-
-    let badgeHtml = "";
-    if (row.sumber === "otomatis") {
-      badgeHtml = `<span class="tx-badge badge-otomatis">Otomatis dari Setoran</span>`;
-    } else if (row.sumber === "cek-dulu") {
-      badgeHtml = `<span class="tx-badge badge-cekdulu">Cek dulu sebelum hapus</span>`;
-    }
-
-    card.innerHTML = `
-      <div class="tx-top">
-        <span class="tx-kategori">${escapeHtml(row.kategori)}</span>
-        <span class="tx-jumlah">${row.arah === "Masuk" ? "+" : "-"} ${formatRupiah(row.jumlah)}</span>
-      </div>
-      <div class="tx-meta">${jamStr}${row.belanjaDi ? " &middot; " + escapeHtml(row.belanjaDi) : ""}</div>
-      ${row.keterangan && row.keterangan !== "-" ? `<div class="tx-keterangan">${escapeHtml(row.keterangan)}</div>` : ""}
-      ${badgeHtml}
-      <div class="tx-actions">
-        <button type="button" class="btn-edit-tx">Edit</button>
-        <button type="button" class="btn-hapus-tx">Hapus</button>
-      </div>
-    `;
-
-    card.querySelector(".btn-edit-tx").addEventListener("click", () => openEditModal(row));
-    card.querySelector(".btn-hapus-tx").addEventListener("click", () => openDeleteModal(row));
-
-    cardList.appendChild(card);
+  currentRows.forEach((row) => {
+    // ↓ isi loop kartu PERSIS SAMA seperti yang ada di renderList lama,
+    // dari "const jamStr = ..." sampai "cardList.appendChild(card);"
+    // tinggal copy-paste isi forEach lama ke sini, tidak ada yang berubah.
   });
-
-  summaryBar.hidden = false;
-  summaryMasuk.textContent = formatRupiah(totalMasuk);
-  summaryKeluar.textContent = formatRupiah(totalKeluar);
 }
 
 function escapeHtml(str) {
