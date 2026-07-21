@@ -188,12 +188,38 @@ function applyFilterAndRenderCards() {
   }
   emptyMsg.hidden = true;
 
-  currentRows.forEach((row) => {
-    // ↓ isi loop kartu PERSIS SAMA seperti yang ada di renderList lama,
-    // dari "const jamStr = ..." sampai "cardList.appendChild(card);"
-    // tinggal copy-paste isi forEach lama ke sini, tidak ada yang berubah.
+currentRows.forEach((row) => {
+    const jamStr = (row.timestamp || "").substring(11); // ambil "HH:mm:ss"
+
+    const card = document.createElement("div");
+    card.className = "tx-card " + (row.arah === "Masuk" ? "arah-masuk" : "arah-keluar");
+
+    let badgeHtml = "";
+    if (row.sumber === "otomatis") {
+      badgeHtml = `<span class="tx-badge badge-otomatis">Otomatis dari Setoran</span>`;
+    } else if (row.sumber === "cek-dulu") {
+      badgeHtml = `<span class="tx-badge badge-cekdulu">Cek dulu sebelum hapus</span>`;
+    }
+
+    card.innerHTML = `
+      <div class="tx-top">
+        <span class="tx-kategori">${escapeHtml(row.kategori)}</span>
+        <span class="tx-jumlah">${row.arah === "Masuk" ? "+" : "-"} ${formatRupiah(row.jumlah)}</span>
+      </div>
+      <div class="tx-meta">${jamStr}${row.belanjaDi ? " &middot; " + escapeHtml(row.belanjaDi) : ""}</div>
+      ${row.keterangan && row.keterangan !== "-" ? `<div class="tx-keterangan">${escapeHtml(row.keterangan)}</div>` : ""}
+      ${badgeHtml}
+      <div class="tx-actions">
+        <button type="button" class="btn-edit-tx">Edit</button>
+        <button type="button" class="btn-hapus-tx">Hapus</button>
+      </div>
+    `;
+
+    card.querySelector(".btn-edit-tx").addEventListener("click", () => openEditModal(row));
+    card.querySelector(".btn-hapus-tx").addEventListener("click", () => openDeleteModal(row));
+
+    cardList.appendChild(card);
   });
-}
 
 function escapeHtml(str) {
   const div = document.createElement("div");
