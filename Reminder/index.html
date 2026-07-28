@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Reminder · ntfy</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.10.0/dist/tabler-icons.min.css">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="app">
+  <!-- Topbar -->
+  <div class="topbar">
+    <div class="tb-dots">
+      <div class="dot dot-r"></div>
+      <div class="dot dot-y"></div>
+      <div class="dot dot-g"></div>
+    </div>
+    <span class="tb-path"><span>moroxixi</span>@archlinux <span>~/reminder</span> [ntfy]</span>
+    <a class="tb-back" href="../Dashboard/index.html" aria-label="Back to Dashboard">
+      <i class="ti ti-arrow-left"></i>
+    </a>
+  </div>
+
+  <div class="body">
+    <div class="container">
+      <!-- Header -->
+      <div class="header">
+        <div class="header-icon"><i class="ti ti-bell-ringing"></i></div>
+        <div class="header-text">
+          <h1>Reminder</h1>
+          <p>Push notification via <span class="hl">ntfy.sh</span> — no backend needed</p>
+        </div>
+      </div>
+
+      <!-- Quick buttons -->
+      <div class="section">
+        <div class="sec-label">quick</div>
+        <div class="quick-grid">
+          <button class="quick-btn" data-minutes="10">
+            <i class="ti ti-coffee"></i>
+            <span>10 menit</span>
+          </button>
+          <button class="quick-btn" data-minutes="20">
+            <i class="ti ti-hourglass"></i>
+            <span>20 menit</span>
+          </button>
+          <button class="quick-btn" data-minutes="30">
+            <i class="ti ti-alarm"></i>
+            <span>30 menit</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Custom duration -->
+      <div class="section">
+        <div class="sec-label">custom</div>
+        <div class="dur-row">
+          <div class="input-group">
+            <label for="hoursInp">Jam</label>
+            <input type="number" id="hoursInp" class="num-input" min="0" max="72" value="0" placeholder="0">
+          </div>
+          <div class="input-group">
+            <label for="minsInp">Menit</label>
+            <input type="number" id="minsInp" class="num-input" min="0" max="59" value="0" placeholder="0">
+          </div>
+          <div class="input-group total-badge">
+            <span class="total-label">total</span>
+            <span class="total-val" id="totalDisplay">0 menit</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Absolute time -->
+      <div class="section">
+        <div class="sec-label">waktu pasti</div>
+        <div class="time-row">
+          <div class="input-group">
+            <label for="timePicker">Jam:Menit</label>
+            <input type="time" id="timePicker" class="time-input">
+          </div>
+          <div class="input-group time-info">
+            <span class="pi-badge" id="piBadge">—</span>
+          </div>
+        </div>
+        <div class="hint" id="timeHint">Kosongkan jika tidak pakai waktu pasti</div>
+      </div>
+
+      <!-- Message -->
+      <div class="section">
+        <div class="sec-label">pesan <span class="opt">(opsional)</span></div>
+        <div class="msg-row">
+          <input type="text" id="msgInp" class="msg-input" placeholder="Tulis pesan reminder... (kosong = default)">
+        </div>
+      </div>
+
+      <!-- Submit -->
+      <div class="section submit-row">
+        <button class="set-btn" id="setBtn">
+          <i class="ti ti-send"></i>
+          <span>Set Reminder</span>
+        </button>
+      </div>
+
+      <!-- Status / confirmation -->
+      <div class="status-area" id="statusArea">
+        <div class="status-box hidden" id="statusBox">
+          <i class="ti" id="statusIcon"></i>
+          <div class="status-msg" id="statusMsg"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Statusbar -->
+  <div class="statusbar">
+    <span class="sb-pill">NORMAL</span>
+    <span>reminder.html</span>
+    <span>·</span>
+    <span id="infoLine">ntfy.sh/reminderme</span>
+    <div class="sb-r">
+      <span>Tokyo Night</span><span>·</span><span>client-side</span>
+    </div>
+  </div>
+</div>
+<script src="script.js"></script>
+</body>
+</html>

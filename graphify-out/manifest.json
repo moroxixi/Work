@@ -1,0 +1,112 @@
+{
+  "Dashboard/script.js": {
+    "mtime": 1784375554.8701084,
+    "ast_hash": "ca23dd6ee8d94c045c9929d40580a99c",
+    "semantic_hash": "ca23dd6ee8d94c045c9929d40580a99c"
+  },
+  "Formulir/Karyawan-Baru/script.js": {
+    "mtime": 1784451516.1289833,
+    "ast_hash": "8cd08059a65a53e0c70eac13bc1b58c6",
+    "semantic_hash": "8cd08059a65a53e0c70eac13bc1b58c6"
+  },
+  "Pencatatan-Buku-Kas/Riwayat/script.js": {
+    "mtime": 1784630126.7384691,
+    "ast_hash": "6d09b02c05ae3443eef11c61f5fcd74b",
+    "semantic_hash": "6d09b02c05ae3443eef11c61f5fcd74b"
+  },
+  "Pencatatan-Buku-Kas/Scan-Struk/script.js": {
+    "mtime": 1784374844.8700814,
+    "ast_hash": "5408a08fb50ac4c417e54aef6d5b5893",
+    "semantic_hash": "5408a08fb50ac4c417e54aef6d5b5893"
+  },
+  "Pencatatan-Buku-Kas/Stok/script.js": {
+    "mtime": 1784554665.9617288,
+    "ast_hash": "14cf0419eb8c810c503dd0c3d1bf5d98",
+    "semantic_hash": "14cf0419eb8c810c503dd0c3d1bf5d98"
+  },
+  "Pencatatan-Buku-Kas/config.js": {
+    "mtime": 1784382037.1199625,
+    "ast_hash": "12b72b472052edaf21dc7645df8d7eb0",
+    "semantic_hash": "12b72b472052edaf21dc7645df8d7eb0"
+  },
+  "Pencatatan-Buku-Kas/script.js": {
+    "mtime": 1784613637.4265835,
+    "ast_hash": "487f740d12c91163293b4a96b7759237",
+    "semantic_hash": "487f740d12c91163293b4a96b7759237"
+  },
+  "kantong.py": {
+    "mtime": 1782747370.734231,
+    "ast_hash": "61e5ab26bc0d5e1bf664666bf0f8cfc7",
+    "semantic_hash": "61e5ab26bc0d5e1bf664666bf0f8cfc7"
+  },
+  "work-push.sh": {
+    "mtime": 1784360638.9048307,
+    "ast_hash": "656035dc51dca6b7aa9fee7b8798d1a0",
+    "semantic_hash": "656035dc51dca6b7aa9fee7b8798d1a0"
+  },
+  "Aturan-Business.md": {
+    "mtime": 1783944801.2986321,
+    "ast_hash": "c0233683de4376ceafc91db4ed131790",
+    "semantic_hash": "c0233683de4376ceafc91db4ed131790"
+  },
+  "Business.md": {
+    "mtime": 1784382575.864817,
+    "ast_hash": "13f58456cc9d9537ddd4c60e0bf497db",
+    "semantic_hash": "13f58456cc9d9537ddd4c60e0bf497db"
+  },
+  "Dashboard/index.html": {
+    "mtime": 1784375552.6201084,
+    "ast_hash": "e3054bd301b87fdc19f3349c9870ae31",
+    "semantic_hash": "e3054bd301b87fdc19f3349c9870ae31"
+  },
+  "Formulir/Karyawan-Baru/index.html": {
+    "mtime": 1784451460.906076,
+    "ast_hash": "0e266ff0f101038c5276e733834ae02c",
+    "semantic_hash": "0e266ff0f101038c5276e733834ae02c"
+  },
+  "Pencatatan-Buku-Kas/Riwayat/index.html": {
+    "mtime": 1784629192.4777143,
+    "ast_hash": "27b52302a2f93bfa5461ee59ddaf1a33",
+    "semantic_hash": "27b52302a2f93bfa5461ee59ddaf1a33"
+  },
+  "Pencatatan-Buku-Kas/Scan-Struk/index.html": {
+    "mtime": 1784554319.5230372,
+    "ast_hash": "206e2f1c3b6e3eaedcf546bce2ee1f1f",
+    "semantic_hash": "206e2f1c3b6e3eaedcf546bce2ee1f1f"
+  },
+  "Pencatatan-Buku-Kas/Stok/index.html": {
+    "mtime": 1784553074.6652253,
+    "ast_hash": "537ac2b3a8cdc303540210be74f691b1",
+    "semantic_hash": "537ac2b3a8cdc303540210be74f691b1"
+  },
+  "Pencatatan-Buku-Kas/index.html": {
+    "mtime": 1784613649.8859615,
+    "ast_hash": "5bcc7c3b86dd6713dc5a4b92e40ef99c",
+    "semantic_hash": "5bcc7c3b86dd6713dc5a4b92e40ef99c"
+  },
+  "Tempura/index.html": {
+    "mtime": 1784382368.6934593,
+    "ast_hash": "c518d2ccb358e98bddf3e2886f4825b0",
+    "semantic_hash": "c518d2ccb358e98bddf3e2886f4825b0"
+  },
+  "Wonton/index.html": {
+    "mtime": 1784382382.8762946,
+    "ast_hash": "93ce525043e9b8de1f84e523339145f0",
+    "semantic_hash": "93ce525043e9b8de1f84e523339145f0"
+  },
+  "Reminder/script.js": {
+    "mtime": 1785263281.886602,
+    "ast_hash": "2074cc4bfdb17709bdd37d5dba3f70f2",
+    "semantic_hash": ""
+  },
+  "Reminder/index.html": {
+    "mtime": 1785263268.363268,
+    "ast_hash": "8f6795e3bd47cd505d531cdc9035352f",
+    "semantic_hash": ""
+  },
+  "Reqrutment.txt": {
+    "mtime": 1784549624.6863632,
+    "ast_hash": "89b49c843f43c9ab3e3cf11677123a41",
+    "semantic_hash": ""
+  }
+}
