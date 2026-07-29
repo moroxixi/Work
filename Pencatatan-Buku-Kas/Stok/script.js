@@ -18,31 +18,8 @@ const errorMsg = document.getElementById("errorMsg");
 const itemList = document.getElementById("itemList");
 const reportInfo = document.getElementById("reportInfo");
 
-function formatTanggalApi(date) {
-  return date.toLocaleDateString("id-ID", {
-    timeZone: "Asia/Jakarta", day: "2-digit", month: "2-digit", year: "numeric"
-  });
-}
-
-function formatTanggalLabel(date) {
-  return date.toLocaleDateString("id-ID", {
-    timeZone: "Asia/Jakarta", weekday: "long", day: "numeric", month: "long", year: "numeric"
-  });
-}
-
-function toDateInputValue(date) {
-  const d = new Date(date.toLocaleString("en-US", { timeZone: "Asia/Jakarta" }));
-  const y = d.getFullYear();
-  const m = String(d.getMonth() + 1).padStart(2, "0");
-  const day = String(d.getDate()).padStart(2, "0");
-  return `${y}-${m}-${day}`;
-}
-
-function escapeHtml(str) {
-  const div = document.createElement("div");
-  div.textContent = str == null ? "" : String(str);
-  return div.innerHTML;
-}
+// formatTanggalApi, formatTanggalLabel, toDateInputValue, escapeHtml
+// sekarang ada di shared-utils.js (dimuat sebelum file ini).
 
 function setLoading(isLoading) {
   loadingMsg.hidden = !isLoading;

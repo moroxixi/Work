@@ -55,28 +55,8 @@ const btnBatalHapus = document.getElementById("btnBatalHapus");
 const btnKonfirmHapus = document.getElementById("btnKonfirmHapus");
 
 // ===== Util tanggal =====
-// Format dd/MM/yyyy sesuai zona Asia/Jakarta, dipakai buat query ke server
-// dan buat cocokkan dengan format Timestamp di sheet.
-function formatTanggalApi(date) {
-  return date.toLocaleDateString("id-ID", {
-    timeZone: "Asia/Jakarta", day: "2-digit", month: "2-digit", year: "numeric"
-  });
-}
-
-function formatTanggalLabel(date) {
-  return date.toLocaleDateString("id-ID", {
-    timeZone: "Asia/Jakarta", weekday: "long", day: "numeric", month: "long", year: "numeric"
-  });
-}
-
-// yyyy-MM-dd buat isi <input type="date">
-function toDateInputValue(date) {
-  const d = new Date(date.toLocaleString("en-US", { timeZone: "Asia/Jakarta" }));
-  const y = d.getFullYear();
-  const m = String(d.getMonth() + 1).padStart(2, "0");
-  const day = String(d.getDate()).padStart(2, "0");
-  return `${y}-${m}-${day}`;
-}
+// formatTanggalApi, formatTanggalLabel, toDateInputValue, escapeHtml
+// sekarang ada di shared-utils.js (dimuat sebelum file ini).
 
 function isSameDate(a, b) {
   return formatTanggalApi(a) === formatTanggalApi(b);
@@ -220,12 +200,6 @@ currentRows.forEach((row) => {
 
     cardList.appendChild(card);
   });
-}
-
-function escapeHtml(str) {
-  const div = document.createElement("div");
-  div.textContent = str == null ? "" : String(str);
-  return div.innerHTML;
 }
 
 // ===== Fetch data =====
