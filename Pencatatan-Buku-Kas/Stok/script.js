@@ -4,6 +4,27 @@ const NAMA_CABANG = { P: "Tempura", B: "Babakan", L: "Leweung Gajah", R: "Depan 
 let currentDate = new Date();
 let currentCabang = "P";
 
+// === Fase 3: optimasi fetch ===
+let activeStokController = null;          // AbortController untuk cancel request lama
+const stokCache = new Map();              // key = tanggalStr::cabang, value = data payload
+const CACHE_MAX_AGE = 30 * 60 * 1000;     // 30 menit — cache dianggap stale
+const stokCacheTimestamps = new Map();    // key = cacheKey, value = Date.now()
+
+function getStokCacheKey() {
+  return formatTanggalApi(currentDate) + "::" + currentCabang;
+}
+
+function isStokCacheValid(cacheKey) {
+  if (!stokCache.has(cacheKey)) return false;
+  const age = Date.now() - (stokCacheTimestamps.get(cacheKey) || 0);
+  return age < CACHE_MAX_AGE;
+}
+
+function invalidateStokCache(cacheKey) {
+  stokCache.delete(cacheKey);
+  stokCacheTimestamps.delete(cacheKey);
+}
+
 const tanggalLabel = document.getElementById("tanggalLabel");
 const datePicker = document.getElementById("datePicker");
 const btnKemarin = document.getElementById("btnKemarin");
@@ -41,34 +62,54 @@ function renderItems(payload) {
   emptyMsg.hidden = true;
 
   reportInfo.hidden = false;
-  reportInfo.textContent = `Laporan terakhir: ${payload.timestamp} \u00b7 ${payload.cabang}`;
+  reportInfo.textContent = "Laporan terakhir: " + payload.timestamp + " \u00b7 " + payload.cabang;
 
   payload.items.forEach(item => {
     const row = document.createElement("div");
     row.className = "item-row";
-    row.innerHTML = `
-      <span class="item-nama">${escapeHtml(item.nama)}</span>
-      <span class="item-laku">Laku: ${item.laku}</span>
-      <span class="item-sisa">Sisa: ${item.sisa}</span>
-    `;
+    row.innerHTML =
+      "<span class=\"item-nama\">" + escapeHtml(item.nama) + "</span>" +
+      "<span class=\"item-laku\">Laku: " + item.laku + "</span>" +
+      "<span class=\"item-sisa\">Sisa: " + item.sisa + "</span>";
     itemList.appendChild(row);
   });
 }
 
-async function fetchStok({ silent = false } = {}) {
+async function fetchStok({ silent = false, force = false } = {}) {
   if (!silent) setLoading(true);
   errorMsg.hidden = true;
 
+  const cacheKey = getStokCacheKey();
+
+  // Cache hit (kecuali force-refresh)
+  if (!force && isStokCacheValid(cacheKey)) {
+    renderItems(stokCache.get(cacheKey));
+    if (!silent) setLoading(false);
+    return;
+  }
+
+  // Cancel request sebelumnya kalau ada
+  if (activeStokController) {
+    activeStokController.abort();
+  }
+  activeStokController = new AbortController();
+  const signal = activeStokController.signal;
+
   try {
     const tanggalStr = formatTanggalApi(currentDate);
-    const url = `${STOK_SCRIPT_URL}?action=stok&tanggal=${encodeURIComponent(tanggalStr)}&cabang=${currentCabang}`;
-    const res = await fetch(url);
+    const url = STOK_SCRIPT_URL + "?action=stok&tanggal=" + encodeURIComponent(tanggalStr) + "&cabang=" + currentCabang;
+    const res = await fetch(url, { signal });
     const data = await res.json();
 
     if (data.status !== "ok") throw new Error(data.message || "Gagal memuat data.");
 
+    // Simpan ke cache
+    stokCache.set(cacheKey, data);
+    stokCacheTimestamps.set(cacheKey, Date.now());
+
     renderItems(data);
   } catch (err) {
+    if (err.name === "AbortError") return; // request dibatalkan karena ada fetch baru — silent
     errorMsg.textContent = "Gagal memuat data: " + err.message;
     errorMsg.hidden = false;
   } finally {
@@ -113,7 +154,8 @@ datePicker.addEventListener("change", () => {
 
 btnRefresh.addEventListener("click", async () => {
   refreshIcon.classList.add("spin");
-  await fetchStok();
+  invalidateStokCache(getStokCacheKey()); // paksa fresh
+  await fetchStok({ force: true });
   setTimeout(() => refreshIcon.classList.remove("spin"), 400);
 });
 

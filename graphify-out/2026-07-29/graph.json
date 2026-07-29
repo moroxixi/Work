@@ -42,10 +42,10 @@
       "source_file": "Dashboard/script.js",
       "source_location": "L1",
       "_origin": "ast",
-      "community": 3,
-      "norm_label": "dashboard/script.js",
       "id": "dashboard_script",
-      "community_name": "Dashboard UI Components"
+      "community": 3,
+      "community_name": "Dashboard UI Components",
+      "norm_label": "dashboard/script.js"
     },
     {
       "label": "all",
@@ -53,10 +53,10 @@
       "source_file": "Dashboard/script.js",
       "source_location": "L2",
       "_origin": "ast",
-      "community": 3,
-      "norm_label": "all",
       "id": "dashboard_script_all",
-      "community_name": "Dashboard UI Components"
+      "community": 3,
+      "community_name": "Dashboard UI Components",
+      "norm_label": "all"
     },
     {
       "label": "menuBtn",
@@ -64,10 +64,10 @@
       "source_file": "Dashboard/script.js",
       "source_location": "L11",
       "_origin": "ast",
-      "community": 3,
-      "norm_label": "menubtn",
       "id": "dashboard_script_menubtn",
-      "community_name": "Dashboard UI Components"
+      "community": 3,
+      "community_name": "Dashboard UI Components",
+      "norm_label": "menubtn"
     },
     {
       "label": "drawer",
@@ -75,10 +75,10 @@
       "source_file": "Dashboard/script.js",
       "source_location": "L12",
       "_origin": "ast",
-      "community": 3,
-      "norm_label": "drawer",
       "id": "dashboard_script_drawer",
-      "community_name": "Dashboard UI Components"
+      "community": 3,
+      "community_name": "Dashboard UI Components",
+      "norm_label": "drawer"
     },
     {
       "label": "overlay",
@@ -86,10 +86,10 @@
       "source_file": "Dashboard/script.js",
       "source_location": "L13",
       "_origin": "ast",
-      "community": 3,
-      "norm_label": "overlay",
       "id": "dashboard_script_overlay",
-      "community_name": "Dashboard UI Components"
+      "community": 3,
+      "community_name": "Dashboard UI Components",
+      "norm_label": "overlay"
     },
     {
       "label": "drawerClose",
@@ -97,10 +97,10 @@
       "source_file": "Dashboard/script.js",
       "source_location": "L14",
       "_origin": "ast",
-      "community": 3,
-      "norm_label": "drawerclose",
       "id": "dashboard_script_drawerclose",
-      "community_name": "Dashboard UI Components"
+      "community": 3,
+      "community_name": "Dashboard UI Components",
+      "norm_label": "drawerclose"
     },
     {
       "label": "openDrawer()",
@@ -108,10 +108,10 @@
       "source_file": "Dashboard/script.js",
       "source_location": "L16",
       "_origin": "ast",
-      "community": 3,
-      "norm_label": "opendrawer()",
       "id": "dashboard_script_opendrawer",
-      "community_name": "Dashboard UI Components"
+      "community": 3,
+      "community_name": "Dashboard UI Components",
+      "norm_label": "opendrawer()"
     },
     {
       "label": "closeDrawer()",
@@ -119,10 +119,10 @@
       "source_file": "Dashboard/script.js",
       "source_location": "L21",
       "_origin": "ast",
-      "community": 3,
-      "norm_label": "closedrawer()",
       "id": "dashboard_script_closedrawer",
-      "community_name": "Dashboard UI Components"
+      "community": 3,
+      "community_name": "Dashboard UI Components",
+      "norm_label": "closedrawer()"
     },
     {
       "label": "isBusiness()",
@@ -130,10 +130,10 @@
       "source_file": "Dashboard/script.js",
       "source_location": "L30",
       "_origin": "ast",
-      "community": 3,
-      "norm_label": "isbusiness()",
       "id": "dashboard_script_isbusiness",
-      "community_name": "Dashboard UI Components"
+      "community": 3,
+      "community_name": "Dashboard UI Components",
+      "norm_label": "isbusiness()"
     },
     {
       "label": "catColor()",
@@ -141,10 +141,10 @@
       "source_file": "Dashboard/script.js",
       "source_location": "L36",
       "_origin": "ast",
-      "community": 3,
-      "norm_label": "catcolor()",
       "id": "dashboard_script_catcolor",
-      "community_name": "Dashboard UI Components"
+      "community": 3,
+      "community_name": "Dashboard UI Components",
+      "norm_label": "catcolor()"
     },
     {
       "label": "catIcon()",
@@ -152,10 +152,10 @@
       "source_file": "Dashboard/script.js",
       "source_location": "L46",
       "_origin": "ast",
-      "community": 3,
-      "norm_label": "caticon()",
       "id": "dashboard_script_caticon",
-      "community_name": "Dashboard UI Components"
+      "community": 3,
+      "community_name": "Dashboard UI Components",
+      "norm_label": "caticon()"
     },
     {
       "label": "cardHTML()",
@@ -163,10 +163,10 @@
       "source_file": "Dashboard/script.js",
       "source_location": "L64",
       "_origin": "ast",
-      "community": 3,
-      "norm_label": "cardhtml()",
       "id": "dashboard_script_cardhtml",
-      "community_name": "Dashboard UI Components"
+      "community": 3,
+      "community_name": "Dashboard UI Components",
+      "norm_label": "cardhtml()"
     },
     {
       "label": "render()",
@@ -174,10 +174,10 @@
       "source_file": "Dashboard/script.js",
       "source_location": "L84",
       "_origin": "ast",
-      "community": 3,
-      "norm_label": "render()",
       "id": "dashboard_script_render",
-      "community_name": "Dashboard UI Components"
+      "community": 3,
+      "community_name": "Dashboard UI Components",
+      "norm_label": "render()"
     },
     {
       "label": "bmGroupHTML()",
@@ -185,10 +185,10 @@
       "source_file": "Dashboard/script.js",
       "source_location": "L102",
       "_origin": "ast",
-      "community": 3,
-      "norm_label": "bmgrouphtml()",
       "id": "dashboard_script_bmgrouphtml",
-      "community_name": "Dashboard UI Components"
+      "community": 3,
+      "community_name": "Dashboard UI Components",
+      "norm_label": "bmgrouphtml()"
     },
     {
       "label": "bmHTML()",
@@ -196,10 +196,10 @@
       "source_file": "Dashboard/script.js",
       "source_location": "L106",
       "_origin": "ast",
-      "community": 3,
-      "norm_label": "bmhtml()",
       "id": "dashboard_script_bmhtml",
-      "community_name": "Dashboard UI Components"
+      "community": 3,
+      "community_name": "Dashboard UI Components",
+      "norm_label": "bmhtml()"
     },
     {
       "label": "init()",
@@ -207,10 +207,10 @@
       "source_file": "Dashboard/script.js",
       "source_location": "L122",
       "_origin": "ast",
-      "community": 3,
-      "norm_label": "init()",
       "id": "dashboard_script_init",
-      "community_name": "Dashboard UI Components"
+      "community": 3,
+      "community_name": "Dashboard UI Components",
+      "norm_label": "init()"
     },
     {
       "label": "Karyawan-Baru/script.js",
@@ -218,10 +218,10 @@
       "source_file": "Formulir/Karyawan-Baru/script.js",
       "source_location": "L1",
       "_origin": "ast",
-      "community": 4,
-      "norm_label": "karyawan-baru/script.js",
       "id": "formulir_karyawan_baru_script",
-      "community_name": "Employee Registration Form"
+      "community": 4,
+      "community_name": "Employee Registration Form",
+      "norm_label": "karyawan-baru/script.js"
     },
     {
       "label": "form",
@@ -229,10 +229,10 @@
       "source_file": "Formulir/Karyawan-Baru/script.js",
       "source_location": "L4",
       "_origin": "ast",
-      "community": 4,
-      "norm_label": "form",
       "id": "formulir_karyawan_baru_script_form",
-      "community_name": "Employee Registration Form"
+      "community": 4,
+      "community_name": "Employee Registration Form",
+      "norm_label": "form"
     },
     {
       "label": "submitBtn",
@@ -240,10 +240,10 @@
       "source_file": "Formulir/Karyawan-Baru/script.js",
       "source_location": "L5",
       "_origin": "ast",
-      "community": 4,
-      "norm_label": "submitbtn",
       "id": "formulir_karyawan_baru_script_submitbtn",
-      "community_name": "Employee Registration Form"
+      "community": 4,
+      "community_name": "Employee Registration Form",
+      "norm_label": "submitbtn"
     },
     {
       "label": "submitLabel",
@@ -251,10 +251,10 @@
       "source_file": "Formulir/Karyawan-Baru/script.js",
       "source_location": "L6",
       "_origin": "ast",
-      "community": 4,
-      "norm_label": "submitlabel",
       "id": "formulir_karyawan_baru_script_submitlabel",
-      "community_name": "Employee Registration Form"
+      "community": 4,
+      "community_name": "Employee Registration Form",
+      "norm_label": "submitlabel"
     },
     {
       "label": "successMsg",
@@ -262,10 +262,10 @@
       "source_file": "Formulir/Karyawan-Baru/script.js",
       "source_location": "L7",
       "_origin": "ast",
-      "community": 4,
-      "norm_label": "successmsg",
       "id": "formulir_karyawan_baru_script_successmsg",
-      "community_name": "Employee Registration Form"
+      "community": 4,
+      "community_name": "Employee Registration Form",
+      "norm_label": "successmsg"
     },
     {
       "label": "hubunganChips",
@@ -273,10 +273,10 @@
       "source_file": "Formulir/Karyawan-Baru/script.js",
       "source_location": "L10",
       "_origin": "ast",
-      "community": 4,
-      "norm_label": "hubunganchips",
       "id": "formulir_karyawan_baru_script_hubunganchips",
-      "community_name": "Employee Registration Form"
+      "community": 4,
+      "community_name": "Employee Registration Form",
+      "norm_label": "hubunganchips"
     },
     {
       "label": "hubunganInput",
@@ -284,10 +284,10 @@
       "source_file": "Formulir/Karyawan-Baru/script.js",
       "source_location": "L11",
       "_origin": "ast",
-      "community": 4,
-      "norm_label": "hubunganinput",
       "id": "formulir_karyawan_baru_script_hubunganinput",
-      "community_name": "Employee Registration Form"
+      "community": 4,
+      "community_name": "Employee Registration Form",
+      "norm_label": "hubunganinput"
     },
     {
       "label": "hubunganLainnya",
@@ -295,10 +295,10 @@
       "source_file": "Formulir/Karyawan-Baru/script.js",
       "source_location": "L12",
       "_origin": "ast",
-      "community": 4,
-      "norm_label": "hubunganlainnya",
       "id": "formulir_karyawan_baru_script_hubunganlainnya",
-      "community_name": "Employee Registration Form"
+      "community": 4,
+      "community_name": "Employee Registration Form",
+      "norm_label": "hubunganlainnya"
     },
     {
       "label": "uploadedImages",
@@ -306,10 +306,10 @@
       "source_file": "Formulir/Karyawan-Baru/script.js",
       "source_location": "L37",
       "_origin": "ast",
-      "community": 4,
-      "norm_label": "uploadedimages",
       "id": "formulir_karyawan_baru_script_uploadedimages",
-      "community_name": "Employee Registration Form"
+      "community": 4,
+      "community_name": "Employee Registration Form",
+      "norm_label": "uploadedimages"
     },
     {
       "label": "compressImage()",
@@ -317,10 +317,10 @@
       "source_file": "Formulir/Karyawan-Baru/script.js",
       "source_location": "L42",
       "_origin": "ast",
-      "community": 4,
-      "norm_label": "compressimage()",
       "id": "formulir_karyawan_baru_script_compressimage",
-      "community_name": "Employee Registration Form"
+      "community": 4,
+      "community_name": "Employee Registration Form",
+      "norm_label": "compressimage()"
     },
     {
       "label": "Riwayat/script.js",
@@ -328,10 +328,10 @@
       "source_file": "Pencatatan-Buku-Kas/Riwayat/script.js",
       "source_location": "L1",
       "_origin": "ast",
-      "community": 0,
-      "norm_label": "riwayat/script.js",
       "id": "pencatatan_buku_kas_riwayat_script",
-      "community_name": "Transaction History UI"
+      "community": 0,
+      "community_name": "Riwayat/script.js",
+      "norm_label": "riwayat/script.js"
     },
     {
       "label": "KATEGORI_MASUK",
@@ -339,10 +339,10 @@
       "source_file": "Pencatatan-Buku-Kas/Riwayat/script.js",
       "source_location": "L9",
       "_origin": "ast",
-      "community": 10,
-      "norm_label": "kategori_masuk",
       "id": "pencatatan_buku_kas_riwayat_script_kategori_masuk",
-      "community_name": "Category Modal Management"
+      "community": 10,
+      "community_name": "Category Modal Management",
+      "norm_label": "kategori_masuk"
     },
     {
       "label": "KATEGORI_KELUAR",
@@ -350,10 +350,10 @@
       "source_file": "Pencatatan-Buku-Kas/Riwayat/script.js",
       "source_location": "L12",
       "_origin": "ast",
-      "community": 0,
-      "norm_label": "kategori_keluar",
       "id": "pencatatan_buku_kas_riwayat_script_kategori_keluar",
-      "community_name": "Transaction History UI"
+      "community": 0,
+      "community_name": "Riwayat/script.js",
+      "norm_label": "kategori_keluar"
     },
     {
       "label": "currentDate",
@@ -361,10 +361,10 @@
       "source_file": "Pencatatan-Buku-Kas/Riwayat/script.js",
       "source_location": "L16",
       "_origin": "ast",
-      "community": 0,
-      "norm_label": "currentdate",
       "id": "pencatatan_buku_kas_riwayat_script_currentdate",
-      "community_name": "Transaction History UI"
+      "community": 0,
+      "community_name": "Riwayat/script.js",
+      "norm_label": "currentdate"
     },
     {
       "label": "currentRows",
@@ -372,10 +372,10 @@
       "source_file": "Pencatatan-Buku-Kas/Riwayat/script.js",
       "source_location": "L17",
       "_origin": "ast",
-      "community": 0,
-      "norm_label": "currentrows",
       "id": "pencatatan_buku_kas_riwayat_script_currentrows",
-      "community_name": "Transaction History UI"
+      "community": 0,
+      "community_name": "Riwayat/script.js",
+      "norm_label": "currentrows"
     },
     {
       "label": "tanggalLabel",
@@ -383,10 +383,10 @@
       "source_file": "Pencatatan-Buku-Kas/Riwayat/script.js",
       "source_location": "L24",
       "_origin": "ast",
-      "community": 0,
-      "norm_label": "tanggallabel",
       "id": "pencatatan_buku_kas_riwayat_script_tanggallabel",
-      "community_name": "Transaction History UI"
+      "community": 0,
+      "community_name": "Riwayat/script.js",
+      "norm_label": "tanggallabel"
     },
     {
       "label": "datePicker",
@@ -394,10 +394,10 @@
       "source_file": "Pencatatan-Buku-Kas/Riwayat/script.js",
       "source_location": "L25",
       "_origin": "ast",
-      "community": 0,
-      "norm_label": "datepicker",
       "id": "pencatatan_buku_kas_riwayat_script_datepicker",
-      "community_name": "Transaction History UI"
+      "community": 0,
+      "community_name": "Riwayat/script.js",
+      "norm_label": "datepicker"
     },
     {
       "label": "btnKemarin",
@@ -405,10 +405,10 @@
       "source_file": "Pencatatan-Buku-Kas/Riwayat/script.js",
       "source_location": "L26",
       "_origin": "ast",
-      "community": 0,
-      "norm_label": "btnkemarin",
       "id": "pencatatan_buku_kas_riwayat_script_btnkemarin",
-      "community_name": "Transaction History UI"
+      "community": 0,
+      "community_name": "Riwayat/script.js",
+      "norm_label": "btnkemarin"
     },
     {
       "label": "btnHariIni",
@@ -416,10 +416,10 @@
       "source_file": "Pencatatan-Buku-Kas/Riwayat/script.js",
       "source_location": "L27",
       "_origin": "ast",
-      "community": 0,
-      "norm_label": "btnhariini",
       "id": "pencatatan_buku_kas_riwayat_script_btnhariini",
-      "community_name": "Transaction History UI"
+      "community": 0,
+      "community_name": "Riwayat/script.js",
+      "norm_label": "btnhariini"
     },
     {
       "label": "btnRefresh",
@@ -427,10 +427,10 @@
       "source_file": "Pencatatan-Buku-Kas/Riwayat/script.js",
       "source_location": "L28",
       "_origin": "ast",
-      "community": 0,
-      "norm_label": "btnrefresh",
       "id": "pencatatan_buku_kas_riwayat_script_btnrefresh",
-      "community_name": "Transaction History UI"
+      "community": 0,
+      "community_name": "Riwayat/script.js",
+      "norm_label": "btnrefresh"
     },
     {
       "label": "refreshIcon",
@@ -438,10 +438,10 @@
       "source_file": "Pencatatan-Buku-Kas/Riwayat/script.js",
       "source_location": "L29",
       "_origin": "ast",
-      "community": 0,
-      "norm_label": "refreshicon",
       "id": "pencatatan_buku_kas_riwayat_script_refreshicon",
-      "community_name": "Transaction History UI"
+      "community": 0,
+      "community_name": "Riwayat/script.js",
+      "norm_label": "refreshicon"
     },
     {
       "label": "liveStatus",
@@ -449,10 +449,10 @@
       "source_file": "Pencatatan-Buku-Kas/Riwayat/script.js",
       "source_location": "L30",
       "_origin": "ast",
-      "community": 0,
-      "norm_label": "livestatus",
       "id": "pencatatan_buku_kas_riwayat_script_livestatus",
-      "community_name": "Transaction History UI"
+      "community": 0,
+      "community_name": "Riwayat/script.js",
+      "norm_label": "livestatus"
     },
     {
       "label": "loadingMsg",
@@ -460,10 +460,10 @@
       "source_file": "Pencatatan-Buku-Kas/Riwayat/script.js",
       "source_location": "L32",
       "_origin": "ast",
-      "community": 0,
-      "norm_label": "loadingmsg",
       "id": "pencatatan_buku_kas_riwayat_script_loadingmsg",
-      "community_name": "Transaction History UI"
+      "community": 0,
+      "community_name": "Riwayat/script.js",
+      "norm_label": "loadingmsg"
     },
     {
       "label": "emptyMsg",
@@ -471,10 +471,10 @@
       "source_file": "Pencatatan-Buku-Kas/Riwayat/script.js",
       "source_location": "L33",
       "_origin": "ast",
-      "community": 0,
-      "norm_label": "emptymsg",
       "id": "pencatatan_buku_kas_riwayat_script_emptymsg",
-      "community_name": "Transaction History UI"
+      "community": 0,
+      "community_name": "Riwayat/script.js",
+      "norm_label": "emptymsg"
     },
     {
       "label": "errorMsg",
@@ -482,10 +482,10 @@
       "source_file": "Pencatatan-Buku-Kas/Riwayat/script.js",
       "source_location": "L34",
       "_origin": "ast",
-      "community": 0,
-      "norm_label": "errormsg",
       "id": "pencatatan_buku_kas_riwayat_script_errormsg",
-      "community_name": "Transaction History UI"
+      "community": 0,
+      "community_name": "Riwayat/script.js",
+      "norm_label": "errormsg"
     },
     {
       "label": "cardList",
@@ -493,10 +493,10 @@
       "source_file": "Pencatatan-Buku-Kas/Riwayat/script.js",
       "source_location": "L35",
       "_origin": "ast",
-      "community": 0,
-      "norm_label": "cardlist",
       "id": "pencatatan_buku_kas_riwayat_script_cardlist",
-      "community_name": "Transaction History UI"
+      "community": 0,
+      "community_name": "Riwayat/script.js",
+      "norm_label": "cardlist"
     },
     {
       "label": "summaryBar",
@@ -504,10 +504,10 @@
       "source_file": "Pencatatan-Buku-Kas/Riwayat/script.js",
       "source_location": "L36",
       "_origin": "ast",
-      "community": 0,
-      "norm_label": "summarybar",
       "id": "pencatatan_buku_kas_riwayat_script_summarybar",
-      "community_name": "Transaction History UI"
+      "community": 0,
+      "community_name": "Riwayat/script.js",
+      "norm_label": "summarybar"
     },
     {
       "label": "summaryMasuk",
@@ -515,10 +515,10 @@
       "source_file": "Pencatatan-Buku-Kas/Riwayat/script.js",
       "source_location": "L37",
       "_origin": "ast",
-      "community": 0,
-      "norm_label": "summarymasuk",
       "id": "pencatatan_buku_kas_riwayat_script_summarymasuk",
-      "community_name": "Transaction History UI"
+      "community": 0,
+      "community_name": "Riwayat/script.js",
+      "norm_label": "summarymasuk"
     },
     {
       "label": "summaryKeluar",
@@ -526,10 +526,10 @@
       "source_file": "Pencatatan-Buku-Kas/Riwayat/script.js",
       "source_location": "L38",
       "_origin": "ast",
-      "community": 0,
-      "norm_label": "summarykeluar",
       "id": "pencatatan_buku_kas_riwayat_script_summarykeluar",
-      "community_name": "Transaction History UI"
+      "community": 0,
+      "community_name": "Riwayat/script.js",
+      "norm_label": "summarykeluar"
     },
     {
       "label": "editModal",
@@ -537,10 +537,10 @@
       "source_file": "Pencatatan-Buku-Kas/Riwayat/script.js",
       "source_location": "L40",
       "_origin": "ast",
-      "community": 0,
-      "norm_label": "editmodal",
       "id": "pencatatan_buku_kas_riwayat_script_editmodal",
-      "community_name": "Transaction History UI"
+      "community": 0,
+      "community_name": "Riwayat/script.js",
+      "norm_label": "editmodal"
     },
     {
       "label": "editWarning",
@@ -548,10 +548,10 @@
       "source_file": "Pencatatan-Buku-Kas/Riwayat/script.js",
       "source_location": "L41",
       "_origin": "ast",
-      "community": 0,
-      "norm_label": "editwarning",
       "id": "pencatatan_buku_kas_riwayat_script_editwarning",
-      "community_name": "Transaction History UI"
+      "community": 0,
+      "community_name": "Riwayat/script.js",
+      "norm_label": "editwarning"
     },
     {
       "label": "editKategori",
@@ -559,10 +559,10 @@
       "source_file": "Pencatatan-Buku-Kas/Riwayat/script.js",
       "source_location": "L42",
       "_origin": "ast",
-      "community": 0,
-      "norm_label": "editkategori",
       "id": "pencatatan_buku_kas_riwayat_script_editkategori",
-      "community_name": "Transaction History UI"
+      "community": 0,
+      "community_name": "Riwayat/script.js",
+      "norm_label": "editkategori"
     },
     {
       "label": "editBelanjaDi",
@@ -570,10 +570,10 @@
       "source_file": "Pencatatan-Buku-Kas/Riwayat/script.js",
       "source_location": "L43",
       "_origin": "ast",
-      "community": 0,
-      "norm_label": "editbelanjadi",
       "id": "pencatatan_buku_kas_riwayat_script_editbelanjadi",
-      "community_name": "Transaction History UI"
+      "community": 0,
+      "community_name": "Riwayat/script.js",
+      "norm_label": "editbelanjadi"
     },
     {
       "label": "editKeterangan",
@@ -581,10 +581,10 @@
       "source_file": "Pencatatan-Buku-Kas/Riwayat/script.js",
       "source_location": "L44",
       "_origin": "ast",
-      "community": 0,
-      "norm_label": "editketerangan",
       "id": "pencatatan_buku_kas_riwayat_script_editketerangan",
-      "community_name": "Transaction History UI"
+      "community": 0,
+      "community_name": "Riwayat/script.js",
+      "norm_label": "editketerangan"
     },
     {
       "label": "editJumlah",
@@ -592,10 +592,10 @@
       "source_file": "Pencatatan-Buku-Kas/Riwayat/script.js",
       "source_location": "L45",
       "_origin": "ast",
-      "community": 0,
-      "norm_label": "editjumlah",
       "id": "pencatatan_buku_kas_riwayat_script_editjumlah",
-      "community_name": "Transaction History UI"
+      "community": 0,
+      "community_name": "Riwayat/script.js",
+      "norm_label": "editjumlah"
     },
     {
       "label": "editStatus",
@@ -603,10 +603,10 @@
       "source_file": "Pencatatan-Buku-Kas/Riwayat/script.js",
       "source_location": "L46",
       "_origin": "ast",
-      "community": 0,
-      "norm_label": "editstatus",
       "id": "pencatatan_buku_kas_riwayat_script_editstatus",
-      "community_name": "Transaction History UI"
+      "community": 0,
+      "community_name": "Riwayat/script.js",
+      "norm_label": "editstatus"
     },
     {
       "label": "btnBatalEdit",
@@ -614,10 +614,10 @@
       "source_file": "Pencatatan-Buku-Kas/Riwayat/script.js",
       "source_location": "L47",
       "_origin": "ast",
-      "community": 0,
-      "norm_label": "btnbataledit",
       "id": "pencatatan_buku_kas_riwayat_script_btnbataledit",
-      "community_name": "Transaction History UI"
+      "community": 0,
+      "community_name": "Riwayat/script.js",
+      "norm_label": "btnbataledit"
     },
     {
       "label": "btnSimpanEdit",
@@ -625,10 +625,10 @@
       "source_file": "Pencatatan-Buku-Kas/Riwayat/script.js",
       "source_location": "L48",
       "_origin": "ast",
-      "community": 0,
-      "norm_label": "btnsimpanedit",
       "id": "pencatatan_buku_kas_riwayat_script_btnsimpanedit",
-      "community_name": "Transaction History UI"
+      "community": 0,
+      "community_name": "Riwayat/script.js",
+      "norm_label": "btnsimpanedit"
     },
     {
       "label": "deleteModal",
@@ -636,10 +636,10 @@
       "source_file": "Pencatatan-Buku-Kas/Riwayat/script.js",
       "source_location": "L50",
       "_origin": "ast",
-      "community": 0,
-      "norm_label": "deletemodal",
       "id": "pencatatan_buku_kas_riwayat_script_deletemodal",
-      "community_name": "Transaction History UI"
+      "community": 0,
+      "community_name": "Riwayat/script.js",
+      "norm_label": "deletemodal"
     },
     {
       "label": "deleteWarning",
@@ -647,10 +647,10 @@
       "source_file": "Pencatatan-Buku-Kas/Riwayat/script.js",
       "source_location": "L51",
       "_origin": "ast",
-      "community": 0,
-      "norm_label": "deletewarning",
       "id": "pencatatan_buku_kas_riwayat_script_deletewarning",
-      "community_name": "Transaction History UI"
+      "community": 0,
+      "community_name": "Riwayat/script.js",
+      "norm_label": "deletewarning"
     },
     {
       "label": "deleteDetail",
@@ -658,10 +658,10 @@
       "source_file": "Pencatatan-Buku-Kas/Riwayat/script.js",
       "source_location": "L52",
       "_origin": "ast",
-      "community": 0,
-      "norm_label": "deletedetail",
       "id": "pencatatan_buku_kas_riwayat_script_deletedetail",
-      "community_name": "Transaction History UI"
+      "community": 0,
+      "community_name": "Riwayat/script.js",
+      "norm_label": "deletedetail"
     },
     {
       "label": "deleteStatus",
@@ -669,10 +669,10 @@
       "source_file": "Pencatatan-Buku-Kas/Riwayat/script.js",
       "source_location": "L53",
       "_origin": "ast",
-      "community": 0,
-      "norm_label": "deletestatus",
       "id": "pencatatan_buku_kas_riwayat_script_deletestatus",
-      "community_name": "Transaction History UI"
+      "community": 0,
+      "community_name": "Riwayat/script.js",
+      "norm_label": "deletestatus"
     },
     {
       "label": "btnBatalHapus",
@@ -680,10 +680,10 @@
       "source_file": "Pencatatan-Buku-Kas/Riwayat/script.js",
       "source_location": "L54",
       "_origin": "ast",
-      "community": 0,
-      "norm_label": "btnbatalhapus",
       "id": "pencatatan_buku_kas_riwayat_script_btnbatalhapus",
-      "community_name": "Transaction History UI"
+      "community": 0,
+      "community_name": "Riwayat/script.js",
+      "norm_label": "btnbatalhapus"
     },
     {
       "label": "btnKonfirmHapus",
@@ -691,241 +691,197 @@
       "source_file": "Pencatatan-Buku-Kas/Riwayat/script.js",
       "source_location": "L55",
       "_origin": "ast",
-      "community": 0,
-      "norm_label": "btnkonfirmhapus",
       "id": "pencatatan_buku_kas_riwayat_script_btnkonfirmhapus",
-      "community_name": "Transaction History UI"
-    },
-    {
-      "label": "formatTanggalApi()",
-      "file_type": "code",
-      "source_file": "Pencatatan-Buku-Kas/Riwayat/script.js",
-      "source_location": "L60",
-      "_origin": "ast",
-      "community": 9,
-      "norm_label": "formattanggalapi()",
-      "id": "pencatatan_buku_kas_riwayat_script_formattanggalapi",
-      "community_name": "API Data Fetching"
-    },
-    {
-      "label": "formatTanggalLabel()",
-      "file_type": "code",
-      "source_file": "Pencatatan-Buku-Kas/Riwayat/script.js",
-      "source_location": "L66",
-      "_origin": "ast",
-      "community": 8,
-      "norm_label": "formattanggallabel()",
-      "id": "pencatatan_buku_kas_riwayat_script_formattanggallabel",
-      "community_name": "Date Navigation Helpers"
-    },
-    {
-      "label": "toDateInputValue()",
-      "file_type": "code",
-      "source_file": "Pencatatan-Buku-Kas/Riwayat/script.js",
-      "source_location": "L73",
-      "_origin": "ast",
-      "community": 8,
-      "norm_label": "todateinputvalue()",
-      "id": "pencatatan_buku_kas_riwayat_script_todateinputvalue",
-      "community_name": "Date Navigation Helpers"
+      "community": 0,
+      "community_name": "Riwayat/script.js",
+      "norm_label": "btnkonfirmhapus"
     },
     {
       "label": "isSameDate()",
       "file_type": "code",
       "source_file": "Pencatatan-Buku-Kas/Riwayat/script.js",
-      "source_location": "L81",
+      "source_location": "L61",
       "_origin": "ast",
-      "community": 9,
-      "norm_label": "issamedate()",
       "id": "pencatatan_buku_kas_riwayat_script_issamedate",
-      "community_name": "API Data Fetching"
+      "community": 0,
+      "community_name": "Riwayat/script.js",
+      "norm_label": "issamedate()"
     },
     {
       "label": "formatRupiah()",
       "file_type": "code",
       "source_file": "Pencatatan-Buku-Kas/Riwayat/script.js",
-      "source_location": "L85",
+      "source_location": "L65",
       "_origin": "ast",
-      "community": 7,
-      "norm_label": "formatrupiah()",
       "id": "pencatatan_buku_kas_riwayat_script_formatrupiah",
-      "community_name": "List Filtering Logic"
+      "community": 7,
+      "community_name": "applyFilterAndRenderCards",
+      "norm_label": "formatrupiah()"
     },
     {
       "label": "setLoading()",
       "file_type": "code",
       "source_file": "Pencatatan-Buku-Kas/Riwayat/script.js",
-      "source_location": "L90",
+      "source_location": "L70",
       "_origin": "ast",
-      "community": 9,
-      "norm_label": "setloading()",
       "id": "pencatatan_buku_kas_riwayat_script_setloading",
-      "community_name": "API Data Fetching"
+      "community": 8,
+      "community_name": "fetchList",
+      "norm_label": "setloading()"
     },
     {
       "label": "kategoriFilterBar",
       "file_type": "code",
       "source_file": "Pencatatan-Buku-Kas/Riwayat/script.js",
-      "source_location": "L99",
+      "source_location": "L79",
       "_origin": "ast",
-      "community": 0,
-      "norm_label": "kategorifilterbar",
       "id": "pencatatan_buku_kas_riwayat_script_kategorifilterbar",
-      "community_name": "Transaction History UI"
+      "community": 0,
+      "community_name": "Riwayat/script.js",
+      "norm_label": "kategorifilterbar"
     },
     {
       "label": "allRowsToday",
       "file_type": "code",
       "source_file": "Pencatatan-Buku-Kas/Riwayat/script.js",
-      "source_location": "L102",
+      "source_location": "L82",
       "_origin": "ast",
-      "community": 0,
-      "norm_label": "allrowstoday",
       "id": "pencatatan_buku_kas_riwayat_script_allrowstoday",
-      "community_name": "Transaction History UI"
+      "community": 0,
+      "community_name": "Riwayat/script.js",
+      "norm_label": "allrowstoday"
     },
     {
       "label": "renderList()",
       "file_type": "code",
       "source_file": "Pencatatan-Buku-Kas/Riwayat/script.js",
-      "source_location": "L105",
+      "source_location": "L85",
       "_origin": "ast",
-      "community": 7,
-      "norm_label": "renderlist()",
       "id": "pencatatan_buku_kas_riwayat_script_renderlist",
-      "community_name": "List Filtering Logic"
+      "community": 7,
+      "community_name": "applyFilterAndRenderCards",
+      "norm_label": "renderlist()"
     },
     {
       "label": "renderKategoriFilterBar()",
       "file_type": "code",
       "source_file": "Pencatatan-Buku-Kas/Riwayat/script.js",
-      "source_location": "L112",
+      "source_location": "L92",
       "_origin": "ast",
-      "community": 7,
-      "norm_label": "renderkategorifilterbar()",
       "id": "pencatatan_buku_kas_riwayat_script_renderkategorifilterbar",
-      "community_name": "List Filtering Logic"
+      "community": 7,
+      "community_name": "applyFilterAndRenderCards",
+      "norm_label": "renderkategorifilterbar()"
     },
     {
       "label": "applyFilterAndRenderCards()",
       "file_type": "code",
       "source_file": "Pencatatan-Buku-Kas/Riwayat/script.js",
-      "source_location": "L160",
+      "source_location": "L140",
       "_origin": "ast",
-      "community": 7,
-      "norm_label": "applyfilterandrendercards()",
       "id": "pencatatan_buku_kas_riwayat_script_applyfilterandrendercards",
-      "community_name": "List Filtering Logic"
-    },
-    {
-      "label": "escapeHtml()",
-      "file_type": "code",
-      "source_file": "Pencatatan-Buku-Kas/Riwayat/script.js",
-      "source_location": "L225",
-      "_origin": "ast",
       "community": 7,
-      "norm_label": "escapehtml()",
-      "id": "pencatatan_buku_kas_riwayat_script_escapehtml",
-      "community_name": "List Filtering Logic"
+      "community_name": "applyFilterAndRenderCards",
+      "norm_label": "applyfilterandrendercards()"
     },
     {
       "label": "fetchList()",
       "file_type": "code",
       "source_file": "Pencatatan-Buku-Kas/Riwayat/script.js",
-      "source_location": "L232",
+      "source_location": "L206",
       "_origin": "ast",
-      "community": 9,
-      "norm_label": "fetchlist()",
       "id": "pencatatan_buku_kas_riwayat_script_fetchlist",
-      "community_name": "API Data Fetching"
+      "community": 8,
+      "community_name": "fetchList",
+      "norm_label": "fetchlist()"
     },
     {
       "label": "refreshCurrent()",
       "file_type": "code",
       "source_file": "Pencatatan-Buku-Kas/Riwayat/script.js",
-      "source_location": "L253",
+      "source_location": "L227",
       "_origin": "ast",
-      "community": 8,
-      "norm_label": "refreshcurrent()",
       "id": "pencatatan_buku_kas_riwayat_script_refreshcurrent",
-      "community_name": "Date Navigation Helpers"
+      "community": 8,
+      "community_name": "fetchList",
+      "norm_label": "refreshcurrent()"
     },
     {
       "label": "goToDate()",
       "file_type": "code",
       "source_file": "Pencatatan-Buku-Kas/Riwayat/script.js",
-      "source_location": "L257",
+      "source_location": "L231",
       "_origin": "ast",
-      "community": 8,
-      "norm_label": "gotodate()",
       "id": "pencatatan_buku_kas_riwayat_script_gotodate",
-      "community_name": "Date Navigation Helpers"
+      "community": 8,
+      "community_name": "fetchList",
+      "norm_label": "gotodate()"
     },
     {
       "label": "pollMarker()",
       "file_type": "code",
       "source_file": "Pencatatan-Buku-Kas/Riwayat/script.js",
-      "source_location": "L289",
+      "source_location": "L263",
       "_origin": "ast",
-      "community": 8,
-      "norm_label": "pollmarker()",
       "id": "pencatatan_buku_kas_riwayat_script_pollmarker",
-      "community_name": "Date Navigation Helpers"
+      "community": 8,
+      "community_name": "fetchList",
+      "norm_label": "pollmarker()"
     },
     {
       "label": "populateKategoriSelect()",
       "file_type": "code",
       "source_file": "Pencatatan-Buku-Kas/Riwayat/script.js",
-      "source_location": "L319",
+      "source_location": "L293",
       "_origin": "ast",
-      "community": 10,
-      "norm_label": "populatekategoriselect()",
       "id": "pencatatan_buku_kas_riwayat_script_populatekategoriselect",
-      "community_name": "Category Modal Management"
+      "community": 10,
+      "community_name": "Category Modal Management",
+      "norm_label": "populatekategoriselect()"
     },
     {
       "label": "openEditModal()",
       "file_type": "code",
       "source_file": "Pencatatan-Buku-Kas/Riwayat/script.js",
-      "source_location": "L348",
+      "source_location": "L322",
       "_origin": "ast",
-      "community": 10,
-      "norm_label": "openeditmodal()",
       "id": "pencatatan_buku_kas_riwayat_script_openeditmodal",
-      "community_name": "Category Modal Management"
+      "community": 10,
+      "community_name": "Category Modal Management",
+      "norm_label": "openeditmodal()"
     },
     {
       "label": "closeEditModal()",
       "file_type": "code",
       "source_file": "Pencatatan-Buku-Kas/Riwayat/script.js",
-      "source_location": "L374",
+      "source_location": "L348",
       "_origin": "ast",
-      "community": 0,
-      "norm_label": "closeeditmodal()",
       "id": "pencatatan_buku_kas_riwayat_script_closeeditmodal",
-      "community_name": "Transaction History UI"
+      "community": 0,
+      "community_name": "Riwayat/script.js",
+      "norm_label": "closeeditmodal()"
     },
     {
       "label": "openDeleteModal()",
       "file_type": "code",
       "source_file": "Pencatatan-Buku-Kas/Riwayat/script.js",
-      "source_location": "L432",
+      "source_location": "L406",
       "_origin": "ast",
-      "community": 7,
-      "norm_label": "opendeletemodal()",
       "id": "pencatatan_buku_kas_riwayat_script_opendeletemodal",
-      "community_name": "List Filtering Logic"
+      "community": 7,
+      "community_name": "applyFilterAndRenderCards",
+      "norm_label": "opendeletemodal()"
     },
     {
       "label": "closeDeleteModal()",
       "file_type": "code",
       "source_file": "Pencatatan-Buku-Kas/Riwayat/script.js",
-      "source_location": "L456",
+      "source_location": "L430",
       "_origin": "ast",
-      "community": 0,
-      "norm_label": "closedeletemodal()",
       "id": "pencatatan_buku_kas_riwayat_script_closedeletemodal",
-      "community_name": "Transaction History UI"
+      "community": 0,
+      "community_name": "Riwayat/script.js",
+      "norm_label": "closedeletemodal()"
     },
     {
       "label": "Scan-Struk/script.js",
@@ -933,10 +889,10 @@
       "source_file": "Pencatatan-Buku-Kas/Scan-Struk/script.js",
       "source_location": "L1",
       "_origin": "ast",
-      "community": 6,
-      "norm_label": "scan-struk/script.js",
       "id": "pencatatan_buku_kas_scan_struk_script",
-      "community_name": "Receipt Scanning Module"
+      "community": 6,
+      "community_name": "Receipt Scanning Module",
+      "norm_label": "scan-struk/script.js"
     },
     {
       "label": "items",
@@ -944,10 +900,10 @@
       "source_file": "Pencatatan-Buku-Kas/Scan-Struk/script.js",
       "source_location": "L9",
       "_origin": "ast",
-      "community": 6,
-      "norm_label": "items",
       "id": "pencatatan_buku_kas_scan_struk_script_items",
-      "community_name": "Receipt Scanning Module"
+      "community": 6,
+      "community_name": "Receipt Scanning Module",
+      "norm_label": "items"
     },
     {
       "label": "updateScanBtnState()",
@@ -955,10 +911,10 @@
       "source_file": "Pencatatan-Buku-Kas/Scan-Struk/script.js",
       "source_location": "L54",
       "_origin": "ast",
-      "community": 6,
-      "norm_label": "updatescanbtnstate()",
       "id": "pencatatan_buku_kas_scan_struk_script_updatescanbtnstate",
-      "community_name": "Receipt Scanning Module"
+      "community": 6,
+      "community_name": "Receipt Scanning Module",
+      "norm_label": "updatescanbtnstate()"
     },
     {
       "label": "compressImage()",
@@ -966,10 +922,10 @@
       "source_file": "Pencatatan-Buku-Kas/Scan-Struk/script.js",
       "source_location": "L58",
       "_origin": "ast",
-      "community": 6,
-      "norm_label": "compressimage()",
       "id": "pencatatan_buku_kas_scan_struk_script_compressimage",
-      "community_name": "Receipt Scanning Module"
+      "community": 6,
+      "community_name": "Receipt Scanning Module",
+      "norm_label": "compressimage()"
     },
     {
       "label": "renderItems()",
@@ -977,10 +933,10 @@
       "source_file": "Pencatatan-Buku-Kas/Scan-Struk/script.js",
       "source_location": "L127",
       "_origin": "ast",
-      "community": 6,
-      "norm_label": "renderitems()",
       "id": "pencatatan_buku_kas_scan_struk_script_renderitems",
-      "community_name": "Receipt Scanning Module"
+      "community": 6,
+      "community_name": "Receipt Scanning Module",
+      "norm_label": "renderitems()"
     },
     {
       "label": "updateTotals()",
@@ -988,10 +944,10 @@
       "source_file": "Pencatatan-Buku-Kas/Scan-Struk/script.js",
       "source_location": "L176",
       "_origin": "ast",
-      "community": 6,
-      "norm_label": "updatetotals()",
       "id": "pencatatan_buku_kas_scan_struk_script_updatetotals",
-      "community_name": "Receipt Scanning Module"
+      "community": 6,
+      "community_name": "Receipt Scanning Module",
+      "norm_label": "updatetotals()"
     },
     {
       "label": "formatRp()",
@@ -999,10 +955,10 @@
       "source_file": "Pencatatan-Buku-Kas/Scan-Struk/script.js",
       "source_location": "L227",
       "_origin": "ast",
-      "community": 6,
-      "norm_label": "formatrp()",
       "id": "pencatatan_buku_kas_scan_struk_script_formatrp",
-      "community_name": "Receipt Scanning Module"
+      "community": 6,
+      "community_name": "Receipt Scanning Module",
+      "norm_label": "formatrp()"
     },
     {
       "label": "escapeAttr()",
@@ -1010,10 +966,10 @@
       "source_file": "Pencatatan-Buku-Kas/Scan-Struk/script.js",
       "source_location": "L230",
       "_origin": "ast",
-      "community": 6,
-      "norm_label": "escapeattr()",
       "id": "pencatatan_buku_kas_scan_struk_script_escapeattr",
-      "community_name": "Receipt Scanning Module"
+      "community": 6,
+      "community_name": "Receipt Scanning Module",
+      "norm_label": "escapeattr()"
     },
     {
       "label": "Stok/script.js",
@@ -1021,10 +977,10 @@
       "source_file": "Pencatatan-Buku-Kas/Stok/script.js",
       "source_location": "L1",
       "_origin": "ast",
-      "community": 2,
-      "norm_label": "stok/script.js",
       "id": "pencatatan_buku_kas_stok_script",
-      "community_name": "Stock Inventory Tracking"
+      "community": 2,
+      "community_name": "Stok/script.js",
+      "norm_label": "stok/script.js"
     },
     {
       "label": "NAMA_CABANG",
@@ -1032,10 +988,10 @@
       "source_file": "Pencatatan-Buku-Kas/Stok/script.js",
       "source_location": "L2",
       "_origin": "ast",
-      "community": 2,
-      "norm_label": "nama_cabang",
       "id": "pencatatan_buku_kas_stok_script_nama_cabang",
-      "community_name": "Stock Inventory Tracking"
+      "community": 2,
+      "community_name": "Stok/script.js",
+      "norm_label": "nama_cabang"
     },
     {
       "label": "currentDate",
@@ -1043,10 +999,10 @@
       "source_file": "Pencatatan-Buku-Kas/Stok/script.js",
       "source_location": "L4",
       "_origin": "ast",
-      "community": 2,
-      "norm_label": "currentdate",
       "id": "pencatatan_buku_kas_stok_script_currentdate",
-      "community_name": "Stock Inventory Tracking"
+      "community": 2,
+      "community_name": "Stok/script.js",
+      "norm_label": "currentdate"
     },
     {
       "label": "tanggalLabel",
@@ -1054,10 +1010,10 @@
       "source_file": "Pencatatan-Buku-Kas/Stok/script.js",
       "source_location": "L7",
       "_origin": "ast",
-      "community": 2,
-      "norm_label": "tanggallabel",
       "id": "pencatatan_buku_kas_stok_script_tanggallabel",
-      "community_name": "Stock Inventory Tracking"
+      "community": 2,
+      "community_name": "Stok/script.js",
+      "norm_label": "tanggallabel"
     },
     {
       "label": "datePicker",
@@ -1065,10 +1021,10 @@
       "source_file": "Pencatatan-Buku-Kas/Stok/script.js",
       "source_location": "L8",
       "_origin": "ast",
-      "community": 2,
-      "norm_label": "datepicker",
       "id": "pencatatan_buku_kas_stok_script_datepicker",
-      "community_name": "Stock Inventory Tracking"
+      "community": 2,
+      "community_name": "Stok/script.js",
+      "norm_label": "datepicker"
     },
     {
       "label": "btnKemarin",
@@ -1076,10 +1032,10 @@
       "source_file": "Pencatatan-Buku-Kas/Stok/script.js",
       "source_location": "L9",
       "_origin": "ast",
-      "community": 2,
-      "norm_label": "btnkemarin",
       "id": "pencatatan_buku_kas_stok_script_btnkemarin",
-      "community_name": "Stock Inventory Tracking"
+      "community": 2,
+      "community_name": "Stok/script.js",
+      "norm_label": "btnkemarin"
     },
     {
       "label": "btnHariIni",
@@ -1087,10 +1043,10 @@
       "source_file": "Pencatatan-Buku-Kas/Stok/script.js",
       "source_location": "L10",
       "_origin": "ast",
-      "community": 2,
-      "norm_label": "btnhariini",
       "id": "pencatatan_buku_kas_stok_script_btnhariini",
-      "community_name": "Stock Inventory Tracking"
+      "community": 2,
+      "community_name": "Stok/script.js",
+      "norm_label": "btnhariini"
     },
     {
       "label": "btnRefresh",
@@ -1098,10 +1054,10 @@
       "source_file": "Pencatatan-Buku-Kas/Stok/script.js",
       "source_location": "L11",
       "_origin": "ast",
-      "community": 2,
-      "norm_label": "btnrefresh",
       "id": "pencatatan_buku_kas_stok_script_btnrefresh",
-      "community_name": "Stock Inventory Tracking"
+      "community": 2,
+      "community_name": "Stok/script.js",
+      "norm_label": "btnrefresh"
     },
     {
       "label": "refreshIcon",
@@ -1109,10 +1065,10 @@
       "source_file": "Pencatatan-Buku-Kas/Stok/script.js",
       "source_location": "L12",
       "_origin": "ast",
-      "community": 2,
-      "norm_label": "refreshicon",
       "id": "pencatatan_buku_kas_stok_script_refreshicon",
-      "community_name": "Stock Inventory Tracking"
+      "community": 2,
+      "community_name": "Stok/script.js",
+      "norm_label": "refreshicon"
     },
     {
       "label": "tabBar",
@@ -1120,10 +1076,10 @@
       "source_file": "Pencatatan-Buku-Kas/Stok/script.js",
       "source_location": "L13",
       "_origin": "ast",
-      "community": 2,
-      "norm_label": "tabbar",
       "id": "pencatatan_buku_kas_stok_script_tabbar",
-      "community_name": "Stock Inventory Tracking"
+      "community": 2,
+      "community_name": "Stok/script.js",
+      "norm_label": "tabbar"
     },
     {
       "label": "loadingMsg",
@@ -1131,10 +1087,10 @@
       "source_file": "Pencatatan-Buku-Kas/Stok/script.js",
       "source_location": "L15",
       "_origin": "ast",
-      "community": 2,
-      "norm_label": "loadingmsg",
       "id": "pencatatan_buku_kas_stok_script_loadingmsg",
-      "community_name": "Stock Inventory Tracking"
+      "community": 2,
+      "community_name": "Stok/script.js",
+      "norm_label": "loadingmsg"
     },
     {
       "label": "emptyMsg",
@@ -1142,10 +1098,10 @@
       "source_file": "Pencatatan-Buku-Kas/Stok/script.js",
       "source_location": "L16",
       "_origin": "ast",
-      "community": 2,
-      "norm_label": "emptymsg",
       "id": "pencatatan_buku_kas_stok_script_emptymsg",
-      "community_name": "Stock Inventory Tracking"
+      "community": 2,
+      "community_name": "Stok/script.js",
+      "norm_label": "emptymsg"
     },
     {
       "label": "errorMsg",
@@ -1153,10 +1109,10 @@
       "source_file": "Pencatatan-Buku-Kas/Stok/script.js",
       "source_location": "L17",
       "_origin": "ast",
-      "community": 2,
-      "norm_label": "errormsg",
       "id": "pencatatan_buku_kas_stok_script_errormsg",
-      "community_name": "Stock Inventory Tracking"
+      "community": 2,
+      "community_name": "Stok/script.js",
+      "norm_label": "errormsg"
     },
     {
       "label": "itemList",
@@ -1164,10 +1120,10 @@
       "source_file": "Pencatatan-Buku-Kas/Stok/script.js",
       "source_location": "L18",
       "_origin": "ast",
-      "community": 2,
-      "norm_label": "itemlist",
       "id": "pencatatan_buku_kas_stok_script_itemlist",
-      "community_name": "Stock Inventory Tracking"
+      "community": 2,
+      "community_name": "Stok/script.js",
+      "norm_label": "itemlist"
     },
     {
       "label": "reportInfo",
@@ -1175,120 +1131,76 @@
       "source_file": "Pencatatan-Buku-Kas/Stok/script.js",
       "source_location": "L19",
       "_origin": "ast",
-      "community": 2,
-      "norm_label": "reportinfo",
       "id": "pencatatan_buku_kas_stok_script_reportinfo",
-      "community_name": "Stock Inventory Tracking"
-    },
-    {
-      "label": "formatTanggalApi()",
-      "file_type": "code",
-      "source_file": "Pencatatan-Buku-Kas/Stok/script.js",
-      "source_location": "L21",
-      "_origin": "ast",
       "community": 2,
-      "norm_label": "formattanggalapi()",
-      "id": "pencatatan_buku_kas_stok_script_formattanggalapi",
-      "community_name": "Stock Inventory Tracking"
-    },
-    {
-      "label": "formatTanggalLabel()",
-      "file_type": "code",
-      "source_file": "Pencatatan-Buku-Kas/Stok/script.js",
-      "source_location": "L27",
-      "_origin": "ast",
-      "community": 2,
-      "norm_label": "formattanggallabel()",
-      "id": "pencatatan_buku_kas_stok_script_formattanggallabel",
-      "community_name": "Stock Inventory Tracking"
-    },
-    {
-      "label": "toDateInputValue()",
-      "file_type": "code",
-      "source_file": "Pencatatan-Buku-Kas/Stok/script.js",
-      "source_location": "L33",
-      "_origin": "ast",
-      "community": 2,
-      "norm_label": "todateinputvalue()",
-      "id": "pencatatan_buku_kas_stok_script_todateinputvalue",
-      "community_name": "Stock Inventory Tracking"
-    },
-    {
-      "label": "escapeHtml()",
-      "file_type": "code",
-      "source_file": "Pencatatan-Buku-Kas/Stok/script.js",
-      "source_location": "L41",
-      "_origin": "ast",
-      "community": 2,
-      "norm_label": "escapehtml()",
-      "id": "pencatatan_buku_kas_stok_script_escapehtml",
-      "community_name": "Stock Inventory Tracking"
+      "community_name": "Stok/script.js",
+      "norm_label": "reportinfo"
     },
     {
       "label": "setLoading()",
       "file_type": "code",
       "source_file": "Pencatatan-Buku-Kas/Stok/script.js",
-      "source_location": "L47",
+      "source_location": "L24",
       "_origin": "ast",
-      "community": 2,
-      "norm_label": "setloading()",
       "id": "pencatatan_buku_kas_stok_script_setloading",
-      "community_name": "Stock Inventory Tracking"
+      "community": 2,
+      "community_name": "Stok/script.js",
+      "norm_label": "setloading()"
     },
     {
       "label": "renderItems()",
       "file_type": "code",
       "source_file": "Pencatatan-Buku-Kas/Stok/script.js",
-      "source_location": "L56",
+      "source_location": "L33",
       "_origin": "ast",
-      "community": 2,
-      "norm_label": "renderitems()",
       "id": "pencatatan_buku_kas_stok_script_renderitems",
-      "community_name": "Stock Inventory Tracking"
+      "community": 2,
+      "community_name": "Stok/script.js",
+      "norm_label": "renderitems()"
     },
     {
       "label": "fetchStok()",
       "file_type": "code",
       "source_file": "Pencatatan-Buku-Kas/Stok/script.js",
-      "source_location": "L81",
+      "source_location": "L58",
       "_origin": "ast",
-      "community": 2,
-      "norm_label": "fetchstok()",
       "id": "pencatatan_buku_kas_stok_script_fetchstok",
-      "community_name": "Stock Inventory Tracking"
+      "community": 2,
+      "community_name": "Stok/script.js",
+      "norm_label": "fetchstok()"
     },
     {
       "label": "goToDate()",
       "file_type": "code",
       "source_file": "Pencatatan-Buku-Kas/Stok/script.js",
-      "source_location": "L102",
+      "source_location": "L79",
       "_origin": "ast",
-      "community": 2,
-      "norm_label": "gotodate()",
       "id": "pencatatan_buku_kas_stok_script_gotodate",
-      "community_name": "Stock Inventory Tracking"
+      "community": 2,
+      "community_name": "Stok/script.js",
+      "norm_label": "gotodate()"
     },
     {
       "label": "switchCabang()",
       "file_type": "code",
       "source_file": "Pencatatan-Buku-Kas/Stok/script.js",
-      "source_location": "L109",
+      "source_location": "L86",
       "_origin": "ast",
-      "community": 2,
-      "norm_label": "switchcabang()",
       "id": "pencatatan_buku_kas_stok_script_switchcabang",
-      "community_name": "Stock Inventory Tracking"
+      "community": 2,
+      "community_name": "Stok/script.js",
+      "norm_label": "switchcabang()"
     },
     {
       "label": "initDate",
       "file_type": "code",
       "source_file": "Pencatatan-Buku-Kas/Stok/script.js",
-      "source_location": "L146",
+      "source_location": "L123",
       "_origin": "ast",
-      "community": 2,
-      "norm_label": "initdate",
       "id": "pencatatan_buku_kas_stok_script_initdate",
-      "community_name": "Stock Inventory Tracking"
+      "community": 2,
+      "community_name": "Stok/script.js",
+      "norm_label": "initdate"
     },
     {
       "label": "config.js",
@@ -1296,10 +1208,10 @@
       "source_file": "Pencatatan-Buku-Kas/config.js",
       "source_location": "L1",
       "_origin": "ast",
-      "community": 16,
-      "norm_label": "config.js",
       "id": "pencatatan_buku_kas_config",
-      "community_name": "Application Configuration"
+      "community": 16,
+      "community_name": "Application Configuration",
+      "norm_label": "config.js"
     },
     {
       "label": "Pencatatan-Buku-Kas/script.js",
@@ -1307,10 +1219,10 @@
       "source_file": "Pencatatan-Buku-Kas/script.js",
       "source_location": "L1",
       "_origin": "ast",
-      "community": 1,
-      "norm_label": "pencatatan-buku-kas/script.js",
       "id": "pencatatan_buku_kas_script",
-      "community_name": "Cash Book Recording"
+      "community": 1,
+      "community_name": "Cash Book Recording",
+      "norm_label": "pencatatan-buku-kas/script.js"
     },
     {
       "label": "form",
@@ -1318,10 +1230,10 @@
       "source_file": "Pencatatan-Buku-Kas/script.js",
       "source_location": "L1",
       "_origin": "ast",
-      "community": 1,
-      "norm_label": "form",
       "id": "pencatatan_buku_kas_script_form",
-      "community_name": "Cash Book Recording"
+      "community": 1,
+      "community_name": "Cash Book Recording",
+      "norm_label": "form"
     },
     {
       "label": "outletWrap",
@@ -1329,10 +1241,10 @@
       "source_file": "Pencatatan-Buku-Kas/script.js",
       "source_location": "L3",
       "_origin": "ast",
-      "community": 1,
-      "norm_label": "outletwrap",
       "id": "pencatatan_buku_kas_script_outletwrap",
-      "community_name": "Cash Book Recording"
+      "community": 1,
+      "community_name": "Cash Book Recording",
+      "norm_label": "outletwrap"
     },
     {
       "label": "belanjaDiWrap",
@@ -1340,10 +1252,10 @@
       "source_file": "Pencatatan-Buku-Kas/script.js",
       "source_location": "L4",
       "_origin": "ast",
-      "community": 1,
-      "norm_label": "belanjadiwrap",
       "id": "pencatatan_buku_kas_script_belanjadiwrap",
-      "community_name": "Cash Book Recording"
+      "community": 1,
+      "community_name": "Cash Book Recording",
+      "norm_label": "belanjadiwrap"
     },
     {
       "label": "belanjaDiLainnyaInput",
@@ -1351,10 +1263,10 @@
       "source_file": "Pencatatan-Buku-Kas/script.js",
       "source_location": "L5",
       "_origin": "ast",
-      "community": 1,
-      "norm_label": "belanjadilainnyainput",
       "id": "pencatatan_buku_kas_script_belanjadilainnyainput",
-      "community_name": "Cash Book Recording"
+      "community": 1,
+      "community_name": "Cash Book Recording",
+      "norm_label": "belanjadilainnyainput"
     },
     {
       "label": "tokoLainnyaRadio",
@@ -1362,10 +1274,10 @@
       "source_file": "Pencatatan-Buku-Kas/script.js",
       "source_location": "L6",
       "_origin": "ast",
-      "community": 1,
-      "norm_label": "tokolainnyaradio",
       "id": "pencatatan_buku_kas_script_tokolainnyaradio",
-      "community_name": "Cash Book Recording"
+      "community": 1,
+      "community_name": "Cash Book Recording",
+      "norm_label": "tokolainnyaradio"
     },
     {
       "label": "kategoriLainWrap",
@@ -1373,10 +1285,10 @@
       "source_file": "Pencatatan-Buku-Kas/script.js",
       "source_location": "L8",
       "_origin": "ast",
-      "community": 1,
-      "norm_label": "kategorilainwrap",
       "id": "pencatatan_buku_kas_script_kategorilainwrap",
-      "community_name": "Cash Book Recording"
+      "community": 1,
+      "community_name": "Cash Book Recording",
+      "norm_label": "kategorilainwrap"
     },
     {
       "label": "kategoriLainnyaInput",
@@ -1384,10 +1296,10 @@
       "source_file": "Pencatatan-Buku-Kas/script.js",
       "source_location": "L9",
       "_origin": "ast",
-      "community": 1,
-      "norm_label": "kategorilainnyainput",
       "id": "pencatatan_buku_kas_script_kategorilainnyainput",
-      "community_name": "Cash Book Recording"
+      "community": 1,
+      "community_name": "Cash Book Recording",
+      "norm_label": "kategorilainnyainput"
     },
     {
       "label": "kategoriLainnyaRadio",
@@ -1395,10 +1307,10 @@
       "source_file": "Pencatatan-Buku-Kas/script.js",
       "source_location": "L10",
       "_origin": "ast",
-      "community": 1,
-      "norm_label": "kategorilainnyaradio",
       "id": "pencatatan_buku_kas_script_kategorilainnyaradio",
-      "community_name": "Cash Book Recording"
+      "community": 1,
+      "community_name": "Cash Book Recording",
+      "norm_label": "kategorilainnyaradio"
     },
     {
       "label": "jumlahEl",
@@ -1406,10 +1318,10 @@
       "source_file": "Pencatatan-Buku-Kas/script.js",
       "source_location": "L12",
       "_origin": "ast",
-      "community": 1,
-      "norm_label": "jumlahel",
       "id": "pencatatan_buku_kas_script_jumlahel",
-      "community_name": "Cash Book Recording"
+      "community": 1,
+      "community_name": "Cash Book Recording",
+      "norm_label": "jumlahel"
     },
     {
       "label": "keteranganEl",
@@ -1417,10 +1329,10 @@
       "source_file": "Pencatatan-Buku-Kas/script.js",
       "source_location": "L13",
       "_origin": "ast",
-      "community": 1,
-      "norm_label": "keteranganel",
       "id": "pencatatan_buku_kas_script_keteranganel",
-      "community_name": "Cash Book Recording"
+      "community": 1,
+      "community_name": "Cash Book Recording",
+      "norm_label": "keteranganel"
     },
     {
       "label": "submitBtn",
@@ -1428,10 +1340,10 @@
       "source_file": "Pencatatan-Buku-Kas/script.js",
       "source_location": "L14",
       "_origin": "ast",
-      "community": 1,
-      "norm_label": "submitbtn",
       "id": "pencatatan_buku_kas_script_submitbtn",
-      "community_name": "Cash Book Recording"
+      "community": 1,
+      "community_name": "Cash Book Recording",
+      "norm_label": "submitbtn"
     },
     {
       "label": "statusMsg",
@@ -1439,10 +1351,10 @@
       "source_file": "Pencatatan-Buku-Kas/script.js",
       "source_location": "L15",
       "_origin": "ast",
-      "community": 1,
-      "norm_label": "statusmsg",
       "id": "pencatatan_buku_kas_script_statusmsg",
-      "community_name": "Cash Book Recording"
+      "community": 1,
+      "community_name": "Cash Book Recording",
+      "norm_label": "statusmsg"
     },
     {
       "label": "resetRadioGroup()",
@@ -1450,10 +1362,10 @@
       "source_file": "Pencatatan-Buku-Kas/script.js",
       "source_location": "L37",
       "_origin": "ast",
-      "community": 1,
-      "norm_label": "resetradiogroup()",
       "id": "pencatatan_buku_kas_script_resetradiogroup",
-      "community_name": "Cash Book Recording"
+      "community": 1,
+      "community_name": "Cash Book Recording",
+      "norm_label": "resetradiogroup()"
     },
     {
       "label": "updateVisibility()",
@@ -1461,10 +1373,10 @@
       "source_file": "Pencatatan-Buku-Kas/script.js",
       "source_location": "L41",
       "_origin": "ast",
-      "community": 1,
-      "norm_label": "updatevisibility()",
       "id": "pencatatan_buku_kas_script_updatevisibility",
-      "community_name": "Cash Book Recording"
+      "community": 1,
+      "community_name": "Cash Book Recording",
+      "norm_label": "updatevisibility()"
     },
     {
       "label": "applyBelanjaKeterangan()",
@@ -1472,10 +1384,10 @@
       "source_file": "Pencatatan-Buku-Kas/script.js",
       "source_location": "L109",
       "_origin": "ast",
-      "community": 1,
-      "norm_label": "applybelanjaketerangan()",
       "id": "pencatatan_buku_kas_script_applybelanjaketerangan",
-      "community_name": "Cash Book Recording"
+      "community": 1,
+      "community_name": "Cash Book Recording",
+      "norm_label": "applybelanjaketerangan()"
     },
     {
       "label": "setStatus()",
@@ -1483,10 +1395,10 @@
       "source_file": "Pencatatan-Buku-Kas/script.js",
       "source_location": "L156",
       "_origin": "ast",
-      "community": 1,
-      "norm_label": "setstatus()",
       "id": "pencatatan_buku_kas_script_setstatus",
-      "community_name": "Cash Book Recording"
+      "community": 1,
+      "community_name": "Cash Book Recording",
+      "norm_label": "setstatus()"
     },
     {
       "label": "getSelectedOutlet()",
@@ -1494,10 +1406,10 @@
       "source_file": "Pencatatan-Buku-Kas/script.js",
       "source_location": "L161",
       "_origin": "ast",
-      "community": 1,
-      "norm_label": "getselectedoutlet()",
       "id": "pencatatan_buku_kas_script_getselectedoutlet",
-      "community_name": "Cash Book Recording"
+      "community": 1,
+      "community_name": "Cash Book Recording",
+      "norm_label": "getselectedoutlet()"
     },
     {
       "label": "getSelectedBelanjaDi()",
@@ -1505,10 +1417,10 @@
       "source_file": "Pencatatan-Buku-Kas/script.js",
       "source_location": "L166",
       "_origin": "ast",
-      "community": 1,
-      "norm_label": "getselectedbelanjadi()",
       "id": "pencatatan_buku_kas_script_getselectedbelanjadi",
-      "community_name": "Cash Book Recording"
+      "community": 1,
+      "community_name": "Cash Book Recording",
+      "norm_label": "getselectedbelanjadi()"
     },
     {
       "label": "getSelectedKategoriLain()",
@@ -1516,10 +1428,10 @@
       "source_file": "Pencatatan-Buku-Kas/script.js",
       "source_location": "L172",
       "_origin": "ast",
-      "community": 1,
-      "norm_label": "getselectedkategorilain()",
       "id": "pencatatan_buku_kas_script_getselectedkategorilain",
-      "community_name": "Cash Book Recording"
+      "community": 1,
+      "community_name": "Cash Book Recording",
+      "norm_label": "getselectedkategorilain()"
     },
     {
       "label": "resolveKategori()",
@@ -1527,10 +1439,10 @@
       "source_file": "Pencatatan-Buku-Kas/script.js",
       "source_location": "L180",
       "_origin": "ast",
-      "community": 1,
-      "norm_label": "resolvekategori()",
       "id": "pencatatan_buku_kas_script_resolvekategori",
-      "community_name": "Cash Book Recording"
+      "community": 1,
+      "community_name": "Cash Book Recording",
+      "norm_label": "resolvekategori()"
     },
     {
       "label": "queueSection",
@@ -1538,10 +1450,10 @@
       "source_file": "Pencatatan-Buku-Kas/script.js",
       "source_location": "L228",
       "_origin": "ast",
-      "community": 1,
-      "norm_label": "queuesection",
       "id": "pencatatan_buku_kas_script_queuesection",
-      "community_name": "Cash Book Recording"
+      "community": 1,
+      "community_name": "Cash Book Recording",
+      "norm_label": "queuesection"
     },
     {
       "label": "queueListEl",
@@ -1549,10 +1461,10 @@
       "source_file": "Pencatatan-Buku-Kas/script.js",
       "source_location": "L229",
       "_origin": "ast",
-      "community": 1,
-      "norm_label": "queuelistel",
       "id": "pencatatan_buku_kas_script_queuelistel",
-      "community_name": "Cash Book Recording"
+      "community": 1,
+      "community_name": "Cash Book Recording",
+      "norm_label": "queuelistel"
     },
     {
       "label": "queue",
@@ -1560,10 +1472,10 @@
       "source_file": "Pencatatan-Buku-Kas/script.js",
       "source_location": "L231",
       "_origin": "ast",
-      "community": 1,
-      "norm_label": "queue",
       "id": "pencatatan_buku_kas_script_queue",
-      "community_name": "Cash Book Recording"
+      "community": 1,
+      "community_name": "Cash Book Recording",
+      "norm_label": "queue"
     },
     {
       "label": "loadQueue()",
@@ -1571,10 +1483,10 @@
       "source_file": "Pencatatan-Buku-Kas/script.js",
       "source_location": "L234",
       "_origin": "ast",
-      "community": 1,
-      "norm_label": "loadqueue()",
       "id": "pencatatan_buku_kas_script_loadqueue",
-      "community_name": "Cash Book Recording"
+      "community": 1,
+      "community_name": "Cash Book Recording",
+      "norm_label": "loadqueue()"
     },
     {
       "label": "saveQueue()",
@@ -1582,10 +1494,10 @@
       "source_file": "Pencatatan-Buku-Kas/script.js",
       "source_location": "L251",
       "_origin": "ast",
-      "community": 1,
-      "norm_label": "savequeue()",
       "id": "pencatatan_buku_kas_script_savequeue",
-      "community_name": "Cash Book Recording"
+      "community": 1,
+      "community_name": "Cash Book Recording",
+      "norm_label": "savequeue()"
     },
     {
       "label": "queueItemLabel()",
@@ -1593,10 +1505,10 @@
       "source_file": "Pencatatan-Buku-Kas/script.js",
       "source_location": "L255",
       "_origin": "ast",
-      "community": 1,
-      "norm_label": "queueitemlabel()",
       "id": "pencatatan_buku_kas_script_queueitemlabel",
-      "community_name": "Cash Book Recording"
+      "community": 1,
+      "community_name": "Cash Book Recording",
+      "norm_label": "queueitemlabel()"
     },
     {
       "label": "queueItemTime()",
@@ -1604,10 +1516,10 @@
       "source_file": "Pencatatan-Buku-Kas/script.js",
       "source_location": "L259",
       "_origin": "ast",
-      "community": 1,
-      "norm_label": "queueitemtime()",
       "id": "pencatatan_buku_kas_script_queueitemtime",
-      "community_name": "Cash Book Recording"
+      "community": 1,
+      "community_name": "Cash Book Recording",
+      "norm_label": "queueitemtime()"
     },
     {
       "label": "renderQueue()",
@@ -1615,10 +1527,10 @@
       "source_file": "Pencatatan-Buku-Kas/script.js",
       "source_location": "L265",
       "_origin": "ast",
-      "community": 1,
-      "norm_label": "renderqueue()",
       "id": "pencatatan_buku_kas_script_renderqueue",
-      "community_name": "Cash Book Recording"
+      "community": 1,
+      "community_name": "Cash Book Recording",
+      "norm_label": "renderqueue()"
     },
     {
       "label": "addToQueue()",
@@ -1626,10 +1538,10 @@
       "source_file": "Pencatatan-Buku-Kas/script.js",
       "source_location": "L327",
       "_origin": "ast",
-      "community": 1,
-      "norm_label": "addtoqueue()",
       "id": "pencatatan_buku_kas_script_addtoqueue",
-      "community_name": "Cash Book Recording"
+      "community": 1,
+      "community_name": "Cash Book Recording",
+      "norm_label": "addtoqueue()"
     },
     {
       "label": "processQueue()",
@@ -1637,10 +1549,175 @@
       "source_file": "Pencatatan-Buku-Kas/script.js",
       "source_location": "L337",
       "_origin": "ast",
-      "community": 1,
-      "norm_label": "processqueue()",
       "id": "pencatatan_buku_kas_script_processqueue",
-      "community_name": "Cash Book Recording"
+      "community": 1,
+      "community_name": "Cash Book Recording",
+      "norm_label": "processqueue()"
+    },
+    {
+      "label": "shared-utils.js",
+      "file_type": "code",
+      "source_file": "Pencatatan-Buku-Kas/shared-utils.js",
+      "source_location": "L1",
+      "_origin": "ast",
+      "id": "pencatatan_buku_kas_shared_utils",
+      "community": 9,
+      "community_name": "shared-utils.js",
+      "norm_label": "shared-utils.js"
+    },
+    {
+      "label": "formatTanggalApi()",
+      "file_type": "code",
+      "source_file": "Pencatatan-Buku-Kas/shared-utils.js",
+      "source_location": "L11",
+      "_origin": "ast",
+      "id": "pencatatan_buku_kas_shared_utils_formattanggalapi",
+      "community": 9,
+      "community_name": "shared-utils.js",
+      "norm_label": "formattanggalapi()"
+    },
+    {
+      "label": "formatTanggalLabel()",
+      "file_type": "code",
+      "source_file": "Pencatatan-Buku-Kas/shared-utils.js",
+      "source_location": "L21",
+      "_origin": "ast",
+      "id": "pencatatan_buku_kas_shared_utils_formattanggallabel",
+      "community": 9,
+      "community_name": "shared-utils.js",
+      "norm_label": "formattanggallabel()"
+    },
+    {
+      "label": "toDateInputValue()",
+      "file_type": "code",
+      "source_file": "Pencatatan-Buku-Kas/shared-utils.js",
+      "source_location": "L31",
+      "_origin": "ast",
+      "id": "pencatatan_buku_kas_shared_utils_todateinputvalue",
+      "community": 9,
+      "community_name": "shared-utils.js",
+      "norm_label": "todateinputvalue()"
+    },
+    {
+      "label": "escapeHtml()",
+      "file_type": "code",
+      "source_file": "Pencatatan-Buku-Kas/shared-utils.js",
+      "source_location": "L42",
+      "_origin": "ast",
+      "id": "pencatatan_buku_kas_shared_utils_escapehtml",
+      "community": 9,
+      "community_name": "shared-utils.js",
+      "norm_label": "escapehtml()"
+    },
+    {
+      "label": "Reminder/script.js",
+      "file_type": "code",
+      "source_file": "Reminder/script.js",
+      "source_location": "L1",
+      "_origin": "ast",
+      "id": "reminder_script",
+      "community": 17,
+      "community_name": "Reminder/script.js",
+      "norm_label": "reminder/script.js"
+    },
+    {
+      "label": "el",
+      "file_type": "code",
+      "source_file": "Reminder/script.js",
+      "source_location": "L9",
+      "_origin": "ast",
+      "id": "reminder_script_el",
+      "community": 17,
+      "community_name": "Reminder/script.js",
+      "norm_label": "el"
+    },
+    {
+      "label": "fmtDuration()",
+      "file_type": "code",
+      "source_file": "Reminder/script.js",
+      "source_location": "L28",
+      "_origin": "ast",
+      "id": "reminder_script_fmtduration",
+      "community": 17,
+      "community_name": "Reminder/script.js",
+      "norm_label": "fmtduration()"
+    },
+    {
+      "label": "showStatus()",
+      "file_type": "code",
+      "source_file": "Reminder/script.js",
+      "source_location": "L39",
+      "_origin": "ast",
+      "id": "reminder_script_showstatus",
+      "community": 17,
+      "community_name": "Reminder/script.js",
+      "norm_label": "showstatus()"
+    },
+    {
+      "label": "hideStatus()",
+      "file_type": "code",
+      "source_file": "Reminder/script.js",
+      "source_location": "L49",
+      "_origin": "ast",
+      "id": "reminder_script_hidestatus",
+      "community": 17,
+      "community_name": "Reminder/script.js",
+      "norm_label": "hidestatus()"
+    },
+    {
+      "label": "updateTotal()",
+      "file_type": "code",
+      "source_file": "Reminder/script.js",
+      "source_location": "L54",
+      "_origin": "ast",
+      "id": "reminder_script_updatetotal",
+      "community": 17,
+      "community_name": "Reminder/script.js",
+      "norm_label": "updatetotal()"
+    },
+    {
+      "label": "getCustomSeconds()",
+      "file_type": "code",
+      "source_file": "Reminder/script.js",
+      "source_location": "L62",
+      "_origin": "ast",
+      "id": "reminder_script_getcustomseconds",
+      "community": 17,
+      "community_name": "Reminder/script.js",
+      "norm_label": "getcustomseconds()"
+    },
+    {
+      "label": "getTimePickerSeconds()",
+      "file_type": "code",
+      "source_file": "Reminder/script.js",
+      "source_location": "L69",
+      "_origin": "ast",
+      "id": "reminder_script_gettimepickerseconds",
+      "community": 17,
+      "community_name": "Reminder/script.js",
+      "norm_label": "gettimepickerseconds()"
+    },
+    {
+      "label": "validateAndGetSeconds()",
+      "file_type": "code",
+      "source_file": "Reminder/script.js",
+      "source_location": "L94",
+      "_origin": "ast",
+      "id": "reminder_script_validateandgetseconds",
+      "community": 17,
+      "community_name": "Reminder/script.js",
+      "norm_label": "validateandgetseconds()"
+    },
+    {
+      "label": "submitReminder()",
+      "file_type": "code",
+      "source_file": "Reminder/script.js",
+      "source_location": "L132",
+      "_origin": "ast",
+      "id": "reminder_script_submitreminder",
+      "community": 17,
+      "community_name": "Reminder/script.js",
+      "norm_label": "submitreminder()"
     },
     {
       "label": "kantong.py",
@@ -1648,10 +1725,10 @@
       "source_file": "kantong.py",
       "source_location": "L1",
       "_origin": "ast",
-      "community": 11,
-      "norm_label": "kantong.py",
       "id": "kantong",
-      "community_name": "Order Calculation Logic"
+      "community": 11,
+      "community_name": "Order Calculation Logic",
+      "norm_label": "kantong.py"
     },
     {
       "label": "hitung_pesanan_ayam()",
@@ -1659,10 +1736,10 @@
       "source_file": "kantong.py",
       "source_location": "L3",
       "_origin": "ast",
-      "community": 11,
-      "norm_label": "hitung_pesanan_ayam()",
       "id": "kantong_hitung_pesanan_ayam",
-      "community_name": "Order Calculation Logic"
+      "community": 11,
+      "community_name": "Order Calculation Logic",
+      "norm_label": "hitung_pesanan_ayam()"
     },
     {
       "label": "work-push.sh",
@@ -1674,10 +1751,10 @@
         "kind": "file"
       },
       "_origin": "ast",
-      "community": 12,
-      "norm_label": "work-push.sh",
       "id": "work_push",
-      "community_name": "Deployment Scripts"
+      "community": 12,
+      "community_name": "Deployment Scripts",
+      "norm_label": "work-push.sh"
     },
     {
       "label": "work-push.sh script",
@@ -1689,10 +1766,10 @@
         "kind": "bash_entrypoint"
       },
       "_origin": "ast",
-      "community": 12,
-      "norm_label": "work-push.sh script",
       "id": "work_push_sh__entry",
-      "community_name": "Deployment Scripts"
+      "community": 12,
+      "community_name": "Deployment Scripts",
+      "norm_label": "work-push.sh script"
     },
     {
       "label": "Business Context",
@@ -1705,8 +1782,8 @@
       "contributor": null,
       "community": 13,
       "norm_label": "business context",
-      "id": "aturan_business_context",
-      "community_name": "Business Context Overview"
+      "community_name": "Business Context Overview",
+      "id": "aturan_business_context"
     },
     {
       "label": "Accounting Rules",
@@ -1719,8 +1796,8 @@
       "contributor": null,
       "community": 5,
       "norm_label": "accounting rules",
-      "id": "business_accounting_rules",
-      "community_name": "Accounting Backend System"
+      "community_name": "Accounting Backend System",
+      "id": "business_accounting_rules"
     },
     {
       "label": "Input Kas Harian Form",
@@ -1733,8 +1810,8 @@
       "contributor": null,
       "community": 5,
       "norm_label": "input kas harian form",
-      "id": "pencatatan_buku_kas_index",
-      "community_name": "Accounting Backend System"
+      "community_name": "Accounting Backend System",
+      "id": "pencatatan_buku_kas_index"
     },
     {
       "label": "Riwayat Kas Harian",
@@ -1747,8 +1824,8 @@
       "contributor": null,
       "community": 5,
       "norm_label": "riwayat kas harian",
-      "id": "pencatatan_buku_kas_riwayat",
-      "community_name": "Accounting Backend System"
+      "community_name": "Accounting Backend System",
+      "id": "pencatatan_buku_kas_riwayat"
     },
     {
       "label": "Scan Struk Belanja",
@@ -1761,8 +1838,8 @@
       "contributor": null,
       "community": 5,
       "norm_label": "scan struk belanja",
-      "id": "pencatatan_buku_kas_scan_struk",
-      "community_name": "Accounting Backend System"
+      "community_name": "Accounting Backend System",
+      "id": "pencatatan_buku_kas_scan_struk"
     },
     {
       "label": "Sisa Stok Dashboard",
@@ -1775,8 +1852,8 @@
       "contributor": null,
       "community": 5,
       "norm_label": "sisa stok dashboard",
-      "id": "pencatatan_buku_kas_stok",
-      "community_name": "Accounting Backend System"
+      "community_name": "Accounting Backend System",
+      "id": "pencatatan_buku_kas_stok"
     },
     {
       "label": "Setoran Tempura Form",
@@ -1789,8 +1866,8 @@
       "contributor": null,
       "community": 5,
       "norm_label": "setoran tempura form",
-      "id": "tempura_index",
-      "community_name": "Accounting Backend System"
+      "community_name": "Accounting Backend System",
+      "id": "tempura_index"
     },
     {
       "label": "Setoran Wonton Form",
@@ -1803,8 +1880,8 @@
       "contributor": null,
       "community": 5,
       "norm_label": "setoran wonton form",
-      "id": "wonton_index",
-      "community_name": "Accounting Backend System"
+      "community_name": "Accounting Backend System",
+      "id": "wonton_index"
     },
     {
       "label": "Onboarding Form",
@@ -1817,8 +1894,8 @@
       "contributor": null,
       "community": 15,
       "norm_label": "onboarding form",
-      "id": "formulir_karyawan_baru_index",
-      "community_name": "User Onboarding Form"
+      "community_name": "User Onboarding Form",
+      "id": "formulir_karyawan_baru_index"
     },
     {
       "label": "Main Dashboard",
@@ -1831,8 +1908,8 @@
       "contributor": null,
       "community": 14,
       "norm_label": "main dashboard",
-      "id": "dashboard_index",
-      "community_name": "Main Dashboard View"
+      "community_name": "Main Dashboard View",
+      "id": "dashboard_index"
     },
     {
       "label": "Apps Script Backend",
@@ -1845,8 +1922,8 @@
       "contributor": null,
       "community": 5,
       "norm_label": "apps script backend",
-      "id": "google_apps_script_code",
-      "community_name": "Accounting Backend System"
+      "community_name": "Accounting Backend System",
+      "id": "google_apps_script_code"
     },
     {
       "label": "Buku Kas Spreadsheet",
@@ -1859,8 +1936,8 @@
       "contributor": null,
       "community": 5,
       "norm_label": "buku kas spreadsheet",
-      "id": "google_sheets_buku_kas",
-      "community_name": "Accounting Backend System"
+      "community_name": "Accounting Backend System",
+      "id": "google_sheets_buku_kas"
     }
   ],
   "links": [
@@ -1871,9 +1948,9 @@
       "source_location": "L2",
       "weight": 1.0,
       "_origin": "ast",
-      "confidence_score": 1.0,
       "source": "dashboard_script",
-      "target": "dashboard_script_all"
+      "target": "dashboard_script_all",
+      "confidence_score": 1.0
     },
     {
       "relation": "contains",
@@ -1882,9 +1959,9 @@
       "source_location": "L102",
       "weight": 1.0,
       "_origin": "ast",
-      "confidence_score": 1.0,
       "source": "dashboard_script",
-      "target": "dashboard_script_bmgrouphtml"
+      "target": "dashboard_script_bmgrouphtml",
+      "confidence_score": 1.0
     },
     {
       "relation": "contains",
@@ -1893,9 +1970,9 @@
       "source_location": "L106",
       "weight": 1.0,
       "_origin": "ast",
-      "confidence_score": 1.0,
       "source": "dashboard_script",
-      "target": "dashboard_script_bmhtml"
+      "target": "dashboard_script_bmhtml",
+      "confidence_score": 1.0
     },
     {
       "relation": "contains",
@@ -1904,9 +1981,9 @@
       "source_location": "L64",
       "weight": 1.0,
       "_origin": "ast",
-      "confidence_score": 1.0,
       "source": "dashboard_script",
-      "target": "dashboard_script_cardhtml"
+      "target": "dashboard_script_cardhtml",
+      "confidence_score": 1.0
     },
     {
       "relation": "contains",
@@ -1915,9 +1992,9 @@
       "source_location": "L36",
       "weight": 1.0,
       "_origin": "ast",
-      "confidence_score": 1.0,
       "source": "dashboard_script",
-      "target": "dashboard_script_catcolor"
+      "target": "dashboard_script_catcolor",
+      "confidence_score": 1.0
     },
     {
       "relation": "contains",
@@ -1926,9 +2003,9 @@
       "source_location": "L46",
       "weight": 1.0,
       "_origin": "ast",
-      "confidence_score": 1.0,
       "source": "dashboard_script",
-      "target": "dashboard_script_caticon"
+      "target": "dashboard_script_caticon",
+      "confidence_score": 1.0
     },
     {
       "relation": "indirect_call",
@@ -1938,9 +2015,9 @@
       "weight": 1.0,
       "_origin": "ast",
       "context": "argument",
-      "confidence_score": 0.5,
       "source": "dashboard_script",
-      "target": "dashboard_script_closedrawer"
+      "target": "dashboard_script_closedrawer",
+      "confidence_score": 0.5
     },
     {
       "relation": "contains",
@@ -1949,9 +2026,9 @@
       "source_location": "L12",
       "weight": 1.0,
       "_origin": "ast",
-      "confidence_score": 1.0,
       "source": "dashboard_script",
-      "target": "dashboard_script_drawer"
+      "target": "dashboard_script_drawer",
+      "confidence_score": 1.0
     },
     {
       "relation": "contains",
@@ -1960,9 +2037,9 @@
       "source_location": "L14",
       "weight": 1.0,
       "_origin": "ast",
-      "confidence_score": 1.0,
       "source": "dashboard_script",
-      "target": "dashboard_script_drawerclose"
+      "target": "dashboard_script_drawerclose",
+      "confidence_score": 1.0
     },
     {
       "relation": "contains",
@@ -1971,9 +2048,9 @@
       "source_location": "L122",
       "weight": 1.0,
       "_origin": "ast",
-      "confidence_score": 1.0,
       "source": "dashboard_script",
-      "target": "dashboard_script_init"
+      "target": "dashboard_script_init",
+      "confidence_score": 1.0
     },
     {
       "relation": "contains",
@@ -1982,9 +2059,9 @@
       "source_location": "L30",
       "weight": 1.0,
       "_origin": "ast",
-      "confidence_score": 1.0,
       "source": "dashboard_script",
-      "target": "dashboard_script_isbusiness"
+      "target": "dashboard_script_isbusiness",
+      "confidence_score": 1.0
     },
     {
       "relation": "contains",
@@ -1993,9 +2070,9 @@
       "source_location": "L11",
       "weight": 1.0,
       "_origin": "ast",
-      "confidence_score": 1.0,
       "source": "dashboard_script",
-      "target": "dashboard_script_menubtn"
+      "target": "dashboard_script_menubtn",
+      "confidence_score": 1.0
     },
     {
       "relation": "contains",
@@ -2004,9 +2081,9 @@
       "source_location": "L16",
       "weight": 1.0,
       "_origin": "ast",
-      "confidence_score": 1.0,
       "source": "dashboard_script",
-      "target": "dashboard_script_opendrawer"
+      "target": "dashboard_script_opendrawer",
+      "confidence_score": 1.0
     },
     {
       "relation": "contains",
@@ -2015,9 +2092,9 @@
       "source_location": "L13",
       "weight": 1.0,
       "_origin": "ast",
-      "confidence_score": 1.0,
       "source": "dashboard_script",
-      "target": "dashboard_script_overlay"
+      "target": "dashboard_script_overlay",
+      "confidence_score": 1.0
     },
     {
       "relation": "contains",
@@ -2026,9 +2103,9 @@
       "source_location": "L84",
       "weight": 1.0,
       "_origin": "ast",
-      "confidence_score": 1.0,
       "source": "dashboard_script",
-      "target": "dashboard_script_render"
+      "target": "dashboard_script_render",
+      "confidence_score": 1.0
     },
     {
       "relation": "calls",
@@ -2038,9 +2115,9 @@
       "source_location": "L109",
       "weight": 1.0,
       "_origin": "ast",
-      "confidence_score": 1.0,
       "source": "dashboard_script_bmhtml",
-      "target": "dashboard_script_isbusiness"
+      "target": "dashboard_script_isbusiness",
+      "confidence_score": 1.0
     },
     {
       "relation": "calls",
@@ -2050,9 +2127,9 @@
       "source_location": "L89",
       "weight": 1.0,
       "_origin": "ast",
-      "confidence_score": 1.0,
       "source": "dashboard_script_render",
-      "target": "dashboard_script_isbusiness"
+      "target": "dashboard_script_isbusiness",
+      "confidence_score": 1.0
     },
     {
       "relation": "calls",
@@ -2062,9 +2139,9 @@
       "source_location": "L67",
       "weight": 1.0,
       "_origin": "ast",
-      "confidence_score": 1.0,
       "source": "dashboard_script_cardhtml",
-      "target": "dashboard_script_catcolor"
+      "target": "dashboard_script_catcolor",
+      "confidence_score": 1.0
     },
     {
       "relation": "calls",
@@ -2074,9 +2151,9 @@
       "source_location": "L68",
       "weight": 1.0,
       "_origin": "ast",
-      "confidence_score": 1.0,
       "source": "dashboard_script_cardhtml",
-      "target": "dashboard_script_caticon"
+      "target": "dashboard_script_caticon",
+      "confidence_score": 1.0
     },
     {
       "relation": "calls",
@@ -2086,9 +2163,9 @@
       "source_location": "L94",
       "weight": 1.0,
       "_origin": "ast",
-      "confidence_score": 1.0,
       "source": "dashboard_script_render",
-      "target": "dashboard_script_cardhtml"
+      "target": "dashboard_script_cardhtml",
+      "confidence_score": 1.0
     },
     {
       "relation": "calls",
@@ -2098,9 +2175,9 @@
       "source_location": "L128",
       "weight": 1.0,
       "_origin": "ast",
-      "confidence_score": 1.0,
       "source": "dashboard_script_init",
-      "target": "dashboard_script_render"
+      "target": "dashboard_script_render",
+      "confidence_score": 1.0
     },
     {
       "relation": "calls",
@@ -2110,9 +2187,9 @@
       "source_location": "L114",
       "weight": 1.0,
       "_origin": "ast",
-      "confidence_score": 1.0,
       "source": "dashboard_script_bmhtml",
-      "target": "dashboard_script_bmgrouphtml"
+      "target": "dashboard_script_bmgrouphtml",
+      "confidence_score": 1.0
     },
     {
       "relation": "calls",
@@ -2122,9 +2199,9 @@
       "source_location": "L130",
       "weight": 1.0,
       "_origin": "ast",
-      "confidence_score": 1.0,
       "source": "dashboard_script_init",
-      "target": "dashboard_script_bmhtml"
+      "target": "dashboard_script_bmhtml",
+      "confidence_score": 1.0
     },
     {
       "relation": "contains",
@@ -2133,9 +2210,9 @@
       "source_location": "L42",
       "weight": 1.0,
       "_origin": "ast",
-      "confidence_score": 1.0,
       "source": "formulir_karyawan_baru_script",
-      "target": "formulir_karyawan_baru_script_compressimage"
+      "target": "formulir_karyawan_baru_script_compressimage",
+      "confidence_score": 1.0
     },
     {
       "relation": "contains",
@@ -2144,9 +2221,9 @@
       "source_location": "L4",
       "weight": 1.0,
       "_origin": "ast",
-      "confidence_score": 1.0,
       "source": "formulir_karyawan_baru_script",
-      "target": "formulir_karyawan_baru_script_form"
+      "target": "formulir_karyawan_baru_script_form",
+      "confidence_score": 1.0
     },
     {
       "relation": "contains",
@@ -2155,9 +2232,9 @@
       "source_location": "L10",
       "weight": 1.0,
       "_origin": "ast",
-      "confidence_score": 1.0,
       "source": "formulir_karyawan_baru_script",
-      "target": "formulir_karyawan_baru_script_hubunganchips"
+      "target": "formulir_karyawan_baru_script_hubunganchips",
+      "confidence_score": 1.0
     },
     {
       "relation": "contains",
@@ -2166,9 +2243,9 @@
       "source_location": "L11",
       "weight": 1.0,
       "_origin": "ast",
-      "confidence_score": 1.0,
       "source": "formulir_karyawan_baru_script",
-      "target": "formulir_karyawan_baru_script_hubunganinput"
+      "target": "formulir_karyawan_baru_script_hubunganinput",
+      "confidence_score": 1.0
     },
     {
       "relation": "contains",
@@ -2177,9 +2254,9 @@
       "source_location": "L12",
       "weight": 1.0,
       "_origin": "ast",
-      "confidence_score": 1.0,
       "source": "formulir_karyawan_baru_script",
-      "target": "formulir_karyawan_baru_script_hubunganlainnya"
+      "target": "formulir_karyawan_baru_script_hubunganlainnya",
+      "confidence_score": 1.0
     },
     {
       "relation": "contains",
@@ -2188,9 +2265,9 @@
       "source_location": "L5",
       "weight": 1.0,
       "_origin": "ast",
-      "confidence_score": 1.0,
       "source": "formulir_karyawan_baru_script",
-      "target": "formulir_karyawan_baru_script_submitbtn"
+      "target": "formulir_karyawan_baru_script_submitbtn",
+      "confidence_score": 1.0
     },
     {
       "relation": "contains",
@@ -2199,9 +2276,9 @@
       "source_location": "L6",
       "weight": 1.0,
       "_origin": "ast",
-      "confidence_score": 1.0,
       "source": "formulir_karyawan_baru_script",
-      "target": "formulir_karyawan_baru_script_submitlabel"
+      "target": "formulir_karyawan_baru_script_submitlabel",
+      "confidence_score": 1.0
     },
     {
       "relation": "contains",
@@ -2210,9 +2287,9 @@
       "source_location": "L7",
       "weight": 1.0,
       "_origin": "ast",
-      "confidence_score": 1.0,
       "source": "formulir_karyawan_baru_script",
-      "target": "formulir_karyawan_baru_script_successmsg"
+      "target": "formulir_karyawan_baru_script_successmsg",
+      "confidence_score": 1.0
     },
     {
       "relation": "contains",
@@ -2221,31 +2298,31 @@
       "source_location": "L37",
       "weight": 1.0,
       "_origin": "ast",
-      "confidence_score": 1.0,
       "source": "formulir_karyawan_baru_script",
-      "target": "formulir_karyawan_baru_script_uploadedimages"
+      "target": "formulir_karyawan_baru_script_uploadedimages",
+      "confidence_score": 1.0
     },
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "Pencatatan-Buku-Kas/Riwayat/script.js",
-      "source_location": "L102",
+      "source_location": "L82",
       "weight": 1.0,
       "_origin": "ast",
-      "confidence_score": 1.0,
       "source": "pencatatan_buku_kas_riwayat_script",
-      "target": "pencatatan_buku_kas_riwayat_script_allrowstoday"
+      "target": "pencatatan_buku_kas_riwayat_script_allrowstoday",
+      "confidence_score": 1.0
     },
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "Pencatatan-Buku-Kas/Riwayat/script.js",
-      "source_location": "L160",
+      "source_location": "L140",
       "weight": 1.0,
       "_origin": "ast",
-      "confidence_score": 1.0,
       "source": "pencatatan_buku_kas_riwayat_script",
-      "target": "pencatatan_buku_kas_riwayat_script_applyfilterandrendercards"
+      "target": "pencatatan_buku_kas_riwayat_script_applyfilterandrendercards",
+      "confidence_score": 1.0
     },
     {
       "relation": "contains",
@@ -2254,9 +2331,9 @@
       "source_location": "L47",
       "weight": 1.0,
       "_origin": "ast",
-      "confidence_score": 1.0,
       "source": "pencatatan_buku_kas_riwayat_script",
-      "target": "pencatatan_buku_kas_riwayat_script_btnbataledit"
+      "target": "pencatatan_buku_kas_riwayat_script_btnbataledit",
+      "confidence_score": 1.0
     },
     {
       "relation": "contains",
@@ -2265,9 +2342,9 @@
       "source_location": "L54",
       "weight": 1.0,
       "_origin": "ast",
-      "confidence_score": 1.0,
       "source": "pencatatan_buku_kas_riwayat_script",
-      "target": "pencatatan_buku_kas_riwayat_script_btnbatalhapus"
+      "target": "pencatatan_buku_kas_riwayat_script_btnbatalhapus",
+      "confidence_score": 1.0
     },
     {
       "relation": "contains",
@@ -2276,9 +2353,9 @@
       "source_location": "L27",
       "weight": 1.0,
       "_origin": "ast",
-      "confidence_score": 1.0,
       "source": "pencatatan_buku_kas_riwayat_script",
-      "target": "pencatatan_buku_kas_riwayat_script_btnhariini"
+      "target": "pencatatan_buku_kas_riwayat_script_btnhariini",
+      "confidence_score": 1.0
     },
     {
       "relation": "contains",
@@ -2287,9 +2364,9 @@
       "source_location": "L26",
       "weight": 1.0,
       "_origin": "ast",
-      "confidence_score": 1.0,
       "source": "pencatatan_buku_kas_riwayat_script",
-      "target": "pencatatan_buku_kas_riwayat_script_btnkemarin"
+      "target": "pencatatan_buku_kas_riwayat_script_btnkemarin",
+      "confidence_score": 1.0
     },
     {
       "relation": "contains",
@@ -2298,9 +2375,9 @@
       "source_location": "L55",
       "weight": 1.0,
       "_origin": "ast",
-      "confidence_score": 1.0,
       "source": "pencatatan_buku_kas_riwayat_script",
-      "target": "pencatatan_buku_kas_riwayat_script_btnkonfirmhapus"
+      "target": "pencatatan_buku_kas_riwayat_script_btnkonfirmhapus",
+      "confidence_score": 1.0
     },
     {
       "relation": "contains",
@@ -2309,9 +2386,9 @@
       "source_location": "L28",
       "weight": 1.0,
       "_origin": "ast",
-      "confidence_score": 1.0,
       "source": "pencatatan_buku_kas_riwayat_script",
-      "target": "pencatatan_buku_kas_riwayat_script_btnrefresh"
+      "target": "pencatatan_buku_kas_riwayat_script_btnrefresh",
+      "confidence_score": 1.0
     },
     {
       "relation": "contains",
@@ -2320,9 +2397,9 @@
       "source_location": "L48",
       "weight": 1.0,
       "_origin": "ast",
-      "confidence_score": 1.0,
       "source": "pencatatan_buku_kas_riwayat_script",
-      "target": "pencatatan_buku_kas_riwayat_script_btnsimpanedit"
+      "target": "pencatatan_buku_kas_riwayat_script_btnsimpanedit",
+      "confidence_score": 1.0
     },
     {
       "relation": "contains",
@@ -2331,33 +2408,33 @@
       "source_location": "L35",
       "weight": 1.0,
       "_origin": "ast",
-      "confidence_score": 1.0,
       "source": "pencatatan_buku_kas_riwayat_script",
-      "target": "pencatatan_buku_kas_riwayat_script_cardlist"
+      "target": "pencatatan_buku_kas_riwayat_script_cardlist",
+      "confidence_score": 1.0
     },
     {
       "relation": "indirect_call",
       "confidence": "INFERRED",
       "source_file": "Pencatatan-Buku-Kas/Riwayat/script.js",
-      "source_location": "L462",
+      "source_location": "L436",
       "weight": 1.0,
       "_origin": "ast",
       "context": "argument",
-      "confidence_score": 0.5,
       "source": "pencatatan_buku_kas_riwayat_script",
-      "target": "pencatatan_buku_kas_riwayat_script_closedeletemodal"
+      "target": "pencatatan_buku_kas_riwayat_script_closedeletemodal",
+      "confidence_score": 0.5
     },
     {
       "relation": "indirect_call",
       "confidence": "INFERRED",
       "source_file": "Pencatatan-Buku-Kas/Riwayat/script.js",
-      "source_location": "L380",
+      "source_location": "L354",
       "weight": 1.0,
       "_origin": "ast",
       "context": "argument",
-      "confidence_score": 0.5,
       "source": "pencatatan_buku_kas_riwayat_script",
-      "target": "pencatatan_buku_kas_riwayat_script_closeeditmodal"
+      "target": "pencatatan_buku_kas_riwayat_script_closeeditmodal",
+      "confidence_score": 0.5
     },
     {
       "relation": "contains",
@@ -2366,9 +2443,9 @@
       "source_location": "L16",
       "weight": 1.0,
       "_origin": "ast",
-      "confidence_score": 1.0,
       "source": "pencatatan_buku_kas_riwayat_script",
-      "target": "pencatatan_buku_kas_riwayat_script_currentdate"
+      "target": "pencatatan_buku_kas_riwayat_script_currentdate",
+      "confidence_score": 1.0
     },
     {
       "relation": "contains",
@@ -2377,9 +2454,9 @@
       "source_location": "L17",
       "weight": 1.0,
       "_origin": "ast",
-      "confidence_score": 1.0,
       "source": "pencatatan_buku_kas_riwayat_script",
-      "target": "pencatatan_buku_kas_riwayat_script_currentrows"
+      "target": "pencatatan_buku_kas_riwayat_script_currentrows",
+      "confidence_score": 1.0
     },
     {
       "relation": "contains",
@@ -2388,9 +2465,9 @@
       "source_location": "L25",
       "weight": 1.0,
       "_origin": "ast",
-      "confidence_score": 1.0,
       "source": "pencatatan_buku_kas_riwayat_script",
-      "target": "pencatatan_buku_kas_riwayat_script_datepicker"
+      "target": "pencatatan_buku_kas_riwayat_script_datepicker",
+      "confidence_score": 1.0
     },
     {
       "relation": "contains",
@@ -2399,9 +2476,9 @@
       "source_location": "L52",
       "weight": 1.0,
       "_origin": "ast",
-      "confidence_score": 1.0,
       "source": "pencatatan_buku_kas_riwayat_script",
-      "target": "pencatatan_buku_kas_riwayat_script_deletedetail"
+      "target": "pencatatan_buku_kas_riwayat_script_deletedetail",
+      "confidence_score": 1.0
     },
     {
       "relation": "contains",
@@ -2410,9 +2487,9 @@
       "source_location": "L50",
       "weight": 1.0,
       "_origin": "ast",
-      "confidence_score": 1.0,
       "source": "pencatatan_buku_kas_riwayat_script",
-      "target": "pencatatan_buku_kas_riwayat_script_deletemodal"
+      "target": "pencatatan_buku_kas_riwayat_script_deletemodal",
+      "confidence_score": 1.0
     },
     {
       "relation": "contains",
@@ -2421,9 +2498,9 @@
       "source_location": "L53",
       "weight": 1.0,
       "_origin": "ast",
-      "confidence_score": 1.0,
       "source": "pencatatan_buku_kas_riwayat_script",
-      "target": "pencatatan_buku_kas_riwayat_script_deletestatus"
+      "target": "pencatatan_buku_kas_riwayat_script_deletestatus",
+      "confidence_score": 1.0
     },
     {
       "relation": "contains",
@@ -2432,9 +2509,9 @@
       "source_location": "L51",
       "weight": 1.0,
       "_origin": "ast",
-      "confidence_score": 1.0,
       "source": "pencatatan_buku_kas_riwayat_script",
-      "target": "pencatatan_buku_kas_riwayat_script_deletewarning"
+      "target": "pencatatan_buku_kas_riwayat_script_deletewarning",
+      "confidence_score": 1.0
     },
     {
       "relation": "contains",
@@ -2443,9 +2520,9 @@
       "source_location": "L43",
       "weight": 1.0,
       "_origin": "ast",
-      "confidence_score": 1.0,
       "source": "pencatatan_buku_kas_riwayat_script",
-      "target": "pencatatan_buku_kas_riwayat_script_editbelanjadi"
+      "target": "pencatatan_buku_kas_riwayat_script_editbelanjadi",
+      "confidence_score": 1.0
     },
     {
       "relation": "contains",
@@ -2454,9 +2531,9 @@
       "source_location": "L45",
       "weight": 1.0,
       "_origin": "ast",
-      "confidence_score": 1.0,
       "source": "pencatatan_buku_kas_riwayat_script",
-      "target": "pencatatan_buku_kas_riwayat_script_editjumlah"
+      "target": "pencatatan_buku_kas_riwayat_script_editjumlah",
+      "confidence_score": 1.0
     },
     {
       "relation": "contains",
@@ -2465,9 +2542,9 @@
       "source_location": "L42",
       "weight": 1.0,
       "_origin": "ast",
-      "confidence_score": 1.0,
       "source": "pencatatan_buku_kas_riwayat_script",
-      "target": "pencatatan_buku_kas_riwayat_script_editkategori"
+      "target": "pencatatan_buku_kas_riwayat_script_editkategori",
+      "confidence_score": 1.0
     },
     {
       "relation": "contains",
@@ -2476,9 +2553,9 @@
       "source_location": "L44",
       "weight": 1.0,
       "_origin": "ast",
-      "confidence_score": 1.0,
       "source": "pencatatan_buku_kas_riwayat_script",
-      "target": "pencatatan_buku_kas_riwayat_script_editketerangan"
+      "target": "pencatatan_buku_kas_riwayat_script_editketerangan",
+      "confidence_score": 1.0
     },
     {
       "relation": "contains",
@@ -2487,9 +2564,9 @@
       "source_location": "L40",
       "weight": 1.0,
       "_origin": "ast",
-      "confidence_score": 1.0,
       "source": "pencatatan_buku_kas_riwayat_script",
-      "target": "pencatatan_buku_kas_riwayat_script_editmodal"
+      "target": "pencatatan_buku_kas_riwayat_script_editmodal",
+      "confidence_score": 1.0
     },
     {
       "relation": "contains",
@@ -2498,9 +2575,9 @@
       "source_location": "L46",
       "weight": 1.0,
       "_origin": "ast",
-      "confidence_score": 1.0,
       "source": "pencatatan_buku_kas_riwayat_script",
-      "target": "pencatatan_buku_kas_riwayat_script_editstatus"
+      "target": "pencatatan_buku_kas_riwayat_script_editstatus",
+      "confidence_score": 1.0
     },
     {
       "relation": "contains",
@@ -2509,9 +2586,9 @@
       "source_location": "L41",
       "weight": 1.0,
       "_origin": "ast",
-      "confidence_score": 1.0,
       "source": "pencatatan_buku_kas_riwayat_script",
-      "target": "pencatatan_buku_kas_riwayat_script_editwarning"
+      "target": "pencatatan_buku_kas_riwayat_script_editwarning",
+      "confidence_score": 1.0
     },
     {
       "relation": "contains",
@@ -2520,9 +2597,9 @@
       "source_location": "L33",
       "weight": 1.0,
       "_origin": "ast",
-      "confidence_score": 1.0,
       "source": "pencatatan_buku_kas_riwayat_script",
-      "target": "pencatatan_buku_kas_riwayat_script_emptymsg"
+      "target": "pencatatan_buku_kas_riwayat_script_emptymsg",
+      "confidence_score": 1.0
     },
     {
       "relation": "contains",
@@ -2531,86 +2608,53 @@
       "source_location": "L34",
       "weight": 1.0,
       "_origin": "ast",
-      "confidence_score": 1.0,
       "source": "pencatatan_buku_kas_riwayat_script",
-      "target": "pencatatan_buku_kas_riwayat_script_errormsg"
+      "target": "pencatatan_buku_kas_riwayat_script_errormsg",
+      "confidence_score": 1.0
     },
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "Pencatatan-Buku-Kas/Riwayat/script.js",
-      "source_location": "L225",
+      "source_location": "L206",
       "weight": 1.0,
       "_origin": "ast",
-      "confidence_score": 1.0,
       "source": "pencatatan_buku_kas_riwayat_script",
-      "target": "pencatatan_buku_kas_riwayat_script_escapehtml"
+      "target": "pencatatan_buku_kas_riwayat_script_fetchlist",
+      "confidence_score": 1.0
     },
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "Pencatatan-Buku-Kas/Riwayat/script.js",
-      "source_location": "L232",
+      "source_location": "L65",
       "weight": 1.0,
       "_origin": "ast",
-      "confidence_score": 1.0,
       "source": "pencatatan_buku_kas_riwayat_script",
-      "target": "pencatatan_buku_kas_riwayat_script_fetchlist"
+      "target": "pencatatan_buku_kas_riwayat_script_formatrupiah",
+      "confidence_score": 1.0
     },
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "Pencatatan-Buku-Kas/Riwayat/script.js",
-      "source_location": "L85",
+      "source_location": "L231",
       "weight": 1.0,
       "_origin": "ast",
-      "confidence_score": 1.0,
       "source": "pencatatan_buku_kas_riwayat_script",
-      "target": "pencatatan_buku_kas_riwayat_script_formatrupiah"
+      "target": "pencatatan_buku_kas_riwayat_script_gotodate",
+      "confidence_score": 1.0
     },
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "Pencatatan-Buku-Kas/Riwayat/script.js",
-      "source_location": "L60",
+      "source_location": "L61",
       "weight": 1.0,
       "_origin": "ast",
-      "confidence_score": 1.0,
       "source": "pencatatan_buku_kas_riwayat_script",
-      "target": "pencatatan_buku_kas_riwayat_script_formattanggalapi"
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "Pencatatan-Buku-Kas/Riwayat/script.js",
-      "source_location": "L66",
-      "weight": 1.0,
-      "_origin": "ast",
-      "confidence_score": 1.0,
-      "source": "pencatatan_buku_kas_riwayat_script",
-      "target": "pencatatan_buku_kas_riwayat_script_formattanggallabel"
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "Pencatatan-Buku-Kas/Riwayat/script.js",
-      "source_location": "L257",
-      "weight": 1.0,
-      "_origin": "ast",
-      "confidence_score": 1.0,
-      "source": "pencatatan_buku_kas_riwayat_script",
-      "target": "pencatatan_buku_kas_riwayat_script_gotodate"
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "Pencatatan-Buku-Kas/Riwayat/script.js",
-      "source_location": "L81",
-      "weight": 1.0,
-      "_origin": "ast",
-      "confidence_score": 1.0,
-      "source": "pencatatan_buku_kas_riwayat_script",
-      "target": "pencatatan_buku_kas_riwayat_script_issamedate"
+      "target": "pencatatan_buku_kas_riwayat_script_issamedate",
+      "confidence_score": 1.0
     },
     {
       "relation": "contains",
@@ -2619,9 +2663,9 @@
       "source_location": "L12",
       "weight": 1.0,
       "_origin": "ast",
-      "confidence_score": 1.0,
       "source": "pencatatan_buku_kas_riwayat_script",
-      "target": "pencatatan_buku_kas_riwayat_script_kategori_keluar"
+      "target": "pencatatan_buku_kas_riwayat_script_kategori_keluar",
+      "confidence_score": 1.0
     },
     {
       "relation": "contains",
@@ -2630,20 +2674,20 @@
       "source_location": "L9",
       "weight": 1.0,
       "_origin": "ast",
-      "confidence_score": 1.0,
       "source": "pencatatan_buku_kas_riwayat_script",
-      "target": "pencatatan_buku_kas_riwayat_script_kategori_masuk"
+      "target": "pencatatan_buku_kas_riwayat_script_kategori_masuk",
+      "confidence_score": 1.0
     },
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "Pencatatan-Buku-Kas/Riwayat/script.js",
-      "source_location": "L99",
+      "source_location": "L79",
       "weight": 1.0,
       "_origin": "ast",
-      "confidence_score": 1.0,
       "source": "pencatatan_buku_kas_riwayat_script",
-      "target": "pencatatan_buku_kas_riwayat_script_kategorifilterbar"
+      "target": "pencatatan_buku_kas_riwayat_script_kategorifilterbar",
+      "confidence_score": 1.0
     },
     {
       "relation": "contains",
@@ -2652,9 +2696,9 @@
       "source_location": "L30",
       "weight": 1.0,
       "_origin": "ast",
-      "confidence_score": 1.0,
       "source": "pencatatan_buku_kas_riwayat_script",
-      "target": "pencatatan_buku_kas_riwayat_script_livestatus"
+      "target": "pencatatan_buku_kas_riwayat_script_livestatus",
+      "confidence_score": 1.0
     },
     {
       "relation": "contains",
@@ -2663,65 +2707,65 @@
       "source_location": "L32",
       "weight": 1.0,
       "_origin": "ast",
-      "confidence_score": 1.0,
       "source": "pencatatan_buku_kas_riwayat_script",
-      "target": "pencatatan_buku_kas_riwayat_script_loadingmsg"
+      "target": "pencatatan_buku_kas_riwayat_script_loadingmsg",
+      "confidence_score": 1.0
     },
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "Pencatatan-Buku-Kas/Riwayat/script.js",
-      "source_location": "L432",
+      "source_location": "L406",
       "weight": 1.0,
       "_origin": "ast",
-      "confidence_score": 1.0,
       "source": "pencatatan_buku_kas_riwayat_script",
-      "target": "pencatatan_buku_kas_riwayat_script_opendeletemodal"
+      "target": "pencatatan_buku_kas_riwayat_script_opendeletemodal",
+      "confidence_score": 1.0
     },
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "Pencatatan-Buku-Kas/Riwayat/script.js",
-      "source_location": "L348",
+      "source_location": "L322",
       "weight": 1.0,
       "_origin": "ast",
-      "confidence_score": 1.0,
       "source": "pencatatan_buku_kas_riwayat_script",
-      "target": "pencatatan_buku_kas_riwayat_script_openeditmodal"
+      "target": "pencatatan_buku_kas_riwayat_script_openeditmodal",
+      "confidence_score": 1.0
     },
     {
       "relation": "indirect_call",
       "confidence": "INFERRED",
       "source_file": "Pencatatan-Buku-Kas/Riwayat/script.js",
-      "source_location": "L316",
+      "source_location": "L290",
       "weight": 1.0,
       "_origin": "ast",
       "context": "argument",
-      "confidence_score": 0.5,
       "source": "pencatatan_buku_kas_riwayat_script",
-      "target": "pencatatan_buku_kas_riwayat_script_pollmarker"
+      "target": "pencatatan_buku_kas_riwayat_script_pollmarker",
+      "confidence_score": 0.5
     },
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "Pencatatan-Buku-Kas/Riwayat/script.js",
-      "source_location": "L319",
+      "source_location": "L293",
       "weight": 1.0,
       "_origin": "ast",
-      "confidence_score": 1.0,
       "source": "pencatatan_buku_kas_riwayat_script",
-      "target": "pencatatan_buku_kas_riwayat_script_populatekategoriselect"
+      "target": "pencatatan_buku_kas_riwayat_script_populatekategoriselect",
+      "confidence_score": 1.0
     },
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "Pencatatan-Buku-Kas/Riwayat/script.js",
-      "source_location": "L253",
+      "source_location": "L227",
       "weight": 1.0,
       "_origin": "ast",
-      "confidence_score": 1.0,
       "source": "pencatatan_buku_kas_riwayat_script",
-      "target": "pencatatan_buku_kas_riwayat_script_refreshcurrent"
+      "target": "pencatatan_buku_kas_riwayat_script_refreshcurrent",
+      "confidence_score": 1.0
     },
     {
       "relation": "contains",
@@ -2730,42 +2774,42 @@
       "source_location": "L29",
       "weight": 1.0,
       "_origin": "ast",
-      "confidence_score": 1.0,
       "source": "pencatatan_buku_kas_riwayat_script",
-      "target": "pencatatan_buku_kas_riwayat_script_refreshicon"
+      "target": "pencatatan_buku_kas_riwayat_script_refreshicon",
+      "confidence_score": 1.0
     },
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "Pencatatan-Buku-Kas/Riwayat/script.js",
-      "source_location": "L112",
+      "source_location": "L92",
       "weight": 1.0,
       "_origin": "ast",
-      "confidence_score": 1.0,
       "source": "pencatatan_buku_kas_riwayat_script",
-      "target": "pencatatan_buku_kas_riwayat_script_renderkategorifilterbar"
+      "target": "pencatatan_buku_kas_riwayat_script_renderkategorifilterbar",
+      "confidence_score": 1.0
     },
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "Pencatatan-Buku-Kas/Riwayat/script.js",
-      "source_location": "L105",
+      "source_location": "L85",
       "weight": 1.0,
       "_origin": "ast",
-      "confidence_score": 1.0,
       "source": "pencatatan_buku_kas_riwayat_script",
-      "target": "pencatatan_buku_kas_riwayat_script_renderlist"
+      "target": "pencatatan_buku_kas_riwayat_script_renderlist",
+      "confidence_score": 1.0
     },
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "Pencatatan-Buku-Kas/Riwayat/script.js",
-      "source_location": "L90",
+      "source_location": "L70",
       "weight": 1.0,
       "_origin": "ast",
-      "confidence_score": 1.0,
       "source": "pencatatan_buku_kas_riwayat_script",
-      "target": "pencatatan_buku_kas_riwayat_script_setloading"
+      "target": "pencatatan_buku_kas_riwayat_script_setloading",
+      "confidence_score": 1.0
     },
     {
       "relation": "contains",
@@ -2774,9 +2818,9 @@
       "source_location": "L36",
       "weight": 1.0,
       "_origin": "ast",
-      "confidence_score": 1.0,
       "source": "pencatatan_buku_kas_riwayat_script",
-      "target": "pencatatan_buku_kas_riwayat_script_summarybar"
+      "target": "pencatatan_buku_kas_riwayat_script_summarybar",
+      "confidence_score": 1.0
     },
     {
       "relation": "contains",
@@ -2785,9 +2829,9 @@
       "source_location": "L38",
       "weight": 1.0,
       "_origin": "ast",
-      "confidence_score": 1.0,
       "source": "pencatatan_buku_kas_riwayat_script",
-      "target": "pencatatan_buku_kas_riwayat_script_summarykeluar"
+      "target": "pencatatan_buku_kas_riwayat_script_summarykeluar",
+      "confidence_score": 1.0
     },
     {
       "relation": "contains",
@@ -2796,9 +2840,9 @@
       "source_location": "L37",
       "weight": 1.0,
       "_origin": "ast",
-      "confidence_score": 1.0,
       "source": "pencatatan_buku_kas_riwayat_script",
-      "target": "pencatatan_buku_kas_riwayat_script_summarymasuk"
+      "target": "pencatatan_buku_kas_riwayat_script_summarymasuk",
+      "confidence_score": 1.0
     },
     {
       "relation": "contains",
@@ -2807,20 +2851,9 @@
       "source_location": "L24",
       "weight": 1.0,
       "_origin": "ast",
-      "confidence_score": 1.0,
       "source": "pencatatan_buku_kas_riwayat_script",
-      "target": "pencatatan_buku_kas_riwayat_script_tanggallabel"
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "Pencatatan-Buku-Kas/Riwayat/script.js",
-      "source_location": "L73",
-      "weight": 1.0,
-      "_origin": "ast",
-      "confidence_score": 1.0,
-      "source": "pencatatan_buku_kas_riwayat_script",
-      "target": "pencatatan_buku_kas_riwayat_script_todateinputvalue"
+      "target": "pencatatan_buku_kas_riwayat_script_tanggallabel",
+      "confidence_score": 1.0
     },
     {
       "relation": "references",
@@ -2828,7 +2861,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "Pencatatan-Buku-Kas/Riwayat/script.js",
-      "source_location": "L337",
+      "source_location": "L311",
       "weight": 1.0,
       "_origin": "ast",
       "source": "pencatatan_buku_kas_riwayat_script_populatekategoriselect",
@@ -2839,156 +2872,36 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "Pencatatan-Buku-Kas/Riwayat/script.js",
-      "source_location": "L237",
+      "source_location": "L161",
       "weight": 1.0,
       "_origin": "ast",
-      "confidence_score": 1.0,
-      "source": "pencatatan_buku_kas_riwayat_script_fetchlist",
-      "target": "pencatatan_buku_kas_riwayat_script_formattanggalapi"
-    },
-    {
-      "relation": "calls",
-      "context": "call",
-      "confidence": "EXTRACTED",
-      "source_file": "Pencatatan-Buku-Kas/Riwayat/script.js",
-      "source_location": "L82",
-      "weight": 1.0,
-      "_origin": "ast",
-      "confidence_score": 1.0,
-      "source": "pencatatan_buku_kas_riwayat_script_issamedate",
-      "target": "pencatatan_buku_kas_riwayat_script_formattanggalapi"
-    },
-    {
-      "relation": "calls",
-      "context": "call",
-      "confidence": "EXTRACTED",
-      "source_file": "Pencatatan-Buku-Kas/Riwayat/script.js",
-      "source_location": "L260",
-      "weight": 1.0,
-      "_origin": "ast",
-      "confidence_score": 1.0,
-      "source": "pencatatan_buku_kas_riwayat_script_gotodate",
-      "target": "pencatatan_buku_kas_riwayat_script_formattanggallabel"
-    },
-    {
-      "relation": "calls",
-      "context": "call",
-      "confidence": "EXTRACTED",
-      "source_file": "Pencatatan-Buku-Kas/Riwayat/script.js",
-      "source_location": "L261",
-      "weight": 1.0,
-      "_origin": "ast",
-      "confidence_score": 1.0,
-      "source": "pencatatan_buku_kas_riwayat_script_gotodate",
-      "target": "pencatatan_buku_kas_riwayat_script_todateinputvalue"
-    },
-    {
-      "relation": "calls",
-      "context": "call",
-      "confidence": "EXTRACTED",
-      "source_file": "Pencatatan-Buku-Kas/Riwayat/script.js",
-      "source_location": "L181",
-      "weight": 1.0,
-      "_origin": "ast",
-      "confidence_score": 1.0,
       "source": "pencatatan_buku_kas_riwayat_script_applyfilterandrendercards",
-      "target": "pencatatan_buku_kas_riwayat_script_formatrupiah"
+      "target": "pencatatan_buku_kas_riwayat_script_formatrupiah",
+      "confidence_score": 1.0
     },
     {
       "relation": "calls",
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "Pencatatan-Buku-Kas/Riwayat/script.js",
-      "source_location": "L451",
+      "source_location": "L425",
       "weight": 1.0,
       "_origin": "ast",
-      "confidence_score": 1.0,
       "source": "pencatatan_buku_kas_riwayat_script_opendeletemodal",
-      "target": "pencatatan_buku_kas_riwayat_script_formatrupiah"
+      "target": "pencatatan_buku_kas_riwayat_script_formatrupiah",
+      "confidence_score": 1.0
     },
     {
       "relation": "calls",
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "Pencatatan-Buku-Kas/Riwayat/script.js",
-      "source_location": "L233",
+      "source_location": "L207",
       "weight": 1.0,
       "_origin": "ast",
-      "confidence_score": 1.0,
       "source": "pencatatan_buku_kas_riwayat_script_fetchlist",
-      "target": "pencatatan_buku_kas_riwayat_script_setloading"
-    },
-    {
-      "relation": "calls",
-      "context": "call",
-      "confidence": "EXTRACTED",
-      "source_file": "Pencatatan-Buku-Kas/Riwayat/script.js",
-      "source_location": "L244",
-      "weight": 1.0,
-      "_origin": "ast",
-      "confidence_score": 1.0,
-      "source": "pencatatan_buku_kas_riwayat_script_fetchlist",
-      "target": "pencatatan_buku_kas_riwayat_script_renderlist"
-    },
-    {
-      "relation": "calls",
-      "context": "call",
-      "confidence": "EXTRACTED",
-      "source_file": "Pencatatan-Buku-Kas/Riwayat/script.js",
-      "source_location": "L108",
-      "weight": 1.0,
-      "_origin": "ast",
-      "confidence_score": 1.0,
-      "source": "pencatatan_buku_kas_riwayat_script_renderlist",
-      "target": "pencatatan_buku_kas_riwayat_script_applyfilterandrendercards"
-    },
-    {
-      "relation": "calls",
-      "context": "call",
-      "confidence": "EXTRACTED",
-      "source_file": "Pencatatan-Buku-Kas/Riwayat/script.js",
-      "source_location": "L107",
-      "weight": 1.0,
-      "_origin": "ast",
-      "confidence_score": 1.0,
-      "source": "pencatatan_buku_kas_riwayat_script_renderlist",
-      "target": "pencatatan_buku_kas_riwayat_script_renderkategorifilterbar"
-    },
-    {
-      "relation": "calls",
-      "context": "call",
-      "confidence": "EXTRACTED",
-      "source_file": "Pencatatan-Buku-Kas/Riwayat/script.js",
-      "source_location": "L141",
-      "weight": 1.0,
-      "_origin": "ast",
-      "confidence_score": 1.0,
-      "source": "pencatatan_buku_kas_riwayat_script_renderkategorifilterbar",
-      "target": "pencatatan_buku_kas_riwayat_script_applyfilterandrendercards"
-    },
-    {
-      "relation": "calls",
-      "context": "call",
-      "confidence": "EXTRACTED",
-      "source_file": "Pencatatan-Buku-Kas/Riwayat/script.js",
-      "source_location": "L206",
-      "weight": 1.0,
-      "_origin": "ast",
-      "confidence_score": 1.0,
-      "source": "pencatatan_buku_kas_riwayat_script_applyfilterandrendercards",
-      "target": "pencatatan_buku_kas_riwayat_script_escapehtml"
-    },
-    {
-      "relation": "calls",
-      "context": "call",
-      "confidence": "EXTRACTED",
-      "source_file": "Pencatatan-Buku-Kas/Riwayat/script.js",
-      "source_location": "L219",
-      "weight": 1.0,
-      "_origin": "ast",
-      "confidence_score": 1.0,
-      "source": "pencatatan_buku_kas_riwayat_script_applyfilterandrendercards",
-      "target": "pencatatan_buku_kas_riwayat_script_opendeletemodal"
+      "target": "pencatatan_buku_kas_riwayat_script_setloading",
+      "confidence_score": 1.0
     },
     {
       "relation": "calls",
@@ -2998,57 +2911,117 @@
       "source_location": "L218",
       "weight": 1.0,
       "_origin": "ast",
-      "confidence_score": 1.0,
+      "source": "pencatatan_buku_kas_riwayat_script_fetchlist",
+      "target": "pencatatan_buku_kas_riwayat_script_renderlist",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "Pencatatan-Buku-Kas/Riwayat/script.js",
+      "source_location": "L88",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "pencatatan_buku_kas_riwayat_script_renderlist",
+      "target": "pencatatan_buku_kas_riwayat_script_applyfilterandrendercards",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "Pencatatan-Buku-Kas/Riwayat/script.js",
+      "source_location": "L87",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "pencatatan_buku_kas_riwayat_script_renderlist",
+      "target": "pencatatan_buku_kas_riwayat_script_renderkategorifilterbar",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "Pencatatan-Buku-Kas/Riwayat/script.js",
+      "source_location": "L121",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "pencatatan_buku_kas_riwayat_script_renderkategorifilterbar",
+      "target": "pencatatan_buku_kas_riwayat_script_applyfilterandrendercards",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "Pencatatan-Buku-Kas/Riwayat/script.js",
+      "source_location": "L199",
+      "weight": 1.0,
+      "_origin": "ast",
       "source": "pencatatan_buku_kas_riwayat_script_applyfilterandrendercards",
-      "target": "pencatatan_buku_kas_riwayat_script_openeditmodal"
+      "target": "pencatatan_buku_kas_riwayat_script_opendeletemodal",
+      "confidence_score": 1.0
     },
     {
       "relation": "calls",
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "Pencatatan-Buku-Kas/Riwayat/script.js",
-      "source_location": "L254",
+      "source_location": "L198",
       "weight": 1.0,
       "_origin": "ast",
-      "confidence_score": 1.0,
+      "source": "pencatatan_buku_kas_riwayat_script_applyfilterandrendercards",
+      "target": "pencatatan_buku_kas_riwayat_script_openeditmodal",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "Pencatatan-Buku-Kas/Riwayat/script.js",
+      "source_location": "L228",
+      "weight": 1.0,
+      "_origin": "ast",
       "source": "pencatatan_buku_kas_riwayat_script_refreshcurrent",
-      "target": "pencatatan_buku_kas_riwayat_script_fetchlist"
+      "target": "pencatatan_buku_kas_riwayat_script_fetchlist",
+      "confidence_score": 1.0
     },
     {
       "relation": "calls",
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "Pencatatan-Buku-Kas/Riwayat/script.js",
-      "source_location": "L262",
+      "source_location": "L236",
       "weight": 1.0,
       "_origin": "ast",
-      "confidence_score": 1.0,
       "source": "pencatatan_buku_kas_riwayat_script_gotodate",
-      "target": "pencatatan_buku_kas_riwayat_script_refreshcurrent"
+      "target": "pencatatan_buku_kas_riwayat_script_refreshcurrent",
+      "confidence_score": 1.0
     },
     {
       "relation": "calls",
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "Pencatatan-Buku-Kas/Riwayat/script.js",
-      "source_location": "L307",
+      "source_location": "L281",
       "weight": 1.0,
       "_origin": "ast",
-      "confidence_score": 1.0,
       "source": "pencatatan_buku_kas_riwayat_script_pollmarker",
-      "target": "pencatatan_buku_kas_riwayat_script_refreshcurrent"
+      "target": "pencatatan_buku_kas_riwayat_script_refreshcurrent",
+      "confidence_score": 1.0
     },
     {
       "relation": "calls",
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "Pencatatan-Buku-Kas/Riwayat/script.js",
-      "source_location": "L366",
+      "source_location": "L340",
       "weight": 1.0,
       "_origin": "ast",
-      "confidence_score": 1.0,
       "source": "pencatatan_buku_kas_riwayat_script_openeditmodal",
-      "target": "pencatatan_buku_kas_riwayat_script_populatekategoriselect"
+      "target": "pencatatan_buku_kas_riwayat_script_populatekategoriselect",
+      "confidence_score": 1.0
     },
     {
       "relation": "contains",
@@ -3057,9 +3030,9 @@
       "source_location": "L58",
       "weight": 1.0,
       "_origin": "ast",
-      "confidence_score": 1.0,
       "source": "pencatatan_buku_kas_scan_struk_script",
-      "target": "pencatatan_buku_kas_scan_struk_script_compressimage"
+      "target": "pencatatan_buku_kas_scan_struk_script_compressimage",
+      "confidence_score": 1.0
     },
     {
       "relation": "contains",
@@ -3068,9 +3041,9 @@
       "source_location": "L230",
       "weight": 1.0,
       "_origin": "ast",
-      "confidence_score": 1.0,
       "source": "pencatatan_buku_kas_scan_struk_script",
-      "target": "pencatatan_buku_kas_scan_struk_script_escapeattr"
+      "target": "pencatatan_buku_kas_scan_struk_script_escapeattr",
+      "confidence_score": 1.0
     },
     {
       "relation": "contains",
@@ -3079,9 +3052,9 @@
       "source_location": "L227",
       "weight": 1.0,
       "_origin": "ast",
-      "confidence_score": 1.0,
       "source": "pencatatan_buku_kas_scan_struk_script",
-      "target": "pencatatan_buku_kas_scan_struk_script_formatrp"
+      "target": "pencatatan_buku_kas_scan_struk_script_formatrp",
+      "confidence_score": 1.0
     },
     {
       "relation": "contains",
@@ -3090,9 +3063,9 @@
       "source_location": "L9",
       "weight": 1.0,
       "_origin": "ast",
-      "confidence_score": 1.0,
       "source": "pencatatan_buku_kas_scan_struk_script",
-      "target": "pencatatan_buku_kas_scan_struk_script_items"
+      "target": "pencatatan_buku_kas_scan_struk_script_items",
+      "confidence_score": 1.0
     },
     {
       "relation": "contains",
@@ -3101,9 +3074,9 @@
       "source_location": "L127",
       "weight": 1.0,
       "_origin": "ast",
-      "confidence_score": 1.0,
       "source": "pencatatan_buku_kas_scan_struk_script",
-      "target": "pencatatan_buku_kas_scan_struk_script_renderitems"
+      "target": "pencatatan_buku_kas_scan_struk_script_renderitems",
+      "confidence_score": 1.0
     },
     {
       "relation": "contains",
@@ -3112,9 +3085,9 @@
       "source_location": "L54",
       "weight": 1.0,
       "_origin": "ast",
-      "confidence_score": 1.0,
       "source": "pencatatan_buku_kas_scan_struk_script",
-      "target": "pencatatan_buku_kas_scan_struk_script_updatescanbtnstate"
+      "target": "pencatatan_buku_kas_scan_struk_script_updatescanbtnstate",
+      "confidence_score": 1.0
     },
     {
       "relation": "contains",
@@ -3123,9 +3096,9 @@
       "source_location": "L176",
       "weight": 1.0,
       "_origin": "ast",
-      "confidence_score": 1.0,
       "source": "pencatatan_buku_kas_scan_struk_script",
-      "target": "pencatatan_buku_kas_scan_struk_script_updatetotals"
+      "target": "pencatatan_buku_kas_scan_struk_script_updatetotals",
+      "confidence_score": 1.0
     },
     {
       "relation": "calls",
@@ -3135,9 +3108,9 @@
       "source_location": "L136",
       "weight": 1.0,
       "_origin": "ast",
-      "confidence_score": 1.0,
       "source": "pencatatan_buku_kas_scan_struk_script_renderitems",
-      "target": "pencatatan_buku_kas_scan_struk_script_escapeattr"
+      "target": "pencatatan_buku_kas_scan_struk_script_escapeattr",
+      "confidence_score": 1.0
     },
     {
       "relation": "calls",
@@ -3147,9 +3120,9 @@
       "source_location": "L144",
       "weight": 1.0,
       "_origin": "ast",
-      "confidence_score": 1.0,
       "source": "pencatatan_buku_kas_scan_struk_script_renderitems",
-      "target": "pencatatan_buku_kas_scan_struk_script_formatrp"
+      "target": "pencatatan_buku_kas_scan_struk_script_formatrp",
+      "confidence_score": 1.0
     },
     {
       "relation": "calls",
@@ -3159,9 +3132,9 @@
       "source_location": "L148",
       "weight": 1.0,
       "_origin": "ast",
-      "confidence_score": 1.0,
       "source": "pencatatan_buku_kas_scan_struk_script_renderitems",
-      "target": "pencatatan_buku_kas_scan_struk_script_updatetotals"
+      "target": "pencatatan_buku_kas_scan_struk_script_updatetotals",
+      "confidence_score": 1.0
     },
     {
       "relation": "calls",
@@ -3171,9 +3144,9 @@
       "source_location": "L182",
       "weight": 1.0,
       "_origin": "ast",
-      "confidence_score": 1.0,
       "source": "pencatatan_buku_kas_scan_struk_script_updatetotals",
-      "target": "pencatatan_buku_kas_scan_struk_script_formatrp"
+      "target": "pencatatan_buku_kas_scan_struk_script_formatrp",
+      "confidence_score": 1.0
     },
     {
       "relation": "contains",
@@ -3182,9 +3155,9 @@
       "source_location": "L10",
       "weight": 1.0,
       "_origin": "ast",
-      "confidence_score": 1.0,
       "source": "pencatatan_buku_kas_stok_script",
-      "target": "pencatatan_buku_kas_stok_script_btnhariini"
+      "target": "pencatatan_buku_kas_stok_script_btnhariini",
+      "confidence_score": 1.0
     },
     {
       "relation": "contains",
@@ -3193,9 +3166,9 @@
       "source_location": "L9",
       "weight": 1.0,
       "_origin": "ast",
-      "confidence_score": 1.0,
       "source": "pencatatan_buku_kas_stok_script",
-      "target": "pencatatan_buku_kas_stok_script_btnkemarin"
+      "target": "pencatatan_buku_kas_stok_script_btnkemarin",
+      "confidence_score": 1.0
     },
     {
       "relation": "contains",
@@ -3204,9 +3177,9 @@
       "source_location": "L11",
       "weight": 1.0,
       "_origin": "ast",
-      "confidence_score": 1.0,
       "source": "pencatatan_buku_kas_stok_script",
-      "target": "pencatatan_buku_kas_stok_script_btnrefresh"
+      "target": "pencatatan_buku_kas_stok_script_btnrefresh",
+      "confidence_score": 1.0
     },
     {
       "relation": "contains",
@@ -3215,9 +3188,9 @@
       "source_location": "L4",
       "weight": 1.0,
       "_origin": "ast",
-      "confidence_score": 1.0,
       "source": "pencatatan_buku_kas_stok_script",
-      "target": "pencatatan_buku_kas_stok_script_currentdate"
+      "target": "pencatatan_buku_kas_stok_script_currentdate",
+      "confidence_score": 1.0
     },
     {
       "relation": "contains",
@@ -3226,9 +3199,9 @@
       "source_location": "L8",
       "weight": 1.0,
       "_origin": "ast",
-      "confidence_score": 1.0,
       "source": "pencatatan_buku_kas_stok_script",
-      "target": "pencatatan_buku_kas_stok_script_datepicker"
+      "target": "pencatatan_buku_kas_stok_script_datepicker",
+      "confidence_score": 1.0
     },
     {
       "relation": "contains",
@@ -3237,9 +3210,9 @@
       "source_location": "L16",
       "weight": 1.0,
       "_origin": "ast",
-      "confidence_score": 1.0,
       "source": "pencatatan_buku_kas_stok_script",
-      "target": "pencatatan_buku_kas_stok_script_emptymsg"
+      "target": "pencatatan_buku_kas_stok_script_emptymsg",
+      "confidence_score": 1.0
     },
     {
       "relation": "contains",
@@ -3248,75 +3221,42 @@
       "source_location": "L17",
       "weight": 1.0,
       "_origin": "ast",
-      "confidence_score": 1.0,
       "source": "pencatatan_buku_kas_stok_script",
-      "target": "pencatatan_buku_kas_stok_script_errormsg"
+      "target": "pencatatan_buku_kas_stok_script_errormsg",
+      "confidence_score": 1.0
     },
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "Pencatatan-Buku-Kas/Stok/script.js",
-      "source_location": "L41",
+      "source_location": "L58",
       "weight": 1.0,
       "_origin": "ast",
-      "confidence_score": 1.0,
       "source": "pencatatan_buku_kas_stok_script",
-      "target": "pencatatan_buku_kas_stok_script_escapehtml"
+      "target": "pencatatan_buku_kas_stok_script_fetchstok",
+      "confidence_score": 1.0
     },
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "Pencatatan-Buku-Kas/Stok/script.js",
-      "source_location": "L81",
+      "source_location": "L79",
       "weight": 1.0,
       "_origin": "ast",
-      "confidence_score": 1.0,
       "source": "pencatatan_buku_kas_stok_script",
-      "target": "pencatatan_buku_kas_stok_script_fetchstok"
+      "target": "pencatatan_buku_kas_stok_script_gotodate",
+      "confidence_score": 1.0
     },
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "Pencatatan-Buku-Kas/Stok/script.js",
-      "source_location": "L21",
+      "source_location": "L123",
       "weight": 1.0,
       "_origin": "ast",
-      "confidence_score": 1.0,
       "source": "pencatatan_buku_kas_stok_script",
-      "target": "pencatatan_buku_kas_stok_script_formattanggalapi"
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "Pencatatan-Buku-Kas/Stok/script.js",
-      "source_location": "L27",
-      "weight": 1.0,
-      "_origin": "ast",
-      "confidence_score": 1.0,
-      "source": "pencatatan_buku_kas_stok_script",
-      "target": "pencatatan_buku_kas_stok_script_formattanggallabel"
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "Pencatatan-Buku-Kas/Stok/script.js",
-      "source_location": "L102",
-      "weight": 1.0,
-      "_origin": "ast",
-      "confidence_score": 1.0,
-      "source": "pencatatan_buku_kas_stok_script",
-      "target": "pencatatan_buku_kas_stok_script_gotodate"
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "Pencatatan-Buku-Kas/Stok/script.js",
-      "source_location": "L146",
-      "weight": 1.0,
-      "_origin": "ast",
-      "confidence_score": 1.0,
-      "source": "pencatatan_buku_kas_stok_script",
-      "target": "pencatatan_buku_kas_stok_script_initdate"
+      "target": "pencatatan_buku_kas_stok_script_initdate",
+      "confidence_score": 1.0
     },
     {
       "relation": "contains",
@@ -3325,9 +3265,9 @@
       "source_location": "L18",
       "weight": 1.0,
       "_origin": "ast",
-      "confidence_score": 1.0,
       "source": "pencatatan_buku_kas_stok_script",
-      "target": "pencatatan_buku_kas_stok_script_itemlist"
+      "target": "pencatatan_buku_kas_stok_script_itemlist",
+      "confidence_score": 1.0
     },
     {
       "relation": "contains",
@@ -3336,9 +3276,9 @@
       "source_location": "L15",
       "weight": 1.0,
       "_origin": "ast",
-      "confidence_score": 1.0,
       "source": "pencatatan_buku_kas_stok_script",
-      "target": "pencatatan_buku_kas_stok_script_loadingmsg"
+      "target": "pencatatan_buku_kas_stok_script_loadingmsg",
+      "confidence_score": 1.0
     },
     {
       "relation": "contains",
@@ -3347,9 +3287,9 @@
       "source_location": "L2",
       "weight": 1.0,
       "_origin": "ast",
-      "confidence_score": 1.0,
       "source": "pencatatan_buku_kas_stok_script",
-      "target": "pencatatan_buku_kas_stok_script_nama_cabang"
+      "target": "pencatatan_buku_kas_stok_script_nama_cabang",
+      "confidence_score": 1.0
     },
     {
       "relation": "contains",
@@ -3358,75 +3298,9 @@
       "source_location": "L12",
       "weight": 1.0,
       "_origin": "ast",
-      "confidence_score": 1.0,
       "source": "pencatatan_buku_kas_stok_script",
-      "target": "pencatatan_buku_kas_stok_script_refreshicon"
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "Pencatatan-Buku-Kas/Stok/script.js",
-      "source_location": "L56",
-      "weight": 1.0,
-      "_origin": "ast",
-      "confidence_score": 1.0,
-      "source": "pencatatan_buku_kas_stok_script",
-      "target": "pencatatan_buku_kas_stok_script_renderitems"
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "Pencatatan-Buku-Kas/Stok/script.js",
-      "source_location": "L19",
-      "weight": 1.0,
-      "_origin": "ast",
-      "confidence_score": 1.0,
-      "source": "pencatatan_buku_kas_stok_script",
-      "target": "pencatatan_buku_kas_stok_script_reportinfo"
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "Pencatatan-Buku-Kas/Stok/script.js",
-      "source_location": "L47",
-      "weight": 1.0,
-      "_origin": "ast",
-      "confidence_score": 1.0,
-      "source": "pencatatan_buku_kas_stok_script",
-      "target": "pencatatan_buku_kas_stok_script_setloading"
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "Pencatatan-Buku-Kas/Stok/script.js",
-      "source_location": "L109",
-      "weight": 1.0,
-      "_origin": "ast",
-      "confidence_score": 1.0,
-      "source": "pencatatan_buku_kas_stok_script",
-      "target": "pencatatan_buku_kas_stok_script_switchcabang"
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "Pencatatan-Buku-Kas/Stok/script.js",
-      "source_location": "L13",
-      "weight": 1.0,
-      "_origin": "ast",
-      "confidence_score": 1.0,
-      "source": "pencatatan_buku_kas_stok_script",
-      "target": "pencatatan_buku_kas_stok_script_tabbar"
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "Pencatatan-Buku-Kas/Stok/script.js",
-      "source_location": "L7",
-      "weight": 1.0,
-      "_origin": "ast",
-      "confidence_score": 1.0,
-      "source": "pencatatan_buku_kas_stok_script",
-      "target": "pencatatan_buku_kas_stok_script_tanggallabel"
+      "target": "pencatatan_buku_kas_stok_script_refreshicon",
+      "confidence_score": 1.0
     },
     {
       "relation": "contains",
@@ -3435,105 +3309,112 @@
       "source_location": "L33",
       "weight": 1.0,
       "_origin": "ast",
-      "confidence_score": 1.0,
       "source": "pencatatan_buku_kas_stok_script",
-      "target": "pencatatan_buku_kas_stok_script_todateinputvalue"
+      "target": "pencatatan_buku_kas_stok_script_renderitems",
+      "confidence_score": 1.0
     },
     {
-      "relation": "calls",
-      "context": "call",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "Pencatatan-Buku-Kas/Stok/script.js",
+      "source_location": "L19",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "pencatatan_buku_kas_stok_script",
+      "target": "pencatatan_buku_kas_stok_script_reportinfo",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "Pencatatan-Buku-Kas/Stok/script.js",
+      "source_location": "L24",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "pencatatan_buku_kas_stok_script",
+      "target": "pencatatan_buku_kas_stok_script_setloading",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "Pencatatan-Buku-Kas/Stok/script.js",
       "source_location": "L86",
       "weight": 1.0,
       "_origin": "ast",
-      "confidence_score": 1.0,
+      "source": "pencatatan_buku_kas_stok_script",
+      "target": "pencatatan_buku_kas_stok_script_switchcabang",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "Pencatatan-Buku-Kas/Stok/script.js",
+      "source_location": "L13",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "pencatatan_buku_kas_stok_script",
+      "target": "pencatatan_buku_kas_stok_script_tabbar",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "Pencatatan-Buku-Kas/Stok/script.js",
+      "source_location": "L7",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "pencatatan_buku_kas_stok_script",
+      "target": "pencatatan_buku_kas_stok_script_tanggallabel",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "Pencatatan-Buku-Kas/Stok/script.js",
+      "source_location": "L59",
+      "weight": 1.0,
+      "_origin": "ast",
       "source": "pencatatan_buku_kas_stok_script_fetchstok",
-      "target": "pencatatan_buku_kas_stok_script_formattanggalapi"
+      "target": "pencatatan_buku_kas_stok_script_setloading",
+      "confidence_score": 1.0
     },
     {
       "relation": "calls",
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "Pencatatan-Buku-Kas/Stok/script.js",
-      "source_location": "L104",
+      "source_location": "L70",
       "weight": 1.0,
       "_origin": "ast",
-      "confidence_score": 1.0,
-      "source": "pencatatan_buku_kas_stok_script_gotodate",
-      "target": "pencatatan_buku_kas_stok_script_formattanggallabel"
-    },
-    {
-      "relation": "calls",
-      "context": "call",
-      "confidence": "EXTRACTED",
-      "source_file": "Pencatatan-Buku-Kas/Stok/script.js",
-      "source_location": "L105",
-      "weight": 1.0,
-      "_origin": "ast",
-      "confidence_score": 1.0,
-      "source": "pencatatan_buku_kas_stok_script_gotodate",
-      "target": "pencatatan_buku_kas_stok_script_todateinputvalue"
-    },
-    {
-      "relation": "calls",
-      "context": "call",
-      "confidence": "EXTRACTED",
-      "source_file": "Pencatatan-Buku-Kas/Stok/script.js",
-      "source_location": "L73",
-      "weight": 1.0,
-      "_origin": "ast",
-      "confidence_score": 1.0,
-      "source": "pencatatan_buku_kas_stok_script_renderitems",
-      "target": "pencatatan_buku_kas_stok_script_escapehtml"
-    },
-    {
-      "relation": "calls",
-      "context": "call",
-      "confidence": "EXTRACTED",
-      "source_file": "Pencatatan-Buku-Kas/Stok/script.js",
-      "source_location": "L82",
-      "weight": 1.0,
-      "_origin": "ast",
-      "confidence_score": 1.0,
       "source": "pencatatan_buku_kas_stok_script_fetchstok",
-      "target": "pencatatan_buku_kas_stok_script_setloading"
+      "target": "pencatatan_buku_kas_stok_script_renderitems",
+      "confidence_score": 1.0
     },
     {
       "relation": "calls",
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "Pencatatan-Buku-Kas/Stok/script.js",
-      "source_location": "L93",
+      "source_location": "L83",
       "weight": 1.0,
       "_origin": "ast",
-      "confidence_score": 1.0,
-      "source": "pencatatan_buku_kas_stok_script_fetchstok",
-      "target": "pencatatan_buku_kas_stok_script_renderitems"
-    },
-    {
-      "relation": "calls",
-      "context": "call",
-      "confidence": "EXTRACTED",
-      "source_file": "Pencatatan-Buku-Kas/Stok/script.js",
-      "source_location": "L106",
-      "weight": 1.0,
-      "_origin": "ast",
-      "confidence_score": 1.0,
       "source": "pencatatan_buku_kas_stok_script_gotodate",
-      "target": "pencatatan_buku_kas_stok_script_fetchstok"
+      "target": "pencatatan_buku_kas_stok_script_fetchstok",
+      "confidence_score": 1.0
     },
     {
       "relation": "calls",
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "Pencatatan-Buku-Kas/Stok/script.js",
-      "source_location": "L114",
+      "source_location": "L91",
       "weight": 1.0,
       "_origin": "ast",
-      "confidence_score": 1.0,
       "source": "pencatatan_buku_kas_stok_script_switchcabang",
-      "target": "pencatatan_buku_kas_stok_script_fetchstok"
+      "target": "pencatatan_buku_kas_stok_script_fetchstok",
+      "confidence_score": 1.0
     },
     {
       "relation": "contains",
@@ -3542,9 +3423,9 @@
       "source_location": "L327",
       "weight": 1.0,
       "_origin": "ast",
-      "confidence_score": 1.0,
       "source": "pencatatan_buku_kas_script",
-      "target": "pencatatan_buku_kas_script_addtoqueue"
+      "target": "pencatatan_buku_kas_script_addtoqueue",
+      "confidence_score": 1.0
     },
     {
       "relation": "contains",
@@ -3553,9 +3434,9 @@
       "source_location": "L109",
       "weight": 1.0,
       "_origin": "ast",
-      "confidence_score": 1.0,
       "source": "pencatatan_buku_kas_script",
-      "target": "pencatatan_buku_kas_script_applybelanjaketerangan"
+      "target": "pencatatan_buku_kas_script_applybelanjaketerangan",
+      "confidence_score": 1.0
     },
     {
       "relation": "contains",
@@ -3564,9 +3445,9 @@
       "source_location": "L5",
       "weight": 1.0,
       "_origin": "ast",
-      "confidence_score": 1.0,
       "source": "pencatatan_buku_kas_script",
-      "target": "pencatatan_buku_kas_script_belanjadilainnyainput"
+      "target": "pencatatan_buku_kas_script_belanjadilainnyainput",
+      "confidence_score": 1.0
     },
     {
       "relation": "contains",
@@ -3575,9 +3456,9 @@
       "source_location": "L4",
       "weight": 1.0,
       "_origin": "ast",
-      "confidence_score": 1.0,
       "source": "pencatatan_buku_kas_script",
-      "target": "pencatatan_buku_kas_script_belanjadiwrap"
+      "target": "pencatatan_buku_kas_script_belanjadiwrap",
+      "confidence_score": 1.0
     },
     {
       "relation": "contains",
@@ -3586,9 +3467,9 @@
       "source_location": "L1",
       "weight": 1.0,
       "_origin": "ast",
-      "confidence_score": 1.0,
       "source": "pencatatan_buku_kas_script",
-      "target": "pencatatan_buku_kas_script_form"
+      "target": "pencatatan_buku_kas_script_form",
+      "confidence_score": 1.0
     },
     {
       "relation": "contains",
@@ -3597,9 +3478,9 @@
       "source_location": "L166",
       "weight": 1.0,
       "_origin": "ast",
-      "confidence_score": 1.0,
       "source": "pencatatan_buku_kas_script",
-      "target": "pencatatan_buku_kas_script_getselectedbelanjadi"
+      "target": "pencatatan_buku_kas_script_getselectedbelanjadi",
+      "confidence_score": 1.0
     },
     {
       "relation": "contains",
@@ -3608,9 +3489,9 @@
       "source_location": "L172",
       "weight": 1.0,
       "_origin": "ast",
-      "confidence_score": 1.0,
       "source": "pencatatan_buku_kas_script",
-      "target": "pencatatan_buku_kas_script_getselectedkategorilain"
+      "target": "pencatatan_buku_kas_script_getselectedkategorilain",
+      "confidence_score": 1.0
     },
     {
       "relation": "contains",
@@ -3619,9 +3500,9 @@
       "source_location": "L161",
       "weight": 1.0,
       "_origin": "ast",
-      "confidence_score": 1.0,
       "source": "pencatatan_buku_kas_script",
-      "target": "pencatatan_buku_kas_script_getselectedoutlet"
+      "target": "pencatatan_buku_kas_script_getselectedoutlet",
+      "confidence_score": 1.0
     },
     {
       "relation": "contains",
@@ -3630,9 +3511,9 @@
       "source_location": "L12",
       "weight": 1.0,
       "_origin": "ast",
-      "confidence_score": 1.0,
       "source": "pencatatan_buku_kas_script",
-      "target": "pencatatan_buku_kas_script_jumlahel"
+      "target": "pencatatan_buku_kas_script_jumlahel",
+      "confidence_score": 1.0
     },
     {
       "relation": "contains",
@@ -3641,9 +3522,9 @@
       "source_location": "L9",
       "weight": 1.0,
       "_origin": "ast",
-      "confidence_score": 1.0,
       "source": "pencatatan_buku_kas_script",
-      "target": "pencatatan_buku_kas_script_kategorilainnyainput"
+      "target": "pencatatan_buku_kas_script_kategorilainnyainput",
+      "confidence_score": 1.0
     },
     {
       "relation": "contains",
@@ -3652,9 +3533,9 @@
       "source_location": "L10",
       "weight": 1.0,
       "_origin": "ast",
-      "confidence_score": 1.0,
       "source": "pencatatan_buku_kas_script",
-      "target": "pencatatan_buku_kas_script_kategorilainnyaradio"
+      "target": "pencatatan_buku_kas_script_kategorilainnyaradio",
+      "confidence_score": 1.0
     },
     {
       "relation": "contains",
@@ -3663,9 +3544,9 @@
       "source_location": "L8",
       "weight": 1.0,
       "_origin": "ast",
-      "confidence_score": 1.0,
       "source": "pencatatan_buku_kas_script",
-      "target": "pencatatan_buku_kas_script_kategorilainwrap"
+      "target": "pencatatan_buku_kas_script_kategorilainwrap",
+      "confidence_score": 1.0
     },
     {
       "relation": "contains",
@@ -3674,9 +3555,9 @@
       "source_location": "L13",
       "weight": 1.0,
       "_origin": "ast",
-      "confidence_score": 1.0,
       "source": "pencatatan_buku_kas_script",
-      "target": "pencatatan_buku_kas_script_keteranganel"
+      "target": "pencatatan_buku_kas_script_keteranganel",
+      "confidence_score": 1.0
     },
     {
       "relation": "contains",
@@ -3685,9 +3566,9 @@
       "source_location": "L234",
       "weight": 1.0,
       "_origin": "ast",
-      "confidence_score": 1.0,
       "source": "pencatatan_buku_kas_script",
-      "target": "pencatatan_buku_kas_script_loadqueue"
+      "target": "pencatatan_buku_kas_script_loadqueue",
+      "confidence_score": 1.0
     },
     {
       "relation": "contains",
@@ -3696,9 +3577,9 @@
       "source_location": "L3",
       "weight": 1.0,
       "_origin": "ast",
-      "confidence_score": 1.0,
       "source": "pencatatan_buku_kas_script",
-      "target": "pencatatan_buku_kas_script_outletwrap"
+      "target": "pencatatan_buku_kas_script_outletwrap",
+      "confidence_score": 1.0
     },
     {
       "relation": "contains",
@@ -3707,9 +3588,9 @@
       "source_location": "L337",
       "weight": 1.0,
       "_origin": "ast",
-      "confidence_score": 1.0,
       "source": "pencatatan_buku_kas_script",
-      "target": "pencatatan_buku_kas_script_processqueue"
+      "target": "pencatatan_buku_kas_script_processqueue",
+      "confidence_score": 1.0
     },
     {
       "relation": "contains",
@@ -3718,9 +3599,9 @@
       "source_location": "L231",
       "weight": 1.0,
       "_origin": "ast",
-      "confidence_score": 1.0,
       "source": "pencatatan_buku_kas_script",
-      "target": "pencatatan_buku_kas_script_queue"
+      "target": "pencatatan_buku_kas_script_queue",
+      "confidence_score": 1.0
     },
     {
       "relation": "contains",
@@ -3729,9 +3610,9 @@
       "source_location": "L255",
       "weight": 1.0,
       "_origin": "ast",
-      "confidence_score": 1.0,
       "source": "pencatatan_buku_kas_script",
-      "target": "pencatatan_buku_kas_script_queueitemlabel"
+      "target": "pencatatan_buku_kas_script_queueitemlabel",
+      "confidence_score": 1.0
     },
     {
       "relation": "contains",
@@ -3740,9 +3621,9 @@
       "source_location": "L259",
       "weight": 1.0,
       "_origin": "ast",
-      "confidence_score": 1.0,
       "source": "pencatatan_buku_kas_script",
-      "target": "pencatatan_buku_kas_script_queueitemtime"
+      "target": "pencatatan_buku_kas_script_queueitemtime",
+      "confidence_score": 1.0
     },
     {
       "relation": "contains",
@@ -3751,9 +3632,9 @@
       "source_location": "L229",
       "weight": 1.0,
       "_origin": "ast",
-      "confidence_score": 1.0,
       "source": "pencatatan_buku_kas_script",
-      "target": "pencatatan_buku_kas_script_queuelistel"
+      "target": "pencatatan_buku_kas_script_queuelistel",
+      "confidence_score": 1.0
     },
     {
       "relation": "contains",
@@ -3762,9 +3643,9 @@
       "source_location": "L228",
       "weight": 1.0,
       "_origin": "ast",
-      "confidence_score": 1.0,
       "source": "pencatatan_buku_kas_script",
-      "target": "pencatatan_buku_kas_script_queuesection"
+      "target": "pencatatan_buku_kas_script_queuesection",
+      "confidence_score": 1.0
     },
     {
       "relation": "contains",
@@ -3773,9 +3654,9 @@
       "source_location": "L265",
       "weight": 1.0,
       "_origin": "ast",
-      "confidence_score": 1.0,
       "source": "pencatatan_buku_kas_script",
-      "target": "pencatatan_buku_kas_script_renderqueue"
+      "target": "pencatatan_buku_kas_script_renderqueue",
+      "confidence_score": 1.0
     },
     {
       "relation": "contains",
@@ -3784,9 +3665,9 @@
       "source_location": "L37",
       "weight": 1.0,
       "_origin": "ast",
-      "confidence_score": 1.0,
       "source": "pencatatan_buku_kas_script",
-      "target": "pencatatan_buku_kas_script_resetradiogroup"
+      "target": "pencatatan_buku_kas_script_resetradiogroup",
+      "confidence_score": 1.0
     },
     {
       "relation": "contains",
@@ -3795,9 +3676,9 @@
       "source_location": "L180",
       "weight": 1.0,
       "_origin": "ast",
-      "confidence_score": 1.0,
       "source": "pencatatan_buku_kas_script",
-      "target": "pencatatan_buku_kas_script_resolvekategori"
+      "target": "pencatatan_buku_kas_script_resolvekategori",
+      "confidence_score": 1.0
     },
     {
       "relation": "contains",
@@ -3806,9 +3687,9 @@
       "source_location": "L251",
       "weight": 1.0,
       "_origin": "ast",
-      "confidence_score": 1.0,
       "source": "pencatatan_buku_kas_script",
-      "target": "pencatatan_buku_kas_script_savequeue"
+      "target": "pencatatan_buku_kas_script_savequeue",
+      "confidence_score": 1.0
     },
     {
       "relation": "contains",
@@ -3817,9 +3698,9 @@
       "source_location": "L156",
       "weight": 1.0,
       "_origin": "ast",
-      "confidence_score": 1.0,
       "source": "pencatatan_buku_kas_script",
-      "target": "pencatatan_buku_kas_script_setstatus"
+      "target": "pencatatan_buku_kas_script_setstatus",
+      "confidence_score": 1.0
     },
     {
       "relation": "contains",
@@ -3828,9 +3709,9 @@
       "source_location": "L15",
       "weight": 1.0,
       "_origin": "ast",
-      "confidence_score": 1.0,
       "source": "pencatatan_buku_kas_script",
-      "target": "pencatatan_buku_kas_script_statusmsg"
+      "target": "pencatatan_buku_kas_script_statusmsg",
+      "confidence_score": 1.0
     },
     {
       "relation": "contains",
@@ -3839,9 +3720,9 @@
       "source_location": "L14",
       "weight": 1.0,
       "_origin": "ast",
-      "confidence_score": 1.0,
       "source": "pencatatan_buku_kas_script",
-      "target": "pencatatan_buku_kas_script_submitbtn"
+      "target": "pencatatan_buku_kas_script_submitbtn",
+      "confidence_score": 1.0
     },
     {
       "relation": "contains",
@@ -3850,9 +3731,9 @@
       "source_location": "L6",
       "weight": 1.0,
       "_origin": "ast",
-      "confidence_score": 1.0,
       "source": "pencatatan_buku_kas_script",
-      "target": "pencatatan_buku_kas_script_tokolainnyaradio"
+      "target": "pencatatan_buku_kas_script_tokolainnyaradio",
+      "confidence_score": 1.0
     },
     {
       "relation": "contains",
@@ -3861,9 +3742,9 @@
       "source_location": "L41",
       "weight": 1.0,
       "_origin": "ast",
-      "confidence_score": 1.0,
       "source": "pencatatan_buku_kas_script",
-      "target": "pencatatan_buku_kas_script_updatevisibility"
+      "target": "pencatatan_buku_kas_script_updatevisibility",
+      "confidence_score": 1.0
     },
     {
       "relation": "calls",
@@ -3873,9 +3754,9 @@
       "source_location": "L52",
       "weight": 1.0,
       "_origin": "ast",
-      "confidence_score": 1.0,
       "source": "pencatatan_buku_kas_script_updatevisibility",
-      "target": "pencatatan_buku_kas_script_resetradiogroup"
+      "target": "pencatatan_buku_kas_script_resetradiogroup",
+      "confidence_score": 1.0
     },
     {
       "relation": "calls",
@@ -3885,9 +3766,9 @@
       "source_location": "L190",
       "weight": 1.0,
       "_origin": "ast",
-      "confidence_score": 1.0,
       "source": "pencatatan_buku_kas_script_resolvekategori",
-      "target": "pencatatan_buku_kas_script_getselectedoutlet"
+      "target": "pencatatan_buku_kas_script_getselectedoutlet",
+      "confidence_score": 1.0
     },
     {
       "relation": "calls",
@@ -3897,9 +3778,9 @@
       "source_location": "L196",
       "weight": 1.0,
       "_origin": "ast",
-      "confidence_score": 1.0,
       "source": "pencatatan_buku_kas_script_resolvekategori",
-      "target": "pencatatan_buku_kas_script_getselectedbelanjadi"
+      "target": "pencatatan_buku_kas_script_getselectedbelanjadi",
+      "confidence_score": 1.0
     },
     {
       "relation": "calls",
@@ -3909,9 +3790,9 @@
       "source_location": "L202",
       "weight": 1.0,
       "_origin": "ast",
-      "confidence_score": 1.0,
       "source": "pencatatan_buku_kas_script_resolvekategori",
-      "target": "pencatatan_buku_kas_script_getselectedkategorilain"
+      "target": "pencatatan_buku_kas_script_getselectedkategorilain",
+      "confidence_score": 1.0
     },
     {
       "relation": "calls",
@@ -3921,9 +3802,9 @@
       "source_location": "L330",
       "weight": 1.0,
       "_origin": "ast",
-      "confidence_score": 1.0,
       "source": "pencatatan_buku_kas_script_addtoqueue",
-      "target": "pencatatan_buku_kas_script_savequeue"
+      "target": "pencatatan_buku_kas_script_savequeue",
+      "confidence_score": 1.0
     },
     {
       "relation": "calls",
@@ -3933,9 +3814,9 @@
       "source_location": "L346",
       "weight": 1.0,
       "_origin": "ast",
-      "confidence_score": 1.0,
       "source": "pencatatan_buku_kas_script_processqueue",
-      "target": "pencatatan_buku_kas_script_savequeue"
+      "target": "pencatatan_buku_kas_script_savequeue",
+      "confidence_score": 1.0
     },
     {
       "relation": "calls",
@@ -3945,9 +3826,9 @@
       "source_location": "L277",
       "weight": 1.0,
       "_origin": "ast",
-      "confidence_score": 1.0,
       "source": "pencatatan_buku_kas_script_renderqueue",
-      "target": "pencatatan_buku_kas_script_queueitemlabel"
+      "target": "pencatatan_buku_kas_script_queueitemlabel",
+      "confidence_score": 1.0
     },
     {
       "relation": "calls",
@@ -3957,9 +3838,9 @@
       "source_location": "L278",
       "weight": 1.0,
       "_origin": "ast",
-      "confidence_score": 1.0,
       "source": "pencatatan_buku_kas_script_renderqueue",
-      "target": "pencatatan_buku_kas_script_queueitemtime"
+      "target": "pencatatan_buku_kas_script_queueitemtime",
+      "confidence_score": 1.0
     },
     {
       "relation": "calls",
@@ -3969,9 +3850,9 @@
       "source_location": "L331",
       "weight": 1.0,
       "_origin": "ast",
-      "confidence_score": 1.0,
       "source": "pencatatan_buku_kas_script_addtoqueue",
-      "target": "pencatatan_buku_kas_script_renderqueue"
+      "target": "pencatatan_buku_kas_script_renderqueue",
+      "confidence_score": 1.0
     },
     {
       "relation": "calls",
@@ -3981,9 +3862,9 @@
       "source_location": "L347",
       "weight": 1.0,
       "_origin": "ast",
-      "confidence_score": 1.0,
       "source": "pencatatan_buku_kas_script_processqueue",
-      "target": "pencatatan_buku_kas_script_renderqueue"
+      "target": "pencatatan_buku_kas_script_renderqueue",
+      "confidence_score": 1.0
     },
     {
       "relation": "calls",
@@ -3993,9 +3874,262 @@
       "source_location": "L332",
       "weight": 1.0,
       "_origin": "ast",
-      "confidence_score": 1.0,
       "source": "pencatatan_buku_kas_script_addtoqueue",
-      "target": "pencatatan_buku_kas_script_processqueue"
+      "target": "pencatatan_buku_kas_script_processqueue",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "Pencatatan-Buku-Kas/shared-utils.js",
+      "source_location": "L42",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "pencatatan_buku_kas_shared_utils",
+      "target": "pencatatan_buku_kas_shared_utils_escapehtml",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "Pencatatan-Buku-Kas/shared-utils.js",
+      "source_location": "L11",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "pencatatan_buku_kas_shared_utils",
+      "target": "pencatatan_buku_kas_shared_utils_formattanggalapi",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "Pencatatan-Buku-Kas/shared-utils.js",
+      "source_location": "L21",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "pencatatan_buku_kas_shared_utils",
+      "target": "pencatatan_buku_kas_shared_utils_formattanggallabel",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "Pencatatan-Buku-Kas/shared-utils.js",
+      "source_location": "L31",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "pencatatan_buku_kas_shared_utils",
+      "target": "pencatatan_buku_kas_shared_utils_todateinputvalue",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "Reminder/script.js",
+      "source_location": "L9",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "reminder_script",
+      "target": "reminder_script_el",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "Reminder/script.js",
+      "source_location": "L28",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "reminder_script",
+      "target": "reminder_script_fmtduration",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "Reminder/script.js",
+      "source_location": "L62",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "reminder_script",
+      "target": "reminder_script_getcustomseconds",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "Reminder/script.js",
+      "source_location": "L69",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "reminder_script",
+      "target": "reminder_script_gettimepickerseconds",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "indirect_call",
+      "confidence": "INFERRED",
+      "source_file": "Reminder/script.js",
+      "source_location": "L231",
+      "weight": 1.0,
+      "_origin": "ast",
+      "context": "argument",
+      "source": "reminder_script",
+      "target": "reminder_script_hidestatus",
+      "confidence_score": 0.5
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "Reminder/script.js",
+      "source_location": "L39",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "reminder_script",
+      "target": "reminder_script_showstatus",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "indirect_call",
+      "confidence": "INFERRED",
+      "source_file": "Reminder/script.js",
+      "source_location": "L234",
+      "weight": 1.0,
+      "_origin": "ast",
+      "context": "argument",
+      "source": "reminder_script",
+      "target": "reminder_script_submitreminder",
+      "confidence_score": 0.5
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "Reminder/script.js",
+      "source_location": "L54",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "reminder_script",
+      "target": "reminder_script_updatetotal",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "Reminder/script.js",
+      "source_location": "L94",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "reminder_script",
+      "target": "reminder_script_validateandgetseconds",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "Reminder/script.js",
+      "source_location": "L88",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "reminder_script_gettimepickerseconds",
+      "target": "reminder_script_fmtduration",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "Reminder/script.js",
+      "source_location": "L160",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "reminder_script_submitreminder",
+      "target": "reminder_script_fmtduration",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "Reminder/script.js",
+      "source_location": "L118",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "reminder_script_validateandgetseconds",
+      "target": "reminder_script_fmtduration",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "Reminder/script.js",
+      "source_location": "L143",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "reminder_script_submitreminder",
+      "target": "reminder_script_showstatus",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "Reminder/script.js",
+      "source_location": "L107",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "reminder_script_validateandgetseconds",
+      "target": "reminder_script_showstatus",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "Reminder/script.js",
+      "source_location": "L133",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "reminder_script_submitreminder",
+      "target": "reminder_script_hidestatus",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "Reminder/script.js",
+      "source_location": "L96",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "reminder_script_validateandgetseconds",
+      "target": "reminder_script_getcustomseconds",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "Reminder/script.js",
+      "source_location": "L97",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "reminder_script_validateandgetseconds",
+      "target": "reminder_script_gettimepickerseconds",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "Reminder/script.js",
+      "source_location": "L135",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "reminder_script_submitreminder",
+      "target": "reminder_script_validateandgetseconds",
+      "confidence_score": 1.0
     },
     {
       "relation": "contains",
@@ -4004,9 +4138,9 @@
       "source_location": "L3",
       "weight": 1.0,
       "_origin": "ast",
-      "confidence_score": 1.0,
       "source": "kantong",
-      "target": "kantong_hitung_pesanan_ayam"
+      "target": "kantong_hitung_pesanan_ayam",
+      "confidence_score": 1.0
     },
     {
       "relation": "contains",
@@ -4015,9 +4149,9 @@
       "source_location": "L1",
       "weight": 1.0,
       "_origin": "ast",
-      "confidence_score": 1.0,
       "source": "work_push",
-      "target": "work_push_sh__entry"
+      "target": "work_push_sh__entry",
+      "confidence_score": 1.0
     },
     {
       "relation": "references",
@@ -4132,5 +4266,5 @@
       "source_file": "Aturan-Business.md"
     }
   ],
-  "built_at_commit": "9f0b883ec95ac2bb83aadcf4d770e138cbe248e9"
+  "built_at_commit": "c36f86d76de1e4b6b78f037743a18d9ff3619129"
 }

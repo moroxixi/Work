@@ -5,6 +5,11 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>Input Kas Harian</title>
 <link rel="stylesheet" href="style.css">
+<link rel="prefetch" href="https://moroxixi.github.io/Work/Pencatatan-Buku-Kas/Scan-Struk/index.html">
+<link rel="prefetch" href="https://moroxixi.github.io/Work/Pencatatan-Buku-Kas/Riwayat/index.html">
+<link rel="prefetch" href="https://moroxixi.github.io/Work/Pencatatan-Buku-Kas/Stok/index.html">
+<link rel="prefetch" href="https://moroxixi.github.io/Work/Pencatatan-Buku-Kas/shared-utils.js">
+<style>#page-loader{position:fixed;top:0;left:0;height:3px;background:linear-gradient(90deg,var(--ink,#232b27),var(--masuk,#2f6e52));z-index:9999;pointer-events:none;width:0;opacity:0;transition:width .35s cubic-bezier(.4,0,.2,1),opacity .15s}#page-loader.active{opacity:1}@media(prefers-reduced-motion:reduce){#page-loader{transition:none}#page-loader.active{width:90%}}</style>
 </head>
 <body>
 
@@ -169,7 +174,9 @@
 
   <p class="footnote">Waktu tercatat otomatis saat kamu tekan Simpan.</p>
 </div>
+<div id="page-loader" role="progressbar" aria-hidden="true"></div>
 <script src="https://moroxixi.github.io/Work/Pencatatan-Buku-Kas/config.js"></script>
 <script src="script.js"></script>
+<script>document.addEventListener('click',function(e){var a=e.target.closest('a[href]');if(!a||a.hostname!==location.hostname||!a.href.includes('Pencatatan-Buku-Kas'))return;var l=document.getElementById('page-loader');if(l){l.classList.add('active');l.style.width='75%';setTimeout(function(){l.style.width='90%'},200)}})</script>
 </body>
 </html>

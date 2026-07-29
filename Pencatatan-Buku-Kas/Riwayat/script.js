@@ -20,6 +20,12 @@ let modalOpen = false;
 let pendingEditRow = null;
 let pendingDeleteRow = null;
 
+// === Fase 3: optimasi fetch ===
+let activeFetchController = null;           // AbortController untuk cancel request lama
+const fetchCache = new Map();               // key = tanggalStr, value = data.rows
+const CACHE_MAX_AGE = 30 * 60 * 1000;       // 30 menit — cache dianggap stale
+const cacheTimestamps = new Map();          // key = tanggalStr, value = Date.now()
+
 // ===== Elemen =====
 const tanggalLabel = document.getElementById("tanggalLabel");
 const datePicker = document.getElementById("datePicker");
@@ -114,7 +120,7 @@ function renderKategoriFilterBar(rows) {
   const chipSemua = document.createElement("button");
   chipSemua.type = "button";
   chipSemua.className = "kategori-chip" + (activeKategoriFilter === null ? " is-active" : "");
-  chipSemua.textContent = `Semua (${rows.length})`;
+  chipSemua.textContent = "Semua (" + rows.length + ")";
   chipSemua.addEventListener("click", () => {
     activeKategoriFilter = null;
     renderKategoriFilterBar(allRowsToday);
@@ -126,7 +132,7 @@ function renderKategoriFilterBar(rows) {
     const chip = document.createElement("button");
     chip.type = "button";
     chip.className = "kategori-chip" + (activeKategoriFilter === kat ? " is-active" : "");
-    chip.textContent = `${kat} (${counts[kat]})`;
+    chip.textContent = kat + " (" + counts[kat] + ")";
     chip.addEventListener("click", () => {
       activeKategoriFilter = activeKategoriFilter === kat ? null : kat;
       renderKategoriFilterBar(allRowsToday);
@@ -163,7 +169,7 @@ function applyFilterAndRenderCards() {
 
   if (currentRows.length === 0) {
     emptyMsg.hidden = false;
-    emptyMsg.textContent = `Tidak ada transaksi kategori "${activeKategoriFilter}" di tanggal ini.`;
+    emptyMsg.textContent = "Tidak ada transaksi kategori \"" + activeKategoriFilter + "\" di tanggal ini.";
     return;
   }
   emptyMsg.hidden = true;
@@ -176,24 +182,23 @@ currentRows.forEach((row) => {
 
     let badgeHtml = "";
     if (row.sumber === "otomatis") {
-      badgeHtml = `<span class="tx-badge badge-otomatis">Otomatis dari Setoran</span>`;
+      badgeHtml = "<span class=\"tx-badge badge-otomatis\">Otomatis dari Setoran</span>";
     } else if (row.sumber === "cek-dulu") {
-      badgeHtml = `<span class="tx-badge badge-cekdulu">Cek dulu sebelum hapus</span>`;
+      badgeHtml = "<span class=\"tx-badge badge-cekdulu\">Cek dulu sebelum hapus</span>";
     }
 
-    card.innerHTML = `
-      <div class="tx-top">
-        <span class="tx-kategori">${escapeHtml(row.kategori)}</span>
-        <span class="tx-jumlah">${row.arah === "Masuk" ? "+" : "-"} ${formatRupiah(row.jumlah)}</span>
-      </div>
-      <div class="tx-meta">${jamStr}${row.belanjaDi ? " &middot; " + escapeHtml(row.belanjaDi) : ""}</div>
-      ${row.keterangan && row.keterangan !== "-" ? `<div class="tx-keterangan">${escapeHtml(row.keterangan)}</div>` : ""}
-      ${badgeHtml}
-      <div class="tx-actions">
-        <button type="button" class="btn-edit-tx">Edit</button>
-        <button type="button" class="btn-hapus-tx">Hapus</button>
-      </div>
-    `;
+    card.innerHTML =
+      "<div class=\"tx-top\">" +
+        "<span class=\"tx-kategori\">" + escapeHtml(row.kategori) + "</span>" +
+        "<span class=\"tx-jumlah\">" + (row.arah === "Masuk" ? "+" : "-") + " " + formatRupiah(row.jumlah) + "</span>" +
+      "</div>" +
+      "<div class=\"tx-meta\">" + jamStr + (row.belanjaDi ? " &middot; " + escapeHtml(row.belanjaDi) : "") + "</div>" +
+      (row.keterangan && row.keterangan !== "-" ? "<div class=\"tx-keterangan\">" + escapeHtml(row.keterangan) + "</div>" : "") +
+      badgeHtml +
+      "<div class=\"tx-actions\">" +
+        "<button type=\"button\" class=\"btn-edit-tx\">Edit</button>" +
+        "<button type=\"button\" class=\"btn-hapus-tx\">Hapus</button>" +
+      "</div>";
 
     card.querySelector(".btn-edit-tx").addEventListener("click", () => openEditModal(row));
     card.querySelector(".btn-hapus-tx").addEventListener("click", () => openDeleteModal(row));
@@ -202,21 +207,53 @@ currentRows.forEach((row) => {
   });
 }
 
+// ===== Cache helpers =====
+function isCacheValid(tanggalStr) {
+  if (!fetchCache.has(tanggalStr)) return false;
+  const age = Date.now() - (cacheTimestamps.get(tanggalStr) || 0);
+  return age < CACHE_MAX_AGE;
+}
+
+function invalidateCache(tanggalStr) {
+  fetchCache.delete(tanggalStr);
+  cacheTimestamps.delete(tanggalStr);
+}
+
 // ===== Fetch data =====
-async function fetchList(date, { silent = false } = {}) {
+async function fetchList(date, { silent = false, force = false } = {}) {
   if (!silent) setLoading(true);
   errorMsg.hidden = true;
 
+  const tanggalStr = formatTanggalApi(date);
+
+  // Cache hit (kecuali force-refresh)
+  if (!force && isCacheValid(tanggalStr)) {
+    renderList(fetchCache.get(tanggalStr));
+    if (!silent) setLoading(false);
+    return;
+  }
+
+  // Cancel request sebelumnya kalau ada
+  if (activeFetchController) {
+    activeFetchController.abort();
+  }
+  activeFetchController = new AbortController();
+  const signal = activeFetchController.signal;
+
   try {
-    const tanggalStr = formatTanggalApi(date);
-    const url = `${ENDPOINT_URL}?action=list&tanggal=${encodeURIComponent(tanggalStr)}`;
-    const res = await fetch(url);
+    const url = ENDPOINT_URL + "?action=list&tanggal=" + encodeURIComponent(tanggalStr);
+    const res = await fetch(url, { signal });
     const data = await res.json();
 
     if (data.status !== "ok") throw new Error(data.message || "Gagal memuat data.");
 
+    // Simpan ke cache
+    fetchCache.set(tanggalStr, data.rows);
+    cacheTimestamps.set(tanggalStr, Date.now());
+
     renderList(data.rows);
   } catch (err) {
+    if (err.name === "AbortError") return; // request dibatalkan karena ada fetch baru — silent
     errorMsg.textContent = "Gagal memuat data: " + err.message;
     errorMsg.hidden = false;
   } finally {
@@ -224,8 +261,8 @@ async function fetchList(date, { silent = false } = {}) {
   }
 }
 
-async function refreshCurrent({ silent = false } = {}) {
-  await fetchList(currentDate, { silent });
+async function refreshCurrent({ silent = false, force = false } = {}) {
+  await fetchList(currentDate, { silent, force });
 }
 
 function goToDate(date) {
@@ -255,14 +292,15 @@ datePicker.addEventListener("change", () => {
 
 btnRefresh.addEventListener("click", async () => {
   refreshIcon.classList.add("spin");
-  await refreshCurrent();
+  invalidateCache(formatTanggalApi(currentDate)); // paksa fresh
+  await refreshCurrent({ force: true });
   setTimeout(() => refreshIcon.classList.remove("spin"), 400);
 });
 
 // ===== Live update (polling penanda ringan, bukan seluruh data) =====
 async function pollMarker() {
   try {
-    const res = await fetch(`${ENDPOINT_URL}?action=ping`);
+    const res = await fetch(ENDPOINT_URL + "?action=ping");
     const data = await res.json();
     const marker = data.lastChange || "";
 
@@ -278,7 +316,8 @@ async function pollMarker() {
         return;
       }
       liveStatus.textContent = "Ada data baru, memperbarui...";
-      await refreshCurrent({ silent: true });
+      invalidateCache(formatTanggalApi(currentDate)); // data di server berubah, cache stale
+      await refreshCurrent({ silent: true, force: true });
       liveStatus.textContent = "Diperbarui otomatis";
       setTimeout(() => { liveStatus.textContent = ""; }, 2500);
     }
@@ -393,7 +432,8 @@ btnSimpanEdit.addEventListener("click", async () => {
     if (data.status !== "ok") throw new Error(data.message || "Gagal menyimpan.");
 
     closeEditModal();
-    await refreshCurrent();
+    invalidateCache(formatTanggalApi(currentDate)); // data berubah, cache jadi stale
+    await refreshCurrent({ force: true });
   } catch (err) {
     editStatus.textContent = err.message;
     editStatus.className = "status err";
@@ -422,7 +462,7 @@ function openDeleteModal(row) {
   }
 
   const jamStr = (row.timestamp || "").substring(11);
-  deleteDetail.textContent = `${jamStr} \u00b7 ${row.kategori} \u00b7 ${formatRupiah(row.jumlah)}`;
+  deleteDetail.textContent = jamStr + " \u00b7 " + row.kategori + " \u00b7 " + formatRupiah(row.jumlah);
 
   deleteModal.hidden = false;
 }
@@ -459,7 +499,8 @@ btnKonfirmHapus.addEventListener("click", async () => {
     if (data.status !== "ok") throw new Error(data.message || "Gagal menghapus.");
 
     closeDeleteModal();
-    await refreshCurrent();
+    invalidateCache(formatTanggalApi(currentDate)); // data berubah, cache jadi stale
+    await refreshCurrent({ force: true });
   } catch (err) {
     deleteStatus.textContent = err.message;
     deleteStatus.className = "status err";

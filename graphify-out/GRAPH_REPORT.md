@@ -1,30 +1,29 @@
 # Graph Report - Work  (2026-07-29)
 
 ## Corpus Check
-- 12 files · ~16,778 words
+- 13 files · ~17,322 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
-- 172 nodes · 217 edges · 18 communities (14 shown, 4 thin omitted)
+- 178 nodes · 217 edges · 18 communities (14 shown, 4 thin omitted)
 - Extraction: 97% EXTRACTED · 3% INFERRED · 0% AMBIGUOUS · INFERRED: 6 edges (avg confidence: 0.5)
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `9f0b883e`
+- Built from commit: `c36f86d7`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
 ## Community Hubs (Navigation)
-- Transaction History UI
+- Riwayat/script.js
 - Cash Book Recording
-- Stock Inventory Tracking
+- Stok/script.js
 - Dashboard UI Components
 - Employee Registration Form
 - Accounting Backend System
 - Receipt Scanning Module
-- List Filtering Logic
-- Date Navigation Helpers
-- API Data Fetching
+- applyFilterAndRenderCards
+- fetchList
 - Category Modal Management
 - Deployment Scripts
 - Business Context Overview
@@ -33,8 +32,8 @@
 - Reminder/script.js
 
 ## God Nodes (most connected - your core abstractions)
-1. `applyFilterAndRenderCards()` - 7 edges
-2. `fetchStok()` - 6 edges
+1. `fetchStok()` - 7 edges
+2. `applyFilterAndRenderCards()` - 6 edges
 3. `validateAndGetSeconds()` - 6 edges
 4. `fetchList()` - 5 edges
 5. `renderQueue()` - 5 edges
@@ -65,17 +64,17 @@
 
 ## Communities (18 total, 4 thin omitted)
 
-### Community 0 - "Transaction History UI"
+### Community 0 - "Riwayat/script.js"
 Cohesion: 0.05
-Nodes (34): allRowsToday, btnBatalEdit, btnBatalHapus, btnHariIni, btnKemarin, btnKonfirmHapus, btnRefresh, btnSimpanEdit (+26 more)
+Nodes (36): allRowsToday, btnBatalEdit, btnBatalHapus, btnHariIni, btnKemarin, btnKonfirmHapus, btnRefresh, btnSimpanEdit (+28 more)
 
 ### Community 1 - "Cash Book Recording"
 Cohesion: 0.09
 Nodes (27): addToQueue(), belanjaDiLainnyaInput, belanjaDiWrap, form, getSelectedBelanjaDi(), getSelectedKategoriLain(), getSelectedOutlet(), jumlahEl (+19 more)
 
-### Community 2 - "Stock Inventory Tracking"
-Cohesion: 0.11
-Nodes (24): btnHariIni, btnKemarin, btnRefresh, currentDate, datePicker, emptyMsg, errorMsg, escapeHtml() (+16 more)
+### Community 2 - "Stok/script.js"
+Cohesion: 0.10
+Nodes (24): btnHariIni, btnKemarin, btnRefresh, currentDate, datePicker, emptyMsg, errorMsg, fetchStok() (+16 more)
 
 ### Community 3 - "Dashboard UI Components"
 Cohesion: 0.19
@@ -93,17 +92,13 @@ Nodes (9): Accounting Rules, Apps Script Backend, Buku Kas Spreadsheet, Input Ka
 Cohesion: 0.39
 Nodes (5): escapeAttr(), formatRp(), items, renderItems(), updateTotals()
 
-### Community 7 - "List Filtering Logic"
-Cohesion: 0.47
-Nodes (6): applyFilterAndRenderCards(), escapeHtml(), formatRupiah(), openDeleteModal(), renderKategoriFilterBar(), renderList()
+### Community 7 - "applyFilterAndRenderCards"
+Cohesion: 0.60
+Nodes (5): applyFilterAndRenderCards(), formatRupiah(), openDeleteModal(), renderKategoriFilterBar(), renderList()
 
-### Community 8 - "Date Navigation Helpers"
-Cohesion: 0.40
-Nodes (5): formatTanggalLabel(), goToDate(), pollMarker(), refreshCurrent(), toDateInputValue()
-
-### Community 9 - "API Data Fetching"
-Cohesion: 0.50
-Nodes (4): fetchList(), formatTanggalApi(), isSameDate(), setLoading()
+### Community 8 - "fetchList"
+Cohesion: 0.29
+Nodes (7): fetchList(), goToDate(), invalidateCache(), isCacheValid(), pollMarker(), refreshCurrent(), setLoading()
 
 ### Community 10 - "Category Modal Management"
 Cohesion: 0.67
@@ -114,7 +109,7 @@ Cohesion: 0.40
 Nodes (8): el, fmtDuration(), getCustomSeconds(), getTimePickerSeconds(), hideStatus(), showStatus(), submitReminder(), validateAndGetSeconds()
 
 ## Knowledge Gaps
-- **89 isolated node(s):** `all`, `menuBtn`, `drawer`, `overlay`, `drawerClose` (+84 more)
+- **93 isolated node(s):** `all`, `menuBtn`, `drawer`, `overlay`, `drawerClose` (+88 more)
   These have ≤1 connection - possible missing edges or undocumented components.
 - **4 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
 
@@ -122,10 +117,10 @@ Nodes (8): el, fmtDuration(), getCustomSeconds(), getTimePickerSeconds(), hideSt
 _Questions this graph is uniquely positioned to answer:_
 
 - **What connects `all`, `menuBtn`, `drawer` to the rest of the system?**
-  _89 weakly-connected nodes found - possible documentation gaps or missing edges._
-- **Should `Transaction History UI` be split into smaller, more focused modules?**
-  _Cohesion score 0.05405405405405406 - nodes in this community are weakly interconnected._
+  _93 weakly-connected nodes found - possible documentation gaps or missing edges._
+- **Should `Riwayat/script.js` be split into smaller, more focused modules?**
+  _Cohesion score 0.05 - nodes in this community are weakly interconnected._
 - **Should `Cash Book Recording` be split into smaller, more focused modules?**
   _Cohesion score 0.08817204301075268 - nodes in this community are weakly interconnected._
-- **Should `Stock Inventory Tracking` be split into smaller, more focused modules?**
-  _Cohesion score 0.10666666666666667 - nodes in this community are weakly interconnected._
+- **Should `Stok/script.js` be split into smaller, more focused modules?**
+  _Cohesion score 0.09538461538461539 - nodes in this community are weakly interconnected._
