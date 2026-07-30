@@ -209,33 +209,36 @@
         };
     }
 
-    let sedangMengirim = false; // guard tambahan, jaga-jaga
+    // TEMP: double-submit guard dimatikan sementara 2026-07-30 — restore sebelum production stabil
+    // let sedangMengirim = false; // guard tambahan, jaga-jaga
 
     function kirimLaporan() {
-        if (sedangMengirim) return; // sudah dalam proses kirim, abaikan tap tambahan
-        sedangMengirim = true;
+        // TEMP: double-submit guard dimatikan sementara 2026-07-30 — restore sebelum production stabil
+        // if (sedangMengirim) return; // sudah dalam proses kirim, abaikan tap tambahan
+        // sedangMengirim = true;
     
         const btnKirim = document.getElementById('btnKirim');
         const status = document.getElementById('status');
     
-        // Disable LANGSUNG saat diklik, sebelum fetch jalan
-        btnKirim.disabled = true;
-        btnKirim.style.backgroundColor = "#95a5a6";
+        // TEMP: disabled button guard dimatikan sementara 2026-07-30
+        // btnKirim.disabled = true;
+        // btnKirim.style.backgroundColor = "#95a5a6";
         status.innerText = "Tunggu, jangan tutup halaman ini. Data sedang di simpan...";
     
         fetch(SCRIPT_URL, { method: 'POST', body: JSON.stringify(globalPayload) })
         .then(() => {
             alert("✅ DATA BERHASIL TERSIMPAN!");
             status.innerText = "Oke. Data sudah tersimpan di DB.";
-            // tetap disabled permanen -> mencegah kirim laporan yang sama 2x
+            // TEMP: guard dimatikan — data bisa dikirim ulang
+            // (dulu: tetap disabled permanen -> mencegah kirim laporan yang sama 2x)
         })
         .catch(err => {
             alert("❌ GAGAL KIRIM.");
             status.innerText = "Gagal kirim ke database.";
-            // gagal -> izinkan coba lagi
-            btnKirim.disabled = false;
-            btnKirim.style.backgroundColor = "";
-            sedangMengirim = false;
+            // TEMP: cleanup guard ikut dinonaktifkan
+            // btnKirim.disabled = false;
+            // btnKirim.style.backgroundColor = "";
+            // sedangMengirim = false;
         });
     }
 
