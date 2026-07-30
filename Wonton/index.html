@@ -209,36 +209,31 @@
         };
     }
 
-    // TEMP: double-submit guard dimatikan sementara 2026-07-30 — restore sebelum production stabil
-    // let sedangMengirim = false; // guard tambahan, jaga-jaga
+    let sedangMengirim = false; // guard tambahan, jaga-jaga
 
     function kirimLaporan() {
-        // TEMP: double-submit guard dimatikan sementara 2026-07-30 — restore sebelum production stabil
-        // if (sedangMengirim) return; // sudah dalam proses kirim, abaikan tap tambahan
-        // sedangMengirim = true;
+        if (sedangMengirim) return; // sudah dalam proses kirim, abaikan tap tambahan
+        sedangMengirim = true;
     
         const btnKirim = document.getElementById('btnKirim');
         const status = document.getElementById('status');
     
-        // TEMP: disabled button guard dimatikan sementara 2026-07-30
-        // btnKirim.disabled = true;
-        // btnKirim.style.backgroundColor = "#95a5a6";
+        btnKirim.disabled = true;
+        btnKirim.style.backgroundColor = "#95a5a6";
         status.innerText = "Tunggu, jangan tutup halaman ini. Data sedang di simpan...";
     
         fetch(SCRIPT_URL, { method: 'POST', body: JSON.stringify(globalPayload) })
         .then(() => {
             alert("✅ DATA BERHASIL TERSIMPAN!");
             status.innerText = "Oke. Data sudah tersimpan di DB.";
-            // TEMP: guard dimatikan — data bisa dikirim ulang
-            // (dulu: tetap disabled permanen -> mencegah kirim laporan yang sama 2x)
+            // tetap disabled permanen -> mencegah kirim laporan yang sama 2x
         })
         .catch(err => {
             alert("❌ GAGAL KIRIM.");
             status.innerText = "Gagal kirim ke database.";
-            // TEMP: cleanup guard ikut dinonaktifkan
-            // btnKirim.disabled = false;
-            // btnKirim.style.backgroundColor = "";
-            // sedangMengirim = false;
+            btnKirim.disabled = false;
+            btnKirim.style.backgroundColor = "";
+            sedangMengirim = false;
         });
     }
 
