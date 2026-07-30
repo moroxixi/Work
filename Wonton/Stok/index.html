@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Stok Ayam — Wonton</title>
+<style>
+  :root {
+    --primary: #2980b9;
+    --primary-dark: #1a5276;
+    --primary-soft: #d6eaf8;
+    --bg: #f4f7f6;
+    --card: #ffffff;
+    --ink: #2c3e50;
+    --ink-soft: #7f8c8d;
+    --border: #dee2e6;
+    --success: #27ae60;
+    --success-bg: #d5f5e3;
+    --warn: #e67e22;
+    --warn-bg: #fdebd0;
+    --danger: #e74c3c;
+    --danger-bg: #fadbd8;
+    --radius: 12px;
+  }
+
+  * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+
+  body {
+    margin: 0;
+    min-height: 100vh;
+    background: var(--bg);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    color: var(--ink);
+    display: flex;
+    justify-content: center;
+    padding: 16px 12px calc(40px + env(safe-area-inset-bottom));
+  }
+
+  .container {
+    width: 100%;
+    max-width: 420px;
+  }
+
+  /* Header */
+  .header {
+    text-align: center;
+    padding: 24px 16px 20px;
+    background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+    border-radius: 18px;
+    margin-bottom: 16px;
+    color: #fff;
+    box-shadow: 0 4px 12px rgba(41, 128, 185, 0.25);
+  }
+
+  .header h1 {
+    margin: 0 0 4px;
+    font-size: 22px;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+  }
+
+  .header p {
+    margin: 0;
+    font-size: 13px;
+    opacity: 0.85;
+  }
+
+  /* Card */
+  .card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 18px 16px;
+    margin-bottom: 14px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+  }
+
+  .card-title {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--ink-soft);
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+    margin: 0 0 14px;
+    border-left: 4px solid var(--primary);
+    padding-left: 10px;
+  }
+
+  /* Form fields */
+  .field { margin-bottom: 14px; }
+  .field:last-child { margin-bottom: 0; }
+
+  .field label {
+    display: block;
+    font-size: 13px;
+    font-weight: 600;
+    margin-bottom: 6px;
+    color: var(--ink);
+  }
+
+  .field .hint {
+    font-size: 11px;
+    color: var(--ink-soft);
+    font-weight: 400;
+    margin-top: 2px;
+  }
+
+  .text-input {
+    width: 100%;
+    padding: 12px 14px;
+    font-size: 16px;
+    border: 1.5px solid var(--border);
+    border-radius: 8px;
+    background: #fbfaf6;
+    color: var(--ink);
+    appearance: none;
+    -webkit-appearance: none;
+    transition: border-color 0.15s ease;
+  }
+
+  .text-input:focus {
+    outline: none;
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px var(--primary-soft);
+  }
+
+  .text-input::placeholder { color: #b0b8c1; }
+
+  /* Button */
+  .btn-calc {
+    width: 100%;
+    padding: 14px;
+    background: #34495e;
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    font-size: 15px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: background 0.15s ease, transform 0.06s ease;
+    margin-top: 4px;
+  }
+
+  .btn-calc:hover { background: #2c3e50; }
+  .btn-calc:active { transform: scale(0.98); }
+
+  /* Output area */
+  #hasilArea {
+    display: none;
+    animation: fadeSlideIn 0.3s ease;
+  }
+
+  @keyframes fadeSlideIn {
+    from { opacity: 0; transform: translateY(-8px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .hasil-stok-cukup {
+    text-align: center;
+    padding: 20px 16px;
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--success);
+    background: var(--success-bg);
+    border-radius: 10px;
+  }
+
+  .hasil-stok-cukup .icon { font-size: 28px; display: block; margin-bottom: 8px; }
+
+  .hasil-pesan {
+    padding: 16px;
+  }
+
+  .hasil-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 0;
+    font-size: 15px;
+  }
+
+  .hasil-row .label { color: var(--ink-soft); }
+  .hasil-row .value { font-weight: 700; }
+  .hasil-row .value.highlight {
+    font-size: 22px;
+    color: var(--primary);
+  }
+
+  .hasil-divider {
+    border-top: 1px solid var(--border);
+    margin: 8px 0;
+  }
+
+  /* Reminder banner */
+  #reminderBanner {
+    display: none;
+    background: var(--warn-bg);
+    border: 1.5px solid var(--warn);
+    border-radius: 10px;
+    padding: 14px 16px;
+    margin-bottom: 14px;
+    font-size: 14px;
+    font-weight: 600;
+    color: #784b0a;
+    text-align: center;
+    animation: pulseBanner 2s ease-in-out infinite;
+    box-shadow: 0 2px 8px rgba(230, 126, 34, 0.15);
+  }
+
+  #reminderBanner .icon {
+    font-size: 22px;
+    display: block;
+    margin-bottom: 6px;
+  }
+
+  @keyframes pulseBanner {
+    0%, 100% { box-shadow: 0 2px 8px rgba(230, 126, 34, 0.15); }
+    50% { box-shadow: 0 2px 16px rgba(230, 126, 34, 0.3); }
+  }
+
+  /* Status text */
+  .status-msg {
+    text-align: center;
+    font-size: 12px;
+    color: var(--ink-soft);
+    margin-top: 10px;
+    min-height: 18px;
+  }
+
+  /* Reset button (small, subtle) */
+  .btn-reset {
+    display: inline-block;
+    padding: 6px 14px;
+    margin-top: 10px;
+    font-size: 12px;
+    color: var(--ink-soft);
+    background: transparent;
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    cursor: pointer;
+    transition: background 0.12s ease;
+  }
+
+  .btn-reset:hover { background: var(--primary-soft); }
+  .btn-reset:active { transform: scale(0.96); }
+
+  .text-center { text-align: center; }
+
+  @media (prefers-reduced-motion: reduce) {
+    #hasilArea { animation: none; }
+    #reminderBanner { animation: none; }
+  }
+
+  /* Responsive */
+  @media (max-width: 360px) {
+    .header h1 { font-size: 19px; }
+    .hasil-row .value.highlight { font-size: 18px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="container">
+  <div class="header">
+    <h1>🐔 Stok Ayam</h1>
+    <p>MAO WONTON &amp; MIE JEBEW</p>
+  </div>
+
+  <!-- Reminder banner (ditampilkan hanya dalam range waktu tertentu) -->
+  <div id="reminderBanner">
+    <span class="icon">⏰</span>
+    Tambahkan <strong>1-2 kantong</strong> lagi untuk stok besok pagi
+  </div>
+
+  <!-- Form input -->
+  <div class="card">
+    <div class="card-title">Hitung Kebutuhan Ayam</div>
+
+    <div class="field">
+      <label for="targetInput">Jumlah kantong yang diinginkan</label>
+      <input type="number" id="targetInput" class="text-input" placeholder="cth: 10" step="0.1" min="0">
+    </div>
+
+    <div class="field">
+      <label for="sisaInput">Sisa kantong saat ini</label>
+      <input type="number" id="sisaInput" class="text-input" placeholder="cth: 3.5" step="0.1" min="0">
+      <div class="hint">Gunakan titik untuk desimal, misal: 0.5</div>
+    </div>
+
+    <button class="btn-calc" onclick="hitung()">🔢 Hitung Kebutuhan</button>
+    <p class="status-msg" id="statusMsg"></p>
+  </div>
+
+  <!-- Hasil -->
+  <div class="card" id="hasilArea">
+    <div id="hasilContent"></div>
+    <div class="text-center">
+      <button class="btn-reset" onclick="resetForm()">↻ Reset</button>
+    </div>
+  </div>
+</div>
+
+<script>
+  const RASIO_KG_PER_KANTONG = 20 / 7.5;
+
+  function hitung() {
+    const targetInput = document.getElementById('targetInput');
+    const sisaInput = document.getElementById('sisaInput');
+    const hasilArea = document.getElementById('hasilArea');
+    const hasilContent = document.getElementById('hasilContent');
+    const statusMsg = document.getElementById('statusMsg');
+
+    // Parse input
+    const target = parseFloat(targetInput.value) || 0;
+    const sisa = parseFloat(sisaInput.value) || 0;
+
+    if (isNaN(target) || isNaN(sisa)) {
+      statusMsg.textContent = 'Harap masukkan angka yang valid (gunakan titik untuk desimal, misal: 0.5)';
+      statusMsg.style.color = '#e74c3c';
+      return;
+    }
+
+    const kekurangan = target - sisa;
+
+    if (kekurangan <= 0) {
+      hasilContent.innerHTML = `
+        <div class="hasil-stok-cukup">
+          <span class="icon">✅</span>
+          Stok masih cukup. Tidak perlu pesan ayam tambahan.
+        </div>
+      `;
+    } else {
+      const totalKg = kekurangan * RASIO_KG_PER_KANTONG;
+      hasilContent.innerHTML = `
+        <div class="hasil-pesan">
+          <div class="hasil-row">
+            <span class="label">Target kantong</span>
+            <span class="value">${target} kantong</span>
+          </div>
+          <div class="hasil-row">
+            <span class="label">Sisa kantong</span>
+            <span class="value">${sisa} kantong</span>
+          </div>
+          <div class="hasil-divider"></div>
+          <div class="hasil-row">
+            <span class="label">Kekurangan</span>
+            <span class="value">${kekurangan} kantong</span>
+          </div>
+          <div class="hasil-row">
+            <span class="label">Total ayam yang harus dipesan</span>
+            <span class="value highlight">${totalKg.toFixed(2)} kg</span>
+          </div>
+          <div class="hasil-divider"></div>
+          <div style="font-size:11px; color:#95a5a6; text-align:center; margin-top:6px;">
+            Rasio: 20 kg = 7.5 kantong
+          </div>
+        </div>
+      `;
+    }
+
+    hasilArea.style.display = 'block';
+    statusMsg.textContent = '';
+    statusMsg.style.color = '';
+  }
+
+  function resetForm() {
+    document.getElementById('targetInput').value = '';
+    document.getElementById('sisaInput').value = '';
+    document.getElementById('hasilArea').style.display = 'none';
+    document.getElementById('statusMsg').textContent = '';
+  }
+
+  // === Reminder berbasis waktu ===
+  function cekReminder() {
+    const now = new Date();
+    const hari = now.getDay();    // JS: Sun=0, Mon=1, Tue=2, Wed=3, Thu=4, Fri=5, Sat=6
+    const jam = now.getHours();
+
+    // Range A: Kamis (4) 20:00 – Jumat (5) 05:00 (05:00 tidak termasuk)
+    const inRangeA = (hari === 4 && jam >= 20) || (hari === 5 && jam < 5);
+
+    // Range B: Jumat (5) 20:00 – Sabtu (6) 05:00 (05:00 tidak termasuk)
+    const inRangeB = (hari === 5 && jam >= 20) || (hari === 6 && jam < 5);
+
+    const banner = document.getElementById('reminderBanner');
+
+    if (inRangeA || inRangeB) {
+      banner.style.display = 'block';
+    } else {
+      banner.style.display = 'none';
+    }
+  }
+
+  // Jalankan cek reminder saat halaman dimuat
+  cekReminder();
+
+  // Optional: refresh reminder setiap menit (biar update tanpa reload)
+  setInterval(cekReminder, 60000);
+</script>
+
+</body>
+</html>

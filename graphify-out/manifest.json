@@ -34,11 +34,6 @@
     "ast_hash": "487f740d12c91163293b4a96b7759237",
     "semantic_hash": "487f740d12c91163293b4a96b7759237"
   },
-  "kantong.py": {
-    "mtime": 1785390310.360472,
-    "ast_hash": "c0349f1a5c3212832fc948885c93a131",
-    "semantic_hash": ""
-  },
   "work-push.sh": {
     "mtime": 1784360638.9048307,
     "ast_hash": "656035dc51dca6b7aa9fee7b8798d1a0",
@@ -112,6 +107,16 @@
   "Pencatatan-Buku-Kas/shared-utils.js": {
     "mtime": 1785315743.7595155,
     "ast_hash": "721bde5f1ce7ca7dc1f578287d7bd9ff",
+    "semantic_hash": ""
+  },
+  "Wonton/Stok/kantong.py": {
+    "mtime": 1785390310.360472,
+    "ast_hash": "c0349f1a5c3212832fc948885c93a131",
+    "semantic_hash": ""
+  },
+  "Wonton/Stok/index.html": {
+    "mtime": 1785397791.5607557,
+    "ast_hash": "d5c2a28f6990da49b409ef2cb7c34b52",
     "semantic_hash": ""
   }
 }

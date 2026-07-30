@@ -1,16 +1,16 @@
-# Graph Report - Work  (2026-07-29)
+# Graph Report - Work  (2026-07-30)
 
 ## Corpus Check
-- 13 files · ~17,322 words
+- 13 files · ~17,513 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
-- 178 nodes · 217 edges · 18 communities (14 shown, 4 thin omitted)
+- 180 nodes · 219 edges · 18 communities (13 shown, 5 thin omitted)
 - Extraction: 97% EXTRACTED · 3% INFERRED · 0% AMBIGUOUS · INFERRED: 6 edges (avg confidence: 0.5)
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `c36f86d7`
+- Built from commit: `8f508180`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -25,6 +25,7 @@
 - applyFilterAndRenderCards
 - fetchList
 - Category Modal Management
+- kantong.py
 - Deployment Scripts
 - Business Context Overview
 - Main Dashboard View
@@ -62,7 +63,7 @@
 - **MAO Group Digital Ecosystem** — pencatatan_buku_kas_index, tempura_index, wonton_index, pencatatan_buku_kas_scan_struk, pencatatan_buku_kas_riwayat, pencatatan_buku_kas_stok [EXTRACTED 0.90]
 - **Daily Financial Reporting Flow** — tempura_index, wonton_index, google_apps_script_code, google_sheets_buku_kas [EXTRACTED 0.95]
 
-## Communities (18 total, 4 thin omitted)
+## Communities (18 total, 5 thin omitted)
 
 ### Community 0 - "Riwayat/script.js"
 Cohesion: 0.05
@@ -111,7 +112,7 @@ Nodes (8): el, fmtDuration(), getCustomSeconds(), getTimePickerSeconds(), hideSt
 ## Knowledge Gaps
 - **93 isolated node(s):** `all`, `menuBtn`, `drawer`, `overlay`, `drawerClose` (+88 more)
   These have ≤1 connection - possible missing edges or undocumented components.
-- **4 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
+- **5 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
 
 ## Suggested Questions
 _Questions this graph is uniquely positioned to answer:_
