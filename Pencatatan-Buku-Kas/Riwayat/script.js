@@ -20,6 +20,10 @@ let modalOpen = false;
 let pendingEditRow = null;
 let pendingDeleteRow = null;
 
+// "YYYY-MM" saat mode bulanan aktif; null = mode harian (default).
+// Ini yang membedakan periode tampilan & key cache antara harian vs bulanan.
+let currentMonthKey = null;
+
 // === Fase 3: optimasi fetch ===
 let activeFetchController = null;           // AbortController untuk cancel request lama
 const fetchCache = new Map();               // key = tanggalStr, value = data.rows
@@ -29,11 +33,14 @@ const cacheTimestamps = new Map();          // key = tanggalStr, value = Date.no
 // ===== Elemen =====
 const tanggalLabel = document.getElementById("tanggalLabel");
 const datePicker = document.getElementById("datePicker");
+const monthPicker = document.getElementById("monthPicker");
+const btnBulanIni = document.getElementById("btnBulanIni");
 const btnKemarin = document.getElementById("btnKemarin");
 const btnHariIni = document.getElementById("btnHariIni");
 const btnRefresh = document.getElementById("btnRefresh");
 const refreshIcon = document.getElementById("refreshIcon");
 const liveStatus = document.getElementById("liveStatus");
+const btnDownload = document.getElementById("btnDownload");
 
 const loadingMsg = document.getElementById("loadingMsg");
 const emptyMsg = document.getElementById("emptyMsg");
@@ -84,7 +91,9 @@ function setLoading(isLoading) {
 // Elemen filter kategori
 const kategoriFilterBar = document.getElementById("kategoriFilterBar");
 
-// Data mentah hari ini (belum difilter) + kategori yang lagi aktif difilter
+// Data mentah periode aktif (belum difilter) — berisi transaksi hari itu
+// (mode harian) ATAU satu bulan penuh (mode bulanan) + kategori yang lagi
+// aktif difilter.
 let allRowsToday = [];
 let activeKategoriFilter = null; // null = "Semua"
 
@@ -152,7 +161,9 @@ function applyFilterAndRenderCards() {
 
   if (allRowsToday.length === 0) {
     emptyMsg.hidden = false;
-    emptyMsg.textContent = "Belum ada transaksi di tanggal ini.";
+    emptyMsg.textContent = currentMonthKey
+      ? "Belum ada transaksi di bulan ini."
+      : "Belum ada transaksi di tanggal ini.";
     summaryBar.hidden = true;
     return;
   }
@@ -169,13 +180,19 @@ function applyFilterAndRenderCards() {
 
   if (currentRows.length === 0) {
     emptyMsg.hidden = false;
-    emptyMsg.textContent = "Tidak ada transaksi kategori \"" + activeKategoriFilter + "\" di tanggal ini.";
+    emptyMsg.textContent = "Tidak ada transaksi kategori \"" + activeKategoriFilter + "\"" +
+      (currentMonthKey ? " di bulan ini." : " di tanggal ini.");
     return;
   }
   emptyMsg.hidden = true;
 
 currentRows.forEach((row) => {
-    const jamStr = (row.timestamp || "").substring(11); // ambil "HH:mm:ss"
+    const timestamp = row.timestamp || "";
+    // Mode bulanan: tampilkan tanggal juga (dd/MM · HH:mm:ss) karena kartu
+    // bisa berisi transaksi dari beberapa hari berbeda.
+    const jamStr = currentMonthKey && timestamp.length >= 16
+      ? timestamp.substring(0, 5) + " · " + timestamp.substring(11)
+      : timestamp.substring(11); // ambil "HH:mm:ss"
 
     const card = document.createElement("div");
     card.className = "tx-card " + (row.arah === "Masuk" ? "arah-masuk" : "arah-keluar");
@@ -207,20 +224,43 @@ currentRows.forEach((row) => {
   });
 }
 
+// ===== Util bulan (mode bulanan) =====
+function monthKeyOf(date) {
+  return date.getFullYear() + "-" + String(date.getMonth() + 1).padStart(2, "0");
+}
+
+function formatBulanLabel(monthKey) {
+  return formatBulanNama(monthKey) + " " + monthKey.split("-")[0];
+}
+
+// Key cache periode aktif. WAJIB dibedakan antara mode harian ("dd/MM/yyyy")
+// dan mode bulanan ("bulan:YYYY-MM") supaya switching mode tidak menampilkan
+// data stale/tertukar antar periode.
+function currentViewKey() {
+  return currentMonthKey ? "bulan:" + currentMonthKey : formatTanggalApi(currentDate);
+}
+
 // ===== Cache helpers =====
-function isCacheValid(tanggalStr) {
-  if (!fetchCache.has(tanggalStr)) return false;
-  const age = Date.now() - (cacheTimestamps.get(tanggalStr) || 0);
+// Key cache bisa berupa tanggal harian ("dd/MM/yyyy") ATAU bulanan
+// ("bulan:YYYY-MM") — kedua namespace sengaja dipisah supaya tidak saling
+// tertukar saat switching mode harian ↔ bulanan.
+function isCacheValid(key) {
+  if (!fetchCache.has(key)) return false;
+  const age = Date.now() - (cacheTimestamps.get(key) || 0);
   return age < CACHE_MAX_AGE;
 }
 
-function invalidateCache(tanggalStr) {
-  fetchCache.delete(tanggalStr);
-  cacheTimestamps.delete(tanggalStr);
+function invalidateCache(key) {
+  fetchCache.delete(key);
+  cacheTimestamps.delete(key);
 }
 
 // ===== Fetch data =====
-async function fetchList(date, { silent = false, force = false } = {}) {
+async function fetchList(date, { silent = false, force = false, mode = "day" } = {}) {
+  // Mode bulanan punya jalur fetch sendiri (fetch tiap hari lalu gabung),
+  // key cache-nya dipisah. Mode harian (default) di bawah TIDAK berubah.
+  if (mode === "month") return fetchMonthList(date, { silent, force });
+
   if (!silent) setLoading(true);
   errorMsg.hidden = true;
 
@@ -261,16 +301,117 @@ async function fetchList(date, { silent = false, force = false } = {}) {
   }
 }
 
-async function refreshCurrent({ silent = false, force = false } = {}) {
-  await fetchList(currentDate, { silent, force });
+// Mode bulanan: fetch data satu bulan penuh. Backend Apps Script hanya
+// mendukung query per tanggal (action=list&tanggal=dd/MM/yyyy), jadi bulan
+// diambil dengan mem-fetch tiap hari dalam bulan itu (per batch maks 10
+// request paralel) lalu digabung — baris sheet unik per nomor baris.
+// Cache pakai key terpisah ("bulan:YYYY-MM") supaya tidak tertukar dengan
+// cache harian.
+async function fetchMonthList(date, { silent = false, force = false } = {}) {
+  if (!silent) setLoading(true);
+  errorMsg.hidden = true;
+
+  const key = "bulan:" + monthKeyOf(date);
+
+  // Cache hit (kecuali force-refresh)
+  if (!force && isCacheValid(key)) {
+    renderList(fetchCache.get(key));
+    if (!silent) setLoading(false);
+    return;
+  }
+
+  // Cancel request sebelumnya kalau ada
+  if (activeFetchController) {
+    activeFetchController.abort();
+  }
+  const controller = new AbortController();
+  activeFetchController = controller;
+  const signal = controller.signal;
+
+  try {
+    const year = date.getFullYear();
+    const month = date.getMonth();
+    const daysInMonth = new Date(year, month + 1, 0).getDate();
+
+    // Fetch per batch kecil supaya tidak membuka 30+ koneksi sekaligus.
+    // Kalau yang dilihat bulan berjalan, hari-hari masa depan sudah pasti
+    // kosong (timestamp selalu di-set saat input), jadi tidak perlu di-fetch.
+    const today = new Date();
+    const isCurrentMonth = year === today.getFullYear() && month === today.getMonth();
+    const lastDayToFetch = isCurrentMonth ? today.getDate() : daysInMonth;
+    const days = [];
+    for (let day = 1; day <= lastDayToFetch; day++) {
+      days.push(new Date(year, month, day));
+    }
+    const CHUNK = 10;
+    const results = [];
+    for (let i = 0; i < days.length; i += CHUNK) {
+      const chunkDays = days.slice(i, i + CHUNK);
+      const chunkResults = await Promise.all(chunkDays.map((d) => fetchDayRows(d, signal)));
+      results.push(...chunkResults);
+    }
+
+    // Gabungkan semua hari; nomor baris sheet dipakai sebagai id unik
+    const seen = new Set();
+    const rows = [];
+    results.forEach((res) => {
+      if (res.status !== "ok") throw new Error(res.message || "Gagal memuat data.");
+      (res.rows || []).forEach((row) => {
+        if (!seen.has(row.row)) {
+          seen.add(row.row);
+          rows.push(row);
+        }
+      });
+    });
+    rows.sort((a, b) => b.row - a.row); // paling baru di atas, sama seperti harian
+
+    fetchCache.set(key, rows);
+    cacheTimestamps.set(key, Date.now());
+
+    renderList(rows);
+  } catch (err) {
+    if (err.name === "AbortError") return; // dibatalkan karena ada fetch baru — silent
+    errorMsg.textContent = "Gagal memuat data: " + err.message;
+    errorMsg.hidden = false;
+  } finally {
+    if (!silent) setLoading(false);
+  }
+}
+
+// Satu request harian (dipakai fetchMonthList). Pakai signal yang sama
+// supaya ikut dibatalkan kalau user pindah periode sebelum selesai.
+async function fetchDayRows(date, signal) {
+  const tanggalStr = formatTanggalApi(date);
+  const res = await fetch(ENDPOINT_URL + "?action=list&tanggal=" + encodeURIComponent(tanggalStr), { signal });
+  return res.json();
+}
+
+async function refreshCurrent({ silent = false, force = false, mode } = {}) {
+  await fetchList(currentDate, {
+    silent,
+    force,
+    mode: mode || (currentMonthKey ? "month" : "day")
+  });
 }
 
 function goToDate(date) {
   currentDate = date;
+  currentMonthKey = null; // keluar dari mode bulanan
   activeKategoriFilter = null; // ganti tanggal → filter balik ke "Semua"
   tanggalLabel.textContent = formatTanggalLabel(currentDate);
   datePicker.value = toDateInputValue(currentDate);
+  updateDownloadVisibility(); // tombol download hanya untuk mode bulanan
   refreshCurrent();
+}
+
+function goToMonth(date) {
+  currentDate = date;
+  currentMonthKey = monthKeyOf(date); // masuk mode bulanan
+  activeKategoriFilter = null; // ganti bulan → filter balik ke "Semua"
+  tanggalLabel.textContent = formatBulanLabel(currentMonthKey);
+  monthPicker.value = currentMonthKey;
+  updateDownloadVisibility(); // tombol download hanya untuk mode bulanan
+  refreshCurrent({ mode: "month" });
 }
 
 // ===== Navigasi =====
@@ -290,9 +431,108 @@ datePicker.addEventListener("change", () => {
   goToDate(new Date(y, m - 1, d));
 });
 
+btnBulanIni.addEventListener("click", () => {
+  goToMonth(new Date()); // dihitung ulang tiap klik, selalu "bulan ini"
+});
+
+monthPicker.addEventListener("change", () => {
+  if (!monthPicker.value) return;
+  const [y, m] = monthPicker.value.split("-").map(Number);
+  goToMonth(new Date(y, m - 1, 1));
+});
+
+// ===== Download CSV (mode bulanan) =====
+// Muncul hanya saat mode bulanan aktif. Data diambil DARI state yang sudah
+// dirender (currentRows = hasil filter bulan + kategori aktif), TIDAK fetch
+// ulang ke backend — murni export dari yang sedang tampil di layar.
+
+function updateDownloadVisibility() {
+  btnDownload.hidden = !currentMonthKey;
+}
+
+// Nama bulan Indonesia (mis. "Juli") — konvensi sama dengan formatBulanLabel()
+function formatBulanNama(monthKey) {
+  const [y, m] = monthKey.split("-").map(Number);
+  return new Date(y, m - 1, 1).toLocaleDateString("id-ID", { month: "long" });
+}
+
+// Siapkan teks kategori supaya aman dipakai di nama file (ganti /, spasi, dll)
+function sanitizeFilenamePart(str) {
+  return String(str || "")
+    .replace(/[\\\/:*?"<>|]/g, "-")
+    .replace(/\s+/g, "-")
+    .replace(/-+/g, "-");
+}
+
+function downloadFileName() {
+  const [tahun] = currentMonthKey.split("-");
+  let name = "riwayat-kas-" + tahun + "-" + formatBulanNama(currentMonthKey);
+  if (activeKategoriFilter) {
+    name += "-" + sanitizeFilenamePart(activeKategoriFilter);
+  }
+  return name + ".csv";
+}
+
+// Escape RFC 4180: kutip field yang mengandung koma/quote/newline,
+// dan gandakan quote di dalamnya supaya file tidak korup di Excel/Sheets.
+function csvEscape(value) {
+  const s = String(value == null ? "" : value);
+  return /[",\n\r]/.test(s) ? '"' + s.replace(/"/g, '""') + '"' : s;
+}
+
+function downloadCsv() {
+  // Pure addition: tidak boleh mengubah state filter/render yang sedang aktif.
+  if (!currentMonthKey || currentRows.length === 0) {
+    liveStatus.textContent = "Tidak ada data untuk di-download.";
+    setTimeout(() => { liveStatus.textContent = ""; }, 2500);
+    return;
+  }
+
+  try {
+    const header = ["Tanggal", "Jam", "Kategori", "Detail", "Keterangan", "Jenis", "Jumlah", "Sumber"];
+    const lines = [header.map(csvEscape).join(",")];
+
+    currentRows.forEach((row) => {
+      const timestamp = row.timestamp || "";
+      const tanggal = timestamp.substring(0, 10); // "dd/MM/yyyy"
+      const jam = timestamp.length >= 11 ? timestamp.substring(11, 19) : ""; // "HH:mm:ss"
+      lines.push([
+        tanggal,
+        jam,
+        row.kategori || "",
+        row.belanjaDi || "",
+        row.keterangan === "-" ? "" : (row.keterangan || ""),
+        row.arah || "",
+        Number(row.jumlah || 0),
+        row.sumber || "manual"
+      ].map(csvEscape).join(","));
+    });
+
+    // BOM supaya karakter non-ASCII terbaca benar di Excel; \r\n = Excel-friendly
+    const csv = "\uFEFF" + lines.join("\r\n");
+    const blob = new Blob([csv], { type: "text/csv;charset=utf-8" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = downloadFileName();
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    setTimeout(() => URL.revokeObjectURL(url), 1000);
+
+    liveStatus.textContent = "Download CSV dimulai (" + currentRows.length + " transaksi).";
+    setTimeout(() => { liveStatus.textContent = ""; }, 2500);
+  } catch (err) {
+    liveStatus.textContent = "Gagal download: " + err.message;
+    setTimeout(() => { liveStatus.textContent = ""; }, 2500);
+  }
+}
+
+btnDownload.addEventListener("click", downloadCsv);
+
 btnRefresh.addEventListener("click", async () => {
   refreshIcon.classList.add("spin");
-  invalidateCache(formatTanggalApi(currentDate)); // paksa fresh
+  invalidateCache(currentViewKey()); // paksa fresh periode aktif
   await refreshCurrent({ force: true });
   setTimeout(() => refreshIcon.classList.remove("spin"), 400);
 });
@@ -316,7 +556,7 @@ async function pollMarker() {
         return;
       }
       liveStatus.textContent = "Ada data baru, memperbarui...";
-      invalidateCache(formatTanggalApi(currentDate)); // data di server berubah, cache stale
+      invalidateCache(currentViewKey()); // data di server berubah, cache stale
       await refreshCurrent({ silent: true, force: true });
       liveStatus.textContent = "Diperbarui otomatis";
       setTimeout(() => { liveStatus.textContent = ""; }, 2500);
@@ -432,7 +672,7 @@ btnSimpanEdit.addEventListener("click", async () => {
     if (data.status !== "ok") throw new Error(data.message || "Gagal menyimpan.");
 
     closeEditModal();
-    invalidateCache(formatTanggalApi(currentDate)); // data berubah, cache jadi stale
+    invalidateCache(currentViewKey()); // data berubah, cache jadi stale
     await refreshCurrent({ force: true });
   } catch (err) {
     editStatus.textContent = err.message;
@@ -499,7 +739,7 @@ btnKonfirmHapus.addEventListener("click", async () => {
     if (data.status !== "ok") throw new Error(data.message || "Gagal menghapus.");
 
     closeDeleteModal();
-    invalidateCache(formatTanggalApi(currentDate)); // data berubah, cache jadi stale
+    invalidateCache(currentViewKey()); // data berubah, cache jadi stale
     await refreshCurrent({ force: true });
   } catch (err) {
     deleteStatus.textContent = err.message;

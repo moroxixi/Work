@@ -144,6 +144,17 @@ document.querySelectorAll('input[name="kategoriLain"]').forEach((radio) => {
     const isLainnya = radio.value === "__lainnya__";
     kategoriLainnyaInput.hidden = !isLainnya;
     if (isLainnya) kategoriLainnyaInput.focus();
+
+    // Auto-fill nominal Rp 2.000 kalau pilih kategori "Parkir".
+    // Convenience feature saja: hanya jalan kalau nominal masih kosong
+    // (tidak menimpa angka manual yang sudah diketik), field tetap bisa
+    // diedit manual, dan TIDAK di-reset otomatis kalau nanti pindah ke
+    // kategori lain (nilai terakhir dibiarkan tetap ada).
+    if (radio.value === "Parkir") {
+      if (!jumlahEl.value.replace(/\D/g, "")) {
+        jumlahEl.value = "2.000";
+      }
+    }
   });
 });
 

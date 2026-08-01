@@ -53,9 +53,21 @@
     </label>
   </div>
 
+  <!-- Filter bulanan (opsi tambahan di samping filter harian di atas) -->
+  <div class="nav-bar">
+    <button type="button" id="btnBulanIni" class="nav-btn">Bulan Ini</button>
+    <label class="nav-btn nav-btn-date" for="monthPicker">
+      <span>Pilih Bulan</span>
+      <input type="month" id="monthPicker">
+    </label>
+  </div>
+
   <div class="toolbar">
     <button type="button" id="btnRefresh" class="refresh-btn">
       <span id="refreshIcon" class="refresh-icon">&#8635;</span> Refresh
+    </button>
+    <button type="button" id="btnDownload" class="refresh-btn" hidden>
+      <span class="refresh-icon" aria-hidden="true">&#8595;</span> Download CSV
     </button>
     <span id="liveStatus" class="live-status"></span>
   </div>

@@ -1,12 +1,12 @@
 # Graph Report - Work  (2026-08-01)
 
 ## Corpus Check
-- 13 files · ~19,771 words
+- 13 files · ~19,360 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
-- 196 nodes · 252 edges · 19 communities (14 shown, 5 thin omitted)
-- Extraction: 97% EXTRACTED · 3% INFERRED · 0% AMBIGUOUS · INFERRED: 8 edges (avg confidence: 0.5)
+- 188 nodes · 237 edges · 18 communities (13 shown, 5 thin omitted)
+- Extraction: 97% EXTRACTED · 3% INFERRED · 0% AMBIGUOUS · INFERRED: 6 edges (avg confidence: 0.5)
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
@@ -24,14 +24,13 @@
 - Receipt Scanning Module
 - applyFilterAndRenderCards
 - fetchMonthList
-- goToMonth
+- pollMarker
 - kantong.py
 - Deployment Scripts
 - Business Context Overview
 - Main Dashboard View
 - User Onboarding Form
 - Reminder/script.js
-- downloadFileName
 
 ## God Nodes (most connected - your core abstractions)
 1. `fetchMonthList()` - 7 edges
@@ -41,9 +40,9 @@
 5. `validateAndGetSeconds()` - 6 edges
 6. `renderList()` - 5 edges
 7. `refreshCurrent()` - 5 edges
-8. `goToMonth()` - 5 edges
-9. `renderQueue()` - 5 edges
-10. `submitReminder()` - 5 edges
+8. `renderQueue()` - 5 edges
+9. `submitReminder()` - 5 edges
+10. `cardHTML()` - 4 edges
 
 ## Surprising Connections (you probably didn't know these)
 - `Input Kas Harian Form` --calls--> `Apps Script Backend`  [EXTRACTED]
@@ -64,11 +63,11 @@
 - **MAO Group Digital Ecosystem** — pencatatan_buku_kas_index, tempura_index, wonton_index, pencatatan_buku_kas_scan_struk, pencatatan_buku_kas_riwayat, pencatatan_buku_kas_stok [EXTRACTED 0.90]
 - **Daily Financial Reporting Flow** — tempura_index, wonton_index, google_apps_script_code, google_sheets_buku_kas [EXTRACTED 0.95]
 
-## Communities (19 total, 5 thin omitted)
+## Communities (18 total, 5 thin omitted)
 
 ### Community 0 - "Riwayat/script.js"
 Cohesion: 0.05
-Nodes (40): RFC-4180, allRowsToday, btnBatalEdit, btnBatalHapus, btnBulanIni, btnDownload, btnHariIni, btnKemarin (+32 more)
+Nodes (38): allRowsToday, btnBatalEdit, btnBatalHapus, btnBulanIni, btnHariIni, btnKemarin, btnKonfirmHapus, btnRefresh (+30 more)
 
 ### Community 1 - "Cash Book Recording"
 Cohesion: 0.09
@@ -99,23 +98,19 @@ Cohesion: 0.32
 Nodes (8): applyFilterAndRenderCards(), formatRupiah(), KATEGORI_MASUK, openDeleteModal(), openEditModal(), populateKategoriSelect(), renderKategoriFilterBar(), renderList()
 
 ### Community 8 - "fetchMonthList"
-Cohesion: 0.60
-Nodes (5): fetchDayRows(), fetchList(), fetchMonthList(), isCacheValid(), setLoading()
+Cohesion: 0.27
+Nodes (10): fetchDayRows(), fetchList(), fetchMonthList(), formatBulanLabel(), goToDate(), goToMonth(), isCacheValid(), monthKeyOf() (+2 more)
 
-### Community 10 - "goToMonth"
-Cohesion: 0.29
-Nodes (8): currentViewKey(), goToDate(), goToMonth(), invalidateCache(), monthKeyOf(), pollMarker(), refreshCurrent(), updateDownloadVisibility()
+### Community 10 - "pollMarker"
+Cohesion: 0.67
+Nodes (3): currentViewKey(), invalidateCache(), pollMarker()
 
 ### Community 17 - "Reminder/script.js"
 Cohesion: 0.40
 Nodes (8): el, fmtDuration(), getCustomSeconds(), getTimePickerSeconds(), hideStatus(), showStatus(), submitReminder(), validateAndGetSeconds()
 
-### Community 18 - "downloadFileName"
-Cohesion: 0.33
-Nodes (6): csvEscape(), downloadCsv(), downloadFileName(), formatBulanLabel(), formatBulanNama(), sanitizeFilenamePart()
-
 ## Knowledge Gaps
-- **97 isolated node(s):** `all`, `menuBtn`, `drawer`, `overlay`, `drawerClose` (+92 more)
+- **95 isolated node(s):** `all`, `menuBtn`, `drawer`, `overlay`, `drawerClose` (+90 more)
   These have ≤1 connection - possible missing edges or undocumented components.
 - **5 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
 
@@ -123,9 +118,9 @@ Nodes (6): csvEscape(), downloadCsv(), downloadFileName(), formatBulanLabel(), f
 _Questions this graph is uniquely positioned to answer:_
 
 - **What connects `all`, `menuBtn`, `drawer` to the rest of the system?**
-  _97 weakly-connected nodes found - possible documentation gaps or missing edges._
+  _95 weakly-connected nodes found - possible documentation gaps or missing edges._
 - **Should `Riwayat/script.js` be split into smaller, more focused modules?**
-  _Cohesion score 0.045454545454545456 - nodes in this community are weakly interconnected._
+  _Cohesion score 0.047619047619047616 - nodes in this community are weakly interconnected._
 - **Should `Cash Book Recording` be split into smaller, more focused modules?**
   _Cohesion score 0.08817204301075268 - nodes in this community are weakly interconnected._
 - **Should `Stok/script.js` be split into smaller, more focused modules?**

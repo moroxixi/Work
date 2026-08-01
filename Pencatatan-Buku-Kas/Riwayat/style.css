@@ -86,7 +86,8 @@ body {
   color: #fff;
   font-weight: 600;
 }
-.nav-btn-date input[type="date"] {
+.nav-btn-date input[type="date"],
+.nav-btn-date input[type="month"] {
   position: absolute;
   inset: 0;
   opacity: 0;
