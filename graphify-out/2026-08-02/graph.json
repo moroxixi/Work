@@ -1478,7 +1478,7 @@
       "norm_label": "initdate"
     },
     {
-      "label": "Pencatatan-Buku-Kas/config.js",
+      "label": "config.js",
       "file_type": "code",
       "source_file": "Pencatatan-Buku-Kas/config.js",
       "source_location": "L1",
@@ -1486,7 +1486,7 @@
       "id": "pencatatan_buku_kas_config",
       "community": 16,
       "community_name": "Application Configuration",
-      "norm_label": "pencatatan-buku-kas/config.js"
+      "norm_label": "config.js"
     },
     {
       "label": "Pencatatan-Buku-Kas/script.js",
@@ -1993,17 +1993,6 @@
       "community": 17,
       "community_name": "Reminder/script.js",
       "norm_label": "submitreminder()"
-    },
-    {
-      "label": "Config/config.js",
-      "file_type": "code",
-      "source_file": "Wonton/Config/config.js",
-      "source_location": "L1",
-      "_origin": "ast",
-      "id": "wonton_config_config",
-      "community": 19,
-      "community_name": "Config/config.js",
-      "norm_label": "config/config.js"
     },
     {
       "label": "kantong.py",
@@ -5124,5 +5113,5 @@
       "source_file": "Aturan-Business.md"
     }
   ],
-  "built_at_commit": "69682090f1a6b3084338861ed372b14537c1dfed"
+  "built_at_commit": "74f11fdf7b9d1c68dfb51803e6b01c730aafe509"
 }

@@ -606,17 +606,29 @@ function handleStok_(tanggalStr, cabangKode) {
  * ============================================================
  */
 function report_kirimNotif_(pesan, judul) {
-  try {
-    const res = UrlFetchApp.fetch(REPORT_NTFY_URL, {
-      method: "post",
-      payload: pesan,
-      headers: { "Title": judul || "Report Checker" },
-      muteHttpExceptions: true
-    });
-    Logger.log("[Report] Notif terkirim (HTTP " + res.getResponseCode() + ") ke " + REPORT_NTFY_URL);
-  } catch (err) {
-    Logger.log("[Report] Gagal kirim notif ntfy: " + err);
+  const MAX_ATTEMPT = 2;
+  const RETRY_DELAY_MS = 2000;
+
+  for (let attempt = 1; attempt <= MAX_ATTEMPT; attempt++) {
+    try {
+      const res = UrlFetchApp.fetch(REPORT_NTFY_URL, {
+        method: "post",
+        payload: pesan,
+        headers: { "Title": judul || "Report Checker" },
+        muteHttpExceptions: true
+      });
+      const code = res.getResponseCode();
+      if (code >= 200 && code < 300) {
+        Logger.log("[Report] Notif terkirim (HTTP " + code + ") ke " + REPORT_NTFY_URL + " (percobaan " + attempt + "/" + MAX_ATTEMPT + ")");
+        return;
+      }
+      Logger.log("[Report] Percobaan " + attempt + "/" + MAX_ATTEMPT + " gagal, HTTP " + code);
+    } catch (err) {
+      Logger.log("[Report] Percobaan " + attempt + "/" + MAX_ATTEMPT + " error: " + err);
+    }
+    if (attempt < MAX_ATTEMPT) Utilities.sleep(RETRY_DELAY_MS);
   }
+  Logger.log("[Report] Gagal kirim notif ntfy setelah " + MAX_ATTEMPT + " percobaan.");
 }
 
 /**

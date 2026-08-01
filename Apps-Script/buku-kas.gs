@@ -436,17 +436,29 @@ function pola_buildPesan_(targetKey, reminders) {
 
 /** Kirim SATU notif ntfy (pola request sama dengan Reminder/script.js). */
 function pola_kirimNotif_(pesan) {
-  try {
-    const res = UrlFetchApp.fetch(POLA_NTFY_URL, {
-      method: "post",
-      payload: pesan,
-      headers: { "Title": "Buku Kas — Pola Transaksi" },
-      muteHttpExceptions: true
-    });
-    Logger.log("[Pola] Notif terkirim (HTTP " + res.getResponseCode() + ") ke " + POLA_NTFY_URL);
-  } catch (err) {
-    Logger.log("[Pola] Gagal kirim notif ntfy: " + err);
+  const MAX_ATTEMPT = 2;
+  const RETRY_DELAY_MS = 2000;
+
+  for (let attempt = 1; attempt <= MAX_ATTEMPT; attempt++) {
+    try {
+      const res = UrlFetchApp.fetch(POLA_NTFY_URL, {
+        method: "post",
+        payload: pesan,
+        headers: { "Title": "Buku Kas — Pola Transaksi" },
+        muteHttpExceptions: true
+      });
+      const code = res.getResponseCode();
+      if (code >= 200 && code < 300) {
+        Logger.log("[Pola] Notif terkirim (HTTP " + code + ") ke " + POLA_NTFY_URL + " (percobaan " + attempt + "/" + MAX_ATTEMPT + ")");
+        return;
+      }
+      Logger.log("[Pola] Percobaan " + attempt + "/" + MAX_ATTEMPT + " gagal, HTTP " + code);
+    } catch (err) {
+      Logger.log("[Pola] Percobaan " + attempt + "/" + MAX_ATTEMPT + " error: " + err);
+    }
+    if (attempt < MAX_ATTEMPT) Utilities.sleep(RETRY_DELAY_MS);
   }
+  Logger.log("[Pola] Gagal kirim notif ntfy setelah " + MAX_ATTEMPT + " percobaan.");
 }
 
 // ==== TRIGGER (dipasang otomatis 2x sehari) ====
