@@ -215,7 +215,20 @@ const POLA_KATEGORI_WAJIB = [
 // Versi ternormalisasi (trim+lowercase) — dihitung sekali supaya tidak
 // normalize ulang tiap baris data.
 const POLA_KATEGORI_WAJIB_NORM = POLA_KATEGORI_WAJIB.map(pola_normalize_);
-const POLA_DRY_RUN = true;   // default: hasil deteksi cuma di-Logger.log
+// Kombinasi kategori+toko yang wajib dicek TIAP HARI, terpisah dari
+// POLA_KATEGORI_WAJIB (yang cuma per-kategori tanpa peduli toko).
+// Tambah baris baru di sini kalau ada toko/mitra lain yang mau dipantau serupa.
+const POLA_KOMBINASI_WAJIB = [
+  { kategori: "Belanja", belanjaDi: "Surya" }
+];
+const POLA_KOMBINASI_WAJIB_NORM = POLA_KOMBINASI_WAJIB.map(function(k) {
+  return {
+    key: pola_normalize_(k.kategori) + "|" + pola_normalize_(k.belanjaDi),
+    kategori: k.kategori,
+    belanjaDi: k.belanjaDi
+  };
+});
+const POLA_DRY_RUN = false;  // notif dikirim langsung ke ntfy, bukan cuma di-log
 
 const POLA_BULAN_ID = {
   januari: 1, februari: 2, maret: 3, april: 4, mei: 5, juni: 6,
@@ -373,6 +386,23 @@ function checkPolaTransaksi(tanggalTarget, DRY_RUN) {
     });
   });
 
+  // Wajib kombinasi kategori+toko (mis. Belanja Surya) — cek terpisah,
+  // pakai key gabungan supaya toko lain di kategori "Belanja" tidak ikut wajib.
+  POLA_KOMBINASI_WAJIB_NORM.forEach(k => {
+    if (munculTarget[k.key]) return; // sudah tercatat di target
+    const sudahDiReminder = reminders.some(r =>
+      pola_normalize_(r.kategori) === pola_normalize_(k.kategori) &&
+      pola_normalize_(r.belanjaDi || "") === pola_normalize_(k.belanjaDi)
+    );
+    if (sudahDiReminder) return;
+    reminders.push({
+      kategori: k.kategori,
+      belanjaDi: k.belanjaDi,
+      hariMuncul: null,
+      wajib: true
+    });
+  });
+
   Logger.log("[Pola] " + targetKey + " | baris dibaca=" + values.length + " | tak-terparse=" + gagalParse + " | dryRun=" + dryRun);
 
   if (reminders.length === 0) {
@@ -394,7 +424,8 @@ function checkPolaTransaksi(tanggalTarget, DRY_RUN) {
 function pola_buildPesan_(targetKey, reminders) {
   const lines = reminders.map((r, i) => {
     if (r.wajib) {
-      return (i + 1) + ". " + r.kategori + " — wajib (aturan tetap)";
+      const tempat = r.belanjaDi ? " (" + r.belanjaDi + ")" : "";
+      return (i + 1) + ". " + r.kategori + tempat + " — wajib (aturan tetap)";
     }
     const tempat = r.belanjaDi ? " (" + r.belanjaDi + ")" : "";
     return (i + 1) + ". " + r.kategori + tempat + " — muncul " + r.hariMuncul +

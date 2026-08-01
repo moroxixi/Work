@@ -24,6 +24,10 @@ const SHEET_GID_WONTON = "76341395";
 const CHECK_STATUS_COL_NAME = "Check_Status";
 const DUPLICATE_WINDOW_MS = 60 * 60 * 1000; // 1 jam — dipakai submission-time guard & checker berkala
 
+// Notifikasi ntfy — channel baru pengganti channel notifikasi chat lama (topic khusus "report-checker").
+const REPORT_NTFY_TOPIC = "report-checker";
+const REPORT_NTFY_URL = "https://ntfy.sh/" + REPORT_NTFY_TOPIC;
+
 /**
  * ============================================================
  *  ENTRY POINT — POST dari form (Tempura / Wonton)
@@ -80,7 +84,7 @@ function simpanDataTempura(data) {
 
   if (guard && guard.type === "Duplikat") {
     Logger.log("Duplikat Tempura diblokir: " + JSON.stringify(data));
-    sendTelegramMessage("🚫 Submission duplikat Tempura diblokir (cabang: " + (data.cabang || "-") + "). Data TIDAK disimpan. Baris pembanding: " + guard.rowNum + ".");
+    report_kirimNotif_("🚫 Submission duplikat Tempura diblokir (cabang: " + (data.cabang || "-") + "). Data TIDAK disimpan. Baris pembanding: " + guard.rowNum + ".", "Buku Kas — Duplikat Tempura");
     return; // blokir total: tidak appendRow, tidak kirim ke Buku Kas
   }
 
@@ -156,7 +160,7 @@ function simpanDataWonton(data) {
 
   if (guard && guard.type === "Duplikat") {
     Logger.log("Duplikat Wonton diblokir: " + JSON.stringify(data));
-    sendTelegramMessage("🚫 Submission duplikat Wonton diblokir (cabang: " + (data.cabang || "-") + "). Data TIDAK disimpan. Baris pembanding: " + guard.rowNum + ".");
+    report_kirimNotif_("🚫 Submission duplikat Wonton diblokir (cabang: " + (data.cabang || "-") + "). Data TIDAK disimpan. Baris pembanding: " + guard.rowNum + ".", "Buku Kas — Duplikat Wonton");
     return;
   }
 
@@ -265,10 +269,11 @@ function kirimSetoranWontonKeBukuKas(data) {
       rows.push([ts, "Setoran harian - " + cabang, kategoriMasuk, "", nilaiSetoran]);
     }
   } else if (nilaiSetoran > 0) {
-    sendTelegramMessage(
+    report_kirimNotif_(
       "⚠️ Cabang '" + cabang + "' tidak dikenali sistem (bukan Babakan/Leweung Gajah/Depan RS).\n" +
       "Nilai Rp" + nilaiSetoran.toLocaleString("id-ID") + " TIDAK otomatis masuk Buku Kas.\n" +
-      "Mohon input manual kategori Penjualan-nya."
+      "Mohon input manual kategori Penjualan-nya.",
+      "Buku Kas — Cabang Tidak Dikenali"
     );
   }
 
@@ -311,7 +316,7 @@ function kirimKeBukuKas(rows) {
     sheet.getRange(startRow, 1, rows.length, 5).setValues(rows);
   } catch (err) {
     Logger.log("Gagal kirim ke Buku Kas Gabungan: " + err);
-    sendTelegramMessage("⚠️ Gagal kirim data setoran ke Buku Kas Gabungan: " + err);
+    report_kirimNotif_("⚠️ Gagal kirim data setoran ke Buku Kas Gabungan: " + err, "Buku Kas — Gagal Kirim");
   }
 }
 
@@ -393,7 +398,7 @@ function flagAnomaliRow_(sheet, guard, sheetName, gid, cabang) {
     `Baris baru: ${newRowNum} (Cabang: ${cabang || "-"})\n` +
     `Dibandingkan dengan baris: ${guard.rowNum}\n` +
     `Link: ${link}`;
-  sendTelegramMessage(msg);
+  report_kirimNotif_(msg, "Buku Kas — Anomali");
 }
 
 function buildRowLink(gid, rowNum) {
@@ -454,7 +459,7 @@ function checkDuplicatesAnomaliesForSheet(sheetName, gid) {
         `Baris: ${rowNum} (Cabang: ${row[cabangCol] || "-"})\n` +
         `Dibandingkan dengan baris: ${match.rowNum}\n` +
         `Link: ${link}`;
-      sendTelegramMessage(msg);
+      report_kirimNotif_(msg, "Buku Kas — " + match.type);
       sheet.getRange(rowNum, statusCol + 1).setValue(match.type);
     } else {
       sheet.getRange(rowNum, statusCol + 1).setValue("OK");
@@ -485,7 +490,7 @@ function checkMissingReports() {
     scanSheetForReports(wontonSheet, today, tz, reported, emptyCabangAlerts, ["L", "B", "R"]);
   }
 
-  emptyCabangAlerts.forEach(msg => sendTelegramMessage(msg));
+  emptyCabangAlerts.forEach(msg => report_kirimNotif_(msg, "Buku Kas — Cabang Tanpa Nama"));
 
   const namaCabang = { P: "Tempura (Pabuaran)", L: "Leweung Gajah", B: "Babakan", R: "Depan RS (eksternal)" };
   const missing = Object.keys(reported).filter(k => !reported[k]);
@@ -493,7 +498,7 @@ function checkMissingReports() {
   if (missing.length > 0) {
     const list = missing.map(k => `- ${namaCabang[k]}`).join("\n");
     const jamSekarang = Utilities.formatDate(new Date(), tz, "HH:mm");
-    sendTelegramMessage(`🔔 Cabang belum lapor hari ini (cek jam ${jamSekarang}):\n${list}`);
+    report_kirimNotif_(`🔔 Cabang belum lapor hari ini (cek jam ${jamSekarang}):\n${list}`, "Buku Kas — Cabang Belum Lapor");
   }
 }
 
@@ -596,31 +601,21 @@ function handleStok_(tanggalStr, cabangKode) {
 
 /**
  * ============================================================
- *  TELEGRAM
+ *  NOTIFIKASI NTFY — pengganti channel notifikasi chat lama (topic "report-checker")
+ *  Pola request persis meniru pola_kirimNotif_() di buku-kas.gs.
  * ============================================================
  */
-function sendTelegramMessage(text) {
-  const props = PropertiesService.getScriptProperties();
-  const token = props.getProperty("TELEGRAM_BOT_TOKEN");
-  const chatId = props.getProperty("TELEGRAM_CHAT_ID");
-
-  if (!token || !chatId) {
-    Logger.log("TELEGRAM_BOT_TOKEN / TELEGRAM_CHAT_ID belum diset di Script Properties.");
-    return;
-  }
-
-  const url = `https://api.telegram.org/bot${token}/sendMessage`;
-  const payload = { chat_id: chatId, text: text };
-
+function report_kirimNotif_(pesan, judul) {
   try {
-    UrlFetchApp.fetch(url, {
+    const res = UrlFetchApp.fetch(REPORT_NTFY_URL, {
       method: "post",
-      contentType: "application/json",
-      payload: JSON.stringify(payload),
+      payload: pesan,
+      headers: { "Title": judul || "Report Checker" },
       muteHttpExceptions: true
     });
+    Logger.log("[Report] Notif terkirim (HTTP " + res.getResponseCode() + ") ke " + REPORT_NTFY_URL);
   } catch (err) {
-    Logger.log("Gagal kirim Telegram: " + err);
+    Logger.log("[Report] Gagal kirim notif ntfy: " + err);
   }
 }
 
@@ -666,10 +661,3 @@ function responseJSON(obj) {
     .setMimeType(ContentService.MimeType.JSON);
 }
 
-function testTelegram() {
-  sendTelegramMessage("Test dari Apps Script");
-}
-
-function testAuthPaksa() {
-  UrlFetchApp.fetch("https://api.telegram.org");
-}
