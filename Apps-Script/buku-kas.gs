@@ -27,14 +27,22 @@ const KATEGORI_OTOMATIS_PASTI = [
 const KATEGORI_CEK_DULU = ["Gaji/Upah"];
 
 // Dipakai buat kasih warna Masuk/Keluar di kartu Riwayat.
-// Berdasarkan daftar kategori resmi di Business.md Section 3 — kalau ada
-// kategori custom baru (dari "Lainnya…" di form) yang mestinya Masuk tapi
-// kebaca Keluar, tinggal tambahkan namanya ke KATEGORI_MASUK di bawah.
-const KATEGORI_MASUK = [
-  "Setoran Cabang Tempura", "Sterofoam Tempura",
-  "Setoran Cabang Babakan", "Setoran Cabang Leweung Gajah",
-  "MAO Frozen", "MAO Instan", "Outlet", "Lainnya"
-];
+// Dua mekanisme penentuan arah:
+//   1. KATEGORI_MASUK_EXACT — nama kategori yang cocok persis (exact match).
+//   2. KATEGORI_MASUK_SUBSTRING — kategori dianggap Masuk kalau namanya
+//      MENGANDUNG salah satu keyword di bawah (mis. "Setoran Cabang Depan RS").
+// Kalau ada kategori custom baru (dari "Lainnya…" di form) yang mestinya Masuk
+// tapi kebaca Keluar, tinggal tambahkan namanya ke KATEGORI_MASUK_EXACT (atau
+// keyword-nya ke KATEGORI_MASUK_SUBSTRING) di bawah.
+const KATEGORI_MASUK_EXACT = ["MAO Frozen", "MAO Instan", "Outlet", "Lainnya"];
+const KATEGORI_MASUK_SUBSTRING = ["RS", "Babakan", "Tempura", "Leweung", "LW"];
+
+function isKategoriMasuk_(kategori) {
+  if (KATEGORI_MASUK_EXACT.indexOf(kategori) !== -1) return true;
+  return KATEGORI_MASUK_SUBSTRING.some(function(keyword) {
+    return kategori.indexOf(keyword) !== -1;
+  });
+}
 
 function doPost(e) {
   const data = JSON.parse(e.postData.contents);
@@ -106,7 +114,7 @@ function handleList_(tanggalStr) {
       belanjaDi: row[3] || "",
       jumlah: row[4] || 0,
       sumber: sumber,
-      arah: KATEGORI_MASUK.indexOf(kategori) !== -1 ? "Masuk" : "Keluar"
+      arah: isKategoriMasuk_(kategori) ? "Masuk" : "Keluar"
     });
   });
 
