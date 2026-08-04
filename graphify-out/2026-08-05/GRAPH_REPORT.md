@@ -1,11 +1,11 @@
-# Graph Report - Work  (2026-08-05)
+# Graph Report - Work  (2026-08-02)
 
 ## Corpus Check
-- 13 files · ~17,122 words
+- 12 files · ~15,259 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
-- 216 nodes · 269 edges · 22 communities (16 shown, 6 thin omitted)
+- 193 nodes · 247 edges · 21 communities (15 shown, 6 thin omitted)
 - Extraction: 97% EXTRACTED · 3% INFERRED · 0% AMBIGUOUS · INFERRED: 8 edges (avg confidence: 0.5)
 - Token cost: 0 input · 0 output
 
@@ -22,8 +22,8 @@
 - Employee Registration Form
 - Input Kas Harian Form
 - Receipt Scanning Module
-- applyFilterAndRenderCards
-- Laporan Diagnosis — Baris Kosong Berulang di Sheet "INPUT"
+- fetchMonthList
+- openEditModal
 - goToMonth
 - kantong.py
 - Deployment Scripts
@@ -33,19 +33,18 @@
 - Reminder/script.js
 - downloadFileName
 - Setoran Wonton Form
-- fetchMonthList
 
 ## God Nodes (most connected - your core abstractions)
-1. `Laporan Diagnosis — Baris Kosong Berulang di Sheet "INPUT"` - 9 edges
-2. `fetchMonthList()` - 7 edges
-3. `fetchStok()` - 7 edges
-4. `applyFilterAndRenderCards()` - 6 edges
-5. `fetchList()` - 6 edges
-6. `validateAndGetSeconds()` - 6 edges
-7. `3. Temuan Kode Client-Side (Work/Pencatatan-Buku-Kas/)` - 6 edges
-8. `renderList()` - 5 edges
-9. `refreshCurrent()` - 5 edges
-10. `goToMonth()` - 5 edges
+1. `fetchMonthList()` - 7 edges
+2. `fetchStok()` - 7 edges
+3. `applyFilterAndRenderCards()` - 6 edges
+4. `fetchList()` - 6 edges
+5. `validateAndGetSeconds()` - 6 edges
+6. `renderList()` - 5 edges
+7. `refreshCurrent()` - 5 edges
+8. `goToMonth()` - 5 edges
+9. `renderQueue()` - 5 edges
+10. `submitReminder()` - 5 edges
 
 ## Surprising Connections (you probably didn't know these)
 - `Riwayat Kas Harian` --references--> `Input Kas Harian Form`  [EXTRACTED]
@@ -58,7 +57,7 @@
 ## Import Cycles
 - None detected.
 
-## Communities (22 total, 6 thin omitted)
+## Communities (21 total, 6 thin omitted)
 
 ### Community 0 - "Riwayat/script.js"
 Cohesion: 0.05
@@ -88,13 +87,13 @@ Nodes (4): Input Kas Harian Form, Riwayat Kas Harian, Scan Struk Belanja, Sisa S
 Cohesion: 0.39
 Nodes (5): escapeAttr(), formatRp(), items, renderItems(), updateTotals()
 
-### Community 7 - "applyFilterAndRenderCards"
-Cohesion: 0.32
-Nodes (8): applyFilterAndRenderCards(), formatRupiah(), KATEGORI_MASUK, openDeleteModal(), openEditModal(), populateKategoriSelect(), renderKategoriFilterBar(), renderList()
+### Community 7 - "fetchMonthList"
+Cohesion: 0.31
+Nodes (10): applyFilterAndRenderCards(), fetchDayRows(), fetchList(), fetchMonthList(), formatRupiah(), isCacheValid(), openDeleteModal(), renderKategoriFilterBar() (+2 more)
 
-### Community 8 - "Laporan Diagnosis — Baris Kosong Berulang di Sheet "INPUT""
-Cohesion: 0.09
-Nodes (22): 1. Ringkasan Masalah, 2. Lokasi Folder Apps Script "buku-kas", 3.1 Form Kas Harian (`script.js`) — validasi ada, tidak bisa submit kosong, 3.2 Antrean pengiriman (queue) — TIDAK ada auto-retry, tidak bisa spam, 3.3 Halaman Riwayat (`Riwayat/script.js`) — polling hanya GET, interval 10 detik, 3.4 Halaman Scan Struk (`Scan-Struk/script.js`) — ⚠️ TEMUAN PENTING, 3.5 `shared-utils.js` — netral, 3. Temuan Kode Client-Side (Work/Pencatatan-Buku-Kas/) (+14 more)
+### Community 8 - "openEditModal"
+Cohesion: 0.67
+Nodes (3): KATEGORI_MASUK, openEditModal(), populateKategoriSelect()
 
 ### Community 10 - "goToMonth"
 Cohesion: 0.29
@@ -108,25 +107,23 @@ Nodes (8): el, fmtDuration(), getCustomSeconds(), getTimePickerSeconds(), hideSt
 Cohesion: 0.33
 Nodes (6): csvEscape(), downloadCsv(), downloadFileName(), formatBulanLabel(), formatBulanNama(), sanitizeFilenamePart()
 
-### Community 21 - "fetchMonthList"
-Cohesion: 0.60
-Nodes (5): fetchDayRows(), fetchList(), fetchMonthList(), isCacheValid(), setLoading()
-
 ## Knowledge Gaps
-- **113 isolated node(s):** `all`, `menuBtn`, `drawer`, `overlay`, `drawerClose` (+108 more)
+- **95 isolated node(s):** `all`, `menuBtn`, `drawer`, `overlay`, `drawerClose` (+90 more)
   These have ≤1 connection - possible missing edges or undocumented components.
 - **6 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
 
 ## Suggested Questions
 _Questions this graph is uniquely positioned to answer:_
 
+- **Why does `fetchMonthList()` connect `fetchMonthList` to `Riwayat/script.js`, `goToMonth`?**
+  _High betweenness centrality (0.000) - this node is a cross-community bridge._
+- **Why does `applyFilterAndRenderCards()` connect `fetchMonthList` to `Riwayat/script.js`, `openEditModal`?**
+  _High betweenness centrality (0.000) - this node is a cross-community bridge._
 - **What connects `all`, `menuBtn`, `drawer` to the rest of the system?**
-  _113 weakly-connected nodes found - possible documentation gaps or missing edges._
+  _95 weakly-connected nodes found - possible documentation gaps or missing edges._
 - **Should `Riwayat/script.js` be split into smaller, more focused modules?**
   _Cohesion score 0.045454545454545456 - nodes in this community are weakly interconnected._
 - **Should `Cash Book Recording` be split into smaller, more focused modules?**
   _Cohesion score 0.08817204301075268 - nodes in this community are weakly interconnected._
 - **Should `Stok/script.js` be split into smaller, more focused modules?**
   _Cohesion score 0.09538461538461539 - nodes in this community are weakly interconnected._
-- **Should `Laporan Diagnosis — Baris Kosong Berulang di Sheet "INPUT"` be split into smaller, more focused modules?**
-  _Cohesion score 0.08695652173913043 - nodes in this community are weakly interconnected._

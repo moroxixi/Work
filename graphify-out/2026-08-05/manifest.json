@@ -25,8 +25,8 @@
     "semantic_hash": ""
   },
   "Pencatatan-Buku-Kas/config.js": {
-    "mtime": 1785587261.832765,
-    "ast_hash": "ec35b5a31cd18c51ddf2f797b4fdc581",
+    "mtime": 1785604174.8235552,
+    "ast_hash": "55cb6d3ac7d703d9ba564514e6876761",
     "semantic_hash": ""
   },
   "Pencatatan-Buku-Kas/script.js": {
@@ -38,16 +38,6 @@
     "mtime": 1784360638.9048307,
     "ast_hash": "656035dc51dca6b7aa9fee7b8798d1a0",
     "semantic_hash": "656035dc51dca6b7aa9fee7b8798d1a0"
-  },
-  "Aturan-Business.md": {
-    "mtime": 1783944801.2986321,
-    "ast_hash": "c0233683de4376ceafc91db4ed131790",
-    "semantic_hash": "c0233683de4376ceafc91db4ed131790"
-  },
-  "Business.md": {
-    "mtime": 1784382575.864817,
-    "ast_hash": "13f58456cc9d9537ddd4c60e0bf497db",
-    "semantic_hash": "13f58456cc9d9537ddd4c60e0bf497db"
   },
   "Dashboard/index.html": {
     "mtime": 1784375552.6201084,
@@ -120,8 +110,8 @@
     "semantic_hash": ""
   },
   "Wonton/Config/config.js": {
-    "mtime": 1785603897.892668,
-    "ast_hash": "c81f94e08f9b5ad6a58ee6bbc77ee9be",
+    "mtime": 1785604225.0214288,
+    "ast_hash": "0b24a87ee4ce3f9432bca11a702ed1e5",
     "semantic_hash": ""
   }
 }

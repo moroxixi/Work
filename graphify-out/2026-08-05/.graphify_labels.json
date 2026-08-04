@@ -6,8 +6,8 @@
   "4": "Employee Registration Form",
   "5": "Input Kas Harian Form",
   "6": "Receipt Scanning Module",
-  "7": "applyFilterAndRenderCards",
-  "8": "Laporan Diagnosis — Baris Kosong Berulang di Sheet \"INPUT\"",
+  "7": "fetchMonthList",
+  "8": "openEditModal",
   "9": "shared-utils.js",
   "10": "goToMonth",
   "11": "kantong.py",
@@ -19,6 +19,5 @@
   "17": "Reminder/script.js",
   "18": "downloadFileName",
   "19": "Config/config.js",
-  "20": "Setoran Wonton Form",
-  "21": "fetchMonthList"
+  "20": "Setoran Wonton Form"
 }

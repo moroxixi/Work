@@ -1,40 +1,7 @@
 {
   "directed": false,
   "multigraph": false,
-  "graph": {
-    "hyperedges": [
-      {
-        "id": "mao_group_ecosystem",
-        "label": "MAO Group Digital Ecosystem",
-        "nodes": [
-          "pencatatan_buku_kas_index",
-          "tempura_index",
-          "wonton_index",
-          "pencatatan_buku_kas_scan_struk",
-          "pencatatan_buku_kas_riwayat",
-          "pencatatan_buku_kas_stok"
-        ],
-        "relation": "participate_in",
-        "confidence": "EXTRACTED",
-        "confidence_score": 0.9,
-        "source_file": "Business.md"
-      },
-      {
-        "id": "accounting_flow",
-        "label": "Daily Financial Reporting Flow",
-        "nodes": [
-          "tempura_index",
-          "wonton_index",
-          "google_apps_script_code",
-          "google_sheets_buku_kas"
-        ],
-        "relation": "form",
-        "confidence": "EXTRACTED",
-        "confidence_score": 0.95,
-        "source_file": "Aturan-Business.md"
-      }
-    ]
-  },
+  "graph": {},
   "nodes": [
     {
       "label": "Dashboard/script.js",
@@ -780,7 +747,7 @@
       "source_location": "L83",
       "_origin": "ast",
       "id": "pencatatan_buku_kas_riwayat_script_setloading",
-      "community": 8,
+      "community": 21,
       "community_name": "fetchMonthList",
       "norm_label": "setloading()"
     },
@@ -879,7 +846,7 @@
       "source_location": "L247",
       "_origin": "ast",
       "id": "pencatatan_buku_kas_riwayat_script_iscachevalid",
-      "community": 8,
+      "community": 21,
       "community_name": "fetchMonthList",
       "norm_label": "iscachevalid()"
     },
@@ -901,7 +868,7 @@
       "source_location": "L259",
       "_origin": "ast",
       "id": "pencatatan_buku_kas_riwayat_script_fetchlist",
-      "community": 8,
+      "community": 21,
       "community_name": "fetchMonthList",
       "norm_label": "fetchlist()"
     },
@@ -912,7 +879,7 @@
       "source_location": "L310",
       "_origin": "ast",
       "id": "pencatatan_buku_kas_riwayat_script_fetchmonthlist",
-      "community": 8,
+      "community": 21,
       "community_name": "fetchMonthList",
       "norm_label": "fetchmonthlist()"
     },
@@ -923,7 +890,7 @@
       "source_location": "L383",
       "_origin": "ast",
       "id": "pencatatan_buku_kas_riwayat_script_fetchdayrows",
-      "community": 8,
+      "community": 21,
       "community_name": "fetchMonthList",
       "norm_label": "fetchdayrows()"
     },
@@ -2080,32 +2047,257 @@
       "norm_label": "work-push.sh script"
     },
     {
-      "label": "Business Context",
+      "label": "report-claude.md",
       "file_type": "document",
-      "source_file": "Aturan-Business.md",
-      "source_location": null,
-      "source_url": null,
-      "captured_at": null,
-      "author": null,
-      "contributor": null,
-      "community": 13,
-      "norm_label": "business context",
-      "community_name": "Business Context Overview",
-      "id": "aturan_business_context"
+      "source_file": "Pencatatan-Buku-Kas/report-claude.md",
+      "source_location": "L1",
+      "_origin": "ast",
+      "id": "pencatatan_buku_kas_report_claude",
+      "community": 8,
+      "community_name": "Laporan Diagnosis \u2014 Baris Kosong Berulang di Sheet \"INPUT\"",
+      "norm_label": "report-claude.md"
     },
     {
-      "label": "Accounting Rules",
+      "label": "Laporan Diagnosis \u2014 Baris Kosong Berulang di Sheet \"INPUT\"",
       "file_type": "document",
-      "source_file": "Business.md",
-      "source_location": null,
-      "source_url": null,
-      "captured_at": null,
-      "author": null,
-      "contributor": null,
-      "community": 5,
-      "norm_label": "accounting rules",
-      "community_name": "Accounting Backend System",
-      "id": "business_accounting_rules"
+      "source_file": "Pencatatan-Buku-Kas/report-claude.md",
+      "source_location": "L1",
+      "_origin": "ast",
+      "id": "pencatatan_buku_kas_report_claude_laporan_diagnosis_baris_kosong_berulang_di_sheet_input",
+      "community": 8,
+      "community_name": "Laporan Diagnosis \u2014 Baris Kosong Berulang di Sheet \"INPUT\"",
+      "norm_label": "laporan diagnosis \u2014 baris kosong berulang di sheet \"input\""
+    },
+    {
+      "label": "1. Ringkasan Masalah",
+      "file_type": "document",
+      "source_file": "Pencatatan-Buku-Kas/report-claude.md",
+      "source_location": "L10",
+      "_origin": "ast",
+      "id": "pencatatan_buku_kas_report_claude_1_ringkasan_masalah",
+      "community": 8,
+      "community_name": "Laporan Diagnosis \u2014 Baris Kosong Berulang di Sheet \"INPUT\"",
+      "norm_label": "1. ringkasan masalah"
+    },
+    {
+      "label": "2. Lokasi Folder Apps Script \"buku-kas\"",
+      "file_type": "document",
+      "source_file": "Pencatatan-Buku-Kas/report-claude.md",
+      "source_location": "L37",
+      "_origin": "ast",
+      "id": "pencatatan_buku_kas_report_claude_2_lokasi_folder_apps_script_buku_kas",
+      "community": 8,
+      "community_name": "Laporan Diagnosis \u2014 Baris Kosong Berulang di Sheet \"INPUT\"",
+      "norm_label": "2. lokasi folder apps script \"buku-kas\""
+    },
+    {
+      "label": "3. Temuan Kode Client-Side (Work/Pencatatan-Buku-Kas/)",
+      "file_type": "document",
+      "source_file": "Pencatatan-Buku-Kas/report-claude.md",
+      "source_location": "L57",
+      "_origin": "ast",
+      "id": "pencatatan_buku_kas_report_claude_3_temuan_kode_client_side_work_pencatatan_buku_kas",
+      "community": 8,
+      "community_name": "Laporan Diagnosis \u2014 Baris Kosong Berulang di Sheet \"INPUT\"",
+      "norm_label": "3. temuan kode client-side (work/pencatatan-buku-kas/)"
+    },
+    {
+      "label": "3.1 Form Kas Harian (`script.js`) \u2014 validasi ada, tidak bisa submit kosong",
+      "file_type": "document",
+      "source_file": "Pencatatan-Buku-Kas/report-claude.md",
+      "source_location": "L59",
+      "_origin": "ast",
+      "id": "pencatatan_buku_kas_report_claude_3_1_form_kas_harian_script_js_validasi_ada_tidak_bisa_submit_kosong",
+      "community": 8,
+      "community_name": "Laporan Diagnosis \u2014 Baris Kosong Berulang di Sheet \"INPUT\"",
+      "norm_label": "3.1 form kas harian (`script.js`) \u2014 validasi ada, tidak bisa submit kosong"
+    },
+    {
+      "label": "3.2 Antrean pengiriman (queue) \u2014 TIDAK ada auto-retry, tidak bisa spam",
+      "file_type": "document",
+      "source_file": "Pencatatan-Buku-Kas/report-claude.md",
+      "source_location": "L68",
+      "_origin": "ast",
+      "id": "pencatatan_buku_kas_report_claude_3_2_antrean_pengiriman_queue_tidak_ada_auto_retry_tidak_bisa_spam",
+      "community": 8,
+      "community_name": "Laporan Diagnosis \u2014 Baris Kosong Berulang di Sheet \"INPUT\"",
+      "norm_label": "3.2 antrean pengiriman (queue) \u2014 tidak ada auto-retry, tidak bisa spam"
+    },
+    {
+      "label": "3.3 Halaman Riwayat (`Riwayat/script.js`) \u2014 polling hanya GET, interval 10 detik",
+      "file_type": "document",
+      "source_file": "Pencatatan-Buku-Kas/report-claude.md",
+      "source_location": "L76",
+      "_origin": "ast",
+      "id": "pencatatan_buku_kas_report_claude_3_3_halaman_riwayat_riwayat_script_js_polling_hanya_get_interval_10_detik",
+      "community": 8,
+      "community_name": "Laporan Diagnosis \u2014 Baris Kosong Berulang di Sheet \"INPUT\"",
+      "norm_label": "3.3 halaman riwayat (`riwayat/script.js`) \u2014 polling hanya get, interval 10 detik"
+    },
+    {
+      "label": "3.4 Halaman Scan Struk (`Scan-Struk/script.js`) \u2014 \u26a0\ufe0f TEMUAN PENTING",
+      "file_type": "document",
+      "source_file": "Pencatatan-Buku-Kas/report-claude.md",
+      "source_location": "L83",
+      "_origin": "ast",
+      "id": "pencatatan_buku_kas_report_claude_3_4_halaman_scan_struk_scan_struk_script_js_temuan_penting",
+      "community": 8,
+      "community_name": "Laporan Diagnosis \u2014 Baris Kosong Berulang di Sheet \"INPUT\"",
+      "norm_label": "3.4 halaman scan struk (`scan-struk/script.js`) \u2014 \u26a0\ufe0f temuan penting"
+    },
+    {
+      "label": "3.5 `shared-utils.js` \u2014 netral",
+      "file_type": "document",
+      "source_file": "Pencatatan-Buku-Kas/report-claude.md",
+      "source_location": "L100",
+      "_origin": "ast",
+      "id": "pencatatan_buku_kas_report_claude_3_5_shared_utils_js_netral",
+      "community": 8,
+      "community_name": "Laporan Diagnosis \u2014 Baris Kosong Berulang di Sheet \"INPUT\"",
+      "norm_label": "3.5 `shared-utils.js` \u2014 netral"
+    },
+    {
+      "label": "4. Temuan Kode Apps Script (`Work/Apps-Script/`)",
+      "file_type": "document",
+      "source_file": "Pencatatan-Buku-Kas/report-claude.md",
+      "source_location": "L107",
+      "_origin": "ast",
+      "id": "pencatatan_buku_kas_report_claude_4_temuan_kode_apps_script_work_apps_script",
+      "community": 8,
+      "community_name": "Laporan Diagnosis \u2014 Baris Kosong Berulang di Sheet \"INPUT\"",
+      "norm_label": "4. temuan kode apps script (`work/apps-script/`)"
+    },
+    {
+      "label": "4.1 `buku-kas.gs` \u2014 `doPost` TANPA validasi (jalur utama penyebab bentuk baris kosong)",
+      "file_type": "document",
+      "source_file": "Pencatatan-Buku-Kas/report-claude.md",
+      "source_location": "L109",
+      "_origin": "ast",
+      "id": "pencatatan_buku_kas_report_claude_4_1_buku_kas_gs_dopost_tanpa_validasi_jalur_utama_penyebab_bentuk_baris_kosong",
+      "community": 8,
+      "community_name": "Laporan Diagnosis \u2014 Baris Kosong Berulang di Sheet \"INPUT\"",
+      "norm_label": "4.1 `buku-kas.gs` \u2014 `dopost` tanpa validasi (jalur utama penyebab bentuk baris kosong)"
+    },
+    {
+      "label": "4.2 Trigger yang terpasang / didefinisikan di buku-kas.gs (status: read-only)",
+      "file_type": "document",
+      "source_file": "Pencatatan-Buku-Kas/report-claude.md",
+      "source_location": "L140",
+      "_origin": "ast",
+      "id": "pencatatan_buku_kas_report_claude_4_2_trigger_yang_terpasang_didefinisikan_di_buku_kas_gs_status_read_only",
+      "community": 8,
+      "community_name": "Laporan Diagnosis \u2014 Baris Kosong Berulang di Sheet \"INPUT\"",
+      "norm_label": "4.2 trigger yang terpasang / didefinisikan di buku-kas.gs (status: read-only)"
+    },
+    {
+      "label": "4.3 `report.gs` \u2014 penulis otomatis ke Buku Kas, tapi tidak pernah baris kosong",
+      "file_type": "document",
+      "source_file": "Pencatatan-Buku-Kas/report-claude.md",
+      "source_location": "L154",
+      "_origin": "ast",
+      "id": "pencatatan_buku_kas_report_claude_4_3_report_gs_penulis_otomatis_ke_buku_kas_tapi_tidak_pernah_baris_kosong",
+      "community": 8,
+      "community_name": "Laporan Diagnosis \u2014 Baris Kosong Berulang di Sheet \"INPUT\"",
+      "norm_label": "4.3 `report.gs` \u2014 penulis otomatis ke buku kas, tapi tidak pernah baris kosong"
+    },
+    {
+      "label": "4.4 Status verifikasi trigger (read-only, tidak dieksekusi)",
+      "file_type": "document",
+      "source_file": "Pencatatan-Buku-Kas/report-claude.md",
+      "source_location": "L164",
+      "_origin": "ast",
+      "id": "pencatatan_buku_kas_report_claude_4_4_status_verifikasi_trigger_read_only_tidak_dieksekusi",
+      "community": 8,
+      "community_name": "Laporan Diagnosis \u2014 Baris Kosong Berulang di Sheet \"INPUT\"",
+      "norm_label": "4.4 status verifikasi trigger (read-only, tidak dieksekusi)"
+    },
+    {
+      "label": "5. Hipotesis Root Cause (diurutkan dari paling meyakinkan)",
+      "file_type": "document",
+      "source_file": "Pencatatan-Buku-Kas/report-claude.md",
+      "source_location": "L173",
+      "_origin": "ast",
+      "id": "pencatatan_buku_kas_report_claude_5_hipotesis_root_cause_diurutkan_dari_paling_meyakinkan",
+      "community": 8,
+      "community_name": "Laporan Diagnosis \u2014 Baris Kosong Berulang di Sheet \"INPUT\"",
+      "norm_label": "5. hipotesis root cause (diurutkan dari paling meyakinkan)"
+    },
+    {
+      "label": "H1 \u2014 Pengirim otomatis eksternal menembak endpoint publik dengan JSON kosong/parsial *(paling meyakinkan untuk rentetan 4\u20138 detik)*",
+      "file_type": "document",
+      "source_file": "Pencatatan-Buku-Kas/report-claude.md",
+      "source_location": "L175",
+      "_origin": "ast",
+      "id": "pencatatan_buku_kas_report_claude_h1_pengirim_otomatis_eksternal_menembak_endpoint_publik_dengan_json_kosong_parsial_paling_meyakinkan_untuk_rentetan_4_8_detik",
+      "community": 8,
+      "community_name": "Laporan Diagnosis \u2014 Baris Kosong Berulang di Sheet \"INPUT\"",
+      "norm_label": "h1 \u2014 pengirim otomatis eksternal menembak endpoint publik dengan json kosong/parsial *(paling meyakinkan untuk rentetan 4\u20138 detik)*"
+    },
+    {
+      "label": "H2 \u2014 Halaman Scan Struk menulis baris kosong lewat action yang tidak ditangani *(jalur in-repo yang terbukti, frekuensi rendah)*",
+      "file_type": "document",
+      "source_file": "Pencatatan-Buku-Kas/report-claude.md",
+      "source_location": "L185",
+      "_origin": "ast",
+      "id": "pencatatan_buku_kas_report_claude_h2_halaman_scan_struk_menulis_baris_kosong_lewat_action_yang_tidak_ditangani_jalur_in_repo_yang_terbukti_frekuensi_rendah",
+      "community": 8,
+      "community_name": "Laporan Diagnosis \u2014 Baris Kosong Berulang di Sheet \"INPUT\"",
+      "norm_label": "h2 \u2014 halaman scan struk menulis baris kosong lewat action yang tidak ditangani *(jalur in-repo yang terbukti, frekuensi rendah)*"
+    },
+    {
+      "label": "H3 \u2014 Versi halaman lama / otomasi lain di perangkat user *(tidak bisa dipastikan secara statis)*",
+      "file_type": "document",
+      "source_file": "Pencatatan-Buku-Kas/report-claude.md",
+      "source_location": "L193",
+      "_origin": "ast",
+      "id": "pencatatan_buku_kas_report_claude_h3_versi_halaman_lama_otomasi_lain_di_perangkat_user_tidak_bisa_dipastikan_secara_statis",
+      "community": 8,
+      "community_name": "Laporan Diagnosis \u2014 Baris Kosong Berulang di Sheet \"INPUT\"",
+      "norm_label": "h3 \u2014 versi halaman lama / otomasi lain di perangkat user *(tidak bisa dipastikan secara statis)*"
+    },
+    {
+      "label": "H4 \u2014 Deploy drift (versi deployed \u2260 repo) *(ditepis oleh jawaban user)*",
+      "file_type": "document",
+      "source_file": "Pencatatan-Buku-Kas/report-claude.md",
+      "source_location": "L198",
+      "_origin": "ast",
+      "id": "pencatatan_buku_kas_report_claude_h4_deploy_drift_versi_deployed_repo_ditepis_oleh_jawaban_user",
+      "community": 8,
+      "community_name": "Laporan Diagnosis \u2014 Baris Kosong Berulang di Sheet \"INPUT\"",
+      "norm_label": "h4 \u2014 deploy drift (versi deployed = repo) *(ditepis oleh jawaban user)*"
+    },
+    {
+      "label": "6. Pertanyaan Terbuka (butuh konfirmasi user)",
+      "file_type": "document",
+      "source_file": "Pencatatan-Buku-Kas/report-claude.md",
+      "source_location": "L212",
+      "_origin": "ast",
+      "id": "pencatatan_buku_kas_report_claude_6_pertanyaan_terbuka_butuh_konfirmasi_user",
+      "community": 8,
+      "community_name": "Laporan Diagnosis \u2014 Baris Kosong Berulang di Sheet \"INPUT\"",
+      "norm_label": "6. pertanyaan terbuka (butuh konfirmasi user)"
+    },
+    {
+      "label": "Lampiran A \u2014 Hasil ask_user (selama investigasi)",
+      "file_type": "document",
+      "source_file": "Pencatatan-Buku-Kas/report-claude.md",
+      "source_location": "L222",
+      "_origin": "ast",
+      "id": "pencatatan_buku_kas_report_claude_lampiran_a_hasil_ask_user_selama_investigasi",
+      "community": 8,
+      "community_name": "Laporan Diagnosis \u2014 Baris Kosong Berulang di Sheet \"INPUT\"",
+      "norm_label": "lampiran a \u2014 hasil ask_user (selama investigasi)"
+    },
+    {
+      "label": "Lampiran B \u2014 Bukti kunci (file:line)",
+      "file_type": "document",
+      "source_file": "Pencatatan-Buku-Kas/report-claude.md",
+      "source_location": "L231",
+      "_origin": "ast",
+      "id": "pencatatan_buku_kas_report_claude_lampiran_b_bukti_kunci_file_line",
+      "community": 8,
+      "community_name": "Laporan Diagnosis \u2014 Baris Kosong Berulang di Sheet \"INPUT\"",
+      "norm_label": "lampiran b \u2014 bukti kunci (file:line)"
     },
     {
       "label": "Input Kas Harian Form",
@@ -2118,7 +2310,7 @@
       "contributor": null,
       "community": 5,
       "norm_label": "input kas harian form",
-      "community_name": "Accounting Backend System",
+      "community_name": "Input Kas Harian Form",
       "id": "pencatatan_buku_kas_index"
     },
     {
@@ -2132,7 +2324,7 @@
       "contributor": null,
       "community": 5,
       "norm_label": "riwayat kas harian",
-      "community_name": "Accounting Backend System",
+      "community_name": "Input Kas Harian Form",
       "id": "pencatatan_buku_kas_riwayat"
     },
     {
@@ -2146,7 +2338,7 @@
       "contributor": null,
       "community": 5,
       "norm_label": "scan struk belanja",
-      "community_name": "Accounting Backend System",
+      "community_name": "Input Kas Harian Form",
       "id": "pencatatan_buku_kas_scan_struk"
     },
     {
@@ -2160,7 +2352,7 @@
       "contributor": null,
       "community": 5,
       "norm_label": "sisa stok dashboard",
-      "community_name": "Accounting Backend System",
+      "community_name": "Input Kas Harian Form",
       "id": "pencatatan_buku_kas_stok"
     },
     {
@@ -2172,9 +2364,9 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 5,
+      "community": 13,
       "norm_label": "setoran tempura form",
-      "community_name": "Accounting Backend System",
+      "community_name": "Setoran Tempura Form",
       "id": "tempura_index"
     },
     {
@@ -2186,9 +2378,9 @@
       "captured_at": null,
       "author": null,
       "contributor": null,
-      "community": 5,
+      "community": 20,
       "norm_label": "setoran wonton form",
-      "community_name": "Accounting Backend System",
+      "community_name": "Setoran Wonton Form",
       "id": "wonton_index"
     },
     {
@@ -2218,34 +2410,6 @@
       "norm_label": "main dashboard",
       "community_name": "Main Dashboard View",
       "id": "dashboard_index"
-    },
-    {
-      "label": "Apps Script Backend",
-      "file_type": "code",
-      "source_file": "Aturan-Business.md",
-      "source_location": null,
-      "source_url": null,
-      "captured_at": null,
-      "author": null,
-      "contributor": null,
-      "community": 5,
-      "norm_label": "apps script backend",
-      "community_name": "Accounting Backend System",
-      "id": "google_apps_script_code"
-    },
-    {
-      "label": "Buku Kas Spreadsheet",
-      "file_type": "rationale",
-      "source_file": "Business.md",
-      "source_location": null,
-      "source_url": null,
-      "captured_at": null,
-      "author": null,
-      "contributor": null,
-      "community": 5,
-      "norm_label": "buku kas spreadsheet",
-      "community_name": "Accounting Backend System",
-      "id": "google_sheets_buku_kas"
     }
   ],
   "links": [
@@ -5012,24 +5176,246 @@
       "confidence_score": 1.0
     },
     {
-      "relation": "references",
+      "relation": "contains",
       "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "Business.md",
-      "source_location": null,
+      "source_file": "Pencatatan-Buku-Kas/report-claude.md",
+      "source_location": "L1",
       "weight": 1.0,
-      "source": "business_accounting_rules",
-      "target": "google_sheets_buku_kas"
+      "_origin": "ast",
+      "source": "pencatatan_buku_kas_report_claude",
+      "target": "pencatatan_buku_kas_report_claude_laporan_diagnosis_baris_kosong_berulang_di_sheet_input",
+      "confidence_score": 1.0
     },
     {
-      "relation": "calls",
+      "relation": "contains",
       "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "Pencatatan-Buku-Kas/index.html",
-      "source_location": null,
+      "source_file": "Pencatatan-Buku-Kas/report-claude.md",
+      "source_location": "L10",
       "weight": 1.0,
-      "source": "pencatatan_buku_kas_index",
-      "target": "google_apps_script_code"
+      "_origin": "ast",
+      "source": "pencatatan_buku_kas_report_claude_laporan_diagnosis_baris_kosong_berulang_di_sheet_input",
+      "target": "pencatatan_buku_kas_report_claude_1_ringkasan_masalah",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "Pencatatan-Buku-Kas/report-claude.md",
+      "source_location": "L37",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "pencatatan_buku_kas_report_claude_laporan_diagnosis_baris_kosong_berulang_di_sheet_input",
+      "target": "pencatatan_buku_kas_report_claude_2_lokasi_folder_apps_script_buku_kas",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "Pencatatan-Buku-Kas/report-claude.md",
+      "source_location": "L57",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "pencatatan_buku_kas_report_claude_laporan_diagnosis_baris_kosong_berulang_di_sheet_input",
+      "target": "pencatatan_buku_kas_report_claude_3_temuan_kode_client_side_work_pencatatan_buku_kas",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "Pencatatan-Buku-Kas/report-claude.md",
+      "source_location": "L107",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "pencatatan_buku_kas_report_claude_laporan_diagnosis_baris_kosong_berulang_di_sheet_input",
+      "target": "pencatatan_buku_kas_report_claude_4_temuan_kode_apps_script_work_apps_script",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "Pencatatan-Buku-Kas/report-claude.md",
+      "source_location": "L173",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "pencatatan_buku_kas_report_claude_laporan_diagnosis_baris_kosong_berulang_di_sheet_input",
+      "target": "pencatatan_buku_kas_report_claude_5_hipotesis_root_cause_diurutkan_dari_paling_meyakinkan",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "Pencatatan-Buku-Kas/report-claude.md",
+      "source_location": "L212",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "pencatatan_buku_kas_report_claude_laporan_diagnosis_baris_kosong_berulang_di_sheet_input",
+      "target": "pencatatan_buku_kas_report_claude_6_pertanyaan_terbuka_butuh_konfirmasi_user",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "Pencatatan-Buku-Kas/report-claude.md",
+      "source_location": "L222",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "pencatatan_buku_kas_report_claude_laporan_diagnosis_baris_kosong_berulang_di_sheet_input",
+      "target": "pencatatan_buku_kas_report_claude_lampiran_a_hasil_ask_user_selama_investigasi",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "Pencatatan-Buku-Kas/report-claude.md",
+      "source_location": "L231",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "pencatatan_buku_kas_report_claude_laporan_diagnosis_baris_kosong_berulang_di_sheet_input",
+      "target": "pencatatan_buku_kas_report_claude_lampiran_b_bukti_kunci_file_line",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "Pencatatan-Buku-Kas/report-claude.md",
+      "source_location": "L59",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "pencatatan_buku_kas_report_claude_3_temuan_kode_client_side_work_pencatatan_buku_kas",
+      "target": "pencatatan_buku_kas_report_claude_3_1_form_kas_harian_script_js_validasi_ada_tidak_bisa_submit_kosong",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "Pencatatan-Buku-Kas/report-claude.md",
+      "source_location": "L68",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "pencatatan_buku_kas_report_claude_3_temuan_kode_client_side_work_pencatatan_buku_kas",
+      "target": "pencatatan_buku_kas_report_claude_3_2_antrean_pengiriman_queue_tidak_ada_auto_retry_tidak_bisa_spam",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "Pencatatan-Buku-Kas/report-claude.md",
+      "source_location": "L76",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "pencatatan_buku_kas_report_claude_3_temuan_kode_client_side_work_pencatatan_buku_kas",
+      "target": "pencatatan_buku_kas_report_claude_3_3_halaman_riwayat_riwayat_script_js_polling_hanya_get_interval_10_detik",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "Pencatatan-Buku-Kas/report-claude.md",
+      "source_location": "L83",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "pencatatan_buku_kas_report_claude_3_temuan_kode_client_side_work_pencatatan_buku_kas",
+      "target": "pencatatan_buku_kas_report_claude_3_4_halaman_scan_struk_scan_struk_script_js_temuan_penting",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "Pencatatan-Buku-Kas/report-claude.md",
+      "source_location": "L100",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "pencatatan_buku_kas_report_claude_3_temuan_kode_client_side_work_pencatatan_buku_kas",
+      "target": "pencatatan_buku_kas_report_claude_3_5_shared_utils_js_netral",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "Pencatatan-Buku-Kas/report-claude.md",
+      "source_location": "L109",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "pencatatan_buku_kas_report_claude_4_temuan_kode_apps_script_work_apps_script",
+      "target": "pencatatan_buku_kas_report_claude_4_1_buku_kas_gs_dopost_tanpa_validasi_jalur_utama_penyebab_bentuk_baris_kosong",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "Pencatatan-Buku-Kas/report-claude.md",
+      "source_location": "L140",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "pencatatan_buku_kas_report_claude_4_temuan_kode_apps_script_work_apps_script",
+      "target": "pencatatan_buku_kas_report_claude_4_2_trigger_yang_terpasang_didefinisikan_di_buku_kas_gs_status_read_only",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "Pencatatan-Buku-Kas/report-claude.md",
+      "source_location": "L154",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "pencatatan_buku_kas_report_claude_4_temuan_kode_apps_script_work_apps_script",
+      "target": "pencatatan_buku_kas_report_claude_4_3_report_gs_penulis_otomatis_ke_buku_kas_tapi_tidak_pernah_baris_kosong",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "Pencatatan-Buku-Kas/report-claude.md",
+      "source_location": "L164",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "pencatatan_buku_kas_report_claude_4_temuan_kode_apps_script_work_apps_script",
+      "target": "pencatatan_buku_kas_report_claude_4_4_status_verifikasi_trigger_read_only_tidak_dieksekusi",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "Pencatatan-Buku-Kas/report-claude.md",
+      "source_location": "L175",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "pencatatan_buku_kas_report_claude_5_hipotesis_root_cause_diurutkan_dari_paling_meyakinkan",
+      "target": "pencatatan_buku_kas_report_claude_h1_pengirim_otomatis_eksternal_menembak_endpoint_publik_dengan_json_kosong_parsial_paling_meyakinkan_untuk_rentetan_4_8_detik",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "Pencatatan-Buku-Kas/report-claude.md",
+      "source_location": "L185",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "pencatatan_buku_kas_report_claude_5_hipotesis_root_cause_diurutkan_dari_paling_meyakinkan",
+      "target": "pencatatan_buku_kas_report_claude_h2_halaman_scan_struk_menulis_baris_kosong_lewat_action_yang_tidak_ditangani_jalur_in_repo_yang_terbukti_frekuensi_rendah",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "Pencatatan-Buku-Kas/report-claude.md",
+      "source_location": "L193",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "pencatatan_buku_kas_report_claude_5_hipotesis_root_cause_diurutkan_dari_paling_meyakinkan",
+      "target": "pencatatan_buku_kas_report_claude_h3_versi_halaman_lama_otomasi_lain_di_perangkat_user_tidak_bisa_dipastikan_secara_statis",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "Pencatatan-Buku-Kas/report-claude.md",
+      "source_location": "L198",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "pencatatan_buku_kas_report_claude_5_hipotesis_root_cause_diurutkan_dari_paling_meyakinkan",
+      "target": "pencatatan_buku_kas_report_claude_h4_deploy_drift_versi_deployed_repo_ditepis_oleh_jawaban_user",
+      "confidence_score": 1.0
     },
     {
       "relation": "references",
@@ -5060,69 +5446,8 @@
       "weight": 1.0,
       "source": "pencatatan_buku_kas_stok",
       "target": "pencatatan_buku_kas_index"
-    },
-    {
-      "relation": "calls",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "Tempura/index.html",
-      "source_location": null,
-      "weight": 1.0,
-      "source": "tempura_index",
-      "target": "google_apps_script_code"
-    },
-    {
-      "relation": "calls",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "Wonton/index.html",
-      "source_location": null,
-      "weight": 1.0,
-      "source": "wonton_index",
-      "target": "google_apps_script_code"
-    },
-    {
-      "relation": "references",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "Aturan-Business.md",
-      "source_location": null,
-      "weight": 1.0,
-      "source": "google_apps_script_code",
-      "target": "google_sheets_buku_kas"
     }
   ],
-  "hyperedges": [
-    {
-      "id": "mao_group_ecosystem",
-      "label": "MAO Group Digital Ecosystem",
-      "nodes": [
-        "pencatatan_buku_kas_index",
-        "tempura_index",
-        "wonton_index",
-        "pencatatan_buku_kas_scan_struk",
-        "pencatatan_buku_kas_riwayat",
-        "pencatatan_buku_kas_stok"
-      ],
-      "relation": "participate_in",
-      "confidence": "EXTRACTED",
-      "confidence_score": 0.9,
-      "source_file": "Business.md"
-    },
-    {
-      "id": "accounting_flow",
-      "label": "Daily Financial Reporting Flow",
-      "nodes": [
-        "tempura_index",
-        "wonton_index",
-        "google_apps_script_code",
-        "google_sheets_buku_kas"
-      ],
-      "relation": "form",
-      "confidence": "EXTRACTED",
-      "confidence_score": 0.95,
-      "source_file": "Aturan-Business.md"
-    }
-  ],
-  "built_at_commit": "69682090f1a6b3084338861ed372b14537c1dfed"
+  "hyperedges": [],
+  "built_at_commit": "a4436fcddceffef34bf97bee7ec53594ad54c052"
 }
