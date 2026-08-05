@@ -1,16 +1,16 @@
 # Graph Report - Work  (2026-08-06)
 
 ## Corpus Check
-- 19 files · ~19,293 words
+- 19 files · ~19,557 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
-- 260 nodes · 314 edges · 28 communities (19 shown, 9 thin omitted)
+- 261 nodes · 315 edges · 28 communities (19 shown, 9 thin omitted)
 - Extraction: 97% EXTRACTED · 3% INFERRED · 0% AMBIGUOUS · INFERRED: 9 edges (avg confidence: 0.5)
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `1878c9d8`
+- Built from commit: `938fe653`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -67,8 +67,8 @@
 ## Communities (28 total, 9 thin omitted)
 
 ### Community 0 - "Riwayat/script.js"
-Cohesion: 0.05
-Nodes (40): RFC-4180, allRowsToday, btnBatalEdit, btnBatalHapus, btnBulanIni, btnDownload, btnHariIni, btnKemarin (+32 more)
+Cohesion: 0.04
+Nodes (41): RFC-4180, allRowsToday, btnBatalEdit, btnBatalHapus, btnBulanIni, btnDownload, btnHariIni, btnKemarin (+33 more)
 
 ### Community 1 - "Cash Book Recording"
 Cohesion: 0.09
@@ -131,7 +131,7 @@ Cohesion: 0.25
 Nodes (7): Kendala yang ditemukan saat pilot, Menjalankan, Playwright Test Suite — Pencatatan-Buku-Kas, ⚠️ Safety: data produksi tidak boleh tersentuh, Setup (sekali per mesin), Skenario saat ini, Struktur
 
 ## Knowledge Gaps
-- **136 isolated node(s):** `all`, `menuBtn`, `drawer`, `overlay`, `drawerClose` (+131 more)
+- **137 isolated node(s):** `all`, `menuBtn`, `drawer`, `overlay`, `drawerClose` (+132 more)
   These have ≤1 connection - possible missing edges or undocumented components.
 - **9 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
 
@@ -139,9 +139,9 @@ Nodes (7): Kendala yang ditemukan saat pilot, Menjalankan, Playwright Test Suite
 _Questions this graph is uniquely positioned to answer:_
 
 - **What connects `all`, `menuBtn`, `drawer` to the rest of the system?**
-  _136 weakly-connected nodes found - possible documentation gaps or missing edges._
+  _137 weakly-connected nodes found - possible documentation gaps or missing edges._
 - **Should `Riwayat/script.js` be split into smaller, more focused modules?**
-  _Cohesion score 0.045454545454545456 - nodes in this community are weakly interconnected._
+  _Cohesion score 0.044444444444444446 - nodes in this community are weakly interconnected._
 - **Should `Cash Book Recording` be split into smaller, more focused modules?**
   _Cohesion score 0.08817204301075268 - nodes in this community are weakly interconnected._
 - **Should `Stok/script.js` be split into smaller, more focused modules?**

@@ -25,5 +25,6 @@
   "23": "package.json",
   "24": "Playwright Test Suite — Pencatatan-Buku-Kas",
   "25": "kas-harian.spec.js",
-  "26": "playwright.config.js"
+  "26": "playwright.config.js",
+  "27": "nav.js"
 }

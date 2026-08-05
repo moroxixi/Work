@@ -18,6 +18,8 @@
   --masuk-soft: var(--green-bg);
   --keluar: var(--terracotta);
   --keluar-soft: var(--terracotta-bg);
+  --dividen: #7c3aed;
+  --dividen-bg: #f3edfc;
   --radius-md: 12px;
 }
 
@@ -167,6 +169,7 @@ body {
 }
 .summary-masuk { background: var(--green-bg); }
 .summary-keluar { background: var(--terracotta-bg); }
+.summary-dividen { background: var(--dividen-bg); }
 .summary-label {
   display: block;
   font-size: 12px;
@@ -179,6 +182,7 @@ body {
 }
 .summary-masuk .summary-value { color: var(--green); }
 .summary-keluar .summary-value { color: var(--terracotta); }
+.summary-dividen .summary-value { color: var(--dividen); }
 
 /* ===== List / kartu transaksi ===== */
 .list-wrap { min-height: 120px; }

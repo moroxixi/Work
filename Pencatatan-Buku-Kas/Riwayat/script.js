@@ -49,6 +49,7 @@ const cardList = document.getElementById("cardList");
 const summaryBar = document.getElementById("summaryBar");
 const summaryMasuk = document.getElementById("summaryMasuk");
 const summaryKeluar = document.getElementById("summaryKeluar");
+const summaryDividen = document.getElementById("summaryDividen");
 
 const editModal = document.getElementById("editModal");
 const editWarning = document.getElementById("editWarning");
@@ -170,13 +171,17 @@ function applyFilterAndRenderCards() {
 
   let totalMasuk = 0;
   let totalKeluar = 0;
+  let totalDividen = 0;
   allRowsToday.forEach((row) => {
-    if (row.arah === "Masuk") totalMasuk += Number(row.jumlah || 0);
+    // Dividen dihitung terpisah — TIDAK ikut ke total uang keluar
+    if (row.kategori === "Dividen") totalDividen += Number(row.jumlah || 0);
+    else if (row.arah === "Masuk") totalMasuk += Number(row.jumlah || 0);
     else totalKeluar += Number(row.jumlah || 0);
   });
   summaryBar.hidden = false;
   summaryMasuk.textContent = formatRupiah(totalMasuk);
   summaryKeluar.textContent = formatRupiah(totalKeluar);
+  summaryDividen.textContent = formatRupiah(totalDividen);
 
   if (currentRows.length === 0) {
     emptyMsg.hidden = false;
