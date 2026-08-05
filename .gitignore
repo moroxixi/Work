@@ -3,6 +3,9 @@
 # Logs
 push.log
 
+# Graphify cache (build artifacts, regeneratable)
+graphify-out/cache/
+
 # Python cache
 __pycache__/
 *.pyc
