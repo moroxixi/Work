@@ -1676,6 +1676,138 @@
       "norm_label": "pencatatan-buku-kas/config.js"
     },
     {
+      "label": "package.json",
+      "file_type": "code",
+      "source_file": "Pencatatan-Buku-Kas/package.json",
+      "source_location": "L1",
+      "_origin": "ast",
+      "id": "pencatatan_buku_kas_package",
+      "community": 23,
+      "community_name": "package.json",
+      "norm_label": "package.json"
+    },
+    {
+      "label": "name",
+      "file_type": "code",
+      "source_file": "Pencatatan-Buku-Kas/package.json",
+      "source_location": "L2",
+      "_origin": "ast",
+      "id": "pencatatan_buku_kas_package_name",
+      "community": 23,
+      "community_name": "package.json",
+      "norm_label": "name"
+    },
+    {
+      "label": "version",
+      "file_type": "code",
+      "source_file": "Pencatatan-Buku-Kas/package.json",
+      "source_location": "L3",
+      "_origin": "ast",
+      "id": "pencatatan_buku_kas_package_version",
+      "community": 23,
+      "community_name": "package.json",
+      "norm_label": "version"
+    },
+    {
+      "label": "private",
+      "file_type": "code",
+      "source_file": "Pencatatan-Buku-Kas/package.json",
+      "source_location": "L4",
+      "_origin": "ast",
+      "id": "pencatatan_buku_kas_package_private",
+      "community": 23,
+      "community_name": "package.json",
+      "norm_label": "private"
+    },
+    {
+      "label": "description",
+      "file_type": "code",
+      "source_file": "Pencatatan-Buku-Kas/package.json",
+      "source_location": "L5",
+      "_origin": "ast",
+      "id": "pencatatan_buku_kas_package_description",
+      "community": 23,
+      "community_name": "package.json",
+      "norm_label": "description"
+    },
+    {
+      "label": "scripts",
+      "file_type": "code",
+      "source_file": "Pencatatan-Buku-Kas/package.json",
+      "source_location": "L6",
+      "_origin": "ast",
+      "id": "pencatatan_buku_kas_package_scripts",
+      "community": 23,
+      "community_name": "package.json",
+      "norm_label": "scripts"
+    },
+    {
+      "label": "test",
+      "file_type": "code",
+      "source_file": "Pencatatan-Buku-Kas/package.json",
+      "source_location": "L7",
+      "_origin": "ast",
+      "id": "pencatatan_buku_kas_package_scripts_test",
+      "community": 23,
+      "community_name": "package.json",
+      "norm_label": "test"
+    },
+    {
+      "label": "devDependencies",
+      "file_type": "code",
+      "source_file": "Pencatatan-Buku-Kas/package.json",
+      "source_location": "L9",
+      "_origin": "ast",
+      "id": "pencatatan_buku_kas_package_devdependencies",
+      "community": 23,
+      "community_name": "package.json",
+      "norm_label": "devdependencies"
+    },
+    {
+      "label": "@playwright/test",
+      "file_type": "code",
+      "source_file": "Pencatatan-Buku-Kas/package.json",
+      "source_location": "L10",
+      "_origin": "ast",
+      "id": "pencatatan_buku_kas_package_devdependencies_playwright_test",
+      "community": 23,
+      "community_name": "package.json",
+      "norm_label": "@playwright/test"
+    },
+    {
+      "label": "@playwright/test",
+      "file_type": "concept",
+      "source_file": "Pencatatan-Buku-Kas/package.json",
+      "source_location": "L10",
+      "_origin": "ast",
+      "id": "playwright_test",
+      "community": 23,
+      "community_name": "package.json",
+      "norm_label": "@playwright/test"
+    },
+    {
+      "label": "playwright.config.js",
+      "file_type": "code",
+      "source_file": "Pencatatan-Buku-Kas/playwright.config.js",
+      "source_location": "L1",
+      "_origin": "ast",
+      "id": "pencatatan_buku_kas_playwright_config",
+      "community": 26,
+      "community_name": "playwright.config.js",
+      "norm_label": "playwright.config.js"
+    },
+    {
+      "label": "{ defineConfig }",
+      "file_type": "code",
+      "source_file": "Pencatatan-Buku-Kas/playwright.config.js",
+      "source_location": "L6",
+      "_origin": "ast",
+      "id": "pencatatan_buku_kas_playwright_config_defineconfig",
+      "community": 26,
+      "community_name": "playwright.config.js",
+      "norm_label": "{ defineconfig }"
+    },
+    {
       "label": "Pencatatan-Buku-Kas/script.js",
       "file_type": "code",
       "source_file": "Pencatatan-Buku-Kas/script.js",
@@ -2072,6 +2204,50 @@
       "norm_label": "escapehtml()"
     },
     {
+      "label": "kas-harian.spec.js",
+      "file_type": "code",
+      "source_file": "Pencatatan-Buku-Kas/tests/kas-harian.spec.js",
+      "source_location": "L1",
+      "_origin": "ast",
+      "id": "pencatatan_buku_kas_tests_kas_harian_spec",
+      "community": 25,
+      "community_name": "kas-harian.spec.js",
+      "norm_label": "kas-harian.spec.js"
+    },
+    {
+      "label": "{ test, expect }",
+      "file_type": "code",
+      "source_file": "Pencatatan-Buku-Kas/tests/kas-harian.spec.js",
+      "source_location": "L12",
+      "_origin": "ast",
+      "id": "pencatatan_buku_kas_tests_kas_harian_spec_test_expect",
+      "community": 25,
+      "community_name": "kas-harian.spec.js",
+      "norm_label": "{ test, expect }"
+    },
+    {
+      "label": "interceptNetwork()",
+      "file_type": "code",
+      "source_file": "Pencatatan-Buku-Kas/tests/kas-harian.spec.js",
+      "source_location": "L26",
+      "_origin": "ast",
+      "id": "pencatatan_buku_kas_tests_kas_harian_spec_interceptnetwork",
+      "community": 25,
+      "community_name": "kas-harian.spec.js",
+      "norm_label": "interceptnetwork()"
+    },
+    {
+      "label": "fillAndSubmit()",
+      "file_type": "code",
+      "source_file": "Pencatatan-Buku-Kas/tests/kas-harian.spec.js",
+      "source_location": "L42",
+      "_origin": "ast",
+      "id": "pencatatan_buku_kas_tests_kas_harian_spec_fillandsubmit",
+      "community": 25,
+      "community_name": "kas-harian.spec.js",
+      "norm_label": "fillandsubmit()"
+    },
+    {
       "label": "Reminder/script.js",
       "file_type": "code",
       "source_file": "Reminder/script.js",
@@ -2265,6 +2441,94 @@
       "community": 12,
       "community_name": "Deployment Scripts",
       "norm_label": "work-push.sh script"
+    },
+    {
+      "label": "README-playwright.md",
+      "file_type": "document",
+      "source_file": "Pencatatan-Buku-Kas/README-playwright.md",
+      "source_location": "L1",
+      "_origin": "ast",
+      "id": "pencatatan_buku_kas_readme_playwright",
+      "community": 24,
+      "community_name": "Playwright Test Suite \u2014 Pencatatan-Buku-Kas",
+      "norm_label": "readme-playwright.md"
+    },
+    {
+      "label": "Playwright Test Suite \u2014 Pencatatan-Buku-Kas",
+      "file_type": "document",
+      "source_file": "Pencatatan-Buku-Kas/README-playwright.md",
+      "source_location": "L1",
+      "_origin": "ast",
+      "id": "pencatatan_buku_kas_readme_playwright_playwright_test_suite_pencatatan_buku_kas",
+      "community": 24,
+      "community_name": "Playwright Test Suite \u2014 Pencatatan-Buku-Kas",
+      "norm_label": "playwright test suite \u2014 pencatatan-buku-kas"
+    },
+    {
+      "label": "Setup (sekali per mesin)",
+      "file_type": "document",
+      "source_file": "Pencatatan-Buku-Kas/README-playwright.md",
+      "source_location": "L7",
+      "_origin": "ast",
+      "id": "pencatatan_buku_kas_readme_playwright_setup_sekali_per_mesin",
+      "community": 24,
+      "community_name": "Playwright Test Suite \u2014 Pencatatan-Buku-Kas",
+      "norm_label": "setup (sekali per mesin)"
+    },
+    {
+      "label": "Menjalankan",
+      "file_type": "document",
+      "source_file": "Pencatatan-Buku-Kas/README-playwright.md",
+      "source_location": "L20",
+      "_origin": "ast",
+      "id": "pencatatan_buku_kas_readme_playwright_menjalankan",
+      "community": 24,
+      "community_name": "Playwright Test Suite \u2014 Pencatatan-Buku-Kas",
+      "norm_label": "menjalankan"
+    },
+    {
+      "label": "\u26a0\ufe0f Safety: data produksi tidak boleh tersentuh",
+      "file_type": "document",
+      "source_file": "Pencatatan-Buku-Kas/README-playwright.md",
+      "source_location": "L30",
+      "_origin": "ast",
+      "id": "pencatatan_buku_kas_readme_playwright_safety_data_produksi_tidak_boleh_tersentuh",
+      "community": 24,
+      "community_name": "Playwright Test Suite \u2014 Pencatatan-Buku-Kas",
+      "norm_label": "\u26a0\ufe0f safety: data produksi tidak boleh tersentuh"
+    },
+    {
+      "label": "Skenario saat ini",
+      "file_type": "document",
+      "source_file": "Pencatatan-Buku-Kas/README-playwright.md",
+      "source_location": "L52",
+      "_origin": "ast",
+      "id": "pencatatan_buku_kas_readme_playwright_skenario_saat_ini",
+      "community": 24,
+      "community_name": "Playwright Test Suite \u2014 Pencatatan-Buku-Kas",
+      "norm_label": "skenario saat ini"
+    },
+    {
+      "label": "Struktur",
+      "file_type": "document",
+      "source_file": "Pencatatan-Buku-Kas/README-playwright.md",
+      "source_location": "L60",
+      "_origin": "ast",
+      "id": "pencatatan_buku_kas_readme_playwright_struktur",
+      "community": 24,
+      "community_name": "Playwright Test Suite \u2014 Pencatatan-Buku-Kas",
+      "norm_label": "struktur"
+    },
+    {
+      "label": "Kendala yang ditemukan saat pilot",
+      "file_type": "document",
+      "source_file": "Pencatatan-Buku-Kas/README-playwright.md",
+      "source_location": "L71",
+      "_origin": "ast",
+      "id": "pencatatan_buku_kas_readme_playwright_kendala_yang_ditemukan_saat_pilot",
+      "community": 24,
+      "community_name": "Playwright Test Suite \u2014 Pencatatan-Buku-Kas",
+      "norm_label": "kendala yang ditemukan saat pilot"
     },
     {
       "label": "report-claude.md",
@@ -4933,6 +5197,117 @@
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
+      "source_file": "Pencatatan-Buku-Kas/package.json",
+      "source_location": "L5",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "pencatatan_buku_kas_package",
+      "target": "pencatatan_buku_kas_package_description",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "Pencatatan-Buku-Kas/package.json",
+      "source_location": "L9",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "pencatatan_buku_kas_package",
+      "target": "pencatatan_buku_kas_package_devdependencies",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "Pencatatan-Buku-Kas/package.json",
+      "source_location": "L2",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "pencatatan_buku_kas_package",
+      "target": "pencatatan_buku_kas_package_name",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "Pencatatan-Buku-Kas/package.json",
+      "source_location": "L4",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "pencatatan_buku_kas_package",
+      "target": "pencatatan_buku_kas_package_private",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "Pencatatan-Buku-Kas/package.json",
+      "source_location": "L6",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "pencatatan_buku_kas_package",
+      "target": "pencatatan_buku_kas_package_scripts",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "Pencatatan-Buku-Kas/package.json",
+      "source_location": "L3",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "pencatatan_buku_kas_package",
+      "target": "pencatatan_buku_kas_package_version",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "Pencatatan-Buku-Kas/package.json",
+      "source_location": "L7",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "pencatatan_buku_kas_package_scripts",
+      "target": "pencatatan_buku_kas_package_scripts_test",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "Pencatatan-Buku-Kas/package.json",
+      "source_location": "L10",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "pencatatan_buku_kas_package_devdependencies",
+      "target": "pencatatan_buku_kas_package_devdependencies_playwright_test",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "confidence": "EXTRACTED",
+      "source_file": "Pencatatan-Buku-Kas/package.json",
+      "source_location": "L10",
+      "weight": 1.0,
+      "context": "import",
+      "_origin": "ast",
+      "source": "pencatatan_buku_kas_package_devdependencies_playwright_test",
+      "target": "playwright_test",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "Pencatatan-Buku-Kas/playwright.config.js",
+      "source_location": "L6",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "pencatatan_buku_kas_playwright_config",
+      "target": "pencatatan_buku_kas_playwright_config_defineconfig",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
       "source_file": "Pencatatan-Buku-Kas/script.js",
       "source_location": "L338",
       "weight": 1.0,
@@ -5439,6 +5814,39 @@
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
+      "source_file": "Pencatatan-Buku-Kas/tests/kas-harian.spec.js",
+      "source_location": "L42",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "pencatatan_buku_kas_tests_kas_harian_spec",
+      "target": "pencatatan_buku_kas_tests_kas_harian_spec_fillandsubmit",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "Pencatatan-Buku-Kas/tests/kas-harian.spec.js",
+      "source_location": "L26",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "pencatatan_buku_kas_tests_kas_harian_spec",
+      "target": "pencatatan_buku_kas_tests_kas_harian_spec_interceptnetwork",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "Pencatatan-Buku-Kas/tests/kas-harian.spec.js",
+      "source_location": "L12",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "pencatatan_buku_kas_tests_kas_harian_spec",
+      "target": "pencatatan_buku_kas_tests_kas_harian_spec_test_expect",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
       "source_file": "Reminder/script.js",
       "source_location": "L9",
       "weight": 1.0,
@@ -5687,6 +6095,83 @@
       "_origin": "ast",
       "source": "work_push",
       "target": "work_push_sh__entry",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "Pencatatan-Buku-Kas/README-playwright.md",
+      "source_location": "L1",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "pencatatan_buku_kas_readme_playwright",
+      "target": "pencatatan_buku_kas_readme_playwright_playwright_test_suite_pencatatan_buku_kas",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "Pencatatan-Buku-Kas/README-playwright.md",
+      "source_location": "L71",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "pencatatan_buku_kas_readme_playwright_playwright_test_suite_pencatatan_buku_kas",
+      "target": "pencatatan_buku_kas_readme_playwright_kendala_yang_ditemukan_saat_pilot",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "Pencatatan-Buku-Kas/README-playwright.md",
+      "source_location": "L20",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "pencatatan_buku_kas_readme_playwright_playwright_test_suite_pencatatan_buku_kas",
+      "target": "pencatatan_buku_kas_readme_playwright_menjalankan",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "Pencatatan-Buku-Kas/README-playwright.md",
+      "source_location": "L30",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "pencatatan_buku_kas_readme_playwright_playwright_test_suite_pencatatan_buku_kas",
+      "target": "pencatatan_buku_kas_readme_playwright_safety_data_produksi_tidak_boleh_tersentuh",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "Pencatatan-Buku-Kas/README-playwright.md",
+      "source_location": "L7",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "pencatatan_buku_kas_readme_playwright_playwright_test_suite_pencatatan_buku_kas",
+      "target": "pencatatan_buku_kas_readme_playwright_setup_sekali_per_mesin",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "Pencatatan-Buku-Kas/README-playwright.md",
+      "source_location": "L52",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "pencatatan_buku_kas_readme_playwright_playwright_test_suite_pencatatan_buku_kas",
+      "target": "pencatatan_buku_kas_readme_playwright_skenario_saat_ini",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "Pencatatan-Buku-Kas/README-playwright.md",
+      "source_location": "L60",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "pencatatan_buku_kas_readme_playwright_playwright_test_suite_pencatatan_buku_kas",
+      "target": "pencatatan_buku_kas_readme_playwright_struktur",
       "confidence_score": 1.0
     },
     {
@@ -5963,5 +6448,5 @@
     }
   ],
   "hyperedges": [],
-  "built_at_commit": "0e4423deeac79702adab01b86e844859d88006f6"
+  "built_at_commit": "7e6cda3ec1dd59bc6898c7532dab684bcec38c49"
 }

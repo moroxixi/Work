@@ -1,16 +1,16 @@
 # Graph Report - Work  (2026-08-05)
 
 ## Corpus Check
-- 18 files · ~19,514 words
+- 18 files · ~19,324 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
-- 260 nodes · 315 edges · 27 communities (19 shown, 8 thin omitted)
+- 257 nodes · 311 edges · 27 communities (19 shown, 8 thin omitted)
 - Extraction: 97% EXTRACTED · 3% INFERRED · 0% AMBIGUOUS · INFERRED: 9 edges (avg confidence: 0.5)
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `7e6cda3e`
+- Built from commit: `e0a12e8f`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -42,10 +42,10 @@
 
 ## God Nodes (most connected - your core abstractions)
 1. `Laporan Diagnosis — Baris Kosong Berulang di Sheet "INPUT"` - 9 edges
-2. `applyFilterAndRenderCards()` - 7 edges
-3. `fetchMonthList()` - 7 edges
-4. `fetchStok()` - 7 edges
-5. `Playwright Test Suite — Pencatatan-Buku-Kas` - 7 edges
+2. `fetchMonthList()` - 7 edges
+3. `fetchStok()` - 7 edges
+4. `Playwright Test Suite — Pencatatan-Buku-Kas` - 7 edges
+5. `applyFilterAndRenderCards()` - 6 edges
 6. `fetchList()` - 6 edges
 7. `validateAndGetSeconds()` - 6 edges
 8. `3. Temuan Kode Client-Side (Work/Pencatatan-Buku-Kas/)` - 6 edges
@@ -66,8 +66,8 @@
 ## Communities (27 total, 8 thin omitted)
 
 ### Community 0 - "Riwayat/script.js"
-Cohesion: 0.04
-Nodes (42): RFC-4180, allRowsToday, btnBatalEdit, btnBatalHapus, btnBulanIni, btnDownload, btnHariIni, btnKemarin (+34 more)
+Cohesion: 0.05
+Nodes (40): RFC-4180, allRowsToday, btnBatalEdit, btnBatalHapus, btnBulanIni, btnDownload, btnHariIni, btnKemarin (+32 more)
 
 ### Community 1 - "Cash Book Recording"
 Cohesion: 0.09
@@ -94,8 +94,8 @@ Cohesion: 0.39
 Nodes (5): escapeAttr(), formatRp(), items, renderItems(), updateTotals()
 
 ### Community 7 - "applyFilterAndRenderCards"
-Cohesion: 0.28
-Nodes (9): applyFilterAndRenderCards(), arahTampilan(), formatRupiah(), KATEGORI_MASUK, openDeleteModal(), openEditModal(), populateKategoriSelect(), renderKategoriFilterBar() (+1 more)
+Cohesion: 0.32
+Nodes (8): applyFilterAndRenderCards(), formatRupiah(), KATEGORI_MASUK, openDeleteModal(), openEditModal(), populateKategoriSelect(), renderKategoriFilterBar(), renderList()
 
 ### Community 8 - "Laporan Diagnosis — Baris Kosong Berulang di Sheet "INPUT""
 Cohesion: 0.09
@@ -130,7 +130,7 @@ Cohesion: 0.25
 Nodes (7): Kendala yang ditemukan saat pilot, Menjalankan, Playwright Test Suite — Pencatatan-Buku-Kas, ⚠️ Safety: data produksi tidak boleh tersentuh, Setup (sekali per mesin), Skenario saat ini, Struktur
 
 ## Knowledge Gaps
-- **138 isolated node(s):** `all`, `menuBtn`, `drawer`, `overlay`, `drawerClose` (+133 more)
+- **136 isolated node(s):** `all`, `menuBtn`, `drawer`, `overlay`, `drawerClose` (+131 more)
   These have ≤1 connection - possible missing edges or undocumented components.
 - **8 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
 
@@ -138,9 +138,9 @@ Nodes (7): Kendala yang ditemukan saat pilot, Menjalankan, Playwright Test Suite
 _Questions this graph is uniquely positioned to answer:_
 
 - **What connects `all`, `menuBtn`, `drawer` to the rest of the system?**
-  _138 weakly-connected nodes found - possible documentation gaps or missing edges._
+  _136 weakly-connected nodes found - possible documentation gaps or missing edges._
 - **Should `Riwayat/script.js` be split into smaller, more focused modules?**
-  _Cohesion score 0.043478260869565216 - nodes in this community are weakly interconnected._
+  _Cohesion score 0.045454545454545456 - nodes in this community are weakly interconnected._
 - **Should `Cash Book Recording` be split into smaller, more focused modules?**
   _Cohesion score 0.08817204301075268 - nodes in this community are weakly interconnected._
 - **Should `Stok/script.js` be split into smaller, more focused modules?**

@@ -21,5 +21,9 @@
   "19": "Config/config.js",
   "20": "Setoran Wonton Form",
   "21": "fetchMonthList",
-  "22": "Rekap/script.js"
+  "22": "Rekap/script.js",
+  "23": "package.json",
+  "24": "Playwright Test Suite — Pencatatan-Buku-Kas",
+  "25": "kas-harian.spec.js",
+  "26": "playwright.config.js"
 }
