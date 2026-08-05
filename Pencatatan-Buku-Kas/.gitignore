@@ -1,0 +1,5 @@
+# Playwright test suite — artifact yang tidak perlu di-track
+node_modules/
+test-results/
+playwright-report/
+blob-report/

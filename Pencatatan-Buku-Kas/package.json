@@ -1,0 +1,12 @@
+{
+  "name": "pencatatan-buku-kas-tests",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Playwright test suite pilot untuk mini-app Pencatatan-Buku-Kas (devDependencies scoped lokal, bukan global)",
+  "scripts": {
+    "test": "playwright test"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.62.1"
+  }
+}

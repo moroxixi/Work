@@ -1,16 +1,16 @@
 # Graph Report - Work  (2026-08-05)
 
 ## Corpus Check
-- 14 files · ~18,397 words
+- 18 files · ~19,514 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
-- 236 nodes · 295 edges · 23 communities (17 shown, 6 thin omitted)
+- 260 nodes · 315 edges · 27 communities (19 shown, 8 thin omitted)
 - Extraction: 97% EXTRACTED · 3% INFERRED · 0% AMBIGUOUS · INFERRED: 9 edges (avg confidence: 0.5)
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `0e4423de`
+- Built from commit: `7e6cda3e`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -35,18 +35,22 @@
 - Setoran Wonton Form
 - fetchMonthList
 - Rekap/script.js
+- package.json
+- Playwright Test Suite — Pencatatan-Buku-Kas
+- kas-harian.spec.js
+- playwright.config.js
 
 ## God Nodes (most connected - your core abstractions)
 1. `Laporan Diagnosis — Baris Kosong Berulang di Sheet "INPUT"` - 9 edges
 2. `applyFilterAndRenderCards()` - 7 edges
 3. `fetchMonthList()` - 7 edges
 4. `fetchStok()` - 7 edges
-5. `fetchList()` - 6 edges
-6. `validateAndGetSeconds()` - 6 edges
-7. `3. Temuan Kode Client-Side (Work/Pencatatan-Buku-Kas/)` - 6 edges
-8. `renderList()` - 5 edges
-9. `refreshCurrent()` - 5 edges
-10. `goToMonth()` - 5 edges
+5. `Playwright Test Suite — Pencatatan-Buku-Kas` - 7 edges
+6. `fetchList()` - 6 edges
+7. `validateAndGetSeconds()` - 6 edges
+8. `3. Temuan Kode Client-Side (Work/Pencatatan-Buku-Kas/)` - 6 edges
+9. `renderList()` - 5 edges
+10. `refreshCurrent()` - 5 edges
 
 ## Surprising Connections (you probably didn't know these)
 - `Riwayat Kas Harian` --references--> `Input Kas Harian Form`  [EXTRACTED]
@@ -59,7 +63,7 @@
 ## Import Cycles
 - None detected.
 
-## Communities (23 total, 6 thin omitted)
+## Communities (27 total, 8 thin omitted)
 
 ### Community 0 - "Riwayat/script.js"
 Cohesion: 0.04
@@ -117,16 +121,24 @@ Nodes (5): fetchDayRows(), fetchList(), fetchMonthList(), isCacheValid(), setLoa
 Cohesion: 0.16
 Nodes (16): allItems, applyFilters(), emptyMsg, errorMsg, fetchItems(), formatRp(), listEl, loadingMsg (+8 more)
 
+### Community 23 - "package.json"
+Cohesion: 0.20
+Nodes (9): description, devDependencies, @playwright/test, name, private, scripts, test, version (+1 more)
+
+### Community 24 - "Playwright Test Suite — Pencatatan-Buku-Kas"
+Cohesion: 0.25
+Nodes (7): Kendala yang ditemukan saat pilot, Menjalankan, Playwright Test Suite — Pencatatan-Buku-Kas, ⚠️ Safety: data produksi tidak boleh tersentuh, Setup (sekali per mesin), Skenario saat ini, Struktur
+
 ## Knowledge Gaps
-- **124 isolated node(s):** `all`, `menuBtn`, `drawer`, `overlay`, `drawerClose` (+119 more)
+- **138 isolated node(s):** `all`, `menuBtn`, `drawer`, `overlay`, `drawerClose` (+133 more)
   These have ≤1 connection - possible missing edges or undocumented components.
-- **6 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
+- **8 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
 
 ## Suggested Questions
 _Questions this graph is uniquely positioned to answer:_
 
 - **What connects `all`, `menuBtn`, `drawer` to the rest of the system?**
-  _124 weakly-connected nodes found - possible documentation gaps or missing edges._
+  _138 weakly-connected nodes found - possible documentation gaps or missing edges._
 - **Should `Riwayat/script.js` be split into smaller, more focused modules?**
   _Cohesion score 0.043478260869565216 - nodes in this community are weakly interconnected._
 - **Should `Cash Book Recording` be split into smaller, more focused modules?**

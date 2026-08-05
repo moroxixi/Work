@@ -1,11 +1,11 @@
 # Graph Report - Work  (2026-08-05)
 
 ## Corpus Check
-- 14 files · ~18,346 words
+- 14 files · ~18,397 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
-- 235 nodes · 294 edges · 23 communities (17 shown, 6 thin omitted)
+- 236 nodes · 295 edges · 23 communities (17 shown, 6 thin omitted)
 - Extraction: 97% EXTRACTED · 3% INFERRED · 0% AMBIGUOUS · INFERRED: 9 edges (avg confidence: 0.5)
 - Token cost: 0 input · 0 output
 
@@ -63,7 +63,7 @@
 
 ### Community 0 - "Riwayat/script.js"
 Cohesion: 0.04
-Nodes (41): RFC-4180, allRowsToday, btnBatalEdit, btnBatalHapus, btnBulanIni, btnDownload, btnHariIni, btnKemarin (+33 more)
+Nodes (42): RFC-4180, allRowsToday, btnBatalEdit, btnBatalHapus, btnBulanIni, btnDownload, btnHariIni, btnKemarin (+34 more)
 
 ### Community 1 - "Cash Book Recording"
 Cohesion: 0.09
@@ -118,7 +118,7 @@ Cohesion: 0.16
 Nodes (16): allItems, applyFilters(), emptyMsg, errorMsg, fetchItems(), formatRp(), listEl, loadingMsg (+8 more)
 
 ## Knowledge Gaps
-- **123 isolated node(s):** `all`, `menuBtn`, `drawer`, `overlay`, `drawerClose` (+118 more)
+- **124 isolated node(s):** `all`, `menuBtn`, `drawer`, `overlay`, `drawerClose` (+119 more)
   These have ≤1 connection - possible missing edges or undocumented components.
 - **6 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
 
@@ -126,9 +126,9 @@ Nodes (16): allItems, applyFilters(), emptyMsg, errorMsg, fetchItems(), formatRp
 _Questions this graph is uniquely positioned to answer:_
 
 - **What connects `all`, `menuBtn`, `drawer` to the rest of the system?**
-  _123 weakly-connected nodes found - possible documentation gaps or missing edges._
+  _124 weakly-connected nodes found - possible documentation gaps or missing edges._
 - **Should `Riwayat/script.js` be split into smaller, more focused modules?**
-  _Cohesion score 0.044444444444444446 - nodes in this community are weakly interconnected._
+  _Cohesion score 0.043478260869565216 - nodes in this community are weakly interconnected._
 - **Should `Cash Book Recording` be split into smaller, more focused modules?**
   _Cohesion score 0.08817204301075268 - nodes in this community are weakly interconnected._
 - **Should `Stok/script.js` be split into smaller, more focused modules?**
