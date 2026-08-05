@@ -1,16 +1,16 @@
 # Graph Report - Work  (2026-08-05)
 
 ## Corpus Check
-- 13 files · ~17,122 words
+- 14 files · ~18,249 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
-- 216 nodes · 269 edges · 22 communities (16 shown, 6 thin omitted)
-- Extraction: 97% EXTRACTED · 3% INFERRED · 0% AMBIGUOUS · INFERRED: 8 edges (avg confidence: 0.5)
+- 233 nodes · 291 edges · 23 communities (17 shown, 6 thin omitted)
+- Extraction: 97% EXTRACTED · 3% INFERRED · 0% AMBIGUOUS · INFERRED: 9 edges (avg confidence: 0.5)
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `a4436fcd`
+- Built from commit: `24c6f2bc`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -34,6 +34,7 @@
 - downloadFileName
 - Setoran Wonton Form
 - fetchMonthList
+- Rekap/script.js
 
 ## God Nodes (most connected - your core abstractions)
 1. `Laporan Diagnosis — Baris Kosong Berulang di Sheet "INPUT"` - 9 edges
@@ -58,7 +59,7 @@
 ## Import Cycles
 - None detected.
 
-## Communities (22 total, 6 thin omitted)
+## Communities (23 total, 6 thin omitted)
 
 ### Community 0 - "Riwayat/script.js"
 Cohesion: 0.05
@@ -112,8 +113,12 @@ Nodes (6): csvEscape(), downloadCsv(), downloadFileName(), formatBulanLabel(), f
 Cohesion: 0.60
 Nodes (5): fetchDayRows(), fetchList(), fetchMonthList(), isCacheValid(), setLoading()
 
+### Community 22 - "Rekap/script.js"
+Cohesion: 0.16
+Nodes (16): allItems, applyFilters(), emptyMsg, errorMsg, fetchItems(), formatRp(), listEl, loadingMsg (+8 more)
+
 ## Knowledge Gaps
-- **113 isolated node(s):** `all`, `menuBtn`, `drawer`, `overlay`, `drawerClose` (+108 more)
+- **122 isolated node(s):** `all`, `menuBtn`, `drawer`, `overlay`, `drawerClose` (+117 more)
   These have ≤1 connection - possible missing edges or undocumented components.
 - **6 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
 
@@ -121,7 +126,7 @@ Nodes (5): fetchDayRows(), fetchList(), fetchMonthList(), isCacheValid(), setLoa
 _Questions this graph is uniquely positioned to answer:_
 
 - **What connects `all`, `menuBtn`, `drawer` to the rest of the system?**
-  _113 weakly-connected nodes found - possible documentation gaps or missing edges._
+  _122 weakly-connected nodes found - possible documentation gaps or missing edges._
 - **Should `Riwayat/script.js` be split into smaller, more focused modules?**
   _Cohesion score 0.045454545454545456 - nodes in this community are weakly interconnected._
 - **Should `Cash Book Recording` be split into smaller, more focused modules?**

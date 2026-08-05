@@ -25,8 +25,8 @@
     "semantic_hash": ""
   },
   "Pencatatan-Buku-Kas/config.js": {
-    "mtime": 1785604174.8235552,
-    "ast_hash": "55cb6d3ac7d703d9ba564514e6876761",
+    "mtime": 1785867431.7617512,
+    "ast_hash": "1e99fe550df212f3241cee8c61fee969",
     "semantic_hash": ""
   },
   "Pencatatan-Buku-Kas/script.js": {
@@ -117,6 +117,16 @@
   "Pencatatan-Buku-Kas/report-claude.md": {
     "mtime": 1785863045.7702389,
     "ast_hash": "d72f1e186d382d159fadffc1b1242457",
+    "semantic_hash": ""
+  },
+  "Pencatatan-Buku-Kas/Scan-Struk/Rekap/script.js": {
+    "mtime": 1785902750.2250757,
+    "ast_hash": "e0e879b8f269f9aec3acec025ae315b6",
+    "semantic_hash": ""
+  },
+  "Pencatatan-Buku-Kas/Scan-Struk/Rekap/index.html": {
+    "mtime": 1785902750.2050757,
+    "ast_hash": "7cbde8d8c2bdf4eb557c3390e71aa3b5",
     "semantic_hash": ""
   }
 }

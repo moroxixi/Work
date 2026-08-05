@@ -51,6 +51,19 @@ function doPost(e) {
   if (action === "edit") return handleEdit_(data);
   if (action === "delete") return handleDelete_(data);
 
+  // ==== Validasi input (lapisan pengaman terakhir di server) ====
+  // Tolak payload tidak valid TANPA menulis apa pun ke sheet. Tidak throw
+  // error mentah supaya execution log Apps Script tidak penuh error.
+  const kategori = (data.kategori || "").toString().trim();
+  if (kategori === "") {
+    return jsonOut_({ ok: false, error: "Kategori wajib diisi." });
+  }
+
+  const jumlah = Number(data.jumlah);
+  if (!isFinite(jumlah) || jumlah <= 0) {
+    return jsonOut_({ ok: false, error: "Jumlah harus angka lebih dari 0." });
+  }
+
   // ==== Perilaku LAMA, tidak diubah sama sekali ====
   const sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName(SHEET_NAME);
   const timestamp = Utilities.formatDate(new Date(), "Asia/Jakarta", "dd/MM/yyyy HH:mm:ss");

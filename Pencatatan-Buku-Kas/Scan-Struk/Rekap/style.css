@@ -1,0 +1,297 @@
+:root{
+  --cream:#FAF6EF;
+  --paper:#FFFFFF;
+  --ink:#2B2420;
+  --ink-soft:#7A6F63;
+  --terracotta:#B5542A;
+  --terracotta-dark:#8F4220;
+  --line:#E7DFD3;
+  --good:#3E7A4C;
+  --bad:#B23A3A;
+  --muted: var(--ink-soft);
+  --card: var(--paper);
+  --masuk: var(--good);
+  --masuk-soft: #E6F0E8;
+  --keluar: var(--terracotta);
+  --keluar-soft: #F5E4D9;
+  --radius-md: 12px;
+}
+*{box-sizing:border-box;}
+body{
+  margin:0;
+  background:var(--cream);
+  color:var(--ink);
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
+  padding:env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
+  display:flex;
+  justify-content:center;
+}
+.wrap{
+  width:100%;
+  max-width:460px;
+  padding:20px 16px 48px;
+}
+header{
+  margin-bottom:18px;
+}
+.eyebrow{
+  font-size:12px;
+  letter-spacing:0.08em;
+  text-transform:uppercase;
+  color:var(--terracotta-dark);
+  font-weight:700;
+  margin:0 0 4px;
+}
+h1{
+  font-size:22px;
+  margin:0 0 4px;
+  font-weight:800;
+}
+.sub{
+  font-size:13px;
+  color:var(--ink-soft);
+  margin:0;
+  line-height:1.4;
+}
+
+/* ===== Filter card ===== */
+.card{
+  background:var(--paper);
+  border-radius:14px;
+  padding:18px;
+  margin-bottom:16px;
+  box-shadow:0 1px 3px rgba(43,36,32,0.08);
+}
+.filter-row{
+  display:flex;
+  gap:10px;
+}
+.field{
+  flex:1;
+  min-width:0;
+}
+.field label{
+  display:block;
+  font-size:12px;
+  font-weight:700;
+  color:var(--ink-soft);
+  text-transform:uppercase;
+  letter-spacing:0.04em;
+  margin-bottom:6px;
+}
+.field input,
+.field select{
+  width:100%;
+  padding:11px 12px;
+  font-size:16px; /* >=16px cegah auto-zoom di iOS */
+  font-family:inherit;
+  color:var(--ink);
+  background:var(--cream);
+  border:1.5px solid var(--line);
+  border-radius:10px;
+  transition:border-color .15s ease, box-shadow .15s ease;
+}
+.field input:focus,
+.field select:focus{
+  outline:none;
+  border-color:var(--terracotta);
+  box-shadow:0 0 0 3px rgba(181,84,42,0.15);
+}
+.filter-actions{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:10px;
+  margin-top:14px;
+}
+.btn{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  gap:6px;
+  border:none;
+  border-radius:10px;
+  padding:11px 16px;
+  font-size:14px;
+  font-weight:700;
+  cursor:pointer;
+  min-height:42px;
+  font-family:inherit;
+}
+.btn-ghost{
+  background:transparent;
+  color:var(--terracotta-dark);
+  border:1.5px solid var(--terracotta);
+  transition:background .15s ease;
+}
+.btn-ghost:hover{
+  background:var(--keluar-soft);
+}
+.btn-ghost:active{
+  transform:scale(0.97);
+}
+.btn-icon{
+  font-size:15px;
+}
+.summary{
+  font-size:12.5px;
+  color:var(--ink-soft);
+  font-weight:600;
+  text-align:right;
+  line-height:1.3;
+}
+
+/* ===== List & states ===== */
+.msg{
+  text-align:center;
+  font-size:13.5px;
+  color:var(--ink-soft);
+  padding:18px 0;
+}
+.msg.err{
+  color:var(--bad);
+  font-weight:700;
+}
+.total-line{
+  font-size:12.5px;
+  font-weight:700;
+  color:var(--terracotta-dark);
+  text-align:right;
+  margin:0 0 10px;
+}
+.hidden{display:none !important;}
+
+/* ===== Harga cards ===== */
+.harga-card{
+  background:var(--paper);
+  border-radius:14px;
+  padding:14px 16px;
+  margin-bottom:10px;
+  box-shadow:0 1px 3px rgba(43,36,32,0.08);
+  transition:transform .08s ease, box-shadow .15s ease;
+}
+.harga-card:hover{
+  box-shadow:0 3px 10px rgba(43,36,32,0.12);
+}
+.hc-top{
+  display:flex;
+  justify-content:space-between;
+  align-items:baseline;
+  gap:10px;
+}
+.hc-nama{
+  margin:0;
+  font-size:15.5px;
+  font-weight:800;
+  line-height:1.3;
+}
+.hc-total{
+  font-size:15px;
+  font-weight:800;
+  color:var(--terracotta);
+  white-space:nowrap;
+}
+.hc-meta{
+  display:flex;
+  flex-wrap:wrap;
+  align-items:center;
+  gap:6px 10px;
+  margin-top:8px;
+  font-size:12.5px;
+  color:var(--ink-soft);
+}
+.hc-toko{
+  background:var(--keluar-soft);
+  color:var(--terracotta-dark);
+  font-weight:700;
+  padding:3px 10px;
+  border-radius:20px;
+  font-size:12px;
+}
+.hc-qty{
+  font-weight:600;
+}
+.hc-satuan{
+  font-weight:600;
+  color:var(--ink);
+}
+.hc-time{
+  margin-top:8px;
+  font-size:11.5px;
+  color:var(--muted);
+  border-top:1px dashed var(--line);
+  padding-top:8px;
+}
+
+/* ===== Quick nav (sama dengan halaman Scan-Struk) ===== */
+.quicknav {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 18px;
+  margin-top: env(safe-area-inset-top);
+}
+
+.quicknav-item {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  padding: 12px 6px 10px;
+  background: var(--card);
+  border: 1.5px solid var(--line);
+  border-radius: var(--radius-md);
+  text-decoration: none;
+  color: var(--ink);
+  box-shadow: 0 1px 2px rgba(35, 43, 39, 0.04);
+  transition: background 0.12s ease, border-color 0.12s ease, transform 0.06s ease;
+  min-height: 40px;
+}
+
+.quicknav-kas .quicknav-icon { color: var(--ink); }
+
+.quicknav-item.is-active {
+  opacity: 0.5;
+  cursor: default;
+  pointer-events: none;
+  transform: none !important;
+}
+
+.quicknav-item:active { transform: scale(0.96); }
+
+.quicknav-icon {
+  display: flex;
+  width: 22px;
+  height: 22px;
+}
+
+.quicknav-icon svg {
+  width: 100%;
+  height: 100%;
+}
+
+.quicknav-label {
+  font-size: 11.5px;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  white-space: nowrap;
+}
+
+/* Warna ikon per fungsi, konsisten sama aksen Masuk/Keluar yang sudah ada */
+.quicknav-scan .quicknav-icon { color: var(--keluar); }
+.quicknav-scan:active { background: var(--keluar-soft); border-color: var(--keluar); }
+
+.quicknav-riwayat .quicknav-icon { color: var(--muted); }
+.quicknav-riwayat:active { background: #f0eee6; border-color: var(--ink); }
+
+.quicknav-stok .quicknav-icon { color: var(--masuk); }
+.quicknav-stok:active { background: var(--masuk-soft); border-color: var(--masuk); }
+
+.quicknav-item:focus-visible {
+  outline: 2px solid var(--ink);
+  outline-offset: 2px;
+}
+
+@media (min-width: 380px) {
+  .quicknav-label { font-size: 12.5px; }
+}
