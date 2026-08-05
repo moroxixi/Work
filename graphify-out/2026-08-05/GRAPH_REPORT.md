@@ -1,16 +1,16 @@
 # Graph Report - Work  (2026-08-05)
 
 ## Corpus Check
-- 13 files · ~17,122 words
+- 14 files · ~18,346 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
-- 216 nodes · 269 edges · 22 communities (16 shown, 6 thin omitted)
-- Extraction: 97% EXTRACTED · 3% INFERRED · 0% AMBIGUOUS · INFERRED: 8 edges (avg confidence: 0.5)
+- 235 nodes · 294 edges · 23 communities (17 shown, 6 thin omitted)
+- Extraction: 97% EXTRACTED · 3% INFERRED · 0% AMBIGUOUS · INFERRED: 9 edges (avg confidence: 0.5)
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `a4436fcd`
+- Built from commit: `0e4423de`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -34,12 +34,13 @@
 - downloadFileName
 - Setoran Wonton Form
 - fetchMonthList
+- Rekap/script.js
 
 ## God Nodes (most connected - your core abstractions)
 1. `Laporan Diagnosis — Baris Kosong Berulang di Sheet "INPUT"` - 9 edges
-2. `fetchMonthList()` - 7 edges
-3. `fetchStok()` - 7 edges
-4. `applyFilterAndRenderCards()` - 6 edges
+2. `applyFilterAndRenderCards()` - 7 edges
+3. `fetchMonthList()` - 7 edges
+4. `fetchStok()` - 7 edges
 5. `fetchList()` - 6 edges
 6. `validateAndGetSeconds()` - 6 edges
 7. `3. Temuan Kode Client-Side (Work/Pencatatan-Buku-Kas/)` - 6 edges
@@ -58,11 +59,11 @@
 ## Import Cycles
 - None detected.
 
-## Communities (22 total, 6 thin omitted)
+## Communities (23 total, 6 thin omitted)
 
 ### Community 0 - "Riwayat/script.js"
-Cohesion: 0.05
-Nodes (40): RFC-4180, allRowsToday, btnBatalEdit, btnBatalHapus, btnBulanIni, btnDownload, btnHariIni, btnKemarin (+32 more)
+Cohesion: 0.04
+Nodes (41): RFC-4180, allRowsToday, btnBatalEdit, btnBatalHapus, btnBulanIni, btnDownload, btnHariIni, btnKemarin (+33 more)
 
 ### Community 1 - "Cash Book Recording"
 Cohesion: 0.09
@@ -89,8 +90,8 @@ Cohesion: 0.39
 Nodes (5): escapeAttr(), formatRp(), items, renderItems(), updateTotals()
 
 ### Community 7 - "applyFilterAndRenderCards"
-Cohesion: 0.32
-Nodes (8): applyFilterAndRenderCards(), formatRupiah(), KATEGORI_MASUK, openDeleteModal(), openEditModal(), populateKategoriSelect(), renderKategoriFilterBar(), renderList()
+Cohesion: 0.28
+Nodes (9): applyFilterAndRenderCards(), arahTampilan(), formatRupiah(), KATEGORI_MASUK, openDeleteModal(), openEditModal(), populateKategoriSelect(), renderKategoriFilterBar() (+1 more)
 
 ### Community 8 - "Laporan Diagnosis — Baris Kosong Berulang di Sheet "INPUT""
 Cohesion: 0.09
@@ -112,8 +113,12 @@ Nodes (6): csvEscape(), downloadCsv(), downloadFileName(), formatBulanLabel(), f
 Cohesion: 0.60
 Nodes (5): fetchDayRows(), fetchList(), fetchMonthList(), isCacheValid(), setLoading()
 
+### Community 22 - "Rekap/script.js"
+Cohesion: 0.16
+Nodes (16): allItems, applyFilters(), emptyMsg, errorMsg, fetchItems(), formatRp(), listEl, loadingMsg (+8 more)
+
 ## Knowledge Gaps
-- **113 isolated node(s):** `all`, `menuBtn`, `drawer`, `overlay`, `drawerClose` (+108 more)
+- **123 isolated node(s):** `all`, `menuBtn`, `drawer`, `overlay`, `drawerClose` (+118 more)
   These have ≤1 connection - possible missing edges or undocumented components.
 - **6 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
 
@@ -121,9 +126,9 @@ Nodes (5): fetchDayRows(), fetchList(), fetchMonthList(), isCacheValid(), setLoa
 _Questions this graph is uniquely positioned to answer:_
 
 - **What connects `all`, `menuBtn`, `drawer` to the rest of the system?**
-  _113 weakly-connected nodes found - possible documentation gaps or missing edges._
+  _123 weakly-connected nodes found - possible documentation gaps or missing edges._
 - **Should `Riwayat/script.js` be split into smaller, more focused modules?**
-  _Cohesion score 0.045454545454545456 - nodes in this community are weakly interconnected._
+  _Cohesion score 0.044444444444444446 - nodes in this community are weakly interconnected._
 - **Should `Cash Book Recording` be split into smaller, more focused modules?**
   _Cohesion score 0.08817204301075268 - nodes in this community are weakly interconnected._
 - **Should `Stok/script.js` be split into smaller, more focused modules?**

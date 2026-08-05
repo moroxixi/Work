@@ -18,6 +18,8 @@
   --masuk-soft: var(--green-bg);
   --keluar: var(--terracotta);
   --keluar-soft: var(--terracotta-bg);
+  --dividen: #8a63b8;
+  --dividen-soft: #f3edf9;
   --radius-md: 12px;
 }
 
@@ -167,6 +169,7 @@ body {
 }
 .summary-masuk { background: var(--green-bg); }
 .summary-keluar { background: var(--terracotta-bg); }
+.summary-dividen { background: var(--dividen-soft); }
 .summary-label {
   display: block;
   font-size: 12px;
@@ -179,6 +182,7 @@ body {
 }
 .summary-masuk .summary-value { color: var(--green); }
 .summary-keluar .summary-value { color: var(--terracotta); }
+.summary-dividen .summary-value { color: var(--dividen); }
 
 /* ===== List / kartu transaksi ===== */
 .list-wrap { min-height: 120px; }
@@ -200,6 +204,10 @@ body {
 }
 .tx-card.arah-masuk { border-left-color: var(--green); }
 .tx-card.arah-keluar { border-left-color: var(--terracotta); }
+.tx-card.arah-dividen {
+  background: var(--dividen-soft);
+  border-left-color: var(--dividen);
+}
 
 .tx-top {
   display: flex;
@@ -218,6 +226,7 @@ body {
 }
 .arah-masuk .tx-jumlah { color: var(--green); }
 .arah-keluar .tx-jumlah { color: var(--terracotta); }
+.arah-dividen .tx-jumlah { color: var(--dividen); }
 
 .tx-meta {
   font-size: 13px;

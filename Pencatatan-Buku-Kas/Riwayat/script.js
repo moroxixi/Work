@@ -9,8 +9,11 @@ const PING_INTERVAL_MS = 10000; // cek penanda perubahan tiap 10 detik
 const KATEGORI_MASUK = ["MAO Frozen", "MAO Instan", "Outlet", "Lainnya",
   "Setoran Cabang Tempura", "Sterofoam Tempura",
   "Setoran Cabang Babakan", "Setoran Cabang Leweung Gajah"];
+// Dividen sengaja DIPISAH dari KATEGORI_KELUAR: secara akuntansi dividen
+// diambil dari laba ditahan, bukan pengeluaran operasional.
+const KATEGORI_DIVIDEN = ["Dividen"];
 const KATEGORI_KELUAR = ["Belanja", "Gaji/Upah", "Sewa Tempat", "Tunjangan",
-  "Bonus", "Parkir", "Dividen", "Pengeluaran Operasional", "Uang Jajan Karyawan"];
+  "Bonus", "Parkir", "Pengeluaran Operasional", "Uang Jajan Karyawan"];
 
 // ===== State =====
 let currentDate = new Date(); // selalu dihitung ulang, tidak pernah di-hardcode
@@ -49,6 +52,7 @@ const cardList = document.getElementById("cardList");
 const summaryBar = document.getElementById("summaryBar");
 const summaryMasuk = document.getElementById("summaryMasuk");
 const summaryKeluar = document.getElementById("summaryKeluar");
+const summaryDividen = document.getElementById("summaryDividen");
 
 const editModal = document.getElementById("editModal");
 const editWarning = document.getElementById("editWarning");
@@ -96,6 +100,16 @@ const kategoriFilterBar = document.getElementById("kategoriFilterBar");
 // aktif difilter.
 let allRowsToday = [];
 let activeKategoriFilter = null; // null = "Semua"
+
+// Klasifikasi tipe untuk tampilan kartu (Masuk / Keluar / Dividen).
+// Backend masih mengirim arah "Keluar" untuk baris berkategori Dividen,
+// jadi deteksi dividen lewat tag kategori, bukan field arah.
+// CATATAN: helper ini dipakai hanya untuk styling kartu — perhitungan total
+// di applyFilterAndRenderCards() punya cabang sendiri (totalDividen).
+function arahTampilan(row) {
+  if (row.kategori === "Dividen") return "Dividen";
+  return row.arah === "Masuk" ? "Masuk" : "Keluar";
+}
 
 function renderList(rows) {
   allRowsToday = rows;
@@ -151,7 +165,7 @@ function renderKategoriFilterBar(rows) {
   });
 }
 
-// Render kartu berdasarkan filter aktif, tapi ringkasan Masuk/Keluar tetap dari total hari itu
+// Render kartu berdasarkan filter aktif, tapi ringkasan Masuk/Keluar/Dividen tetap dari total hari itu
 function applyFilterAndRenderCards() {
   currentRows = activeKategoriFilter
     ? allRowsToday.filter((r) => r.kategori === activeKategoriFilter)
@@ -170,13 +184,18 @@ function applyFilterAndRenderCards() {
 
   let totalMasuk = 0;
   let totalKeluar = 0;
+  let totalDividen = 0;
   allRowsToday.forEach((row) => {
-    if (row.arah === "Masuk") totalMasuk += Number(row.jumlah || 0);
+    // Prioritas: kategori "Dividen" dulu (backend kirim arah "Keluar" untuk
+    // baris dividen), jadi dividen TIDAK ikut ke total operasional.
+    if (row.kategori === "Dividen") totalDividen += Number(row.jumlah || 0);
+    else if (row.arah === "Masuk") totalMasuk += Number(row.jumlah || 0);
     else totalKeluar += Number(row.jumlah || 0);
   });
   summaryBar.hidden = false;
   summaryMasuk.textContent = formatRupiah(totalMasuk);
   summaryKeluar.textContent = formatRupiah(totalKeluar);
+  summaryDividen.textContent = formatRupiah(totalDividen);
 
   if (currentRows.length === 0) {
     emptyMsg.hidden = false;
@@ -194,8 +213,9 @@ currentRows.forEach((row) => {
       ? timestamp.substring(0, 5) + " · " + timestamp.substring(11)
       : timestamp.substring(11); // ambil "HH:mm:ss"
 
+    const arah = arahTampilan(row);
     const card = document.createElement("div");
-    card.className = "tx-card " + (row.arah === "Masuk" ? "arah-masuk" : "arah-keluar");
+    card.className = "tx-card arah-" + arah.toLowerCase();
 
     let badgeHtml = "";
     if (row.sumber === "otomatis") {
@@ -207,7 +227,7 @@ currentRows.forEach((row) => {
     card.innerHTML =
       "<div class=\"tx-top\">" +
         "<span class=\"tx-kategori\">" + escapeHtml(row.kategori) + "</span>" +
-        "<span class=\"tx-jumlah\">" + (row.arah === "Masuk" ? "+" : "-") + " " + formatRupiah(row.jumlah) + "</span>" +
+        "<span class=\"tx-jumlah\">" + (arah === "Masuk" ? "+" : "-") + " " + formatRupiah(row.jumlah) + "</span>" +
       "</div>" +
       "<div class=\"tx-meta\">" + jamStr + (row.belanjaDi ? " &middot; " + escapeHtml(row.belanjaDi) : "") + "</div>" +
       (row.keterangan && row.keterangan !== "-" ? "<div class=\"tx-keterangan\">" + escapeHtml(row.keterangan) + "</div>" : "") +
@@ -502,7 +522,7 @@ function downloadCsv() {
         row.kategori || "",
         row.belanjaDi || "",
         row.keterangan === "-" ? "" : (row.keterangan || ""),
-        row.arah || "",
+        row.kategori === "Dividen" ? "Dividen" : (row.arah || ""),
         Number(row.jumlah || 0),
         row.sumber || "manual"
       ].map(csvEscape).join(","));
@@ -585,9 +605,10 @@ function populateKategoriSelect(currentKategori) {
   };
 
   addOptGroup("Uang Masuk", KATEGORI_MASUK);
+  addOptGroup("Bagi Hasil (Dividen)", KATEGORI_DIVIDEN);
   addOptGroup("Uang Keluar", KATEGORI_KELUAR);
 
-  const known = KATEGORI_MASUK.concat(KATEGORI_KELUAR);
+  const known = KATEGORI_MASUK.concat(KATEGORI_DIVIDEN, KATEGORI_KELUAR);
   if (currentKategori && known.indexOf(currentKategori) === -1) {
     const opt = document.createElement("option");
     opt.value = currentKategori;
