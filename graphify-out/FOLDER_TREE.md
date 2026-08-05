@@ -1,4 +1,4 @@
-# Folder Tree (30 files tracked)
+# Folder Tree (31 files tracked)
 
 > Auto-generated dari manifest.json — jangan edit manual. Regenerate: gen-folder-tree.py <path-manifest.json>
 
@@ -28,6 +28,7 @@
 │   ├── README-playwright.md
 │   ├── config.js
 │   ├── index.html
+│   ├── nav.js
 │   ├── package.json
 │   ├── playwright.config.js
 │   ├── report-claude.md

@@ -5,42 +5,18 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>Input Kas Harian</title>
 <link rel="stylesheet" href="style.css">
-<link rel="prefetch" href="https://moroxixi.github.io/Work/Pencatatan-Buku-Kas/Scan-Struk/index.html">
-<link rel="prefetch" href="https://moroxixi.github.io/Work/Pencatatan-Buku-Kas/Riwayat/index.html">
-<link rel="prefetch" href="https://moroxixi.github.io/Work/Pencatatan-Buku-Kas/Stok/index.html">
-<link rel="prefetch" href="https://moroxixi.github.io/Work/Pencatatan-Buku-Kas/shared-utils.js">
+<link rel="prefetch" href="./Scan-Struk/index.html">
+<link rel="prefetch" href="./Scan-Struk/Rekap/index.html">
+<link rel="prefetch" href="./Riwayat/index.html">
+<link rel="prefetch" href="./Stok/index.html">
+<link rel="prefetch" href="./shared-utils.js">
 <style>#page-loader{position:fixed;top:0;left:0;height:3px;background:linear-gradient(90deg,var(--ink,#232b27),var(--masuk,#2f6e52));z-index:9999;pointer-events:none;width:0;opacity:0;transition:width .35s cubic-bezier(.4,0,.2,1),opacity .15s}#page-loader.active{opacity:1}@media(prefers-reduced-motion:reduce){#page-loader{transition:none}#page-loader.active{width:90%}}</style>
 </head>
 <body>
 
 <div class="wrap">
 	
-  <nav class="quicknav" aria-label="Navigasi cepat">
-    <div class="quicknav-item quicknav-kas is-active" aria-current="page">
-      <span class="quicknav-icon" aria-hidden="true">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="6" width="18" height="13" rx="2"/><path d="M3 10h18"/><circle cx="16.5" cy="14" r="1"/></svg>
-      </span>
-      <span class="quicknav-label">Kas Harian</span>
-    </div>
-    <a class="quicknav-item quicknav-scan" href="https://moroxixi.github.io/Work/Pencatatan-Buku-Kas/Scan-Struk/index.html">
-      <span class="quicknav-icon" aria-hidden="true">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7V5a1 1 0 0 1 1-1h2"/><path d="M20 7V5a1 1 0 0 0-1-1h-2"/><path d="M4 17v2a1 1 0 0 0 1 1h2"/><path d="M20 17v2a1 1 0 0 1-1 1h-2"/><rect x="7" y="8" width="10" height="8" rx="1"/></svg>
-      </span>
-      <span class="quicknav-label">Scan Struk</span>
-    </a>
-    <a class="quicknav-item quicknav-riwayat" href="https://moroxixi.github.io/Work/Pencatatan-Buku-Kas/Riwayat/index.html">
-      <span class="quicknav-icon" aria-hidden="true">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="13" r="7.5"/><path d="M12 9.5V13l2.5 1.5"/><path d="M9 3h6"/></svg>
-      </span>
-      <span class="quicknav-label">Riwayat</span>
-    </a>
-    <a class="quicknav-item quicknav-stok" href="https://moroxixi.github.io/Work/Pencatatan-Buku-Kas/Stok/index.html">
-      <span class="quicknav-icon" aria-hidden="true">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3.5 8 12 4l8.5 4-8.5 4-8.5-4Z"/><path d="M3.5 8v8L12 20l8.5-4V8"/><path d="M12 12v8"/></svg>
-      </span>
-      <span class="quicknav-label">Stok</span>
-    </a>
-  </nav>
+  <nav class="quicknav" aria-label="Navigasi cepat" data-page="kas" data-depth="0"></nav>
 
   <header class="topbar">
     <h1>Kas Harian</h1>
@@ -176,6 +152,7 @@
   <p class="footnote">Waktu tercatat otomatis saat kamu tekan Simpan.</p>
 </div>
 <div id="page-loader" role="progressbar" aria-hidden="true"></div>
+<script src="nav.js"></script>
 <script src="https://moroxixi.github.io/Work/Pencatatan-Buku-Kas/config.js"></script>
 <script src="script.js"></script>
 <script>document.addEventListener('click',function(e){var a=e.target.closest('a[href]');if(!a||a.hostname!==location.hostname||!a.href.includes('Pencatatan-Buku-Kas'))return;var l=document.getElementById('page-loader');if(l){l.classList.add('active');l.style.width='75%';setTimeout(function(){l.style.width='90%'},200)}})</script>

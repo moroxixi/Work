@@ -355,3 +355,43 @@ input[type=file]{display:none;}
   .quicknav-label { font-size: 12.5px; }
 }
 
+/* ===== Sub-nav alur Scan Struk (Scan Struk <-> Rekap Harga) =====
+   Jarak visual ke quicknav: quicknav punya margin-bottom 18px, subnav
+   ditarik -6px ke atas supaya gap efektif ~12px — kalau margin quicknav
+   diubah, sesuaikan angka -6px di sini. */
+.subnav {
+  display: flex;
+  gap: 6px;
+  margin: -6px 0 18px;
+  padding: 4px;
+  background: var(--card);
+  border: 1.5px solid var(--line);
+  border-radius: var(--radius-md);
+}
+
+.subnav-item {
+  flex: 1;
+  text-align: center;
+  padding: 8px 10px;
+  border-radius: calc(var(--radius-md) - 4px);
+  text-decoration: none;
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  transition: background 0.12s ease, color 0.12s ease, transform 0.06s ease;
+}
+
+.subnav-item:active { transform: scale(0.96); }
+
+.subnav-item.is-active {
+  background: var(--keluar-soft);
+  color: var(--keluar);
+  cursor: default;
+}
+
+.subnav-item:focus-visible {
+  outline: 2px solid var(--ink);
+  outline-offset: 2px;
+}
+

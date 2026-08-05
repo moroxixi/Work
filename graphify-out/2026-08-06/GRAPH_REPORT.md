@@ -1,16 +1,16 @@
-# Graph Report - Work  (2026-08-06)
+# Graph Report - Work  (2026-08-05)
 
 ## Corpus Check
-- 19 files · ~19,293 words
+- 18 files · ~19,324 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
-- 260 nodes · 314 edges · 28 communities (19 shown, 9 thin omitted)
+- 257 nodes · 311 edges · 27 communities (19 shown, 8 thin omitted)
 - Extraction: 97% EXTRACTED · 3% INFERRED · 0% AMBIGUOUS · INFERRED: 9 edges (avg confidence: 0.5)
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `1878c9d8`
+- Built from commit: `e0a12e8f`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -39,7 +39,6 @@
 - Playwright Test Suite — Pencatatan-Buku-Kas
 - kas-harian.spec.js
 - playwright.config.js
-- nav.js
 
 ## God Nodes (most connected - your core abstractions)
 1. `Laporan Diagnosis — Baris Kosong Berulang di Sheet "INPUT"` - 9 edges
@@ -64,7 +63,7 @@
 ## Import Cycles
 - None detected.
 
-## Communities (28 total, 9 thin omitted)
+## Communities (27 total, 8 thin omitted)
 
 ### Community 0 - "Riwayat/script.js"
 Cohesion: 0.05
@@ -133,7 +132,7 @@ Nodes (7): Kendala yang ditemukan saat pilot, Menjalankan, Playwright Test Suite
 ## Knowledge Gaps
 - **136 isolated node(s):** `all`, `menuBtn`, `drawer`, `overlay`, `drawerClose` (+131 more)
   These have ≤1 connection - possible missing edges or undocumented components.
-- **9 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
+- **8 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
 
 ## Suggested Questions
 _Questions this graph is uniquely positioned to answer:_

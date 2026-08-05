@@ -1643,39 +1643,6 @@
       "norm_label": "pencatatan-buku-kas/config.js"
     },
     {
-      "label": "nav.js",
-      "file_type": "code",
-      "source_file": "Pencatatan-Buku-Kas/nav.js",
-      "source_location": "L1",
-      "_origin": "ast",
-      "id": "pencatatan_buku_kas_nav",
-      "community": 27,
-      "community_name": "nav.js",
-      "norm_label": "nav.js"
-    },
-    {
-      "label": "buildItem()",
-      "file_type": "code",
-      "source_file": "Pencatatan-Buku-Kas/nav.js",
-      "source_location": "L71",
-      "_origin": "ast",
-      "id": "pencatatan_buku_kas_nav_builditem",
-      "community": 27,
-      "community_name": "nav.js",
-      "norm_label": "builditem()"
-    },
-    {
-      "label": "init()",
-      "file_type": "code",
-      "source_file": "Pencatatan-Buku-Kas/nav.js",
-      "source_location": "L81",
-      "_origin": "ast",
-      "id": "pencatatan_buku_kas_nav_init",
-      "community": 27,
-      "community_name": "nav.js",
-      "norm_label": "init()"
-    },
-    {
       "label": "package.json",
       "file_type": "code",
       "source_file": "Pencatatan-Buku-Kas/package.json",
@@ -5152,40 +5119,6 @@
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
-      "source_file": "Pencatatan-Buku-Kas/nav.js",
-      "source_location": "L71",
-      "weight": 1.0,
-      "_origin": "ast",
-      "source": "pencatatan_buku_kas_nav",
-      "target": "pencatatan_buku_kas_nav_builditem",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "Pencatatan-Buku-Kas/nav.js",
-      "source_location": "L81",
-      "weight": 1.0,
-      "_origin": "ast",
-      "source": "pencatatan_buku_kas_nav",
-      "target": "pencatatan_buku_kas_nav_init",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "calls",
-      "context": "call",
-      "confidence": "EXTRACTED",
-      "source_file": "Pencatatan-Buku-Kas/nav.js",
-      "source_location": "L94",
-      "weight": 1.0,
-      "_origin": "ast",
-      "source": "pencatatan_buku_kas_nav_init",
-      "target": "pencatatan_buku_kas_nav_builditem",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
       "source_file": "Pencatatan-Buku-Kas/package.json",
       "source_location": "L5",
       "weight": 1.0,
@@ -6437,5 +6370,5 @@
     }
   ],
   "hyperedges": [],
-  "built_at_commit": "1878c9d8e84c527c1023e8d9acad39c87c9b6165"
+  "built_at_commit": "e0a12e8f9ab0e24744d9c1b0d1ff1a8691ce60f3"
 }
