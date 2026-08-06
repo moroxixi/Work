@@ -204,6 +204,7 @@ body {
 }
 .tx-card.arah-masuk { border-left-color: var(--green); }
 .tx-card.arah-keluar { border-left-color: var(--terracotta); }
+.tx-card.arah-dividen { border-left-color: var(--dividen); }
 
 .tx-top {
   display: flex;
@@ -222,6 +223,7 @@ body {
 }
 .arah-masuk .tx-jumlah { color: var(--green); }
 .arah-keluar .tx-jumlah { color: var(--terracotta); }
+.arah-dividen .tx-jumlah { color: var(--dividen); }
 
 .tx-meta {
   font-size: 13px;

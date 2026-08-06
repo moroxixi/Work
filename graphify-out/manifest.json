@@ -10,8 +10,8 @@
     "semantic_hash": "8cd08059a65a53e0c70eac13bc1b58c6"
   },
   "Pencatatan-Buku-Kas/Riwayat/script.js": {
-    "mtime": 1785956886.2468622,
-    "ast_hash": "56ce50db8e48dcbea5b24dcfefa7f087",
+    "mtime": 1785997077.6648912,
+    "ast_hash": "c9708a02bdbc1c7b834a22e15a5c5962",
     "semantic_hash": ""
   },
   "Pencatatan-Buku-Kas/Scan-Struk/script.js": {
@@ -145,13 +145,18 @@
     "semantic_hash": ""
   },
   "Pencatatan-Buku-Kas/README-playwright.md": {
-    "mtime": 1785924348.148964,
-    "ast_hash": "98c0f5dd605ac755d79401d2c55314cb",
+    "mtime": 1785997117.0582259,
+    "ast_hash": "b9ecbc1bf0af7f8e9bb89c9c107fde5c",
     "semantic_hash": ""
   },
   "Pencatatan-Buku-Kas/nav.js": {
     "mtime": 1785951953.7133427,
     "ast_hash": "ce7798007fcd45eed6cdb9f33744b7b8",
+    "semantic_hash": ""
+  },
+  "Pencatatan-Buku-Kas/tests/riwayat-dividen.spec.js": {
+    "mtime": 1785997195.6415622,
+    "ast_hash": "ab9edf7d98f35c6c35f35d7d8d46841a",
     "semantic_hash": ""
   }
 }

@@ -56,6 +56,12 @@ produksi; selalu pakai `interceptNetwork` + verifikasi URL mock.
    verifikasi status sukses, form reset, dan payload POST yang tertangkap
 3. **Test 3** — render antrean: item muncul dgn label kategori + nominal
    terformat id-ID, lalu hilang setelah request di-fulfill
+4. **Test 4** (`riwayat-dividen.spec.js`) — halaman Riwayat: item kategori
+   Dividen render dengan identitas sendiri (`arah-dividen`, violet, tanpa tanda
+   minus) meski `arah` dari backend "Keluar", dan Dividen TIDAK ikut ke total
+   Keluar di kartu ringkasan. Mock tambahan: `shared-utils.js` di-intercept
+   dengan implementasi lokal (fungsi murni) karena Riwayat memuatnya dari
+   GitHub Pages live.
 
 ## Struktur
 

@@ -199,8 +199,13 @@ currentRows.forEach((row) => {
       ? timestamp.substring(0, 5) + " · " + timestamp.substring(11)
       : timestamp.substring(11); // ambil "HH:mm:ss"
 
+    // Dividen punya identitas visual sendiri (violet), konsisten dengan kartu
+    // ringkasan di atas — bukan hijau Masuk dan bukan merah Keluar. Arah data
+    // dari backend tetap "Keluar", tapi tampilan tidak boleh ikut-keluar.
+    const isDividen = row.kategori === "Dividen";
+    const arahClass = isDividen ? "arah-dividen" : (row.arah === "Masuk" ? "arah-masuk" : "arah-keluar");
     const card = document.createElement("div");
-    card.className = "tx-card " + (row.arah === "Masuk" ? "arah-masuk" : "arah-keluar");
+    card.className = "tx-card " + arahClass;
 
     let badgeHtml = "";
     if (row.sumber === "otomatis") {
@@ -212,7 +217,7 @@ currentRows.forEach((row) => {
     card.innerHTML =
       "<div class=\"tx-top\">" +
         "<span class=\"tx-kategori\">" + escapeHtml(row.kategori) + "</span>" +
-        "<span class=\"tx-jumlah\">" + (row.arah === "Masuk" ? "+" : "-") + " " + formatRupiah(row.jumlah) + "</span>" +
+        "<span class=\"tx-jumlah\">" + (isDividen ? "" : (row.arah === "Masuk" ? "+" : "-")) + " " + formatRupiah(row.jumlah) + "</span>" +
       "</div>" +
       "<div class=\"tx-meta\">" + jamStr + (row.belanjaDi ? " &middot; " + escapeHtml(row.belanjaDi) : "") + "</div>" +
       (row.keterangan && row.keterangan !== "-" ? "<div class=\"tx-keterangan\">" + escapeHtml(row.keterangan) + "</div>" : "") +
