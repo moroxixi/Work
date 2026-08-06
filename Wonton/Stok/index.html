@@ -266,12 +266,6 @@
     <p>MAO WONTON &amp; MIE JEBEW</p>
   </div>
 
-  <!-- Reminder banner (ditampilkan hanya dalam range waktu tertentu) -->
-  <div id="reminderBanner">
-    <span class="icon">⏰</span>
-    Tambahkan <strong>1-2 kantong</strong> lagi untuk stok besok pagi
-  </div>
-
   <!-- Form input -->
   <div class="card">
     <div class="card-title">Hitung Kebutuhan Ayam</div>
@@ -297,6 +291,12 @@
     <div class="text-center">
       <button class="btn-reset" onclick="resetForm()">↻ Reset</button>
     </div>
+  </div>
+
+  <!-- Reminder banner (ditampilkan hanya dalam range waktu tertentu) -->
+  <div id="reminderBanner">
+    <span class="icon">⏰</span>
+    <span id="reminderText">Jangan lupa pesanan ini untuk hari besok</span>
   </div>
 </div>
 
@@ -371,6 +371,15 @@
   }
 
   // === Reminder berbasis waktu ===
+  const NAMA_HARI = ['Minggu', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'];
+
+  // Nama hari esok (H+1) — aman terhadap rollover akhir minggu/bulan/tahun
+  function namaHariBesok() {
+    const besok = new Date();
+    besok.setDate(besok.getDate() + 1);
+    return NAMA_HARI[besok.getDay()];
+  }
+
   function cekReminder() {
     const now = new Date();
     const hari = now.getDay();    // JS: Sun=0, Mon=1, Tue=2, Wed=3, Thu=4, Fri=5, Sat=6
@@ -383,6 +392,12 @@
     const inRangeB = (hari === 5 && jam >= 20) || (hari === 6 && jam < 5);
 
     const banner = document.getElementById('reminderBanner');
+    const reminderText = document.getElementById('reminderText');
+
+    // Teks dinamis: hari esok (H+1) berdasarkan tanggal sistem
+    if (reminderText) {
+      reminderText.textContent = `Jangan lupa pesanan ini untuk hari ${namaHariBesok()}`;
+    }
 
     if (inRangeA || inRangeB) {
       banner.style.display = 'block';
