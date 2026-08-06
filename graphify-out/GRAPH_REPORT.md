@@ -1,16 +1,16 @@
 # Graph Report - Work  (2026-08-06)
 
 ## Corpus Check
-- 20 files · ~20,289 words
+- 20 files · ~20,405 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
-- 261 nodes · 321 edges · 24 communities (19 shown, 5 thin omitted)
+- 263 nodes · 323 edges · 24 communities (20 shown, 4 thin omitted)
 - Extraction: 97% EXTRACTED · 3% INFERRED · 0% AMBIGUOUS · INFERRED: 9 edges (avg confidence: 0.5)
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `1bd0d515`
+- Built from commit: `6fb98299`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -60,7 +60,7 @@
 ## Import Cycles
 - None detected.
 
-## Communities (24 total, 5 thin omitted)
+## Communities (24 total, 4 thin omitted)
 
 ### Community 0 - "Riwayat/script.js"
 Cohesion: 0.04
@@ -122,6 +122,10 @@ Nodes (6): csvEscape(), downloadCsv(), downloadFileName(), formatBulanLabel(), f
 Cohesion: 0.60
 Nodes (5): fetchDayRows(), fetchList(), fetchMonthList(), isCacheValid(), setLoading()
 
+### Community 17 - "kantong.py"
+Cohesion: 0.33
+Nodes (4): _dalam_range_reminder(), _nama_hari_besok(), Cek apakah waktu sekarang masuk Range A (Kamis 20:00 - Jumat 05:00) atau Range…, Nama hari esok (H+1) dalam Bahasa Indonesia, mis. hari ini Kamis -> Jumat.
+
 ### Community 23 - "riwayat-dividen.spec.js"
 Cohesion: 0.32
 Nodes (7): fs, interceptNetwork(), MOCK_SHARED_UTILS_JS, mockRows(), path, { test, expect }, todayTimestamp()
@@ -129,7 +133,7 @@ Nodes (7): fs, interceptNetwork(), MOCK_SHARED_UTILS_JS, mockRows(), path, { tes
 ## Knowledge Gaps
 - **134 isolated node(s):** `all`, `menuBtn`, `drawer`, `overlay`, `drawerClose` (+129 more)
   These have ≤1 connection - possible missing edges or undocumented components.
-- **5 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
+- **4 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
 
 ## Suggested Questions
 _Questions this graph is uniquely positioned to answer:_

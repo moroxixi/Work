@@ -48,10 +48,16 @@ def _dalam_range_reminder():
 
     return in_range_a or in_range_b
 
+NAMA_HARI = ["Senin", "Selasa", "Rabu", "Kamis", "Jumat", "Sabtu", "Minggu"]  # Python: Senin=0, ..., Minggu=6
+
+def _nama_hari_besok():
+    """Nama hari esok (H+1) dalam Bahasa Indonesia, mis. hari ini Kamis -> Jumat."""
+    return NAMA_HARI[(datetime.now().weekday() + 1) % 7]
+
 if __name__ == "__main__":
     hitung_pesanan_ayam()
 
     # Reminder stok untuk besok pagi
     if _dalam_range_reminder():
         print()
-        print("Tambahkan 1-2 kantong lagi untuk stok besok pagi")
+        print(f"Jangan lupa pesanan ini untuk hari {_nama_hari_besok()}")
