@@ -371,32 +371,25 @@
   }
 
   // === Reminder berbasis waktu ===
-  const NAMA_HARI = ['Minggu', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'];
-
-  // Nama hari esok (H+1) — aman terhadap rollover akhir minggu/bulan/tahun
-  function namaHariBesok() {
-    const besok = new Date();
-    besok.setDate(besok.getDate() + 1);
-    return NAMA_HARI[besok.getDay()];
-  }
-
   function cekReminder() {
     const now = new Date();
     const hari = now.getDay();    // JS: Sun=0, Mon=1, Tue=2, Wed=3, Thu=4, Fri=5, Sat=6
     const jam = now.getHours();
 
-    // Range A: Kamis (4) 20:00 – Jumat (5) 05:00 (05:00 tidak termasuk)
+    // Range A: Kamis (4) 20:00 – Jumat (5) 05:00 (05:00 tidak termasuk) → pesanan untuk Jumat
     const inRangeA = (hari === 4 && jam >= 20) || (hari === 5 && jam < 5);
 
-    // Range B: Jumat (5) 20:00 – Sabtu (6) 05:00 (05:00 tidak termasuk)
+    // Range B: Jumat (5) 20:00 – Sabtu (6) 05:00 (05:00 tidak termasuk) → pesanan untuk Sabtu
     const inRangeB = (hari === 5 && jam >= 20) || (hari === 6 && jam < 5);
 
     const banner = document.getElementById('reminderBanner');
     const reminderText = document.getElementById('reminderText');
 
-    // Teks dinamis: hari esok (H+1) berdasarkan tanggal sistem
-    if (reminderText) {
-      reminderText.textContent = `Jangan lupa pesanan ini untuk hari ${namaHariBesok()}`;
+    // Target hari mengikuti range yang aktif (konsisten di seluruh jendela waktu)
+    const targetHari = inRangeA ? 'Jumat' : inRangeB ? 'Sabtu' : null;
+
+    if (reminderText && targetHari) {
+      reminderText.textContent = `Jangan lupa pesanan ini untuk hari ${targetHari}`;
     }
 
     if (inRangeA || inRangeB) {
