@@ -1,16 +1,16 @@
 # Graph Report - Work  (2026-08-07)
 
 ## Corpus Check
-- 20 files · ~20,538 words
+- 20 files · ~20,659 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
-- 264 nodes · 325 edges · 24 communities (20 shown, 4 thin omitted)
+- 266 nodes · 328 edges · 24 communities (20 shown, 4 thin omitted)
 - Extraction: 97% EXTRACTED · 3% INFERRED · 0% AMBIGUOUS · INFERRED: 9 edges (avg confidence: 0.5)
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `9384ec9e`
+- Built from commit: `0f835f9c`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -44,10 +44,10 @@
 4. `Playwright Test Suite — Pencatatan-Buku-Kas` - 7 edges
 5. `applyFilterAndRenderCards()` - 6 edges
 6. `fetchList()` - 6 edges
-7. `validateAndGetSeconds()` - 6 edges
-8. `3. Temuan Kode Client-Side (Work/Pencatatan-Buku-Kas/)` - 6 edges
-9. `renderList()` - 5 edges
-10. `refreshCurrent()` - 5 edges
+7. `fetchItems()` - 6 edges
+8. `validateAndGetSeconds()` - 6 edges
+9. `3. Temuan Kode Client-Side (Work/Pencatatan-Buku-Kas/)` - 6 edges
+10. `renderList()` - 5 edges
 
 ## Surprising Connections (you probably didn't know these)
 - `fetchList()` --calls--> `renderList()`  [EXTRACTED]
@@ -79,8 +79,8 @@ Cohesion: 0.09
 Nodes (22): 1. Ringkasan Masalah, 2. Lokasi Folder Apps Script "buku-kas", 3.1 Form Kas Harian (`script.js`) — validasi ada, tidak bisa submit kosong, 3.2 Antrean pengiriman (queue) — TIDAK ada auto-retry, tidak bisa spam, 3.3 Halaman Riwayat (`Riwayat/script.js`) — polling hanya GET, interval 10 detik, 3.4 Halaman Scan Struk (`Scan-Struk/script.js`) — ⚠️ TEMUAN PENTING, 3.5 `shared-utils.js` — netral, 3. Temuan Kode Client-Side (Work/Pencatatan-Buku-Kas/) (+14 more)
 
 ### Community 4 - "Rekap/script.js"
-Cohesion: 0.16
-Nodes (17): allItems, applyFilters(), emptyMsg, errorMsg, fetchItems(), formatRp(), listEl, loadingMsg (+9 more)
+Cohesion: 0.14
+Nodes (19): allItems, applyFilters(), buildTokoColors(), emptyMsg, errorMsg, fetchItems(), formatRp(), listEl (+11 more)
 
 ### Community 5 - "Dashboard/script.js"
 Cohesion: 0.19
@@ -131,7 +131,7 @@ Cohesion: 0.32
 Nodes (7): fs, interceptNetwork(), MOCK_SHARED_UTILS_JS, mockRows(), path, { test, expect }, todayTimestamp()
 
 ## Knowledge Gaps
-- **134 isolated node(s):** `all`, `menuBtn`, `drawer`, `overlay`, `drawerClose` (+129 more)
+- **135 isolated node(s):** `all`, `menuBtn`, `drawer`, `overlay`, `drawerClose` (+130 more)
   These have ≤1 connection - possible missing edges or undocumented components.
 - **4 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
 
@@ -139,7 +139,7 @@ Nodes (7): fs, interceptNetwork(), MOCK_SHARED_UTILS_JS, mockRows(), path, { tes
 _Questions this graph is uniquely positioned to answer:_
 
 - **What connects `all`, `menuBtn`, `drawer` to the rest of the system?**
-  _134 weakly-connected nodes found - possible documentation gaps or missing edges._
+  _135 weakly-connected nodes found - possible documentation gaps or missing edges._
 - **Should `Riwayat/script.js` be split into smaller, more focused modules?**
   _Cohesion score 0.044444444444444446 - nodes in this community are weakly interconnected._
 - **Should `Pencatatan-Buku-Kas/script.js` be split into smaller, more focused modules?**
@@ -148,3 +148,5 @@ _Questions this graph is uniquely positioned to answer:_
   _Cohesion score 0.09538461538461539 - nodes in this community are weakly interconnected._
 - **Should `Laporan Diagnosis — Baris Kosong Berulang di Sheet "INPUT"` be split into smaller, more focused modules?**
   _Cohesion score 0.08695652173913043 - nodes in this community are weakly interconnected._
+- **Should `Rekap/script.js` be split into smaller, more focused modules?**
+  _Cohesion score 0.14210526315789473 - nodes in this community are weakly interconnected._

@@ -26,22 +26,37 @@ function formatRp(n) {
   return "Rp " + Math.round(Number(n) || 0).toLocaleString("id-ID");
 }
 
-// Warna indikator per toko — deterministic (murni dari string nama toko),
-// bukan random/index array, jadi konsisten di reload/render manapun.
-// Hash string sederhana -> hue 0-360, saturation 60%, lightness 45%
-// (kontras baik di atas card putih: tidak nyaris putih ataupun gelap pekat).
-// Dipakai sebagai dot kecil di samping nama toko; nama toko TETAP tampil
-// sebagai teks — warna hanya penanda visual tambahan (accessible).
-// PENTING: output cuma berisi angka hue (dipakai di inline style) —
-// jangan pernah interpolasi nama toko ke string return fungsi ini.
-function tokoColor(name) {
-  const s = String(name || "").trim().toLowerCase();
-  let hash = 0;
-  for (let i = 0; i < s.length; i++) {
-    hash = Math.imul(hash, 31) + s.charCodeAt(i);
-  }
-  hash = hash >>> 0; // koersi ke uint32
-  return "hsl(" + (hash % 360) + ", 60%, 45%)";
+// Warna pill per toko — dibangun dari dataset TERKINI (bukan hash per-nama
+// independen yang rawan collision): semua nama toko unik di-sort alphabetically,
+// lalu hue didistribusikan MERATA di rentang 0-360 derajat berdasarkan index
+// toko di list hasil sort. Dijamin TIDAK ada 2 toko berbeda dengan warna persis
+// sama (selama jumlah toko masih puluhan), dan tetap DETERMINISTIC karena
+// basisnya sort nama — bukan random ataupun urutan insert. Rebuild tiap fetch.
+let tokoColors = {}; // "nama toko" -> { bg: "hsl(...)", fg: "#FFFFFF" | "#2B2420" }
+
+function buildTokoColors() {
+  const tokoSet = new Set();
+  allItems.forEach(it => {
+    const t = String(it.toko || "").trim();
+    if (t) tokoSet.add(t);
+  });
+  const tokoList = Array.from(tokoSet).sort((a, b) => a.localeCompare(b, "id"));
+
+  tokoColors = {};
+  const n = tokoList.length;
+  tokoList.forEach((name, i) => {
+    const hue = Math.round((360 / n) * i) % 360; // merata; % 360 cegah hsl(360)===hsl(0)
+    const bg = "hsl(" + hue + ", 65%, 42%)";
+    tokoColors[name] = { bg: bg, fg: textColorForBg(bg) };
+  });
+}
+
+// Pilih warna teks pill OTOMATIS dari lightness background (bukan warna statis):
+// bg gelap -> teks putih, bg terang -> teks gelap.
+function textColorForBg(bg) {
+  const m = /hsl\([^)]*,\s*[^)]*,\s*([\d.]+)%\)/.exec(bg);
+  const lightness = m ? Number(m[1]) : 42;
+  return lightness > 55 ? "#2B2420" : "#FFFFFF";
 }
 
 // Timestamp dari backend: "dd/MM/yyyy HH:mm:ss". Fallback ke format lain
@@ -83,6 +98,9 @@ async function fetchItems() {
     // Default urutan: terbaru dulu (by timestamp)
     allItems.sort((a, b) => parseTimestamp(b.timestamp) - parseTimestamp(a.timestamp));
 
+    // Mapping warna pill toko di-rebuild dari dataset terkini — toko baru yang
+    // muncul di kemudian hari otomatis dapat warna tanpa edit manual.
+    buildTokoColors();
     populateTokoSelect();
     applyFilters();
   } catch (err) {
@@ -163,7 +181,13 @@ function renderList(rows) {
     const qty = Number(it.qty) || 0;
     const satuan = String(it.satuan || "").trim();
     const hargaSatuan = Number(it.harga_satuan) || 0;
-    const hargaTotal = Number(it.harga_total) || 0;
+
+    // Pill toko: SELURUH background ikut warna toko, teks otomatis putih/gelap
+    // berdasar lightness. Nama toko tetap tampil sebagai teks (accessible).
+    const t = String(it.toko || "").trim();
+    const pillColor = (t && tokoColors[t])
+      ? "background:" + tokoColors[t].bg + ";color:" + tokoColors[t].fg
+      : "background:var(--keluar-soft);color:var(--terracotta-dark)";
 
     const card = document.createElement("article");
     card.className = "harga-card";
@@ -171,10 +195,9 @@ function renderList(rows) {
     card.innerHTML =
       '<header class="hc-top">' +
         '<h2 class="hc-nama">' + escapeHtml(it.nama) + '</h2>' +
-        '<span class="hc-total">' + formatRp(hargaTotal) + '</span>' +
       '</header>' +
       '<div class="hc-meta">' +
-        '<span class="hc-toko"><span class="hc-toko-dot" style="background:' + (it.toko ? tokoColor(it.toko) : "transparent") + '" aria-hidden="true"></span>' + escapeHtml(it.toko) + '</span>' +
+        '<span class="hc-toko" style="' + pillColor + '">' + escapeHtml(it.toko) + '</span>' +
         '<span class="hc-qty">' + qty + (satuan ? " " + escapeHtml(satuan) : "") + '</span>' +
         '<span class="hc-satuan">' + formatRp(hargaSatuan) + (satuan ? "/" + escapeHtml(satuan) : "/unit") + '</span>' +
       '</div>' +

@@ -178,12 +178,6 @@ h1{
   font-weight:800;
   line-height:1.3;
 }
-.hc-total{
-  font-size:15px;
-  font-weight:800;
-  color:var(--terracotta);
-  white-space:nowrap;
-}
 .hc-meta{
   display:flex;
   flex-wrap:wrap;
@@ -194,21 +188,11 @@ h1{
   color:var(--ink-soft);
 }
 .hc-toko{
-  background:var(--keluar-soft);
-  color:var(--terracotta-dark);
+  /* background & color di-set inline per-toko dari script.js (warna pill) */
   font-weight:700;
   padding:3px 10px;
   border-radius:20px;
   font-size:12px;
-}
-.hc-toko-dot{
-  display:inline-block;
-  width:9px;
-  height:9px;
-  border-radius:50%;
-  margin-right:6px;
-  vertical-align:-1px;
-  box-shadow:inset 0 0 0 1px rgba(43,36,32,0.18);
 }
 .hc-qty{
   font-weight:600;
