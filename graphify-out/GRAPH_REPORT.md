@@ -1,16 +1,16 @@
 # Graph Report - Work  (2026-08-07)
 
 ## Corpus Check
-- 20 files · ~20,659 words
+- 20 files · ~21,660 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
-- 266 nodes · 328 edges · 24 communities (20 shown, 4 thin omitted)
+- 280 nodes · 357 edges · 24 communities (20 shown, 4 thin omitted)
 - Extraction: 97% EXTRACTED · 3% INFERRED · 0% AMBIGUOUS · INFERRED: 9 edges (avg confidence: 0.5)
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `0f835f9c`
+- Built from commit: `cb5c6584`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -38,16 +38,16 @@
 - riwayat-dividen.spec.js
 
 ## God Nodes (most connected - your core abstractions)
-1. `Laporan Diagnosis — Baris Kosong Berulang di Sheet "INPUT"` - 9 edges
-2. `fetchMonthList()` - 7 edges
-3. `fetchStok()` - 7 edges
-4. `Playwright Test Suite — Pencatatan-Buku-Kas` - 7 edges
-5. `applyFilterAndRenderCards()` - 6 edges
-6. `fetchList()` - 6 edges
-7. `fetchItems()` - 6 edges
-8. `validateAndGetSeconds()` - 6 edges
-9. `3. Temuan Kode Client-Side (Work/Pencatatan-Buku-Kas/)` - 6 edges
-10. `renderList()` - 5 edges
+1. `hitungRekomendasiProduk()` - 9 edges
+2. `Laporan Diagnosis — Baris Kosong Berulang di Sheet "INPUT"` - 9 edges
+3. `fetchMonthList()` - 7 edges
+4. `fetchStok()` - 7 edges
+5. `Playwright Test Suite — Pencatatan-Buku-Kas` - 7 edges
+6. `applyFilterAndRenderCards()` - 6 edges
+7. `fetchList()` - 6 edges
+8. `fetchItems()` - 6 edges
+9. `loadRekomendasi()` - 6 edges
+10. `validateAndGetSeconds()` - 6 edges
 
 ## Surprising Connections (you probably didn't know these)
 - `fetchList()` --calls--> `renderList()`  [EXTRACTED]
@@ -71,8 +71,8 @@ Cohesion: 0.09
 Nodes (27): addToQueue(), belanjaDiLainnyaInput, belanjaDiWrap, form, getSelectedBelanjaDi(), getSelectedKategoriLain(), getSelectedOutlet(), jumlahEl (+19 more)
 
 ### Community 2 - "Stok/script.js"
-Cohesion: 0.10
-Nodes (24): btnHariIni, btnKemarin, btnRefresh, currentDate, datePicker, emptyMsg, errorMsg, fetchStok() (+16 more)
+Cohesion: 0.08
+Nodes (38): applyRekomendasiToDom(), btnHariIni, btnKemarin, btnRefresh, buatCatatan(), currentDate, datePicker, emptyMsg (+30 more)
 
 ### Community 3 - "Laporan Diagnosis — Baris Kosong Berulang di Sheet "INPUT""
 Cohesion: 0.09
@@ -131,7 +131,7 @@ Cohesion: 0.32
 Nodes (7): fs, interceptNetwork(), MOCK_SHARED_UTILS_JS, mockRows(), path, { test, expect }, todayTimestamp()
 
 ## Knowledge Gaps
-- **135 isolated node(s):** `all`, `menuBtn`, `drawer`, `overlay`, `drawerClose` (+130 more)
+- **137 isolated node(s):** `all`, `menuBtn`, `drawer`, `overlay`, `drawerClose` (+132 more)
   These have ≤1 connection - possible missing edges or undocumented components.
 - **4 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
 
@@ -139,13 +139,13 @@ Nodes (7): fs, interceptNetwork(), MOCK_SHARED_UTILS_JS, mockRows(), path, { tes
 _Questions this graph is uniquely positioned to answer:_
 
 - **What connects `all`, `menuBtn`, `drawer` to the rest of the system?**
-  _135 weakly-connected nodes found - possible documentation gaps or missing edges._
+  _137 weakly-connected nodes found - possible documentation gaps or missing edges._
 - **Should `Riwayat/script.js` be split into smaller, more focused modules?**
   _Cohesion score 0.044444444444444446 - nodes in this community are weakly interconnected._
 - **Should `Pencatatan-Buku-Kas/script.js` be split into smaller, more focused modules?**
   _Cohesion score 0.08817204301075268 - nodes in this community are weakly interconnected._
 - **Should `Stok/script.js` be split into smaller, more focused modules?**
-  _Cohesion score 0.09538461538461539 - nodes in this community are weakly interconnected._
+  _Cohesion score 0.07692307692307693 - nodes in this community are weakly interconnected._
 - **Should `Laporan Diagnosis — Baris Kosong Berulang di Sheet "INPUT"` be split into smaller, more focused modules?**
   _Cohesion score 0.08695652173913043 - nodes in this community are weakly interconnected._
 - **Should `Rekap/script.js` be split into smaller, more focused modules?**
