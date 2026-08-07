@@ -194,12 +194,15 @@ h1{
   border-radius:20px;
   font-size:12px;
 }
-.hc-qty{
-  font-weight:600;
-}
 .hc-satuan{
-  font-weight:600;
-  color:var(--ink);
+  /* Harga per satuan = info utama card: paling menonjol di baris meta.
+     margin-left:auto -> badge toko di kiri, harga satuan rata kanan,
+     tanpa gap janggal bekas posisi quantity. */
+  margin-left:auto;
+  font-size:16px;
+  font-weight:800;
+  color:var(--terracotta);
+  white-space:nowrap;
 }
 .hc-time{
   margin-top:8px;

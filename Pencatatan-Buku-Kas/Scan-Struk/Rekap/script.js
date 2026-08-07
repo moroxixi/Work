@@ -178,7 +178,8 @@ function renderList(rows) {
   }
 
   rows.forEach(it => {
-    const qty = Number(it.qty) || 0;
+    // Data it.qty TETAP dibawa dari backend (allItems) — yang dihilangkan hanya
+    // tampilan quantity di card; user butuh harga per satuan, bukan angka qty.
     const satuan = String(it.satuan || "").trim();
     const hargaSatuan = Number(it.harga_satuan) || 0;
 
@@ -198,7 +199,6 @@ function renderList(rows) {
       '</header>' +
       '<div class="hc-meta">' +
         '<span class="hc-toko" style="' + pillColor + '">' + escapeHtml(it.toko) + '</span>' +
-        '<span class="hc-qty">' + qty + (satuan ? " " + escapeHtml(satuan) : "") + '</span>' +
         '<span class="hc-satuan">' + formatRp(hargaSatuan) + (satuan ? "/" + escapeHtml(satuan) : "/unit") + '</span>' +
       '</div>' +
       '<footer class="hc-time">' + escapeHtml(it.timestamp) + '</footer>';
