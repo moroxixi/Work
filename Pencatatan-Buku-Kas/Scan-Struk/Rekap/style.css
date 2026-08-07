@@ -152,13 +152,6 @@ h1{
   color:var(--bad);
   font-weight:700;
 }
-.total-line{
-  font-size:12.5px;
-  font-weight:700;
-  color:var(--terracotta-dark);
-  text-align:right;
-  margin:0 0 10px;
-}
 .hidden{display:none !important;}
 
 /* ===== Harga cards ===== */
@@ -207,6 +200,15 @@ h1{
   padding:3px 10px;
   border-radius:20px;
   font-size:12px;
+}
+.hc-toko-dot{
+  display:inline-block;
+  width:9px;
+  height:9px;
+  border-radius:50%;
+  margin-right:6px;
+  vertical-align:-1px;
+  box-shadow:inset 0 0 0 1px rgba(43,36,32,0.18);
 }
 .hc-qty{
   font-weight:600;

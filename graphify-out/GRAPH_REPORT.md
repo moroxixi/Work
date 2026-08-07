@@ -1,16 +1,16 @@
-# Graph Report - Work  (2026-08-06)
+# Graph Report - Work  (2026-08-07)
 
 ## Corpus Check
-- 20 files · ~20,405 words
+- 20 files · ~20,538 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
-- 263 nodes · 323 edges · 24 communities (20 shown, 4 thin omitted)
+- 264 nodes · 325 edges · 24 communities (20 shown, 4 thin omitted)
 - Extraction: 97% EXTRACTED · 3% INFERRED · 0% AMBIGUOUS · INFERRED: 9 edges (avg confidence: 0.5)
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `6fb98299`
+- Built from commit: `9384ec9e`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -80,7 +80,7 @@ Nodes (22): 1. Ringkasan Masalah, 2. Lokasi Folder Apps Script "buku-kas", 3.1 F
 
 ### Community 4 - "Rekap/script.js"
 Cohesion: 0.16
-Nodes (16): allItems, applyFilters(), emptyMsg, errorMsg, fetchItems(), formatRp(), listEl, loadingMsg (+8 more)
+Nodes (17): allItems, applyFilters(), emptyMsg, errorMsg, fetchItems(), formatRp(), listEl, loadingMsg (+9 more)
 
 ### Community 5 - "Dashboard/script.js"
 Cohesion: 0.19

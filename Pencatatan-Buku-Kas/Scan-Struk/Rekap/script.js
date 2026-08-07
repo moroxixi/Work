@@ -26,6 +26,24 @@ function formatRp(n) {
   return "Rp " + Math.round(Number(n) || 0).toLocaleString("id-ID");
 }
 
+// Warna indikator per toko — deterministic (murni dari string nama toko),
+// bukan random/index array, jadi konsisten di reload/render manapun.
+// Hash string sederhana -> hue 0-360, saturation 60%, lightness 45%
+// (kontras baik di atas card putih: tidak nyaris putih ataupun gelap pekat).
+// Dipakai sebagai dot kecil di samping nama toko; nama toko TETAP tampil
+// sebagai teks — warna hanya penanda visual tambahan (accessible).
+// PENTING: output cuma berisi angka hue (dipakai di inline style) —
+// jangan pernah interpolasi nama toko ke string return fungsi ini.
+function tokoColor(name) {
+  const s = String(name || "").trim().toLowerCase();
+  let hash = 0;
+  for (let i = 0; i < s.length; i++) {
+    hash = Math.imul(hash, 31) + s.charCodeAt(i);
+  }
+  hash = hash >>> 0; // koersi ke uint32
+  return "hsl(" + (hash % 360) + ", 60%, 45%)";
+}
+
 // Timestamp dari backend: "dd/MM/yyyy HH:mm:ss". Fallback ke format lain
 // (mis. ISO kalau ada baris diedit manual di Sheets) biar urutan tetap benar.
 function parseTimestamp(s) {
@@ -92,7 +110,8 @@ function populateTokoSelect() {
 
   const optSemua = document.createElement("option");
   optSemua.value = "__semua__";
-  optSemua.textContent = "Semua Toko (" + allItems.length + ")";
+  // Jumlah TOKO unik di dataset (bukan jumlah baris/item)
+  optSemua.textContent = "Semua Toko (" + tokoList.length + ")";
   tokoSelect.appendChild(optSemua);
 
   tokoList.forEach(t => {
@@ -140,12 +159,6 @@ function renderList(rows) {
     return;
   }
 
-  const total = rows.reduce((sum, it) => sum + (Number(it.harga_total) || 0), 0);
-  const totalEl = document.createElement("p");
-  totalEl.className = "total-line";
-  totalEl.textContent = "Total nilai tampil: " + formatRp(total);
-  listEl.appendChild(totalEl);
-
   rows.forEach(it => {
     const qty = Number(it.qty) || 0;
     const satuan = String(it.satuan || "").trim();
@@ -161,7 +174,7 @@ function renderList(rows) {
         '<span class="hc-total">' + formatRp(hargaTotal) + '</span>' +
       '</header>' +
       '<div class="hc-meta">' +
-        '<span class="hc-toko">' + escapeHtml(it.toko) + '</span>' +
+        '<span class="hc-toko"><span class="hc-toko-dot" style="background:' + (it.toko ? tokoColor(it.toko) : "transparent") + '" aria-hidden="true"></span>' + escapeHtml(it.toko) + '</span>' +
         '<span class="hc-qty">' + qty + (satuan ? " " + escapeHtml(satuan) : "") + '</span>' +
         '<span class="hc-satuan">' + formatRp(hargaSatuan) + (satuan ? "/" + escapeHtml(satuan) : "/unit") + '</span>' +
       '</div>' +
