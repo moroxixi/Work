@@ -303,7 +303,7 @@ input[type=file]{display:none;}
   text-decoration: none;
   color: var(--ink);
   box-shadow: 0 1px 2px rgba(35, 43, 39, 0.04);
-  transition: background 0.12s ease, border-color 0.12s ease, transform 0.06s ease;
+  transition: background 0.12s ease, border-color 0.12s ease, transform 0.18s ease-out;
   min-height: 40px;
 }
 
@@ -316,7 +316,7 @@ input[type=file]{display:none;}
   transform: none !important;
 }
  
-.quicknav-item:active { transform: scale(0.96); }
+.quicknav-item:active { transform: scale(0.95); }
  
 .quicknav-icon {
   display: flex;
@@ -379,10 +379,10 @@ input[type=file]{display:none;}
   font-size: 12px;
   font-weight: 600;
   letter-spacing: 0.01em;
-  transition: background 0.12s ease, color 0.12s ease, transform 0.06s ease;
+  transition: background 0.12s ease, color 0.12s ease, transform 0.18s ease-out;
 }
 
-.subnav-item:active { transform: scale(0.96); }
+.subnav-item:active { transform: scale(0.95); }
 
 .subnav-item.is-active {
   background: var(--keluar-soft);

@@ -335,11 +335,11 @@ body {
   text-decoration: none;
   color: var(--ink);
   box-shadow: 0 1px 2px rgba(35, 43, 39, 0.04);
-  transition: background 0.12s ease, border-color 0.12s ease, transform 0.06s ease;
+  transition: background 0.12s ease, border-color 0.12s ease, transform 0.18s ease-out;
   min-height: 40px;
 }
 
-.quicknav-item:active { transform: scale(0.96); }
+.quicknav-item:active { transform: scale(0.95); }
 
 .quicknav-icon {
   display: flex;
@@ -512,5 +512,5 @@ body {
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .chip, .submit-btn, .list-row, .seg-tab { transition: none; }
+  .chip, .submit-btn, .list-row, .seg-tab, .quicknav-item { transition: none; }
 }
