@@ -437,3 +437,7 @@ select.text-input { appearance: none; }
 }
 .btn-primary { background: var(--green); color: #fff; }
 .btn-danger { background: var(--danger); color: #fff; }
+
+@media (prefers-reduced-motion: reduce) {
+  .quicknav-item { transition: none; }
+}

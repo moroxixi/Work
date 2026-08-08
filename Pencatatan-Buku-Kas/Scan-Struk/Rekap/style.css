@@ -331,3 +331,7 @@ h1{
   outline: 2px solid var(--ink);
   outline-offset: 2px;
 }
+
+@media (prefers-reduced-motion: reduce) {
+  .quicknav-item, .subnav-item { transition: none; }
+}
