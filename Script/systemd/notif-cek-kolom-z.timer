@@ -1,0 +1,11 @@
+[Unit]
+Description=Jalankan notif-cek-kolom-z.service tiap 15 menit (gating window di dalam script)
+
+[Timer]
+# Tiap 15 menit sepanjang hari — gating window 21:30-23:00 ada di dalam script,
+# bukan di calendar expression (calendar range+step kurang reliable).
+OnCalendar=*:0/15
+Persistent=true
+
+[Install]
+WantedBy=timers.target

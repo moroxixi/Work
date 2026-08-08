@@ -1,16 +1,16 @@
-# Graph Report - Work  (2026-08-07)
+# Graph Report - Work  (2026-08-09)
 
 ## Corpus Check
-- 20 files · ~21,660 words
+- 22 files · ~24,024 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
-- 280 nodes · 357 edges · 24 communities (20 shown, 4 thin omitted)
-- Extraction: 97% EXTRACTED · 3% INFERRED · 0% AMBIGUOUS · INFERRED: 9 edges (avg confidence: 0.5)
+- 304 nodes · 398 edges · 26 communities (22 shown, 4 thin omitted)
+- Extraction: 98% EXTRACTED · 2% INFERRED · 0% AMBIGUOUS · INFERRED: 9 edges (avg confidence: 0.5)
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `cb5c6584`
+- Built from commit: `b12204ce`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -36,18 +36,20 @@
 - playwright.config.js
 - work-push.sh
 - riwayat-dividen.spec.js
+- notif_total_harian.py
+- Deploy Manual (WAJIB oleh Rofi — freebuff tidak menjalankan ini)
 
 ## God Nodes (most connected - your core abstractions)
 1. `hitungRekomendasiProduk()` - 9 edges
 2. `Laporan Diagnosis — Baris Kosong Berulang di Sheet "INPUT"` - 9 edges
-3. `fetchMonthList()` - 7 edges
-4. `fetchStok()` - 7 edges
-5. `Playwright Test Suite — Pencatatan-Buku-Kas` - 7 edges
-6. `applyFilterAndRenderCards()` - 6 edges
-7. `fetchList()` - 6 edges
-8. `fetchItems()` - 6 edges
-9. `loadRekomendasi()` - 6 edges
-10. `validateAndGetSeconds()` - 6 edges
+3. `mode_cek_z()` - 8 edges
+4. `fetchMonthList()` - 7 edges
+5. `fetchStok()` - 7 edges
+6. `mode_fallback_2300()` - 7 edges
+7. `Playwright Test Suite — Pencatatan-Buku-Kas` - 7 edges
+8. `applyFilterAndRenderCards()` - 6 edges
+9. `fetchList()` - 6 edges
+10. `fetchItems()` - 6 edges
 
 ## Surprising Connections (you probably didn't know these)
 - `fetchList()` --calls--> `renderList()`  [EXTRACTED]
@@ -60,7 +62,7 @@
 ## Import Cycles
 - None detected.
 
-## Communities (24 total, 4 thin omitted)
+## Communities (26 total, 4 thin omitted)
 
 ### Community 0 - "Riwayat/script.js"
 Cohesion: 0.04
@@ -130,8 +132,16 @@ Nodes (4): _dalam_range_reminder(), _nama_hari_besok(), Cek apakah waktu sekaran
 Cohesion: 0.32
 Nodes (7): fs, interceptNetwork(), MOCK_SHARED_UTILS_JS, mockRows(), path, { test, expect }, todayTimestamp()
 
+### Community 24 - "notif_total_harian.py"
+Cohesion: 0.35
+Nodes (12): cfg_get(), fetch_webapp(), is_dry_run(), main(), mode_cek_z(), mode_fallback_2300(), now_wib(), Env var override duluan, baru config file. (+4 more)
+
+### Community 25 - "Deploy Manual (WAJIB oleh Rofi — freebuff tidak menjalankan ini)"
+Cohesion: 0.20
+Nodes (9): 1. Tempel kode ke `report.gs`, 2. Deploy ulang sebagai Web App, 3. Isi `config.local.env`, 4. Aktifkan linger (sekali saja, kalau belum aktif), 5. Pasang & aktifkan timer, Deploy Manual (WAJIB oleh Rofi — freebuff tidak menjalankan ini), Script — Notif Kolom Z (Bbkn) / Total Harian Sheet "Report 2026", Struktur (+1 more)
+
 ## Knowledge Gaps
-- **137 isolated node(s):** `all`, `menuBtn`, `drawer`, `overlay`, `drawerClose` (+132 more)
+- **144 isolated node(s):** `all`, `menuBtn`, `drawer`, `overlay`, `drawerClose` (+139 more)
   These have ≤1 connection - possible missing edges or undocumented components.
 - **4 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
 
@@ -139,7 +149,7 @@ Nodes (7): fs, interceptNetwork(), MOCK_SHARED_UTILS_JS, mockRows(), path, { tes
 _Questions this graph is uniquely positioned to answer:_
 
 - **What connects `all`, `menuBtn`, `drawer` to the rest of the system?**
-  _137 weakly-connected nodes found - possible documentation gaps or missing edges._
+  _144 weakly-connected nodes found - possible documentation gaps or missing edges._
 - **Should `Riwayat/script.js` be split into smaller, more focused modules?**
   _Cohesion score 0.044444444444444446 - nodes in this community are weakly interconnected._
 - **Should `Pencatatan-Buku-Kas/script.js` be split into smaller, more focused modules?**

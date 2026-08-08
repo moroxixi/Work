@@ -25,6 +25,11 @@ __pycache__/
 .env
 .env.*
 
+# Script notif total harian — config rahasia & state runtime
+Script/config.local.env
+Script/state/*
+!Script/state/.gitkeep
+
 # OS junk
 .DS_Store
 Thumbs.db
