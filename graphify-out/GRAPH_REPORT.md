@@ -1,16 +1,16 @@
 # Graph Report - Work  (2026-08-09)
 
 ## Corpus Check
-- 22 files · ~24,024 words
+- 24 files · ~28,936 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
-- 304 nodes · 398 edges · 26 communities (22 shown, 4 thin omitted)
-- Extraction: 98% EXTRACTED · 2% INFERRED · 0% AMBIGUOUS · INFERRED: 9 edges (avg confidence: 0.5)
+- 364 nodes · 527 edges · 28 communities (24 shown, 4 thin omitted)
+- Extraction: 98% EXTRACTED · 2% INFERRED · 0% AMBIGUOUS · INFERRED: 10 edges (avg confidence: 0.5)
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `b12204ce`
+- Built from commit: `a1445e86`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -38,18 +38,20 @@
 - riwayat-dividen.spec.js
 - notif_total_harian.py
 - Deploy Manual (WAJIB oleh Rofi — freebuff tidak menjalankan ini)
+- report.gs.js
+- buku-kas.gs.js
 
 ## God Nodes (most connected - your core abstractions)
-1. `hitungRekomendasiProduk()` - 9 edges
-2. `Laporan Diagnosis — Baris Kosong Berulang di Sheet "INPUT"` - 9 edges
-3. `mode_cek_z()` - 8 edges
-4. `fetchMonthList()` - 7 edges
-5. `fetchStok()` - 7 edges
-6. `mode_fallback_2300()` - 7 edges
-7. `Playwright Test Suite — Pencatatan-Buku-Kas` - 7 edges
-8. `applyFilterAndRenderCards()` - 6 edges
-9. `fetchList()` - 6 edges
-10. `fetchItems()` - 6 edges
+1. `checkPolaTransaksi()` - 12 edges
+2. `hitungRekomendasiProduk()` - 9 edges
+3. `Laporan Diagnosis — Baris Kosong Berulang di Sheet "INPUT"` - 9 edges
+4. `mode_cek_z()` - 8 edges
+5. `simpanDataTempura()` - 8 edges
+6. `simpanDataWonton()` - 8 edges
+7. `report_kirimNotif_()` - 8 edges
+8. `handleList_()` - 7 edges
+9. `fetchMonthList()` - 7 edges
+10. `fetchStok()` - 7 edges
 
 ## Surprising Connections (you probably didn't know these)
 - `fetchList()` --calls--> `renderList()`  [EXTRACTED]
@@ -62,7 +64,7 @@
 ## Import Cycles
 - None detected.
 
-## Communities (26 total, 4 thin omitted)
+## Communities (28 total, 4 thin omitted)
 
 ### Community 0 - "Riwayat/script.js"
 Cohesion: 0.04
@@ -140,8 +142,16 @@ Nodes (12): cfg_get(), fetch_webapp(), is_dry_run(), main(), mode_cek_z(), mode_
 Cohesion: 0.20
 Nodes (9): 1. Tempel kode ke `report.gs`, 2. Deploy ulang sebagai Web App, 3. Isi `config.local.env`, 4. Aktifkan linger (sekali saja, kalau belum aktif), 5. Pasang & aktifkan timer, Deploy Manual (WAJIB oleh Rofi — freebuff tidak menjalankan ini), Script — Notif Kolom Z (Bbkn) / Total Harian Sheet "Report 2026", Struktur (+1 more)
 
+### Community 26 - "report.gs.js"
+Cohesion: 0.17
+Nodes (28): buildHeaderTempura(), buildHeaderWonton(), buildRowLink(), buildRowTempura(), buildRowWonton(), checkDuplicatesAnomalies(), checkDuplicatesAnomaliesForSheet(), checkMissingReports() (+20 more)
+
+### Community 27 - "buku-kas.gs.js"
+Cohesion: 0.13
+Nodes (28): checkPolaMalam(), checkPolaPagi(), checkPolaTransaksi(), doGet(), doPost(), formatTimestampCell_(), handleDelete_(), handleEdit_() (+20 more)
+
 ## Knowledge Gaps
-- **144 isolated node(s):** `all`, `menuBtn`, `drawer`, `overlay`, `drawerClose` (+139 more)
+- **146 isolated node(s):** `all`, `menuBtn`, `drawer`, `overlay`, `drawerClose` (+141 more)
   These have ≤1 connection - possible missing edges or undocumented components.
 - **4 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
 
@@ -149,7 +159,7 @@ Nodes (9): 1. Tempel kode ke `report.gs`, 2. Deploy ulang sebagai Web App, 3. Is
 _Questions this graph is uniquely positioned to answer:_
 
 - **What connects `all`, `menuBtn`, `drawer` to the rest of the system?**
-  _144 weakly-connected nodes found - possible documentation gaps or missing edges._
+  _146 weakly-connected nodes found - possible documentation gaps or missing edges._
 - **Should `Riwayat/script.js` be split into smaller, more focused modules?**
   _Cohesion score 0.044444444444444446 - nodes in this community are weakly interconnected._
 - **Should `Pencatatan-Buku-Kas/script.js` be split into smaller, more focused modules?**
@@ -160,3 +170,5 @@ _Questions this graph is uniquely positioned to answer:_
   _Cohesion score 0.08695652173913043 - nodes in this community are weakly interconnected._
 - **Should `Rekap/script.js` be split into smaller, more focused modules?**
   _Cohesion score 0.14210526315789473 - nodes in this community are weakly interconnected._
+- **Should `buku-kas.gs.js` be split into smaller, more focused modules?**
+  _Cohesion score 0.13333333333333333 - nodes in this community are weakly interconnected._
