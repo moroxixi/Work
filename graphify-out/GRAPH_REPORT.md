@@ -1,16 +1,16 @@
 # Graph Report - Work  (2026-08-09)
 
 ## Corpus Check
-- 24 files · ~28,936 words
+- 24 files · ~29,467 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
-- 364 nodes · 527 edges · 28 communities (24 shown, 4 thin omitted)
+- 365 nodes · 530 edges · 28 communities (24 shown, 4 thin omitted)
 - Extraction: 98% EXTRACTED · 2% INFERRED · 0% AMBIGUOUS · INFERRED: 10 edges (avg confidence: 0.5)
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `a1445e86`
+- Built from commit: `0b2749c7`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -143,8 +143,8 @@ Cohesion: 0.20
 Nodes (9): 1. Tempel kode ke `report.gs`, 2. Deploy ulang sebagai Web App, 3. Isi `config.local.env`, 4. Aktifkan linger (sekali saja, kalau belum aktif), 5. Pasang & aktifkan timer, Deploy Manual (WAJIB oleh Rofi — freebuff tidak menjalankan ini), Script — Notif Kolom Z (Bbkn) / Total Harian Sheet "Report 2026", Struktur (+1 more)
 
 ### Community 26 - "report.gs.js"
-Cohesion: 0.17
-Nodes (28): buildHeaderTempura(), buildHeaderWonton(), buildRowLink(), buildRowTempura(), buildRowWonton(), checkDuplicatesAnomalies(), checkDuplicatesAnomaliesForSheet(), checkMissingReports() (+20 more)
+Cohesion: 0.16
+Nodes (29): buildHeaderTempura(), buildHeaderWonton(), buildRowLink(), buildRowTempura(), buildRowWonton(), checkDuplicatesAnomalies(), checkDuplicatesAnomaliesForSheet(), checkMissingReports() (+21 more)
 
 ### Community 27 - "buku-kas.gs.js"
 Cohesion: 0.13

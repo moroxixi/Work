@@ -28,6 +28,13 @@ const DUPLICATE_WINDOW_MS = 60 * 60 * 1000; // 1 jam — dipakai submission-time
 const REPORT_NTFY_TOPIC = "report-checker";
 const REPORT_NTFY_URL = "https://ntfy.sh/" + REPORT_NTFY_TOPIC;
 
+// ============ BAGIAN A — konstanta (taruh di area CONFIG) ============
+// Token proteksi endpoint totalHarian.
+// Ganti <TOKEN_DI_SINI> dengan nilai WEBAPP_TOKEN dari config.local.env
+// (file itu TIDAK di-commit — isi token-nya tidak boleh ditulis di sini).
+// Wajib SAMA PERSIS dengan WEBAPP_TOKEN di Work/Script/config.local.env.
+const TOTAL_HARIAN_TOKEN = "<TOKEN_DI_SINI>";
+
 /**
  * ============================================================
  *  ENTRY POINT — POST dari form (Tempura / Wonton)
@@ -57,6 +64,10 @@ function doGet(e) {
 
   if (params.action === "stok") {
     return handleStok_(params.tanggal, params.cabang);
+  }
+
+  if (params.action === "totalHarian") {
+    return handleTotalHarian_(params.token);
   }
 
   return ContentService
@@ -597,6 +608,91 @@ function handleStok_(tanggalStr, cabangKode) {
     cabang: found[cabangCol],
     items: itemsResult
   });
+}
+
+/**
+ * Handle action "totalHarian" — expose kolom A (Tanggal), Z (Bbkn), AB (Total)
+ * dari sheet "Report 2026" untuk baris TANGGAL HARI INI, untuk poller Python
+ * eksternal. Diproteksi token sederhana.
+ *
+ * Catatan penting:
+ * - Pakai ulang constant SPREADSHEET_ID yang SAMA dengan sheet
+ *   Input_Tempura/Input_Wonton — sheet "Report 2026" adalah tab di spreadsheet
+ *   yang sama. JANGAN ketik ulang ID dari mana pun (hindari typo I/l).
+ */
+function handleTotalHarian_(token) {
+  // Validasi token
+  if (token !== TOTAL_HARIAN_TOKEN) {
+    return responseJSON({ ok: false, error: "unauthorized" });
+  }
+
+  // Buka spreadsheet pakai constant yang sama persis dengan fungsi lain
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+
+  // Cari sheet "Report 2026"; fallback cari by gid 794081767 kalau nama beda
+  let sheet = ss.getSheetByName("Report 2026");
+  if (!sheet) {
+    sheet = ss.getSheets().find(s => s.getSheetId() === 794081767);
+  }
+  if (!sheet) {
+    // TODO(Rofi): verifikasi nama tab/gid sebenarnya setelah paste
+    return responseJSON({ ok: false, error: "sheet 'Report 2026' tidak ditemukan" });
+  }
+
+  const tz = "Asia/Jakarta";
+  const todayKey = Utilities.formatDate(new Date(), tz, "dd/MM/yyyy");
+
+  const lastRow = sheet.getLastRow();
+  if (lastRow < 2) {
+    return responseJSON({ ok: false, error: "baris tanggal hari ini belum ada di sheet" });
+  }
+
+  // Baca kolom A..AB (28 kolom) semua baris data (tanpa header = mulai baris 2).
+  // Index 0-based pada array hasil getValues():
+  //   A  = kolom ke-1  -> index 0
+  //   Z  = kolom ke-26 -> index 25
+  //   AB = kolom ke-28 -> index 27
+  const values = sheet.getRange(2, 1, lastRow - 1, 28).getValues();
+
+  for (let i = 0; i < values.length; i++) {
+    const row = values[i];
+    const cellA = row[0];
+
+    // Cari baris dengan kolom A = tanggal hari ini.
+    // 2 kemungkinan tipe kolom A:
+    //   (a) Date object asli -> format langsung
+    //   (b) string terformat Indonesia (mis. "09/08/2026 ...") -> fallback regex
+    // TODO(Rofi): verifikasi tipe data kolom A asli setelah paste, sesuaikan kalau perlu
+    let rowKey = null;
+    if (cellA instanceof Date && !isNaN(cellA.getTime())) {
+      rowKey = Utilities.formatDate(cellA, tz, "dd/MM/yyyy");
+    } else {
+      const m = String(cellA || "").match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})/);
+      // Zero-pad supaya cocok dengan todayKey "dd/MM/yyyy" (formatDate)
+      if (m) rowKey = m[1].padStart(2, "0") + "/" + m[2].padStart(2, "0") + "/" + m[3];
+    }
+    if (rowKey !== todayKey) continue;
+
+    const rowNumber = i + 2; // baris asli di sheet (header = baris 1)
+
+    // Kolom Z (26) dan AB (28) — null kalau kosong, selain itu value apa adanya
+    const kolomZ = (row[25] !== "" && row[25] !== null && row[25] !== undefined) ? row[25] : null;
+    const kolomAB = (row[27] !== "" && row[27] !== null && row[27] !== undefined) ? row[27] : null;
+
+    const link = "https://docs.google.com/spreadsheets/d/" + SPREADSHEET_ID +
+      "/edit?gid=794081767&range=A" + rowNumber;
+
+    return responseJSON({
+      ok: true,
+      tanggal: todayKey,
+      kolomZ: kolomZ,
+      total: kolomAB,
+      rowNumber: rowNumber,
+      link: link
+    });
+  }
+
+  return responseJSON({ ok: false, error: "baris tanggal hari ini belum ada di sheet" });
 }
 
 /**
