@@ -1,16 +1,16 @@
 # Graph Report - Work  (2026-08-10)
 
 ## Corpus Check
-- 25 files · ~31,825 words
+- 25 files · ~32,023 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
-- 378 nodes · 542 edges · 29 communities (25 shown, 4 thin omitted)
+- 379 nodes · 548 edges · 29 communities (25 shown, 4 thin omitted)
 - Extraction: 98% EXTRACTED · 2% INFERRED · 0% AMBIGUOUS · INFERRED: 10 edges (avg confidence: 0.5)
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `ebd93177`
+- Built from commit: `e377e90d`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -50,9 +50,9 @@
 5. `mode_cek_z()` - 8 edges
 6. `simpanDataTempura()` - 8 edges
 7. `simpanDataWonton()` - 8 edges
-8. `report_kirimNotif_()` - 8 edges
-9. `handleList_()` - 7 edges
-10. `fetchMonthList()` - 7 edges
+8. `handleList_()` - 7 edges
+9. `fetchMonthList()` - 7 edges
+10. `fetchStok()` - 7 edges
 
 ## Surprising Connections (you probably didn't know these)
 - `fetchList()` --calls--> `renderList()`  [EXTRACTED]
@@ -145,7 +145,7 @@ Nodes (9): 1. Tempel kode ke `report.gs`, 2. Deploy ulang sebagai Web App, 3. Is
 
 ### Community 26 - "report.gs.js"
 Cohesion: 0.16
-Nodes (29): buildHeaderTempura(), buildHeaderWonton(), buildRowLink(), buildRowTempura(), buildRowWonton(), checkDuplicatesAnomalies(), checkDuplicatesAnomaliesForSheet(), checkMissingReports() (+21 more)
+Nodes (30): buildHeaderTempura(), buildHeaderWonton(), buildRowLink(), buildRowTempura(), buildRowWonton(), checkDuplicatesAnomalies(), checkDuplicatesAnomaliesForSheet(), checkMissingReports() (+22 more)
 
 ### Community 27 - "buku-kas.gs.js"
 Cohesion: 0.13

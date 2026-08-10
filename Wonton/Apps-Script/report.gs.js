@@ -70,6 +70,10 @@ function doGet(e) {
     return handleTotalHarian_(params.token);
   }
 
+  if (params.action === "checkerStatus") {
+    return handleCheckerStatus_(params.token);
+  }
+
   return ContentService
     .createTextOutput("Form endpoint aktif (Tempura & Wonton). Kirim data lewat POST dari form HTML.")
     .setMimeType(ContentService.MimeType.TEXT);
@@ -432,10 +436,21 @@ function checkDuplicatesAnomalies() {
 function checkDuplicatesAnomaliesForSheet(sheetName, gid) {
   const ss = SpreadsheetApp.getActiveSpreadsheet();
   const sheet = ss.getSheetByName(sheetName);
-  if (!sheet) return;
+
+  // Fase 1 konsolidasi ntfy: checker tidak lagi kirim notif langsung — hasil
+  // dikumpulkan dan di-return sebagai JSON (dikonsumsi action doGet checkerStatus).
+  const buildResult = (problems) => ({
+    checker: "checkDuplicatesAnomaliesForSheet",
+    sheet: sheetName,
+    ok: problems.length === 0,
+    problems: problems,
+    timestamp: formatTimestampWIB(new Date())
+  });
+
+  if (!sheet) return buildResult([]);
 
   const lastRow = sheet.getLastRow();
-  if (lastRow < 2) return;
+  if (lastRow < 2) return buildResult([]);
 
   const header = sheet.getRange(1, 1, 1, sheet.getLastColumn()).getValues()[0];
   const tsCol = header.indexOf("Timestamp");
@@ -451,6 +466,7 @@ function checkDuplicatesAnomaliesForSheet(sheetName, gid) {
   const values = sheet.getRange(2, 1, lastRow - 1, header.length).getValues();
   const now = new Date();
   const oneHourAgo = new Date(now.getTime() - DUPLICATE_WINDOW_MS);
+  const problems = [];
 
   values.forEach((row, idx) => {
     if (row[statusCol]) return; // sudah pernah diproses
@@ -470,12 +486,14 @@ function checkDuplicatesAnomaliesForSheet(sheetName, gid) {
         `Baris: ${rowNum} (Cabang: ${row[cabangCol] || "-"})\n` +
         `Dibandingkan dengan baris: ${match.rowNum}\n` +
         `Link: ${link}`;
-      report_kirimNotif_(msg, "Buku Kas — " + match.type);
+      problems.push({ type: match.type, detail: msg });
       sheet.getRange(rowNum, statusCol + 1).setValue(match.type);
     } else {
       sheet.getRange(rowNum, statusCol + 1).setValue("OK");
     }
   });
+
+  return buildResult(problems);
 }
 
 /**
@@ -501,7 +519,12 @@ function checkMissingReports() {
     scanSheetForReports(wontonSheet, today, tz, reported, emptyCabangAlerts, ["L", "B", "R"]);
   }
 
-  emptyCabangAlerts.forEach(msg => report_kirimNotif_(msg, "Buku Kas — Cabang Tanpa Nama"));
+  // Fase 1 konsolidasi ntfy: checker tidak lagi kirim notif langsung — hasil
+  // dikumpulkan dan di-return sebagai JSON (dikonsumsi action doGet checkerStatus).
+  const problems = [];
+  emptyCabangAlerts.forEach(msg => {
+    problems.push({ type: "cabang_tanpa_nama", detail: msg });
+  });
 
   const namaCabang = { P: "Tempura (Pabuaran)", L: "Leweung Gajah", B: "Babakan", R: "Depan RS (eksternal)" };
   const missing = Object.keys(reported).filter(k => !reported[k]);
@@ -509,8 +532,18 @@ function checkMissingReports() {
   if (missing.length > 0) {
     const list = missing.map(k => `- ${namaCabang[k]}`).join("\n");
     const jamSekarang = Utilities.formatDate(new Date(), tz, "HH:mm");
-    report_kirimNotif_(`🔔 Cabang belum lapor hari ini (cek jam ${jamSekarang}):\n${list}`, "Buku Kas — Cabang Belum Lapor");
+    problems.push({
+      type: "cabang_belum_lapor",
+      detail: `Cabang belum lapor hari ini (cek jam ${jamSekarang}):\n${list}`
+    });
   }
+
+  return {
+    checker: "checkMissingReports",
+    ok: problems.length === 0,
+    problems: problems,
+    timestamp: formatTimestampWIB(new Date())
+  };
 }
 
 function scanSheetForReports(sheet, todayStr, tz, reported, emptyCabangAlerts, prefixes) {
@@ -724,6 +757,34 @@ function handleTotalHarian_(token) {
   }
 
   return responseJSON({ ok: false, error: "baris tanggal hari ini belum ada di sheet" });
+}
+
+/**
+ * Handle action "checkerStatus" — jalankan kedua checker time-based (Fase 1
+ * konsolidasi ntfy) dan expose hasilnya sebagai JSON untuk poller Python
+ * eksternal (Fase 2). Diproteksi token sama dengan action totalHarian.
+ *
+ * Catatan: action ini MENJALANKAN ulang checker secara sinkron.
+ * checkMissingReports murni baca; checkDuplicatesAnomaliesForSheet tetap
+ * menulis Check_Status (perilaku asli checker, idempotent via guard row[statusCol]).
+ */
+function handleCheckerStatus_(token) {
+  // Validasi token
+  if (token !== TOTAL_HARIAN_TOKEN) {
+    return responseJSON({ ok: false, error: "unauthorized" });
+  }
+
+  const checkers = [
+    checkMissingReports(),
+    checkDuplicatesAnomaliesForSheet(SHEET_NAME_TEMPURA, SHEET_GID_TEMPURA),
+    checkDuplicatesAnomaliesForSheet(SHEET_NAME_WONTON, SHEET_GID_WONTON)
+  ];
+
+  return responseJSON({
+    ok: true,
+    timestamp: formatTimestampWIB(new Date()),
+    checkers: checkers
+  });
 }
 
 /**
