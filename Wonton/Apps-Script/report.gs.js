@@ -650,30 +650,31 @@ function handleTotalHarian_(token) {
   // Baca kolom A..AB (28 kolom) semua baris mulai row 2. Row 2 = HEADER
   // (dikonfirmasi: Y="LW", Z="Bbkn", AA="Pabuaran", AB="Total"), data mulai row 3.
   // Kolom Z TIDAK dipakai index tetap (row[25]) — dicari DINAMIS lewat teks header
-  // yang diawali huruf "B" (case-insensitive), pola sama dengan LEFT(text,1)="B"
-  // di formula spreadsheet. Robust terhadap kolom yang pernah/disisipkan ke depan.
+  // yang sama persis dengan "Bbkn" (case-insensitive, trimmed). Robust terhadap
+  // kolom yang pernah/disisipkan ke depan.
   const values = sheet.getRange(2, 1, lastRow - 1, 28).getValues();
   const headerRow = values[0]; // row 2 = header
 
-  // Lookup kolom Z (Bbkn): cari header yang diawali "B". Ambigu / tidak ketemu
-  // -> jangan diam-diam pilih salah satu; kolomZ null + columnLookupError eksplisit.
-  const startsWithB = [];
+  // Lookup kolom Z (Bbkn): cari header yang teksnya sama persis dengan "Bbkn"
+  // (case-insensitive, trimmed). Ambigu / tidak ketemu -> jangan diam-diam pilih
+  // salah satu; kolomZ null + columnLookupError eksplisit.
+  const matchedBbkn = [];
   for (let c = 0; c < headerRow.length; c++) {
     const label = String(headerRow[c] || "").trim();
-    if (label && label.charAt(0).toLowerCase() === "b") {
-      startsWithB.push({ col: c, label: label });
+    if (label.toLowerCase() === "bbkn") {
+      matchedBbkn.push({ col: c, label: label });
     }
   }
 
   let kolomZIndex = -1;
   let columnLookupError = null;
-  if (startsWithB.length === 0) {
-    columnLookupError = "Not found: no column starts with B";
-  } else if (startsWithB.length > 1) {
-    columnLookupError = "Ambiguous: " + startsWithB.length + " columns start with B (" +
-      startsWithB.map(m => "\"" + m.label + "\"").join(", ") + ")";
+  if (matchedBbkn.length === 0) {
+    columnLookupError = "Not found: no column named \"Bbkn\"";
+  } else if (matchedBbkn.length > 1) {
+    columnLookupError = "Ambiguous: " + matchedBbkn.length + " columns named \"Bbkn\" (" +
+      matchedBbkn.map(m => "\"" + m.label + "\"").join(", ") + ")";
   } else {
-    kolomZIndex = startsWithB[0].col;
+    kolomZIndex = matchedBbkn[0].col;
   }
 
   // Data mulai index 1 (row 3) — index 0 (row 2) adalah header.
