@@ -33,7 +33,7 @@ const REPORT_NTFY_URL = "https://ntfy.sh/" + REPORT_NTFY_TOPIC;
 // Ganti <TOKEN_DI_SINI> dengan nilai WEBAPP_TOKEN dari config.local.env
 // (file itu TIDAK di-commit — isi token-nya tidak boleh ditulis di sini).
 // Wajib SAMA PERSIS dengan WEBAPP_TOKEN di Work/Script/config.local.env.
-const TOTAL_HARIAN_TOKEN = "<TOKEN_DI_SINI>";
+const TOTAL_HARIAN_TOKEN = "4Ewo2zc41KbWI7G3LTVfusSihMG5_3_s";
 
 /**
  * ============================================================
