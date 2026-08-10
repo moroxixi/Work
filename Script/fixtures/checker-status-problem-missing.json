@@ -1,0 +1,31 @@
+{
+  "ok": true,
+  "timestamp": "10/08/2026 14:35:00",
+  "checkers": [
+    {
+      "checker": "checkMissingReports",
+      "ok": false,
+      "problems": [
+        {
+          "type": "cabang_belum_lapor",
+          "detail": "Cabang belum lapor hari ini (cek jam 14:35):\n- Leweung Gajah\n- Depan RS (eksternal)"
+        }
+      ],
+      "timestamp": "10/08/2026 14:35:00"
+    },
+    {
+      "checker": "checkDuplicatesAnomaliesForSheet",
+      "sheet": "Input_Tempura",
+      "ok": true,
+      "problems": [],
+      "timestamp": "10/08/2026 14:35:00"
+    },
+    {
+      "checker": "checkDuplicatesAnomaliesForSheet",
+      "sheet": "Input_Wonton",
+      "ok": true,
+      "problems": [],
+      "timestamp": "10/08/2026 14:35:00"
+    }
+  ]
+}

@@ -188,5 +188,30 @@
     "mtime": 1786346657.482985,
     "ast_hash": "cbf9d9f05c8c58ce80f6060fbcdeaf2e",
     "semantic_hash": ""
+  },
+  "Script/fixtures/checker-status-all-ok.json": {
+    "mtime": 1786348006.5663695,
+    "ast_hash": "d52c24c7623f9250890f6700e9b84718",
+    "semantic_hash": ""
+  },
+  "Script/fixtures/checker-status-problem-missing.json": {
+    "mtime": 1786348006.5830362,
+    "ast_hash": "cd98dcd8603a43f68ea028107a4876f0",
+    "semantic_hash": ""
+  },
+  "Script/fixtures/checker-status-resolved.json": {
+    "mtime": 1786348006.5963695,
+    "ast_hash": "052cf52b8b080449fe1665b2ec03bf07",
+    "semantic_hash": ""
+  },
+  "Script/notif_checker_poller.py": {
+    "mtime": 1786348244.4797118,
+    "ast_hash": "ccf2ec387d8dc3402caa7dd8319dc674",
+    "semantic_hash": ""
+  },
+  "Script/test_checker_poller.py": {
+    "mtime": 1786348251.749712,
+    "ast_hash": "7d4ea69d0a452c6ef0a5c445f4963cb1",
+    "semantic_hash": ""
   }
 }

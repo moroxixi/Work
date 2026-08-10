@@ -1,16 +1,16 @@
 # Graph Report - Work  (2026-08-10)
 
 ## Corpus Check
-- 25 files · ~32,023 words
+- 30 files · ~34,046 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
-- 379 nodes · 548 edges · 29 communities (25 shown, 4 thin omitted)
+- 402 nodes · 584 edges · 31 communities (26 shown, 5 thin omitted)
 - Extraction: 98% EXTRACTED · 2% INFERRED · 0% AMBIGUOUS · INFERRED: 10 edges (avg confidence: 0.5)
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `e377e90d`
+- Built from commit: `6b384d0d`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -41,6 +41,8 @@
 - report.gs.js
 - buku-kas.gs.js
 - Investigasi Konsolidasi Notifikasi ntfy — `report.gs.js`
+- notif_checker_poller.py
+- test_checker_poller.py
 
 ## God Nodes (most connected - your core abstractions)
 1. `checkPolaTransaksi()` - 12 edges
@@ -65,7 +67,7 @@
 ## Import Cycles
 - None detected.
 
-## Communities (29 total, 4 thin omitted)
+## Communities (31 total, 5 thin omitted)
 
 ### Community 0 - "Riwayat/script.js"
 Cohesion: 0.04
@@ -155,10 +157,14 @@ Nodes (28): checkPolaMalam(), checkPolaPagi(), checkPolaTransaksi(), doGet(), do
 Cohesion: 0.15
 Nodes (12): 1. Daftar fungsi cek di `report.gs.js` + status pemanggilan `report_kirimNotif_()`, 2. Detail `report_kirimNotif_(pesan, judul)` (L735–763), 3. Status trigger per fungsi cek, 4. Status `doGet()` — data yang sudah/ belum di-expose, 5. Perbandingan dengan pola `notif_total_harian.py`, 6. Status `report-gs-doGet-addition.gs.txt`, 7. Rekomendasi, Estimasi effort Model A (hanya bagian time-based): (+4 more)
 
+### Community 29 - "notif_checker_poller.py"
+Cohesion: 0.17
+Nodes (18): build_message(), cfg_get(), checker_key(), compute_fingerprint(), fetch_checker_status(), is_dry_run(), main(), _normalize_problem_detail() (+10 more)
+
 ## Knowledge Gaps
 - **156 isolated node(s):** `all`, `menuBtn`, `drawer`, `overlay`, `drawerClose` (+151 more)
   These have ≤1 connection - possible missing edges or undocumented components.
-- **4 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
+- **5 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
 
 ## Suggested Questions
 _Questions this graph is uniquely positioned to answer:_
