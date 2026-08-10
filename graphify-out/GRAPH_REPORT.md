@@ -1,16 +1,16 @@
 # Graph Report - Work  (2026-08-10)
 
 ## Corpus Check
-- 24 files · ~29,668 words
+- 25 files · ~31,825 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
-- 365 nodes · 530 edges · 28 communities (24 shown, 4 thin omitted)
+- 378 nodes · 542 edges · 29 communities (25 shown, 4 thin omitted)
 - Extraction: 98% EXTRACTED · 2% INFERRED · 0% AMBIGUOUS · INFERRED: 10 edges (avg confidence: 0.5)
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `7a3418de`
+- Built from commit: `ebd93177`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -40,18 +40,19 @@
 - Deploy Manual (WAJIB oleh Rofi — freebuff tidak menjalankan ini)
 - report.gs.js
 - buku-kas.gs.js
+- Investigasi Konsolidasi Notifikasi ntfy — `report.gs.js`
 
 ## God Nodes (most connected - your core abstractions)
 1. `checkPolaTransaksi()` - 12 edges
 2. `hitungRekomendasiProduk()` - 9 edges
 3. `Laporan Diagnosis — Baris Kosong Berulang di Sheet "INPUT"` - 9 edges
-4. `mode_cek_z()` - 8 edges
-5. `simpanDataTempura()` - 8 edges
-6. `simpanDataWonton()` - 8 edges
-7. `report_kirimNotif_()` - 8 edges
-8. `handleList_()` - 7 edges
-9. `fetchMonthList()` - 7 edges
-10. `fetchStok()` - 7 edges
+4. `Investigasi Konsolidasi Notifikasi ntfy — `report.gs.js`` - 9 edges
+5. `mode_cek_z()` - 8 edges
+6. `simpanDataTempura()` - 8 edges
+7. `simpanDataWonton()` - 8 edges
+8. `report_kirimNotif_()` - 8 edges
+9. `handleList_()` - 7 edges
+10. `fetchMonthList()` - 7 edges
 
 ## Surprising Connections (you probably didn't know these)
 - `fetchList()` --calls--> `renderList()`  [EXTRACTED]
@@ -64,7 +65,7 @@
 ## Import Cycles
 - None detected.
 
-## Communities (28 total, 4 thin omitted)
+## Communities (29 total, 4 thin omitted)
 
 ### Community 0 - "Riwayat/script.js"
 Cohesion: 0.04
@@ -150,8 +151,12 @@ Nodes (29): buildHeaderTempura(), buildHeaderWonton(), buildRowLink(), buildRowT
 Cohesion: 0.13
 Nodes (28): checkPolaMalam(), checkPolaPagi(), checkPolaTransaksi(), doGet(), doPost(), formatTimestampCell_(), handleDelete_(), handleEdit_() (+20 more)
 
+### Community 28 - "Investigasi Konsolidasi Notifikasi ntfy — `report.gs.js`"
+Cohesion: 0.15
+Nodes (12): 1. Daftar fungsi cek di `report.gs.js` + status pemanggilan `report_kirimNotif_()`, 2. Detail `report_kirimNotif_(pesan, judul)` (L735–763), 3. Status trigger per fungsi cek, 4. Status `doGet()` — data yang sudah/ belum di-expose, 5. Perbandingan dengan pola `notif_total_harian.py`, 6. Status `report-gs-doGet-addition.gs.txt`, 7. Rekomendasi, Estimasi effort Model A (hanya bagian time-based): (+4 more)
+
 ## Knowledge Gaps
-- **146 isolated node(s):** `all`, `menuBtn`, `drawer`, `overlay`, `drawerClose` (+141 more)
+- **156 isolated node(s):** `all`, `menuBtn`, `drawer`, `overlay`, `drawerClose` (+151 more)
   These have ≤1 connection - possible missing edges or undocumented components.
 - **4 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
 
@@ -159,7 +164,7 @@ Nodes (28): checkPolaMalam(), checkPolaPagi(), checkPolaTransaksi(), doGet(), do
 _Questions this graph is uniquely positioned to answer:_
 
 - **What connects `all`, `menuBtn`, `drawer` to the rest of the system?**
-  _146 weakly-connected nodes found - possible documentation gaps or missing edges._
+  _156 weakly-connected nodes found - possible documentation gaps or missing edges._
 - **Should `Riwayat/script.js` be split into smaller, more focused modules?**
   _Cohesion score 0.044444444444444446 - nodes in this community are weakly interconnected._
 - **Should `Pencatatan-Buku-Kas/script.js` be split into smaller, more focused modules?**
