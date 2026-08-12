@@ -70,10 +70,6 @@ function doGet(e) {
     return handleTotalHarian_(params.token);
   }
 
-  if (params.action === "checkerStatus") {
-    return handleCheckerStatus_(params.token);
-  }
-
   return ContentService
     .createTextOutput("Form endpoint aktif (Tempura & Wonton). Kirim data lewat POST dari form HTML.")
     .setMimeType(ContentService.MimeType.TEXT);
@@ -436,21 +432,10 @@ function checkDuplicatesAnomalies() {
 function checkDuplicatesAnomaliesForSheet(sheetName, gid) {
   const ss = SpreadsheetApp.getActiveSpreadsheet();
   const sheet = ss.getSheetByName(sheetName);
-
-  // Fase 1 konsolidasi ntfy: checker tidak lagi kirim notif langsung — hasil
-  // dikumpulkan dan di-return sebagai JSON (dikonsumsi action doGet checkerStatus).
-  const buildResult = (problems) => ({
-    checker: "checkDuplicatesAnomaliesForSheet",
-    sheet: sheetName,
-    ok: problems.length === 0,
-    problems: problems,
-    timestamp: formatTimestampWIB(new Date())
-  });
-
-  if (!sheet) return buildResult([]);
+  if (!sheet) return;
 
   const lastRow = sheet.getLastRow();
-  if (lastRow < 2) return buildResult([]);
+  if (lastRow < 2) return;
 
   const header = sheet.getRange(1, 1, 1, sheet.getLastColumn()).getValues()[0];
   const tsCol = header.indexOf("Timestamp");
@@ -466,7 +451,6 @@ function checkDuplicatesAnomaliesForSheet(sheetName, gid) {
   const values = sheet.getRange(2, 1, lastRow - 1, header.length).getValues();
   const now = new Date();
   const oneHourAgo = new Date(now.getTime() - DUPLICATE_WINDOW_MS);
-  const problems = [];
 
   values.forEach((row, idx) => {
     if (row[statusCol]) return; // sudah pernah diproses
@@ -486,14 +470,12 @@ function checkDuplicatesAnomaliesForSheet(sheetName, gid) {
         `Baris: ${rowNum} (Cabang: ${row[cabangCol] || "-"})\n` +
         `Dibandingkan dengan baris: ${match.rowNum}\n` +
         `Link: ${link}`;
-      problems.push({ type: match.type, detail: msg });
+      report_kirimNotif_(msg, "Buku Kas — " + match.type);
       sheet.getRange(rowNum, statusCol + 1).setValue(match.type);
     } else {
       sheet.getRange(rowNum, statusCol + 1).setValue("OK");
     }
   });
-
-  return buildResult(problems);
 }
 
 /**
@@ -519,12 +501,7 @@ function checkMissingReports() {
     scanSheetForReports(wontonSheet, today, tz, reported, emptyCabangAlerts, ["L", "B", "R"]);
   }
 
-  // Fase 1 konsolidasi ntfy: checker tidak lagi kirim notif langsung — hasil
-  // dikumpulkan dan di-return sebagai JSON (dikonsumsi action doGet checkerStatus).
-  const problems = [];
-  emptyCabangAlerts.forEach(msg => {
-    problems.push({ type: "cabang_tanpa_nama", detail: msg });
-  });
+  emptyCabangAlerts.forEach(msg => report_kirimNotif_(msg, "Buku Kas — Cabang Tanpa Nama"));
 
   const namaCabang = { P: "Tempura (Pabuaran)", L: "Leweung Gajah", B: "Babakan", R: "Depan RS (eksternal)" };
   const missing = Object.keys(reported).filter(k => !reported[k]);
@@ -532,18 +509,8 @@ function checkMissingReports() {
   if (missing.length > 0) {
     const list = missing.map(k => `- ${namaCabang[k]}`).join("\n");
     const jamSekarang = Utilities.formatDate(new Date(), tz, "HH:mm");
-    problems.push({
-      type: "cabang_belum_lapor",
-      detail: `Cabang belum lapor hari ini (cek jam ${jamSekarang}):\n${list}`
-    });
+    report_kirimNotif_(`🔔 Cabang belum lapor hari ini (cek jam ${jamSekarang}):\n${list}`, "Buku Kas — Cabang Belum Lapor");
   }
-
-  return {
-    checker: "checkMissingReports",
-    ok: problems.length === 0,
-    problems: problems,
-    timestamp: formatTimestampWIB(new Date())
-  };
 }
 
 function scanSheetForReports(sheet, todayStr, tz, reported, emptyCabangAlerts, prefixes) {
@@ -643,32 +610,23 @@ function handleStok_(tanggalStr, cabangKode) {
   });
 }
 
-/**
- * Handle action "totalHarian" — expose kolom A (Tanggal), Z (Bbkn), AB (Total)
- * dari sheet "Report 2026" untuk baris TANGGAL HARI INI, untuk poller Python
- * eksternal. Diproteksi token sederhana.
- *
- * Catatan penting:
- * - Pakai ulang constant SPREADSHEET_ID yang SAMA dengan sheet
- *   Input_Tempura/Input_Wonton — sheet "Report 2026" adalah tab di spreadsheet
- *   yang sama. JANGAN ketik ulang ID dari mana pun (hindari typo I/l).
- */
+
+
 function handleTotalHarian_(token) {
   // Validasi token
   if (token !== TOTAL_HARIAN_TOKEN) {
     return responseJSON({ ok: false, error: "unauthorized" });
   }
 
-  // Buka spreadsheet pakai constant yang sama persis dengan fungsi lain
+  // Buka spreadsheet
   const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
 
-  // Cari sheet "Report 2026"; fallback cari by gid 794081767 kalau nama beda
+  // Cari sheet "Report 2026"; fallback by gid
   let sheet = ss.getSheetByName("Report 2026");
   if (!sheet) {
     sheet = ss.getSheets().find(s => s.getSheetId() === 794081767);
   }
   if (!sheet) {
-    // TODO(Rofi): verifikasi nama tab/gid sebenarnya setelah paste
     return responseJSON({ ok: false, error: "sheet 'Report 2026' tidak ditemukan" });
   }
 
@@ -676,116 +634,55 @@ function handleTotalHarian_(token) {
   const todayKey = Utilities.formatDate(new Date(), tz, "dd/MM/yyyy");
 
   const lastRow = sheet.getLastRow();
-  if (lastRow < 2) {
+  if (lastRow < 3) { // Minimal baris 3 karena data mulai dari baris 3
     return responseJSON({ ok: false, error: "baris tanggal hari ini belum ada di sheet" });
   }
 
-  // Baca kolom A..AB (28 kolom) semua baris mulai row 2. Row 2 = HEADER
-  // (dikonfirmasi: Y="LW", Z="Bbkn", AA="Pabuaran", AB="Total"), data mulai row 3.
-  // Kolom Z TIDAK dipakai index tetap (row[25]) — dicari DINAMIS lewat teks header
-  // yang sama persis dengan "Bbkn" (case-insensitive, trimmed). Robust terhadap
-  // kolom yang pernah/disisipkan ke depan.
-  const values = sheet.getRange(2, 1, lastRow - 1, 28).getValues();
-  const headerRow = values[0]; // row 2 = header
+  // Ambil data dari baris 3 sampai baris terakhir, dari kolom A (1) sampai AA (27)
+  const totalRows = lastRow - 2;
+  const values = sheet.getRange(3, 1, totalRows, 27).getValues();
 
-  // Lookup kolom Z (Bbkn): cari header yang teksnya sama persis dengan "Bbkn"
-  // (case-insensitive, trimmed). Ambigu / tidak ketemu -> jangan diam-diam pilih
-  // salah satu; kolomZ null + columnLookupError eksplisit.
-  const matchedBbkn = [];
-  for (let c = 0; c < headerRow.length; c++) {
-    const label = String(headerRow[c] || "").trim();
-    if (label.toLowerCase() === "bbkn") {
-      matchedBbkn.push({ col: c, label: label });
-    }
-  }
-
-  let kolomZIndex = -1;
-  let columnLookupError = null;
-  if (matchedBbkn.length === 0) {
-    columnLookupError = "Not found: no column named \"Bbkn\"";
-  } else if (matchedBbkn.length > 1) {
-    columnLookupError = "Ambiguous: " + matchedBbkn.length + " columns named \"Bbkn\" (" +
-      matchedBbkn.map(m => "\"" + m.label + "\"").join(", ") + ")";
-  } else {
-    kolomZIndex = matchedBbkn[0].col;
-  }
-
-  // Data mulai index 1 (row 3) — index 0 (row 2) adalah header.
-  for (let i = 1; i < values.length; i++) {
+  // Loop setiap baris data
+  for (let i = 0; i < values.length; i++) {
     const row = values[i];
-    const cellA = row[0];
+    const cellA = row[0]; // Kolom A (Tanggal)
 
-    // Cari baris dengan kolom A = tanggal hari ini.
-    // 2 kemungkinan tipe kolom A:
-    //   (a) Date object asli -> format langsung
-    //   (b) string terformat Indonesia (mis. "09/08/2026 ...") -> fallback regex
-    // TODO(Rofi): verifikasi tipe data kolom A asli setelah paste, sesuaikan kalau perlu
+    // Parsing format tanggal di Kolom A
     let rowKey = null;
     if (cellA instanceof Date && !isNaN(cellA.getTime())) {
       rowKey = Utilities.formatDate(cellA, tz, "dd/MM/yyyy");
     } else {
       const m = String(cellA || "").match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})/);
-      // Zero-pad supaya cocok dengan todayKey "dd/MM/yyyy" (formatDate)
       if (m) rowKey = m[1].padStart(2, "0") + "/" + m[2].padStart(2, "0") + "/" + m[3];
     }
+
+    // Jika tanggal tidak cocok dengan hari ini, lanjut baris berikutnya
     if (rowKey !== todayKey) continue;
 
-    const rowNumber = i + 2; // baris asli di sheet (header = baris 2, data mulai baris 3)
+    const rowNumber = i + 3; // Nomor baris sebenarnya di Sheet (karena data mulai dari row 3)
 
-    // Kolom Z (Bbkn) diambil dari index hasil lookup header (kolomZIndex); kalau lookup
-    // gagal (ambigu / tidak ketemu) kolomZ selalu null + columnLookupError disertakan.
-    const kolomZ = (kolomZIndex >= 0 && row[kolomZIndex] !== "" && row[kolomZIndex] !== null && row[kolomZIndex] !== undefined)
-      ? row[kolomZIndex] : null;
-    // Kolom AB (Total) — tetap index tetap, null kalau kosong, selain itu value apa adanya
-    const kolomAB = (row[27] !== "" && row[27] !== null && row[27] !== undefined) ? row[27] : null;
+    // Ambil nilai langsung berdasarkan Index
+    // Index 24 = Kolom Y  (Babakan/Bbkn)
+    // Index 26 = Kolom AA (Total)
+    const valBbkn = (row[24] !== "" && row[24] !== null && row[24] !== undefined) ? row[24] : null;
+    const valTotal = (row[26] !== "" && row[26] !== null && row[26] !== undefined) ? row[26] : null;
 
     const link = "https://docs.google.com/spreadsheets/d/" + SPREADSHEET_ID +
       "/edit?gid=794081767&range=A" + rowNumber;
 
-    const out = {
+    return responseJSON({
       ok: true,
       tanggal: todayKey,
-      kolomZ: kolomZ,
-      total: kolomAB,
+      kolomZ: valBbkn, // Nama properti tetap 'kolomZ' agar API penerima tidak crash
+      total: valTotal,
       rowNumber: rowNumber,
       link: link
-    };
-    if (columnLookupError !== null) {
-      out.columnLookupError = columnLookupError;
-    }
-    return responseJSON(out);
+    });
   }
 
   return responseJSON({ ok: false, error: "baris tanggal hari ini belum ada di sheet" });
 }
 
-/**
- * Handle action "checkerStatus" — jalankan kedua checker time-based (Fase 1
- * konsolidasi ntfy) dan expose hasilnya sebagai JSON untuk poller Python
- * eksternal (Fase 2). Diproteksi token sama dengan action totalHarian.
- *
- * Catatan: action ini MENJALANKAN ulang checker secara sinkron.
- * checkMissingReports murni baca; checkDuplicatesAnomaliesForSheet tetap
- * menulis Check_Status (perilaku asli checker, idempotent via guard row[statusCol]).
- */
-function handleCheckerStatus_(token) {
-  // Validasi token
-  if (token !== TOTAL_HARIAN_TOKEN) {
-    return responseJSON({ ok: false, error: "unauthorized" });
-  }
-
-  const checkers = [
-    checkMissingReports(),
-    checkDuplicatesAnomaliesForSheet(SHEET_NAME_TEMPURA, SHEET_GID_TEMPURA),
-    checkDuplicatesAnomaliesForSheet(SHEET_NAME_WONTON, SHEET_GID_WONTON)
-  ];
-
-  return responseJSON({
-    ok: true,
-    timestamp: formatTimestampWIB(new Date()),
-    checkers: checkers
-  });
-}
 
 /**
  * ============================================================
@@ -860,4 +757,5 @@ function responseJSON(obj) {
   return ContentService.createTextOutput(JSON.stringify(obj))
     .setMimeType(ContentService.MimeType.JSON);
 }
+
 
