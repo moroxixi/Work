@@ -638,9 +638,9 @@ function handleTotalHarian_(token) {
     return responseJSON({ ok: false, error: "baris tanggal hari ini belum ada di sheet" });
   }
 
-  // Ambil data dari baris 3 sampai baris terakhir, dari kolom A (1) sampai AA (27)
+  // Ambil data dari baris 3 sampai baris terakhir, dari kolom A (1) sampai AB (28)
   const totalRows = lastRow - 2;
-  const values = sheet.getRange(3, 1, totalRows, 27).getValues();
+  const values = sheet.getRange(3, 1, totalRows, 28).getValues();
 
   // Loop setiap baris data
   for (let i = 0; i < values.length; i++) {
@@ -663,9 +663,9 @@ function handleTotalHarian_(token) {
 
     // Ambil nilai langsung berdasarkan Index
     // Index 24 = Kolom Y  (Babakan/Bbkn)
-    // Index 26 = Kolom AA (Total)
+    // Index 27 = Kolom AB (Total)
     const valBbkn = (row[24] !== "" && row[24] !== null && row[24] !== undefined) ? row[24] : null;
-    const valTotal = (row[26] !== "" && row[26] !== null && row[26] !== undefined) ? row[26] : null;
+    const valTotal = (row[27] !== "" && row[27] !== null && row[27] !== undefined) ? row[27] : null;
 
     const link = "https://docs.google.com/spreadsheets/d/" + SPREADSHEET_ID +
       "/edit?gid=794081767&range=A" + rowNumber;
