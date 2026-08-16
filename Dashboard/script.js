@@ -67,16 +67,11 @@ function cardHTML(projects, offset) {
     const col = catColor(p.category, i);
     const ico = catIcon(p.category || '', p.title || '');
     return `<a class="card ${col}" href="${p.url || '#'}" target="_blank">
-      <div class="card-head">
-        <div class="card-icon"><i class="ti ${ico}"></i></div>
-        <span class="badge">${p.category || 'misc'}</span>
-      </div>
       <div class="card-icon-m"><i class="ti ${ico}"></i></div>
       <div class="card-body" style="flex:1;min-width:0">
         <div class="card-title">${p.title || '—'}</div>
         <div class="card-desc">${p.description || '—'}</div>
       </div>
-      <div class="card-foot"><i class="ti ti-arrow-right" style="font-size:10px"></i> open</div>
     </a>`;
   }).join('');
 }
