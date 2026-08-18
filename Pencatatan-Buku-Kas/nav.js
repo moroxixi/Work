@@ -101,7 +101,7 @@
       );
 
       // Halaman Rekap berada di dalam alur Scan Struk: tandai item Scan Struk
-      // sebagai "section aktif" (tetap bisa diklik, tidak diklaim halaman aktif).
+      // sebagai "section aktif" — tampil nonaktif/abu-abu konsisten dengan is-active.
       if (!isActive && item.key === 'scan' && page === 'rekap') {
         el.classList.add('is-section');
       }

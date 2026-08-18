@@ -286,10 +286,16 @@ h1{
 }
 
 /* Halaman Rekap berada dalam alur Scan Struk: item utama Scan Struk
-   ditandai sebagai section aktif (tetap bisa diklik). */
+   ditandai sebagai section aktif — tampil nonaktif/abu-abu konsisten
+   dengan is-active, supaya tidak mengecoh user seolah masih bisa diklik. */
 .quicknav-item.is-section {
-  background: var(--keluar-soft);
-  border-color: var(--keluar);
+  opacity: 0.5;
+  cursor: default;
+  pointer-events: none;
+  transform: none !important;
+}
+.quicknav-item.is-section .quicknav-icon {
+  color: var(--ink-soft);
 }
 
 /* ===== Sub-nav alur Scan Struk (Scan Struk <-> Rekap Harga) =====
