@@ -70,7 +70,7 @@ function renderItems(payload) {
     row.innerHTML =
       "<span class=\"item-nama\">" + escapeHtml(item.nama) + "</span>" +
       "<span class=\"item-laku\">Laku: " + item.laku + "</span>" +
-      "<span class=\"item-sisa\">Sisa: " + item.sisa + "</span>" +
+      "<span class=\"item-sisa\" data-sisa=\"" + item.sisa + "\">Sisa: " + item.sisa + "</span>" +
       "<span class=\"item-rekomendasi\">Rekom: \u2013</span>" +
       "<span class=\"item-catatan\">Catatan: \u2013</span>";
     itemList.appendChild(row);
@@ -304,7 +304,17 @@ function applyRekomendasiToDom() {
     if (!info) return;
     const elR = row.querySelector(".item-rekomendasi");
     const elC = row.querySelector(".item-catatan");
-    if (elR) elR.textContent = "Rekom: " + info.rekomendasi;
+    if (elR) {
+      elR.textContent = "Rekom: " + info.rekomendasi;
+      // Coret + redupkan jika stok sisa sudah cukup (sisa >= rekomendasi)
+      const elSisa = row.querySelector(".item-sisa");
+      const sisa = elSisa ? Number(elSisa.dataset.sisa) : NaN;
+      if (!isNaN(sisa) && sisa >= info.rekomendasi) {
+        elR.classList.add("rekom-coret");
+      } else {
+        elR.classList.remove("rekom-coret");
+      }
+    }
     if (elC) elC.textContent = "Catatan: " + info.catatan;
   });
 }

@@ -46,6 +46,7 @@
 .item-laku { color: var(--ink-soft); white-space: nowrap; }
 .item-sisa { color: var(--terracotta); font-weight: 700; white-space: nowrap; }
 .item-rekomendasi { color: var(--green); font-weight: 700; white-space: nowrap; }
+.rekom-coret { text-decoration: line-through; color: var(--ink-soft); font-weight: 400; opacity: 0.5; }
 .item-catatan {
   flex-basis: 100%;
   font-size: 12px;
