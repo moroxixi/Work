@@ -7,6 +7,10 @@ let selectedToko = null;
 let compressedBase64 = null;
 let compressedMime = "image/jpeg";
 let items = []; // {nama, qty, satuan, harga_satuan, removed}
+let manualItems = []; // {id, nama, qty, satuan, harga_satuan}
+let currentTab = "scan";
+let _origTitle = "";
+let _origSub = "";
 
 // --- Toko chip selection ---
 document.getElementById("tokoChips").addEventListener("click", (e) => {
@@ -188,8 +192,8 @@ document.getElementById("addRowBtn").addEventListener("click", () => {
   renderItems();
 });
 
-// --- Save ---
-document.getElementById("saveBtn").addEventListener("click", async () => {
+// --- Save (scan tab) ---
+async function saveScanItems() {
   const btn = document.getElementById("saveBtn");
   const status = document.getElementById("saveStatus");
   const toSave = items.filter(it => !it.removed && it.nama.trim() !== "");
@@ -213,7 +217,7 @@ document.getElementById("saveBtn").addEventListener("click", async () => {
     const data = await res.json();
     if (!data.ok) throw new Error(data.error || "Gagal simpan.");
 
-    status.textContent = `Tersimpan ✓ (${data.saved} baris ditambahkan ke Riwayat Harga).`;
+    status.textContent = `Tersimpan \u2713 (${data.saved} baris ditambahkan ke Riwayat Harga).`;
     status.className = "status ok";
   } catch (err) {
     status.textContent = "Gagal: " + err.message;
@@ -222,11 +226,205 @@ document.getElementById("saveBtn").addEventListener("click", async () => {
     btn.disabled = false;
     btn.textContent = "Simpan ke Riwayat Harga";
   }
-});
+}
 
 function formatRp(n) {
   return "Rp " + Math.round(n || 0).toLocaleString("id-ID");
 }
 function escapeAttr(s) {
   return String(s || "").replace(/"/g, "&quot;");
+}
+
+// ============================================================
+// Tab switching (Scan Struk | Input Manual | Rekap Harga)
+// ============================================================
+(function initTab() {
+  var titleEl = document.querySelector("header h1");
+  var subEl = document.querySelector("header .sub");
+  _origTitle = titleEl ? titleEl.textContent : "";
+  _origSub = subEl ? subEl.textContent : "";
+  var hash = location.hash.replace("#", "");
+  if (hash === "manual") {
+    switchTab("manual");
+  } else {
+    switchTab("scan");
+  }
+  window.addEventListener("hashchange", function () {
+    var h = location.hash.replace("#", "");
+    if (h === "manual") switchTab("manual");
+    else switchTab("scan");
+  });
+})();
+
+document.getElementById("tabSwitcher").addEventListener("click", function (e) {
+  var btn = e.target.closest(".tab-btn");
+  if (!btn || btn.classList.contains("is-active")) return;
+  var tab = btn.dataset.tab;
+  if (tab) {
+    location.hash = tab === "scan" ? "" : tab;
+  }
+});
+
+function switchTab(tab) {
+  currentTab = tab;
+  var scanContent = document.getElementById("scanContent");
+  var manualContent = document.getElementById("manualContent");
+  var receiptCard = document.getElementById("receiptCard");
+  var saveZone = document.getElementById("saveZone");
+  var addRowBtn = document.getElementById("addRowBtn");
+  var titleEl = document.querySelector("header h1");
+  var subEl = document.querySelector("header .sub");
+
+  document.querySelectorAll("#tabSwitcher .tab-btn").forEach(function (b) {
+    var isActive = (b.dataset.tab === tab) || (!b.dataset.tab && tab === "rekap");
+    b.classList.toggle("is-active", isActive);
+    b.setAttribute("aria-selected", isActive ? "true" : "false");
+  });
+
+  if (tab === "scan") {
+    scanContent.classList.remove("hidden");
+    manualContent.classList.add("hidden");
+    if (items.length > 0) {
+      receiptCard.classList.remove("hidden");
+      saveZone.classList.remove("hidden");
+      addRowBtn.classList.remove("hidden");
+    }
+    titleEl.textContent = _origTitle;
+    subEl.textContent = _origSub;
+  } else if (tab === "manual") {
+    scanContent.classList.add("hidden");
+    manualContent.classList.remove("hidden");
+    receiptCard.classList.add("hidden");
+    if (manualItems.length > 0) {
+      saveZone.classList.remove("hidden");
+      addRowBtn.classList.add("hidden");
+    } else {
+      saveZone.classList.add("hidden");
+      addRowBtn.classList.add("hidden");
+    }
+    titleEl.textContent = "Input Manual Harga";
+    subEl.textContent = "Isi data belanja secara manual tanpa foto struk — data masuk ke Riwayat Harga yang sama.";
+  }
+}
+
+// ============================================================
+// Manual input items
+// ============================================================
+var _manualId = 0;
+
+function renderManualItems() {
+  var list = document.getElementById("manualItems");
+  list.innerHTML = "";
+  manualItems.forEach(function (item, i) {
+    var row = document.createElement("div");
+    row.className = "manual-item";
+    row.dataset.idx = i;
+    row.innerHTML =
+      '<div class="manual-item-top">' +
+        '<input class="manual-item-name" data-i="' + i + '" data-f="nama" value="' + escapeAttr(item.nama) + '" placeholder="Nama barang" />' +
+        '<button class="manual-item-remove" data-i="' + i + '">hapus</button>' +
+      '</div>' +
+      '<div class="manual-item-fields">' +
+        '<div class="f"><label>Qty</label><input type="number" step="any" data-i="' + i + '" data-f="qty" value="' + item.qty + '" /></div>' +
+        '<div class="f"><label>Satuan</label><input data-i="' + i + '" data-f="satuan" value="' + escapeAttr(item.satuan) + '" placeholder="pcs/kg" /></div>' +
+        '<div class="f"><label>Harga satuan</label><input type="number" step="any" data-i="' + i + '" data-f="harga_satuan" value="' + item.harga_satuan + '" /></div>' +
+      '</div>' +
+      '<div class="manual-item-total">' + formatRp((item.qty || 0) * (item.harga_satuan || 0)) + '</div>';
+    list.appendChild(row);
+  });
+
+  // Update totals
+  var total = 0;
+  var count = manualItems.length;
+  manualItems.forEach(function (it) {
+    total += (Number(it.qty) || 0) * (Number(it.harga_satuan) || 0);
+  });
+  document.getElementById("manualItemCount").textContent = count;
+  document.getElementById("manualGrandTotal").textContent = formatRp(total);
+
+  // Input listeners
+  list.querySelectorAll("input").forEach(function (inp) {
+    inp.addEventListener("input", function (e) {
+      var idx = Number(e.target.dataset.i);
+      var f = e.target.dataset.f;
+      manualItems[idx][f] = (f === "qty" || f === "harga_satuan") ? Number(e.target.value) : e.target.value;
+      var row = e.target.closest(".manual-item");
+      var totalEl = row.querySelector(".manual-item-total");
+      totalEl.textContent = formatRp((manualItems[idx].qty || 0) * (manualItems[idx].harga_satuan || 0));
+      var grandTotal = 0;
+      manualItems.forEach(function (it) {
+        grandTotal += (Number(it.qty) || 0) * (Number(it.harga_satuan) || 0);
+      });
+      document.getElementById("manualGrandTotal").textContent = formatRp(grandTotal);
+    });
+  });
+
+  // Remove listeners
+  list.querySelectorAll(".manual-item-remove").forEach(function (btn) {
+    btn.addEventListener("click", function (e) {
+      var idx = Number(e.target.dataset.i);
+      manualItems.splice(idx, 1);
+      renderManualItems();
+      if (manualItems.length === 0) {
+        document.getElementById("saveZone").classList.add("hidden");
+      }
+    });
+  });
+}
+
+document.getElementById("manualAddBtn").addEventListener("click", function () {
+  manualItems.push({ id: ++_manualId, nama: "", qty: 1, satuan: "", harga_satuan: 0 });
+  renderManualItems();
+  document.getElementById("saveZone").classList.remove("hidden");
+  // Focus the new name field
+  var lastRow = document.querySelector("#manualItems .manual-item:last-child .manual-item-name");
+  if (lastRow) lastRow.focus();
+});
+
+// --- Manual save (reuses exact same endpoint & payload as scan save) ---
+document.getElementById("saveBtn").addEventListener("click", async function () {
+  if (currentTab === "manual") {
+    await saveManualItems();
+  } else {
+    await saveScanItems();
+  }
+});
+
+async function saveManualItems() {
+  var btn = document.getElementById("saveBtn");
+  var status = document.getElementById("saveStatus");
+  var toSave = manualItems.filter(function (it) { return it.nama.trim() !== ""; });
+
+  if (!selectedToko) {
+    status.textContent = "Pilih toko dulu.";
+    status.className = "status err";
+    return;
+  }
+  if (toSave.length === 0) {
+    status.textContent = "Tidak ada baris untuk disimpan.";
+    status.className = "status err";
+    return;
+  }
+
+  btn.disabled = true;
+  btn.innerHTML = '<span class="spinner"></span> Menyimpan…';
+  status.textContent = "";
+
+  try {
+    var res = await fetch(SCRIPT_URL, {
+      method: "POST",
+      headers: { "Content-Type": "text/plain;charset=utf-8" },
+      body: JSON.stringify({ action: "save", toko: selectedToko, items: toSave })
+    });
+    var data = await res.json();
+    if (!data.ok) throw new Error(data.error || "Gagal simpan.");
+    status.textContent = "Tersimpan \u2713 (" + data.saved + " baris ditambahkan ke Riwayat Harga).";
+    status.className = "status ok";
+  } catch (err) {
+    status.textContent = "Gagal: " + err.message;
+    status.className = "status err";
+  } finally {
+    btn.disabled = false;
+    btn.textContent = "Simpan ke Riwayat Harga";
+  }
 }

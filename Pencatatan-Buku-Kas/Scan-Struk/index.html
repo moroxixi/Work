@@ -15,6 +15,11 @@
 <body>
 <div class="wrap">
 <nav class="quicknav" aria-label="Navigasi cepat" data-page="scan" data-depth="1"></nav>
+  <div class="tab-switcher" id="tabSwitcher" role="tablist" aria-label="Mode input">
+    <button class="tab-btn is-active" role="tab" aria-selected="true" data-tab="scan">Scan Struk</button>
+    <button class="tab-btn" role="tab" aria-selected="false" data-tab="manual">Input Manual</button>
+    <a class="tab-btn" role="tab" aria-selected="false" href="Rekap/index.html">Rekap Harga</a>
+  </div>
   <header>
     <p class="eyebrow">Riwayat Harga · Terpisah dari Kas</p>
     <h1>Scan Struk Belanja</h1>
@@ -45,24 +50,39 @@
     <input type="text" class="toko-lain" id="tokoLainInput" placeholder="Nama toko lain" />
   </div>
 
-  <div class="card">
-    <span class="label">Foto struk</span>
-    <div class="photo-zone" id="photoZone">
-      <label class="file-btn" for="fileInput">Pilih Foto Struk</label>
-      <input type="file" id="fileInput" accept="image/*" />
-      <div id="photoPreviewWrap"></div>
+  <!-- ===== Scan content (hidden when manual tab active) ===== -->
+  <div id="scanContent">
+    <div class="card">
+      <span class="label">Foto struk</span>
+      <div class="photo-zone" id="photoZone">
+        <label class="file-btn" for="fileInput">Pilih Foto Struk</label>
+        <input type="file" id="fileInput" accept="image/*" />
+        <div id="photoPreviewWrap"></div>
+      </div>
+      <button class="btn btn-terracotta" id="scanBtn" style="margin-top:14px;" disabled>Scan Struk</button>
+      <div class="status" id="scanStatus" style="color:var(--ink-soft);">Pilih toko &amp; foto struk dulu untuk mengaktifkan tombol.</div>
     </div>
-    <button class="btn btn-terracotta" id="scanBtn" style="margin-top:14px;" disabled>Scan Struk</button>
-    <div class="status" id="scanStatus"></div>
-    <div class="status" id="scanStatus" style="color:var(--ink-soft);">Pilih toko &amp; foto struk dulu untuk mengaktifkan tombol.</div>
+
+    <div class="receipt hidden" id="receiptCard">
+      <div class="receipt-title">Hasil Scan — cek &amp; edit dulu</div>
+      <div id="itemList"></div>
+      <div class="receipt-total">
+        <span>Total (<span id="itemCount">0</span> barang)</span>
+        <span id="grandTotal">Rp 0</span>
+      </div>
+    </div>
   </div>
 
-  <div class="receipt hidden" id="receiptCard">
-    <div class="receipt-title">Hasil Scan — cek &amp; edit dulu</div>
-    <div id="itemList"></div>
-    <div class="receipt-total">
-      <span>Total (<span id="itemCount">0</span> barang)</span>
-      <span id="grandTotal">Rp 0</span>
+  <!-- ===== Manual input content (hidden by default) ===== -->
+  <div id="manualContent" class="hidden">
+    <div class="card">
+      <span class="label">Daftar Barang</span>
+      <div id="manualItems"></div>
+      <button class="btn btn-ghost" id="manualAddBtn">+ Tambah Baris</button>
+    </div>
+    <div class="manual-total">
+      <span>Total (<span id="manualItemCount">0</span> barang)</span>
+      <span id="manualGrandTotal">Rp 0</span>
     </div>
   </div>
 
