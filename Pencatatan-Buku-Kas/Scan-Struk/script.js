@@ -239,12 +239,8 @@ function escapeAttr(s) {
 // Tab switching (Scan Struk | Input Manual | Rekap Harga)
 // ============================================================
 (function initTab() {
-  // nav.js generates a 2-tab subnav (Scan Struk | Rekap Harga) for data-page="scan".
-  // The #tabSwitcher in HTML replaces it with a 3-tab version (Scan Struk | Input Manual | Rekap Harga).
-  // Remove the duplicate subnav to avoid two rows of tabs.
-  var oldSubnav = document.querySelector('.subnav');
-  if (oldSubnav) oldSubnav.remove();
-
+  // nav.js no longer generates subnav for data-page="scan" (scoped skip in nav.js).
+  // The #tabSwitcher in HTML provides 3 tabs (Scan Struk | Input Manual | Rekap Harga).
   var titleEl = document.querySelector("header h1");
   var subEl = document.querySelector("header .sub");
   _origTitle = titleEl ? titleEl.textContent : "";

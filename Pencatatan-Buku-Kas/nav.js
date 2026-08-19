@@ -109,8 +109,11 @@
     });
 
     // ---- Sub-nav alur Scan Struk (hanya di halaman scan/rekap) ----
+    // Skip subnav untuk data-page="scan" — Scan-Struk sudah punya #tabSwitcher sendiri
+    // dengan 3 tab (Scan Struk | Input Manual | Rekap Harga). Tanpa skip ini,
+    // nav.js bikin subnav 2-tab dobel karena race condition (DOMContentLoaded vs initTab).
     var subDef = SUB_NAV[page];
-    if (!subDef) return;
+    if (!subDef || page === 'scan') return;
 
     var sub = document.createElement('div');
     sub.className = 'subnav';
