@@ -1,5 +1,14 @@
 // ============================================================
 // Rekap Harga Barang — browse & cari histori harga.
+//
+// nav.js renders a 2-tab subnav for data-page="rekap", but this page
+// has its own #tabSwitcher with 3 tabs (Scan Struk | Input Manual |
+// Rekap Harga). Hide the nav.js subnav to avoid duplication.
+(function () {
+  var sub = document.querySelector('.subnav');
+  if (sub) sub.style.display = 'none';
+})();
+// ============================================================
 // Data diambil READ-ONLY dari action "list" di scan-struk.gs
 // (backend Apps Script). SCRIPT_URL sama persis dengan halaman
 // Scan-Struk: didefinisikan di config.js, di-load sebelum file ini.
