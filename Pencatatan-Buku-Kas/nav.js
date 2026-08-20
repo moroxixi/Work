@@ -60,6 +60,11 @@
     ]
   };
 
+  // Single source of truth: data-page values that belong to the Scan Struk
+  // section. Controls BOTH active-styling AND disable-click for the "Scan Struk"
+  // main nav item. Add new pages here if the section grows.
+  var SCAN_STRUK_PAGES = { scan: 1, manual: 1, rekap: 1 };
+
   /**
    * Bangun satu item nav.
    * @param {string} className  kelas item (tanpa state aktif)
@@ -89,7 +94,9 @@
 
     // ---- Item utama ----
     MAIN_ITEMS.forEach(function (item) {
-      var isActive = item.key === page;
+      // "Scan Struk" item aktif di SEMUA halaman Scan Struk section
+      // (scan, manual, rekap) — bukan cuma data-page == 'scan'.
+      var isActive = item.key === page || (item.key === 'scan' && SCAN_STRUK_PAGES[page]);
       var href = isActive ? null : prefix + item.href;
       var el = buildItem(
         'quicknav-item quicknav-' + item.key,
