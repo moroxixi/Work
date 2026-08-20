@@ -30,13 +30,14 @@ drawerClose.addEventListener('click', closeDrawer);
 function isBusiness(cat) {
   if (!cat) return false;
   const c = cat.toLowerCase();
-  return c.includes('business') || c.includes('mao');
+  return c.includes('business') || c.includes('mao') || c.includes('moroduit');
 }
 
 function catColor(cat, i) {
   if (!cat) return ['c-blue','c-purple','c-teal','c-rose','c-amber'][i % 5];
   const c = cat.toLowerCase();
   if (c.includes('mao') || c.includes('business')) return 'c-amber';
+  if (c.includes('moroduit')) return 'c-purple';
   if (c.includes('mobile')) return 'c-rose';
   if (c.includes('misc')) return 'c-teal';
   if (c.includes('web')) return ['c-blue','c-purple','c-teal'][i % 3];
@@ -48,6 +49,7 @@ function catIcon(cat, title) {
   if (s.includes('tracker') || s.includes('baby')) return 'ti-baby-carriage';
   if (s.includes('dashboard') || s.includes('chart')) return 'ti-chart-bar';
   if (s.includes('mao') || s.includes('wonton') || s.includes('tempura')) return 'ti-bowl';
+  if (s.includes('moroduit')) return 'ti-wallet';
   if (s.includes('diary') || s.includes('life')) return 'ti-notebook';
   if (s.includes('notes') || s.includes('note')) return 'ti-note';
   if (s.includes('music') || s.includes('murottal')) return 'ti-music';
