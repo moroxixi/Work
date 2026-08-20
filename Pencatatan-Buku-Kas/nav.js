@@ -100,20 +100,16 @@
           '<span class="quicknav-label">' + item.label + '</span>'
       );
 
-      // Halaman Rekap berada di dalam alur Scan Struk: tandai item Scan Struk
-      // sebagai "section aktif" — tampil nonaktif/abu-abu konsisten dengan is-active.
-      if (!isActive && item.key === 'scan' && page === 'rekap') {
-        el.classList.add('is-section');
-      }
       nav.appendChild(el);
     });
 
-    // ---- Sub-nav alur Scan Struk (hanya di halaman scan/rekap) ----
-    // Skip subnav untuk data-page="scan" — Scan-Struk sudah punya #tabSwitcher sendiri
-    // dengan 3 tab (Scan Struk | Input Manual | Rekap Harga). Tanpa skip ini,
-    // nav.js bikin subnav 2-tab dobel karena race condition (DOMContentLoaded vs initTab).
+    // ---- Sub-nav alur Scan Struk (hanya di halaman tanpa #tabSwitcher) ----
+    // Skip subnav kalau halaman sudah punya #tabSwitcher sendiri (mis.
+    // Scan Struk dengan 3 tab: Scan Struk | Input Manual | Rekap Harga).
+    // Ini generik — berlaku untuk scan, rekap, atau halaman lain yang nanti
+    // menambahkan #tabSwitcher tanpa perlu edit nav.js.
     var subDef = SUB_NAV[page];
-    if (!subDef || page === 'scan') return;
+    if (!subDef || document.getElementById('tabSwitcher')) return;
 
     var sub = document.createElement('div');
     sub.className = 'subnav';

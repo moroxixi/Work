@@ -212,6 +212,38 @@ h1{
   padding-top:8px;
 }
 
+/* ===== Tab switcher (Scan Struk | Input Manual | Rekap Harga) ===== */
+.tab-switcher {
+  display: flex;
+  gap: 6px;
+  margin-bottom: 18px;
+}
+.tab-btn {
+  flex: 1;
+  text-align: center;
+  padding: 8px 10px;
+  border-radius: calc(var(--radius-md) - 4px);
+  text-decoration: none;
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  transition: background 0.12s ease, color 0.12s ease;
+}
+.tab-btn:active { transform: scale(0.95); }
+.tab-btn.is-active {
+  background: var(--keluar-soft);
+  color: var(--keluar);
+  cursor: default;
+}
+.tab-btn:focus-visible {
+  outline: 2px solid var(--ink);
+  outline-offset: 2px;
+}
+
 /* ===== Quick nav (sama dengan halaman Scan-Struk) ===== */
 .quicknav {
   display: flex;
