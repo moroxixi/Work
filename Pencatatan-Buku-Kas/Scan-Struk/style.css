@@ -505,3 +505,181 @@ input[type=file]{display:none;}
 @media (prefers-reduced-motion: reduce) {
   .quicknav-item, .subnav-item { transition: none; }
 }
+
+/* ===== Data Harga Tersimpan ===== */
+.saved-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.saved-header .label {
+  margin-bottom: 0;
+}
+.btn-refresh-saved {
+  background: none;
+  border: 1.5px solid var(--line);
+  border-radius: 8px;
+  padding: 6px 8px;
+  cursor: pointer;
+  color: var(--ink-soft);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: color 0.12s, border-color 0.12s;
+}
+.btn-refresh-saved:active {
+  color: var(--terracotta);
+  border-color: var(--terracotta);
+}
+.saved-card {
+  background: var(--cream);
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  padding: 12px;
+  margin-bottom: 8px;
+}
+.saved-card-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 8px;
+}
+.saved-card-nama {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--ink);
+  flex: 1;
+}
+.saved-card-toko {
+  display: inline-block;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--terracotta-dark);
+  background: var(--keluar-soft);
+  border-radius: 12px;
+  padding: 2px 8px;
+  margin-top: 4px;
+}
+.saved-card-fields {
+  display: flex;
+  gap: 12px;
+  margin-top: 6px;
+  font-size: 13px;
+  color: var(--ink-soft);
+}
+.saved-card-fields span {
+  white-space: nowrap;
+}
+.saved-card-bottom {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 8px;
+  padding-top: 8px;
+  border-top: 1px dashed var(--line);
+}
+.saved-card-price {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--terracotta-dark);
+}
+.saved-card-actions {
+  display: flex;
+  gap: 6px;
+}
+.saved-card-actions button {
+  font-size: 12px;
+  font-weight: 600;
+  padding: 4px 10px;
+  border-radius: 6px;
+  border: none;
+  cursor: pointer;
+  font-family: inherit;
+}
+.btn-edit-saved {
+  background: var(--keluar-soft);
+  color: var(--terracotta-dark);
+}
+.btn-hapus-saved {
+  background: #fde8e8;
+  color: var(--bad);
+}
+
+/* ===== Modal overlay ===== */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(43, 36, 32, 0.45);
+  z-index: 1000;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  padding: 0 0 env(safe-area-inset-bottom);
+}
+.modal-overlay[hidden] { display: none; }
+.modal-card {
+  background: var(--paper);
+  border-radius: 16px 16px 0 0;
+  width: 100%;
+  max-width: 460px;
+  padding: 20px 18px 24px;
+  box-shadow: 0 -4px 20px rgba(43, 36, 32, 0.15);
+}
+.modal-title {
+  font-size: 17px;
+  font-weight: 800;
+  margin-bottom: 14px;
+}
+.modal-detail {
+  font-size: 14px;
+  color: var(--ink-soft);
+  margin-bottom: 12px;
+  line-height: 1.5;
+}
+.modal-fields {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.mf label {
+  display: block;
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--ink-soft);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  margin-bottom: 3px;
+}
+.mf input {
+  width: 100%;
+  border: 1.5px solid var(--line);
+  border-radius: 8px;
+  padding: 9px 10px;
+  font-size: 15px;
+  font-family: inherit;
+  background: var(--cream);
+}
+.mf-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr 2fr;
+  gap: 8px;
+}
+.modal-total {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--ink-soft);
+  text-align: right;
+  padding-top: 4px;
+}
+.modal-actions {
+  display: flex;
+  gap: 8px;
+  margin-top: 16px;
+}
+.modal-btn-half {
+  flex: 1;
+  margin-top: 0 !important;
+}
+
+/* ===== Spinner for saved refresh ===== */
+.spin { animation: spin 0.7s linear infinite; }

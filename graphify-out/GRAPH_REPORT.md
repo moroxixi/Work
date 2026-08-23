@@ -1,16 +1,16 @@
-# Graph Report - Work  (2026-08-20)
+# Graph Report - Work  (2026-08-23)
 
 ## Corpus Check
-- 30 files · ~34,459 words
+- 29 files · ~33,555 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
-- 406 nodes · 585 edges · 31 communities (26 shown, 5 thin omitted)
-- Extraction: 98% EXTRACTED · 2% INFERRED · 0% AMBIGUOUS · INFERRED: 10 edges (avg confidence: 0.5)
+- 392 nodes · 582 edges · 30 communities (25 shown, 5 thin omitted)
+- Extraction: 98% EXTRACTED · 2% INFERRED · 0% AMBIGUOUS · INFERRED: 14 edges (avg confidence: 0.5)
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `fd1d5f12`
+- Built from commit: `34cb78f0`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -18,7 +18,6 @@
 - Riwayat/script.js
 - Pencatatan-Buku-Kas/script.js
 - Stok/script.js
-- Laporan Diagnosis — Baris Kosong Berulang di Sheet "INPUT"
 - Rekap/script.js
 - Dashboard/script.js
 - Karyawan-Baru/script.js
@@ -47,14 +46,14 @@
 ## God Nodes (most connected - your core abstractions)
 1. `checkPolaTransaksi()` - 12 edges
 2. `hitungRekomendasiProduk()` - 9 edges
-3. `Laporan Diagnosis — Baris Kosong Berulang di Sheet "INPUT"` - 9 edges
-4. `Investigasi Konsolidasi Notifikasi ntfy — `report.gs.js`` - 9 edges
-5. `mode_cek_z()` - 8 edges
-6. `simpanDataTempura()` - 8 edges
-7. `simpanDataWonton()` - 8 edges
-8. `report_kirimNotif_()` - 8 edges
-9. `handleList_()` - 7 edges
-10. `fetchMonthList()` - 7 edges
+3. `Investigasi Konsolidasi Notifikasi ntfy — `report.gs.js`` - 9 edges
+4. `mode_cek_z()` - 8 edges
+5. `simpanDataTempura()` - 8 edges
+6. `simpanDataWonton()` - 8 edges
+7. `report_kirimNotif_()` - 8 edges
+8. `handleList_()` - 7 edges
+9. `fetchMonthList()` - 7 edges
+10. `formatRp()` - 7 edges
 
 ## Surprising Connections (you probably didn't know these)
 - `fetchList()` --calls--> `renderList()`  [EXTRACTED]
@@ -67,7 +66,7 @@
 ## Import Cycles
 - None detected.
 
-## Communities (31 total, 5 thin omitted)
+## Communities (30 total, 5 thin omitted)
 
 ### Community 0 - "Riwayat/script.js"
 Cohesion: 0.04
@@ -80,10 +79,6 @@ Nodes (27): addToQueue(), belanjaDiLainnyaInput, belanjaDiWrap, form, getSelecte
 ### Community 2 - "Stok/script.js"
 Cohesion: 0.08
 Nodes (38): applyRekomendasiToDom(), btnHariIni, btnKemarin, btnRefresh, buatCatatan(), currentDate, datePicker, emptyMsg (+30 more)
-
-### Community 3 - "Laporan Diagnosis — Baris Kosong Berulang di Sheet "INPUT""
-Cohesion: 0.09
-Nodes (22): 1. Ringkasan Masalah, 2. Lokasi Folder Apps Script "buku-kas", 3.1 Form Kas Harian (`script.js`) — validasi ada, tidak bisa submit kosong, 3.2 Antrean pengiriman (queue) — TIDAK ada auto-retry, tidak bisa spam, 3.3 Halaman Riwayat (`Riwayat/script.js`) — polling hanya GET, interval 10 detik, 3.4 Halaman Scan Struk (`Scan-Struk/script.js`) — ⚠️ TEMUAN PENTING, 3.5 `shared-utils.js` — netral, 3. Temuan Kode Client-Side (Work/Pencatatan-Buku-Kas/) (+14 more)
 
 ### Community 4 - "Rekap/script.js"
 Cohesion: 0.14
@@ -118,8 +113,8 @@ Cohesion: 0.29
 Nodes (8): currentViewKey(), goToDate(), goToMonth(), invalidateCache(), monthKeyOf(), pollMarker(), refreshCurrent(), updateDownloadVisibility()
 
 ### Community 12 - "Scan-Struk/script.js"
-Cohesion: 0.23
-Nodes (7): escapeAttr(), formatRp(), items, manualItems, renderItems(), renderManualItems(), updateTotals()
+Cohesion: 0.16
+Nodes (16): escapeAttr(), fetchSavedItems(), formatRp(), items, manualItems, openDeleteSavedModal(), openEditSavedModal(), parseSavedTimestamp() (+8 more)
 
 ### Community 13 - "downloadFileName"
 Cohesion: 0.33
@@ -162,7 +157,7 @@ Cohesion: 0.17
 Nodes (18): build_message(), cfg_get(), checker_key(), compute_fingerprint(), fetch_checker_status(), is_dry_run(), main(), _normalize_problem_detail() (+10 more)
 
 ## Knowledge Gaps
-- **157 isolated node(s):** `all`, `menuBtn`, `drawer`, `overlay`, `drawerClose` (+152 more)
+- **140 isolated node(s):** `all`, `menuBtn`, `drawer`, `overlay`, `drawerClose` (+135 more)
   These have ≤1 connection - possible missing edges or undocumented components.
 - **5 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
 
@@ -170,15 +165,13 @@ Nodes (18): build_message(), cfg_get(), checker_key(), compute_fingerprint(), fe
 _Questions this graph is uniquely positioned to answer:_
 
 - **What connects `all`, `menuBtn`, `drawer` to the rest of the system?**
-  _157 weakly-connected nodes found - possible documentation gaps or missing edges._
+  _140 weakly-connected nodes found - possible documentation gaps or missing edges._
 - **Should `Riwayat/script.js` be split into smaller, more focused modules?**
   _Cohesion score 0.044444444444444446 - nodes in this community are weakly interconnected._
 - **Should `Pencatatan-Buku-Kas/script.js` be split into smaller, more focused modules?**
   _Cohesion score 0.08817204301075268 - nodes in this community are weakly interconnected._
 - **Should `Stok/script.js` be split into smaller, more focused modules?**
   _Cohesion score 0.07692307692307693 - nodes in this community are weakly interconnected._
-- **Should `Laporan Diagnosis — Baris Kosong Berulang di Sheet "INPUT"` be split into smaller, more focused modules?**
-  _Cohesion score 0.08695652173913043 - nodes in this community are weakly interconnected._
 - **Should `Rekap/script.js` be split into smaller, more focused modules?**
   _Cohesion score 0.14210526315789473 - nodes in this community are weakly interconnected._
 - **Should `buku-kas.gs.js` be split into smaller, more focused modules?**

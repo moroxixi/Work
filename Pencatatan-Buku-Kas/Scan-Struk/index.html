@@ -92,6 +92,56 @@
     <div class="status" id="saveStatus"></div>
   </div>
 
+  <!-- ===== Data Harga Tersimpan (visible only on manual tab) ===== -->
+  <div id="savedSection" class="hidden">
+    <div class="card">
+      <div class="saved-header">
+        <span class="label">Data Harga Tersimpan</span>
+        <button class="btn-refresh-saved" id="refreshSavedBtn" title="Muat ulang">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21.5 2v6h-6"/><path d="M21.34 15.57a10 10 0 1 1-.57-8.38L21.5 8"/></svg>
+        </button>
+      </div>
+      <div id="savedStatus" class="status"></div>
+      <div id="savedEmpty" class="status" hidden>Belum ada data tersimpan.</div>
+      <div id="savedList"></div>
+    </div>
+  </div>
+
+  <!-- ===== Edit Modal ===== -->
+  <div id="editModal" class="modal-overlay" hidden>
+    <div class="modal-card">
+      <div class="modal-title">Edit Item Harga</div>
+      <div class="modal-fields">
+        <div class="mf"><label>Toko</label><input id="editToko" type="text" /></div>
+        <div class="mf"><label>Nama Barang</label><input id="editNama" type="text" /></div>
+        <div class="mf-row">
+          <div class="mf"><label>Qty</label><input id="editQty" type="number" step="any" /></div>
+          <div class="mf"><label>Satuan</label><input id="editSatuan" type="text" /></div>
+          <div class="mf"><label>Harga Satuan</label><input id="editHarga" type="number" step="any" /></div>
+        </div>
+        <div class="modal-total">Total: <span id="editTotalPreview">Rp 0</span></div>
+      </div>
+      <div id="editStatus" class="status"></div>
+      <div class="modal-actions">
+        <button class="btn btn-ghost modal-btn-half" id="btnBatalEdit">Batal</button>
+        <button class="btn btn-terracotta modal-btn-half" id="btnSimpanEdit">Simpan</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== Delete Confirm Modal ===== -->
+  <div id="deleteModal" class="modal-overlay" hidden>
+    <div class="modal-card">
+      <div class="modal-title">Hapus Item?</div>
+      <div id="deleteDetail" class="modal-detail"></div>
+      <div id="deleteStatus" class="status"></div>
+      <div class="modal-actions">
+        <button class="btn btn-ghost modal-btn-half" id="btnBatalHapus">Batal</button>
+        <button class="btn btn-terracotta modal-btn-half" id="btnKonfirmHapus" style="background:var(--bad);">Hapus</button>
+      </div>
+    </div>
+  </div>
+
 </div>
 <div id="page-loader" role="progressbar" aria-hidden="true"></div>
 <script src="../nav.js"></script>

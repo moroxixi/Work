@@ -51,6 +51,16 @@ function doPost(e) {
       return jsonResponse_({ ok: true, items: listItems_() });
     }
 
+    if (action === "edit") {
+      const result = handleEditItem_(body);
+      return jsonResponse_(result);
+    }
+
+    if (action === "delete") {
+      const result = handleDeleteItem_(body);
+      return jsonResponse_(result);
+    }
+
     return jsonResponse_({ ok: false, error: "Action tidak dikenali: " + action });
 
   } catch (err) {
@@ -273,8 +283,9 @@ function listItems_() {
   // Harga Satuan (Rp), Harga Total (Rp) — sama dengan header yang ditulis saveItems_.
   const data = sheet.getRange(2, 1, lastRow - 1, 7).getValues();
   const items = [];
-  data.forEach(function (row) {
+  data.forEach(function (row, idx) {
     items.push({
+      row: idx + 2,                     // nomor baris asli di sheet (header = baris 1)
       timestamp: String(row[0] || ""),   // kolom A
       toko: String(row[1] || ""),        // kolom B
       nama: String(row[2] || ""),        // kolom C
@@ -285,4 +296,50 @@ function listItems_() {
     });
   });
   return items;
+}
+
+/**
+ * Edit satu baris item harga berdasarkan nomor baris di sheet.
+ * Field yang bisa diubah: toko, nama, qty, satuan, harga_satuan.
+ * harga_total dihitung ulang otomatis (qty * harga_satuan).
+ * Timestamp asli dipertahankan (tidak diubah saat edit).
+ */
+function handleEditItem_(data) {
+  const row = Number(data.row);
+  if (!row || row < 2) return { ok: false, error: "Nomor baris tidak valid." };
+
+  const ss = SpreadsheetApp.getActiveSpreadsheet();
+  const sheet = ss.getSheetByName(SHEET_NAME);
+  if (!sheet) return { ok: false, error: "Sheet tidak ditemukan." };
+
+  if (row > sheet.getLastRow()) return { ok: false, error: "Baris tidak ditemukan." };
+
+  const qty = Number(data.qty) || 0;
+  const harga = Number(data.harga_satuan) || 0;
+
+  sheet.getRange(row, 2).setValue((data.toko || "").toString().trim());       // B: Toko
+  sheet.getRange(row, 3).setValue((data.nama || "").toString().trim());       // C: Nama Barang
+  sheet.getRange(row, 4).setValue(qty);                                        // D: Qty
+  sheet.getRange(row, 5).setValue((data.satuan || "").toString().trim());     // E: Satuan
+  sheet.getRange(row, 6).setValue(harga);                                      // F: Harga Satuan
+  sheet.getRange(row, 7).setValue(qty * harga);                               // G: Harga Total
+
+  return { ok: true };
+}
+
+/**
+ * Hapus satu baris item harga berdasarkan nomor baris di sheet.
+ */
+function handleDeleteItem_(data) {
+  const row = Number(data.row);
+  if (!row || row < 2) return { ok: false, error: "Nomor baris tidak valid." };
+
+  const ss = SpreadsheetApp.getActiveSpreadsheet();
+  const sheet = ss.getSheetByName(SHEET_NAME);
+  if (!sheet) return { ok: false, error: "Sheet tidak ditemukan." };
+
+  if (row > sheet.getLastRow()) return { ok: false, error: "Baris tidak ditemukan." };
+
+  sheet.deleteRow(row);
+  return { ok: true };
 }

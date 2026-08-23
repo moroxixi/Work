@@ -286,6 +286,7 @@ function switchTab(tab) {
   if (tab === "scan") {
     scanContent.classList.remove("hidden");
     manualContent.classList.add("hidden");
+    document.getElementById("savedSection").classList.add("hidden");
     if (items.length > 0) {
       receiptCard.classList.remove("hidden");
       saveZone.classList.remove("hidden");
@@ -304,6 +305,9 @@ function switchTab(tab) {
       saveZone.classList.add("hidden");
       addRowBtn.classList.add("hidden");
     }
+    // Show saved section & fetch data
+    document.getElementById("savedSection").classList.remove("hidden");
+    fetchSavedItems();
     titleEl.textContent = "Input Manual Harga";
     subEl.textContent = "Isi data belanja secara manual tanpa foto struk — data masuk ke Riwayat Harga yang sama.";
   }
@@ -383,6 +387,247 @@ document.getElementById("manualAddBtn").addEventListener("click", function () {
   if (lastRow) lastRow.focus();
 });
 
+// ============================================================
+// Data Harga Tersimpan (saved items list + edit/delete)
+// ============================================================
+
+let savedItems = []; // all items from backend (with row numbers)
+let pendingEditItem = null;
+let pendingDeleteItem = null;
+let savedModalOpen = false;
+
+async function fetchSavedItems() {
+  var statusEl = document.getElementById("savedStatus");
+  var listEl = document.getElementById("savedList");
+  var emptyEl = document.getElementById("savedEmpty");
+
+  statusEl.textContent = "Memuat...";
+  statusEl.className = "status";
+  statusEl.hidden = false;
+  emptyEl.hidden = true;
+  listEl.innerHTML = "";
+
+  try {
+    var res = await fetch(SCRIPT_URL, {
+      method: "POST",
+      headers: { "Content-Type": "text/plain;charset=utf-8" },
+      body: JSON.stringify({ action: "list" })
+    });
+    var data = await res.json();
+    if (!data.ok) throw new Error(data.error || "Gagal memuat data.");
+
+    savedItems = (data.items || []).filter(function (it) {
+      return String(it.nama || "").trim() !== "";
+    });
+    // Urutkan: terbaru dulu (berdasarkan timestamp)
+    savedItems.sort(function (a, b) {
+      return parseSavedTimestamp(b.timestamp) - parseSavedTimestamp(a.timestamp);
+    });
+
+    statusEl.hidden = true;
+    renderSavedItems();
+  } catch (err) {
+    statusEl.textContent = "Gagal: " + err.message;
+    statusEl.className = "status err";
+    statusEl.hidden = false;
+  }
+}
+
+function parseSavedTimestamp(s) {
+  if (!s) return new Date(0);
+  var m = /^(\d{2})\/(\d{2})\/(\d{4})\s+(\d{2}):(\d{2}):(\d{2})$/.exec(String(s));
+  if (m) return new Date(+m[3], +m[2] - 1, +m[1], +m[4], +m[5], +m[6]);
+  var d = new Date(String(s));
+  return isNaN(d.getTime()) ? new Date(0) : d;
+}
+
+function renderSavedItems() {
+  var listEl = document.getElementById("savedList");
+  var emptyEl = document.getElementById("savedEmpty");
+  listEl.innerHTML = "";
+
+  if (savedItems.length === 0) {
+    emptyEl.textContent = "Belum ada data tersimpan.";
+    emptyEl.hidden = false;
+    return;
+  }
+  emptyEl.hidden = true;
+
+  savedItems.forEach(function (item) {
+    var satuan = String(item.satuan || "").trim();
+    var hargaSatuan = Number(item.harga_satuan) || 0;
+    var hargaTotal = Number(item.harga_total) || 0;
+    var jamStr = (item.timestamp || "").substring(11, 19); // HH:mm:ss
+
+    var card = document.createElement("div");
+    card.className = "saved-card";
+    card.innerHTML =
+      '<div class="saved-card-top">' +
+        '<span class="saved-card-nama">' + escapeHtml(item.nama) + '</span>' +
+      '</div>' +
+      '<span class="saved-card-toko">' + escapeHtml(item.toko) + '</span>' +
+      '<div class="saved-card-fields">' +
+        '<span>' + (item.qty || 0) + ' ' + escapeHtml(satuan || 'unit') + '</span>' +
+        '<span>' + formatRp(hargaSatuan) + '/' + escapeHtml(satuan || 'unit') + '</span>' +
+      '</div>' +
+      '<div class="saved-card-bottom">' +
+        '<span class="saved-card-price">' + formatRp(hargaTotal) + '</span>' +
+        '<div class="saved-card-actions">' +
+          '<button class="btn-edit-saved" data-row="' + item.row + '">Edit</button>' +
+          '<button class="btn-hapus-saved" data-row="' + item.row + '">Hapus</button>' +
+        '</div>' +
+      '</div>' +
+      '<div style="font-size:11px;color:var(--ink-soft);margin-top:4px;">' + escapeHtml(item.timestamp) + '</div>';
+
+    card.querySelector(".btn-edit-saved").addEventListener("click", function () {
+      openEditSavedModal(item);
+    });
+    card.querySelector(".btn-hapus-saved").addEventListener("click", function () {
+      openDeleteSavedModal(item);
+    });
+
+    listEl.appendChild(card);
+  });
+}
+
+// --- Edit modal for saved items ---
+function openEditSavedModal(item) {
+  pendingEditItem = item;
+  savedModalOpen = true;
+
+  document.getElementById("editToko").value = item.toko || "";
+  document.getElementById("editNama").value = item.nama || "";
+  document.getElementById("editQty").value = item.qty || 0;
+  document.getElementById("editSatuan").value = item.satuan || "";
+  document.getElementById("editHarga").value = item.harga_satuan || 0;
+  updateEditTotalPreview();
+
+  document.getElementById("editStatus").textContent = "";
+  document.getElementById("editStatus").className = "status";
+  document.getElementById("editModal").hidden = false;
+}
+
+function closeEditSavedModal() {
+  document.getElementById("editModal").hidden = true;
+  savedModalOpen = false;
+  pendingEditItem = null;
+}
+
+function updateEditTotalPreview() {
+  var qty = Number(document.getElementById("editQty").value) || 0;
+  var harga = Number(document.getElementById("editHarga").value) || 0;
+  document.getElementById("editTotalPreview").textContent = formatRp(qty * harga);
+}
+
+document.getElementById("editQty").addEventListener("input", updateEditTotalPreview);
+document.getElementById("editHarga").addEventListener("input", updateEditTotalPreview);
+document.getElementById("btnBatalEdit").addEventListener("click", closeEditSavedModal);
+
+document.getElementById("btnSimpanEdit").addEventListener("click", async function () {
+  if (!pendingEditItem) return;
+
+  var btn = document.getElementById("btnSimpanEdit");
+  var statusEl = document.getElementById("editStatus");
+  var nama = document.getElementById("editNama").value.trim();
+  var qty = Number(document.getElementById("editQty").value) || 0;
+  var harga = Number(document.getElementById("editHarga").value) || 0;
+
+  if (!nama) {
+    statusEl.textContent = "Nama barang wajib diisi.";
+    statusEl.className = "status err";
+    return;
+  }
+  if (qty <= 0 || harga <= 0) {
+    statusEl.textContent = "Qty dan harga satuan harus lebih dari 0.";
+    statusEl.className = "status err";
+    return;
+  }
+
+  btn.disabled = true;
+  statusEl.textContent = "Menyimpan...";
+  statusEl.className = "status";
+
+  try {
+    var res = await fetch(SCRIPT_URL, {
+      method: "POST",
+      headers: { "Content-Type": "text/plain;charset=utf-8" },
+      body: JSON.stringify({
+        action: "edit",
+        row: pendingEditItem.row,
+        toko: document.getElementById("editToko").value.trim(),
+        nama: nama,
+        qty: qty,
+        satuan: document.getElementById("editSatuan").value.trim(),
+        harga_satuan: harga
+      })
+    });
+    var data = await res.json();
+    if (!data.ok) throw new Error(data.error || "Gagal menyimpan.");
+
+    closeEditSavedModal();
+    await fetchSavedItems();
+  } catch (err) {
+    statusEl.textContent = err.message;
+    statusEl.className = "status err";
+  } finally {
+    btn.disabled = false;
+  }
+});
+
+// --- Delete modal for saved items ---
+function openDeleteSavedModal(item) {
+  pendingDeleteItem = item;
+  savedModalOpen = true;
+
+  var detail = (item.toko ? item.toko + " · " : "") + item.nama + " — " + formatRp(item.harga_total);
+  document.getElementById("deleteDetail").textContent = detail;
+  document.getElementById("deleteStatus").textContent = "";
+  document.getElementById("deleteStatus").className = "status";
+  document.getElementById("deleteModal").hidden = false;
+}
+
+function closeDeleteSavedModal() {
+  document.getElementById("deleteModal").hidden = true;
+  savedModalOpen = false;
+  pendingDeleteItem = null;
+}
+
+document.getElementById("btnBatalHapus").addEventListener("click", closeDeleteSavedModal);
+
+document.getElementById("btnKonfirmHapus").addEventListener("click", async function () {
+  if (!pendingDeleteItem) return;
+
+  var btn = document.getElementById("btnKonfirmHapus");
+  var statusEl = document.getElementById("deleteStatus");
+
+  btn.disabled = true;
+  statusEl.textContent = "Menghapus...";
+  statusEl.className = "status";
+
+  try {
+    var res = await fetch(SCRIPT_URL, {
+      method: "POST",
+      headers: { "Content-Type": "text/plain;charset=utf-8" },
+      body: JSON.stringify({
+        action: "delete",
+        row: pendingDeleteItem.row
+      })
+    });
+    var data = await res.json();
+    if (!data.ok) throw new Error(data.error || "Gagal menghapus.");
+
+    closeDeleteSavedModal();
+    await fetchSavedItems();
+  } catch (err) {
+    statusEl.textContent = err.message;
+    statusEl.className = "status err";
+  } finally {
+    btn.disabled = false;
+  }
+});
+
+document.getElementById("refreshSavedBtn").addEventListener("click", fetchSavedItems);
+
 // --- Manual save (reuses exact same endpoint & payload as scan save) ---
 document.getElementById("saveBtn").addEventListener("click", async function () {
   if (currentTab === "manual") {
@@ -422,6 +667,10 @@ async function saveManualItems() {
     if (!data.ok) throw new Error(data.error || "Gagal simpan.");
     status.textContent = "Tersimpan \u2713 (" + data.saved + " baris ditambahkan ke Riwayat Harga).";
     status.className = "status ok";
+    // Refresh saved list kalau visible
+    if (!document.getElementById("savedSection").classList.contains("hidden")) {
+      fetchSavedItems();
+    }
   } catch (err) {
     status.textContent = "Gagal: " + err.message;
     status.className = "status err";

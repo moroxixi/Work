@@ -15,8 +15,8 @@
     "semantic_hash": ""
   },
   "Pencatatan-Buku-Kas/Scan-Struk/script.js": {
-    "mtime": 1787160557.9331334,
-    "ast_hash": "129d60136108331097b6cb97c5e577bf",
+    "mtime": 1787487887.1770954,
+    "ast_hash": "f33d1289f7fb694788634fb1679d95c0",
     "semantic_hash": ""
   },
   "Pencatatan-Buku-Kas/Stok/script.js": {
@@ -55,8 +55,8 @@
     "semantic_hash": ""
   },
   "Pencatatan-Buku-Kas/Scan-Struk/index.html": {
-    "mtime": 1787066312.7678409,
-    "ast_hash": "3664068df1cf39d79deb55d2ce40d992",
+    "mtime": 1787487780.6870914,
+    "ast_hash": "ee8d884e1cc62676c7d390b799965081",
     "semantic_hash": ""
   },
   "Pencatatan-Buku-Kas/Stok/index.html": {
@@ -112,11 +112,6 @@
   "Wonton/Config/config.js": {
     "mtime": 1786551581.0542004,
     "ast_hash": "4413a76f31f07c346a390061c923b119",
-    "semantic_hash": ""
-  },
-  "Pencatatan-Buku-Kas/report-claude.md": {
-    "mtime": 1785863045.7702389,
-    "ast_hash": "d72f1e186d382d159fadffc1b1242457",
     "semantic_hash": ""
   },
   "Pencatatan-Buku-Kas/Scan-Struk/Rekap/script.js": {
