@@ -636,8 +636,7 @@ document.getElementById("btnSimpanEdit").addEventListener("click", async functio
       method: "POST",
       headers: { "Content-Type": "text/plain;charset=utf-8" },
       body: JSON.stringify({
-        action: "edit",
-        row: pendingEditItem.row,
+        action: "editManual",
         toko: document.getElementById("editToko").value.trim(),
         nama: nama,
         qty: qty,

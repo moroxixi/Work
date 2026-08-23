@@ -56,6 +56,11 @@ function doPost(e) {
       return jsonResponse_(result);
     }
 
+    if (action === "editManual") {
+      const result = handleEditManualAppend_(body);
+      return jsonResponse_(result);
+    }
+
     if (action === "delete") {
       const result = handleDeleteItem_(body);
       return jsonResponse_(result);
@@ -323,6 +328,32 @@ function handleEditItem_(data) {
   sheet.getRange(row, 5).setValue((data.satuan || "").toString().trim());     // E: Satuan
   sheet.getRange(row, 6).setValue(harga);                                      // F: Harga Satuan
   sheet.getRange(row, 7).setValue(qty * harga);                               // G: Harga Total
+
+  return { ok: true };
+}
+
+/**
+ * Edit manual (Data Harga Tersimpan) — APPEND baris baru dengan timestamp baru,
+ * MENIRU pola saveItems_(). Baris lama TIDAK dihapus (scan-flow dedupe
+ * by timestamp di Rekap otomatis menampilkan versi terbaru di atas).
+ * Skema kolom PERSIS SAMA: [Timestamp, Toko, Nama Barang, Qty, Satuan,
+ * Harga Satuan, Harga Total].
+ */
+function handleEditManualAppend_(data) {
+  const ss = SpreadsheetApp.getActiveSpreadsheet();
+  let sheet = ss.getSheetByName(SHEET_NAME);
+  if (!sheet) return { ok: false, error: "Sheet tidak ditemukan." };
+
+  const toko = (data.toko || "").toString().trim();
+  const nama = (data.nama || "").toString().trim();
+  const qty = Number(data.qty) || 0;
+  const satuan = (data.satuan || "").toString().trim();
+  const harga = Number(data.harga_satuan) || 0;
+
+  if (!nama) return { ok: false, error: "Nama barang wajib diisi." };
+
+  const timestamp = formatTimestampWIB_(new Date());
+  sheet.appendRow([timestamp, toko, nama, qty, satuan, harga, qty * harga]);
 
   return { ok: true };
 }
