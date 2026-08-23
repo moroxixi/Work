@@ -102,6 +102,19 @@
         </button>
       </div>
       <div id="savedStatus" class="status"></div>
+      <div class="saved-filter-row">
+        <div class="saved-filter-field">
+          <label for="savedSearchInput">Cari nama barang</label>
+          <input type="search" id="savedSearchInput" placeholder="mis. minyak, telor, cabai…" autocomplete="off" />
+        </div>
+        <div class="saved-filter-field">
+          <label for="savedTokoSelect">Toko</label>
+          <select id="savedTokoSelect">
+            <option value="__semua__">Semua Toko</option>
+          </select>
+        </div>
+      </div>
+      <div id="savedSummary" class="saved-summary" role="status"></div>
       <div id="savedEmpty" class="status" hidden>Belum ada data tersimpan.</div>
       <div id="savedList"></div>
     </div>

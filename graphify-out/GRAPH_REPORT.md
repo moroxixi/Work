@@ -1,16 +1,16 @@
 # Graph Report - Work  (2026-08-23)
 
 ## Corpus Check
-- 29 files · ~33,555 words
+- 29 files · ~34,284 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
-- 392 nodes · 582 edges · 30 communities (25 shown, 5 thin omitted)
+- 397 nodes · 591 edges · 30 communities (25 shown, 5 thin omitted)
 - Extraction: 98% EXTRACTED · 2% INFERRED · 0% AMBIGUOUS · INFERRED: 14 edges (avg confidence: 0.5)
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `34cb78f0`
+- Built from commit: `6b25e72b`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -113,8 +113,8 @@ Cohesion: 0.29
 Nodes (8): currentViewKey(), goToDate(), goToMonth(), invalidateCache(), monthKeyOf(), pollMarker(), refreshCurrent(), updateDownloadVisibility()
 
 ### Community 12 - "Scan-Struk/script.js"
-Cohesion: 0.16
-Nodes (16): escapeAttr(), fetchSavedItems(), formatRp(), items, manualItems, openDeleteSavedModal(), openEditSavedModal(), parseSavedTimestamp() (+8 more)
+Cohesion: 0.13
+Nodes (21): applySavedFilters(), buildSavedTokoColors(), escapeAttr(), fetchSavedItems(), formatRp(), items, manualItems, openDeleteSavedModal() (+13 more)
 
 ### Community 13 - "downloadFileName"
 Cohesion: 0.33
@@ -157,7 +157,7 @@ Cohesion: 0.17
 Nodes (18): build_message(), cfg_get(), checker_key(), compute_fingerprint(), fetch_checker_status(), is_dry_run(), main(), _normalize_problem_detail() (+10 more)
 
 ## Knowledge Gaps
-- **140 isolated node(s):** `all`, `menuBtn`, `drawer`, `overlay`, `drawerClose` (+135 more)
+- **141 isolated node(s):** `all`, `menuBtn`, `drawer`, `overlay`, `drawerClose` (+136 more)
   These have ≤1 connection - possible missing edges or undocumented components.
 - **5 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
 
@@ -165,7 +165,7 @@ Nodes (18): build_message(), cfg_get(), checker_key(), compute_fingerprint(), fe
 _Questions this graph is uniquely positioned to answer:_
 
 - **What connects `all`, `menuBtn`, `drawer` to the rest of the system?**
-  _140 weakly-connected nodes found - possible documentation gaps or missing edges._
+  _141 weakly-connected nodes found - possible documentation gaps or missing edges._
 - **Should `Riwayat/script.js` be split into smaller, more focused modules?**
   _Cohesion score 0.044444444444444446 - nodes in this community are weakly interconnected._
 - **Should `Pencatatan-Buku-Kas/script.js` be split into smaller, more focused modules?**
@@ -174,5 +174,7 @@ _Questions this graph is uniquely positioned to answer:_
   _Cohesion score 0.07692307692307693 - nodes in this community are weakly interconnected._
 - **Should `Rekap/script.js` be split into smaller, more focused modules?**
   _Cohesion score 0.14210526315789473 - nodes in this community are weakly interconnected._
+- **Should `Scan-Struk/script.js` be split into smaller, more focused modules?**
+  _Cohesion score 0.13105413105413105 - nodes in this community are weakly interconnected._
 - **Should `buku-kas.gs.js` be split into smaller, more focused modules?**
   _Cohesion score 0.13333333333333333 - nodes in this community are weakly interconnected._

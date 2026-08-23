@@ -392,6 +392,9 @@ document.getElementById("manualAddBtn").addEventListener("click", function () {
 // ============================================================
 
 let savedItems = []; // all items from backend (with row numbers)
+let savedTokoFilter = "__semua__";
+let savedSearchQuery = "";
+let savedTokoColors = {}; // "nama toko" -> { bg, fg }
 let pendingEditItem = null;
 let pendingDeleteItem = null;
 let savedModalOpen = false;
@@ -425,6 +428,8 @@ async function fetchSavedItems() {
     });
 
     statusEl.hidden = true;
+    buildSavedTokoColors();
+    populateSavedTokoSelect();
     renderSavedItems();
   } catch (err) {
     statusEl.textContent = "Gagal: " + err.message;
@@ -441,23 +446,102 @@ function parseSavedTimestamp(s) {
   return isNaN(d.getTime()) ? new Date(0) : d;
 }
 
+// ===== Toko color assignment (re-implemented from Rekap pattern) =====
+function buildSavedTokoColors() {
+  var tokoSet = new Set();
+  savedItems.forEach(function (it) {
+    var t = String(it.toko || "").trim();
+    if (t) tokoSet.add(t);
+  });
+  var tokoList = Array.from(tokoSet).sort(function (a, b) { return a.localeCompare(b, "id"); });
+
+  savedTokoColors = {};
+  var n = tokoList.length;
+  tokoList.forEach(function (name, i) {
+    var hue = Math.round((360 / n) * i) % 360;
+    var bg = "hsl(" + hue + ", 65%, 42%)";
+    savedTokoColors[name] = { bg: bg, fg: textColorForSavedBg(bg) };
+  });
+}
+
+function textColorForSavedBg(bg) {
+  var m = /hsl\([^)]*,\s*[^)]*,\s*([\d.]+)%\)/.exec(bg);
+  var lightness = m ? Number(m[1]) : 42;
+  return lightness > 55 ? "#2B2420" : "#FFFFFF";
+}
+
+function populateSavedTokoSelect() {
+  var tokoSet = new Set();
+  savedItems.forEach(function (it) {
+    var t = String(it.toko || "").trim();
+    if (t) tokoSet.add(t);
+  });
+  var tokoList = Array.from(tokoSet).sort(function (a, b) { return a.localeCompare(b, "id"); });
+
+  var prev = savedTokoFilter;
+  var sel = document.getElementById("savedTokoSelect");
+  sel.innerHTML = "";
+
+  var optSemua = document.createElement("option");
+  optSemua.value = "__semua__";
+  optSemua.textContent = "Semua Toko (" + tokoList.length + ")";
+  sel.appendChild(optSemua);
+
+  tokoList.forEach(function (t) {
+    var opt = document.createElement("option");
+    opt.value = t;
+    opt.textContent = t;
+    sel.appendChild(opt);
+  });
+
+  savedTokoFilter = tokoList.indexOf(prev) !== -1 ? prev : "__semua__";
+  sel.value = savedTokoFilter;
+}
+
+function applySavedFilters() {
+  var q = savedSearchQuery.toLowerCase();
+  return savedItems.filter(function (it) {
+    if (savedTokoFilter !== "__semua__" && String(it.toko || "") !== savedTokoFilter) return false;
+    if (q && String(it.nama || "").toLowerCase().indexOf(q) === -1) return false;
+    return true;
+  });
+}
+
 function renderSavedItems() {
   var listEl = document.getElementById("savedList");
   var emptyEl = document.getElementById("savedEmpty");
+  var summaryEl = document.getElementById("savedSummary");
   listEl.innerHTML = "";
+
+  var filtered = applySavedFilters();
 
   if (savedItems.length === 0) {
     emptyEl.textContent = "Belum ada data tersimpan.";
     emptyEl.hidden = false;
+    summaryEl.textContent = "";
     return;
   }
   emptyEl.hidden = true;
 
-  savedItems.forEach(function (item) {
+  summaryEl.textContent = filtered.length + " catatan" +
+    (savedTokoFilter !== "__semua__" ? " \u00b7 " + savedTokoFilter : "") +
+    (savedSearchQuery ? " \u00b7 cari \"" + savedSearchQuery + "\"" : "");
+
+  if (filtered.length === 0) {
+    emptyEl.textContent = "Tidak ada barang yang cocok dengan filter.";
+    emptyEl.hidden = false;
+    return;
+  }
+
+  filtered.forEach(function (item) {
     var satuan = String(item.satuan || "").trim();
     var hargaSatuan = Number(item.harga_satuan) || 0;
     var hargaTotal = Number(item.harga_total) || 0;
-    var jamStr = (item.timestamp || "").substring(11, 19); // HH:mm:ss
+
+    var t = String(item.toko || "").trim();
+    var pillStyle = (t && savedTokoColors[t])
+      ? "background:" + savedTokoColors[t].bg + ";color:" + savedTokoColors[t].fg
+      : "background:var(--keluar-soft);color:var(--terracotta-dark)";
 
     var card = document.createElement("div");
     card.className = "saved-card";
@@ -465,7 +549,7 @@ function renderSavedItems() {
       '<div class="saved-card-top">' +
         '<span class="saved-card-nama">' + escapeHtml(item.nama) + '</span>' +
       '</div>' +
-      '<span class="saved-card-toko">' + escapeHtml(item.toko) + '</span>' +
+      '<span class="saved-card-toko" style="' + pillStyle + '">' + escapeHtml(item.toko) + '</span>' +
       '<div class="saved-card-fields">' +
         '<span>' + (item.qty || 0) + ' ' + escapeHtml(satuan || 'unit') + '</span>' +
         '<span>' + formatRp(hargaSatuan) + '/' + escapeHtml(satuan || 'unit') + '</span>' +
@@ -627,6 +711,16 @@ document.getElementById("btnKonfirmHapus").addEventListener("click", async funct
 });
 
 document.getElementById("refreshSavedBtn").addEventListener("click", fetchSavedItems);
+
+document.getElementById("savedSearchInput").addEventListener("input", function (e) {
+  savedSearchQuery = e.target.value.trim();
+  renderSavedItems();
+});
+
+document.getElementById("savedTokoSelect").addEventListener("change", function (e) {
+  savedTokoFilter = e.target.value;
+  renderSavedItems();
+});
 
 // --- Manual save (reuses exact same endpoint & payload as scan save) ---
 document.getElementById("saveBtn").addEventListener("click", async function () {
