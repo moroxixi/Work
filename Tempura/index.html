@@ -2,7 +2,7 @@
 <html lang="id">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Setoran Tempura</title>
     <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
     <style>
@@ -14,7 +14,16 @@
         .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
         .form-group { margin-bottom: 10px; }
         label { display: block; font-size: 0.75em; margin-bottom: 3px; font-weight: 600; }
-        input { width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 6px; box-sizing: border-box; font-size: 0.9em; }
+        input { width: 100%; padding: 10px 8px; border: 1px solid #ddd; border-radius: 6px; box-sizing: border-box; font-size: 16px; }
+        @media (max-width: 480px) {
+            body { padding: 6px; }
+            .container { padding: 14px; border-radius: 10px; }
+            h2 { font-size: 1.1em; margin-bottom: 14px; }
+            .section-title { margin: 10px 0 8px; font-size: 0.8em; }
+            .grid { gap: 6px; }
+            input { padding: 12px 10px; min-height: 44px; font-size: 16px; }
+            .btn-calc, .btn-submit, .btn-ss { min-height: 48px; font-size: 15px; }
+        }
 
         /* Gaya Tabel Report */
         #reportModal { display: none; background: white; padding: 20px; border-radius: 10px; border: 2px solid #ddd; margin-top: 20px; }
@@ -30,9 +39,9 @@
         .rincian-row.kurang span:last-child { color: #e74c3c; }
         .rincian-divider { border-top: 1px solid #ddd; margin: 6px 0; }
 
-        .btn-calc { width: 100%; padding: 12px; background: #34495e; color: white; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; margin-top: 10px; }
-        .btn-submit { width: 100%; padding: 15px; background: var(--primary); color: white; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; margin-top: 10px; display: none; }
-        .btn-ss { width: 100%; padding: 12px; background: var(--success); color: white; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; margin-top: 10px; display: none; }
+        .btn-calc { width: 100%; padding: 12px; min-height: 44px; background: #34495e; color: white; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; margin-top: 10px; }
+        .btn-submit { width: 100%; padding: 15px; min-height: 48px; background: var(--primary); color: white; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; margin-top: 10px; display: none; }
+        .btn-ss { width: 100%; padding: 12px; min-height: 44px; background: var(--success); color: white; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; margin-top: 10px; display: none; }
         #status { text-align: center; font-weight: bold; color: var(--primary); margin-top: 10px; }
 		.status-pas { color: #27ae60; font-weight: bold; }
 		.status-kurang { color: #e74c3c; font-weight: bold; }
@@ -282,6 +291,36 @@
             link.click();
         });
     }
+
+    // === Enter key navigation for berangkat/pulang fields ===
+    document.addEventListener('keydown', function(e) {
+        if (e.key !== 'Enter' || e.target.tagName !== 'INPUT') return;
+        var id = e.target.id;
+        // berangkat field: b_${item}
+        if (id.startsWith('b_')) {
+            var item = id.substring(2);
+            var pulangEl = document.getElementById('p_' + item);
+            if (pulangEl) {
+                e.preventDefault();
+                pulangEl.focus();
+            }
+            return;
+        }
+        // pulang field: p_${item}
+        if (id.startsWith('p_')) {
+            e.preventDefault();
+            var item = id.substring(2);
+            var idx = items.indexOf(item);
+            if (idx >= 0 && idx < items.length - 1) {
+                // focus next item's berangkat
+                document.getElementById('b_' + items[idx + 1]).focus();
+            } else {
+                // last item pulang → blur
+                e.target.blur();
+            }
+            return;
+        }
+    });
 </script>
 
 </body>
