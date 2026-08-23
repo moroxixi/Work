@@ -26,15 +26,18 @@
         }
 
         /* Gaya Tabel Report */
+        #captureArea { padding: 16px; }
+        h3 { margin-bottom: 8px; }
+        p#rep_info { margin-bottom: 16px; }
         #reportModal { display: none; background: white; padding: 20px; border-radius: 10px; border: 2px solid #ddd; margin-top: 20px; }
         .report-table { width: 100%; border-collapse: collapse; font-size: 0.85em; margin-bottom: 15px; }
-        .report-table th, .report-table td { border: 1px solid #eee; padding: 8px; text-align: left; }
+        .report-table th, .report-table td { border: 1px solid #eee; padding: 10px 12px; text-align: left; }
         .report-table th { background: #fdf2e9; }
         .total-highlight { font-weight: bold; color: var(--primary); font-size: 1.1em; }
 
         /* Rincian keuangan */
-        .rincian-box { background: #f9f9f9; padding: 10px; border-radius: 5px; font-size: 0.9em; }
-        .rincian-row { display: flex; justify-content: space-between; padding: 3px 0; }
+        .rincian-box { background: #f9f9f9; padding: 14px; border-radius: 5px; font-size: 0.9em; }
+        .rincian-row { display: flex; justify-content: space-between; padding: 6px 0; }
         .rincian-row.tambah span:last-child { color: var(--success); }
         .rincian-row.kurang span:last-child { color: #e74c3c; }
         .rincian-divider { border-top: 1px solid #ddd; margin: 6px 0; }
@@ -95,7 +98,7 @@
 				</thead>
 			<tbody id="reportContent"></tbody>
             </table>
-            <div class="total-highlight" style="margin-bottom:8px;">Omset: <span id="rep_kotor"></span></div>
+            <div class="total-highlight" style="margin-bottom:12px;">Omset: <span id="rep_kotor"></span></div>
 
             <div class="rincian-box">
                 <div class="rincian-row tambah"><span>+ Uang Modal</span><span id="rep_modal"></span></div>
