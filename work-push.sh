@@ -52,8 +52,8 @@ if ! python3 ~/.local/bin/gen-folder-tree.py "$MANIFEST"; then
     exit 6
 fi
 
-# Kalau graphify-out/ ter-track git → stage perubahannya (ikut commit push ini)
-if git ls-files graphify-out | grep -q .; then
+# Kalau graphify-out/ ter-track git (belum di-ignore) → stage perubahannya (ikut commit push ini)
+if ! git check-ignore -q graphify-out; then
     echo "$(date '+%H:%M') [Graphify] graphify-out tracked — git add." >> "$LOG"
     git add graphify-out/
 fi
