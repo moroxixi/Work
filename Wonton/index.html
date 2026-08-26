@@ -23,7 +23,7 @@
             .grid { gap: 6px; }
             input { padding: 12px 10px; min-height: 44px; font-size: 16px; }
             .btn-calc, .btn-submit, .btn-ss { min-height: 48px; font-size: 15px; }
-            .report-table { font-size: 0.75em; table-layout: auto; }
+            .report-table { font-size: 0.75em; }
             .report-table th, .report-table td { padding: 6px 6px; }
             .total-highlight { font-size: 1em; }
             .rincian-box { font-size: 0.8em; padding: 10px; }
@@ -37,6 +37,7 @@
         .report-table { width: 100%; border-collapse: collapse; font-size: 0.85em; margin-bottom: 15px; table-layout: fixed; }
         .report-table th, .report-table td { border: 1px solid #eee; padding: 10px 12px; text-align: left; word-wrap: break-word; overflow-wrap: break-word; }
         .report-table th { background: #eaf2f8; }
+        .report-table th:last-child, .report-table td:last-child { white-space: nowrap; }
         .table-scroll-wrapper { overflow-x: auto; -webkit-overflow-scrolling: touch; margin-bottom: 15px; position: relative; }
         .table-scroll-wrapper::after { content: '';
             position: absolute; top: 0; right: 0; bottom: 0; width: 20px;
@@ -102,6 +103,12 @@
             <p id="rep_info" style="font-size:0.8em; text-align:center;"></p>
             <div class="table-scroll-wrapper" id="tableWrapper">
                 <table class="report-table">
+                    <colgroup>
+                        <col style="width:40%">
+                        <col style="width:13%">
+                        <col style="width:13%">
+                        <col style="width:34%">
+                    </colgroup>
                     <thead>
                         <tr><th>Item</th><th>Sisa</th><th>Laku</th><th>Subtotal</th></tr>
                     </thead>
