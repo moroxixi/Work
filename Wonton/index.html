@@ -23,6 +23,10 @@
             .grid { gap: 6px; }
             input { padding: 12px 10px; min-height: 44px; font-size: 16px; }
             .btn-calc, .btn-submit, .btn-ss { min-height: 48px; font-size: 15px; }
+            .report-table { font-size: 0.75em; table-layout: auto; }
+            .report-table th, .report-table td { padding: 6px 6px; }
+            .total-highlight { font-size: 1em; }
+            .rincian-box { font-size: 0.8em; padding: 10px; }
         }
 
         /* Gaya Tabel Report */
@@ -30,9 +34,15 @@
         h3 { margin-bottom: 8px; }
         p#rep_info { margin-bottom: 16px; }
         #reportModal { display: none; background: white; padding: 20px; border-radius: 10px; border: 2px solid #ddd; margin-top: 20px; }
-        .report-table { width: 100%; border-collapse: collapse; font-size: 0.85em; margin-bottom: 15px; }
-        .report-table th, .report-table td { border: 1px solid #eee; padding: 10px 12px; text-align: left; }
+        .report-table { width: 100%; border-collapse: collapse; font-size: 0.85em; margin-bottom: 15px; table-layout: fixed; }
+        .report-table th, .report-table td { border: 1px solid #eee; padding: 10px 12px; text-align: left; word-wrap: break-word; overflow-wrap: break-word; }
         .report-table th { background: #eaf2f8; }
+        .table-scroll-wrapper { overflow-x: auto; -webkit-overflow-scrolling: touch; margin-bottom: 15px; position: relative; }
+        .table-scroll-wrapper::after { content: '';
+            position: absolute; top: 0; right: 0; bottom: 0; width: 20px;
+            background: linear-gradient(to right, rgba(255,255,255,0), rgba(220,220,220,0.5));
+            pointer-events: none; border-radius: 0 10px 10px 0; display: none; }
+        .table-scroll-wrapper:not(.no-overflow)::after { display: block; }
         .total-highlight { font-weight: bold; color: var(--primary); font-size: 1.1em; }
 
         /* Rincian keuangan (samakan gaya dengan Tempura) */
@@ -90,12 +100,14 @@
         <div id="captureArea">
             <h3 style="text-align:center; color: #2980b9;">LAPORAN WONTON v.3</h3>
             <p id="rep_info" style="font-size:0.8em; text-align:center;"></p>
-            <table class="report-table">
-                <thead>
-                    <tr><th>Item</th><th>Sisa</th><th>Laku</th><th>Subtotal</th></tr>
-                </thead>
-                <tbody id="reportContent"></tbody>
-            </table>
+            <div class="table-scroll-wrapper" id="tableWrapper">
+                <table class="report-table">
+                    <thead>
+                        <tr><th>Item</th><th>Sisa</th><th>Laku</th><th>Subtotal</th></tr>
+                    </thead>
+                    <tbody id="reportContent"></tbody>
+                </table>
+            </div>
             <div class="total-highlight" style="margin-bottom:12px;">Omset: <span id="rep_kotor"></span></div>
 
             <div class="rincian-box">
@@ -205,6 +217,16 @@
         document.getElementById('reportModal').style.display = 'block';
         document.getElementById('btnKirim').style.display = 'block';
         document.getElementById('btnSS').style.display = 'block';
+
+        // Detect table overflow and toggle scroll indicator
+        requestAnimationFrame(() => {
+            const tw = document.getElementById('tableWrapper');
+            if (tw.scrollWidth > tw.clientWidth) {
+                tw.classList.remove('no-overflow');
+            } else {
+                tw.classList.add('no-overflow');
+            }
+        });
 
         // Payload lengkap untuk audit, samakan pola dengan Tempura
         globalPayload = {
