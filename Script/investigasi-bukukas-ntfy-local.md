@@ -1,5 +1,8 @@
 # Investigasi Mekanisme Ntfy — Pencatatan-Buku-Kas/Apps-Script/buku-kas.gs.js
 
+> **⚠️ STATUS: CODE REMOVED (2026-08-29)**
+> Seluruh mekanisme pola transaksi yang didokumentasikan di laporan ini telah **dihapus total** dari `buku-kas.gs.js` (commit setelah e757d9fc). Fungsi `checkPolaTransaksi()`, `checkPolaPagi()`, `checkPolaMalam()`, `pola_kirimNotif_()`, dan semua konstanta POLA_* telah dihapus karena sudah tidak relevan. Laporan ini dipertahankan sebagai **arsip historis** — jangan referensikan untuk pengembangan kode baru.
+
 > **Tanggal investigasi:** 2026-08-29
 > **Scope:** `~/HomeLab/Work/Pencatatan-Buku-Kas/Apps-Script/buku-kas.gs.js`
 > **Metode:** Static analysis (read-only) — tidak ada fungsi ntfy/trigger yang dieksekusi selama investigasi.
