@@ -263,3 +263,230 @@ Setelah penulisan laporan ini, hanya `Script/investigasi-bukukas-ntfy-local.md` 
 - `Pencatatan-Buku-Kas/Apps-Script/buku-kas.gs.js` ✓
 - `Script/notif_total_harian.py` ✓
 - `Script/investigasi-wonton-ntfy-local.md` ✓
+
+---
+
+## Detail Logic Pola Transaksi (follow-up)
+
+> **Tanggal:** 2026-08-29
+> **Metode:** Static analysis — tidak ada fungsi ntfy/trigger yang dieksekusi.
+> **Latar:** Melengkapi laporan di atas dengan penjelasan logic detail di dalam `checkPolaTransaksi()` dan 10 helper functions.
+
+---
+
+### 1. Definisi "Pola" yang Dicek
+
+`checkPolaTransaksi()` menjawab satu pertanyaan: **"Apakah ada transaksi yang biasanya rutin tapi belum tercatat di tanggal tertentu?"**
+
+Ada **3 mekanisme** yang menentukan kapan notifikasi dikirim vs tidak:
+
+#### Mekanisme A — Pola Rutin (Statistical)
+
+```
+IF kombinasi (kategori + belanjaDi) muncul di ≥ 50% hari dalam 14 hari terakhir
+   DAN kombinasi itu TIDAK muncul di tanggalTarget
+→ MASUK daftar reminder (dengan label "muncul X/14 hari terakhir, belum tercatat")
+```
+
+Contoh konkret: "Setoran Cabang Babakan" muncul 8 dari 14 hari terakhir (= 57% ≥ 50%) tapi hari ini belum ada → masuk reminder.
+
+**Penting:** Yang dihitung adalah **hari unik**, bukan jumlah transaksi. Kalau "Belanja|Surya" muncul 3 kali dalam 1 hari tapi tidak muncul di 6 hari lain, tetap hanya dihitung 1 hari unik (= 1/14 = 7% — tidak memenuhi threshold).
+
+#### Mekanisme B — Kategori Wajib (Hardcoded Rule)
+
+```
+UNTUK setiap kategori di POLA_KATEGORI_WAJIB:
+  IF kategori itu TIDAK muncul di tanggalTarget
+     DAN belum masuk reminder dari Mekanisme A
+  → MASUK daftar reminder (dengan label "wajib (aturan tetap)")
+```
+
+Kategori wajib saat ini:
+- `"Tunjangan"`
+- `"Setoran Cabang Babakan"`
+- `"Setoran Cabang Depan RS"`
+
+**Kondisi ini BERBEDA dari Mekanisme A:** tidak peduli histori 14 hari — kategori ini **selalu** dicek, bahkan kalau belum pernah muncul sekalipun di window 14 hari.
+
+#### Mekanisme C — Kombinasi Kategori+Toko Wajib
+
+```
+UNTUK setiap kombinasi di POLA_KOMBINASI_WAJIB:
+  IF kombinasi (kategori + belanjaDi) TIDAK muncul di tanggalTarget
+     DAN belum masuk reminder dari Mekanisme A atau B
+  → MASUK daftar reminder (dengan label "wajib (aturan tetap)")
+```
+
+Kombinasi wajib saat ini:
+- `{ kategori: "Belanja", belanjaDi: "Surya" }` — hanya "Belanja di Surya" yang wajib, kategori "Belanja" di toko lain TIDAK diwajibkan.
+
+#### Keputusan Akhir: Kirim atau Tidak
+
+```
+IF reminders.length === 0:
+  → TIDAK kirim notif (return ok, reminders kosong)
+ELSE:
+  → Build SATU pesan gabungan berisi SEMUA reminder
+  → KIRIM via pola_kirimNotif_(pesan)
+  → Return ok dengan daftar reminders
+```
+
+**Tidak ada filter duplikat lintas mekanisme.** Mekanisme B dan C secara eksplisit cek `sudahDiReminder` sebelum push — jadi satu kategori tidak akan muncul 2x dalam satu notif. Tapi Mekanisme A dan B bisa menghasilkan reminder yang isinya sama secara semantik jika kategori wajib juga memenuhi threshold pola rutin (dalam praktik: ini jarang terjadi karena kategori wajib biasanya memang rutin).
+
+---
+
+### 2. Perbedaan `checkPolaPagi()` vs `checkPolaMalam()`
+
+**Satu-satunya perbedaan: tanggalTarget yang dikirim.**
+
+| Aspek | checkPolaPagi() | checkPolaMalam() |
+|-------|----------------|------------------|
+| **Trigger time** | 07:00 WIB | 21:00 WIB |
+| **tanggalTarget** | **Kemarin (H-1)** | **Hari ini (H)** |
+| **Cara hitung** | `new Date(base.getTime() - 86400000)` — ambil midnight hari ini, kurangi 1 hari | `pola_dateFromDayKey_(pola_dayKey_(new Date()))` — ambil midnight hari ini |
+| **Artinya** | "Apakah transaksi rutin kemarin sudah tercatat?" | "Apakah transaksi rutin hari ini sudah tercatat?" |
+
+**Tidak ada parameter/mode lain yang berbeda.** Keduanya memanggil `checkPolaTransaksi()` dengan `DRY_RUN = default (false)`, `POLA_WINDOW_HARI = 14`, dan `POLA_THRESHOLD = 0.5` yang sama. Logic di dalam `checkPolaTransaksi()` **identik** — hanya input tanggal yang berbeda.
+
+**Mengapa ada 2 trigger?** Karena pagi (07:00) adalah waktu yang tepat untuk mengingatkan transaksi kemarin yang belum tercatat (operator baru mulai kerja), sedangkan malam (21:00) adalah waktu terakhir untuk memastikan transaksi hari ini sudah lengkap sebelum tutup hari.
+
+---
+
+### 3. Sheet dan Kolom yang Dibaca
+
+**Sheet:** `"Input"` (didefinisikan sebagai `const SHEET_NAME = "Input"`)
+
+**Range dibaca:** `sheet.getRange(2, 1, lastRow - 1, 5)` — artinya:
+- Mulai dari **baris 2** (baris 1 = header, dilewati)
+- **5 kolom** pertama (A sampai E)
+
+| Kolom | Index (0-based) | Isi | Dipakai untuk |
+|-------|-----------------|-----|---------------|
+| **A** | 0 | Timestamp (format tidak konsisten) | Parse tanggal → tentukan hari transaksi |
+| **B** | 1 | Keterangan | Tidak dipakai dalam pola |
+| **C** | 2 | Kategori | Digunakan sebagai key pola (kategori + belanjaDi) |
+| **D** | 3 | BelanjaDi (toko/mitra) | Digunakan sebagai key pola |
+| **E** | 4 | Jumlah | Tidak dipakai dalam pola |
+
+**Format timestamp kolom A (3 format didukung oleh `pola_parseTanggal_()`):**
+1. `Date object` — langsung dari cell berformat tanggal di Google Sheets
+2. `"29/07/2026 12:57:11"` — format dd/MM/yyyy HH:mm:ss (jam/menit opsional)
+3. `"Kamis, 16 Juli 2026"` — nama hari opsional + tanggal bulan Indonesia + tahun
+
+Timestamp yang gagal di-parse → baris di-skip (dihitung sebagai `gagalParse` di log, tidak mempengaruhi logic pola).
+
+---
+
+### 4. Peran Masing-Masing Helper Function
+
+| # | Fungsi | Peran dalam Logic Pola |
+|---|--------|----------------------|
+| 1 | `pola_parseTanggal_(value)` | Mengonversi timestamp mentah dari kolom A (3 format berbeda) menjadi Date object — **kunci** untuk menentukan tanggal transaksi. Jika gagal parse → baris di-skip. |
+| 2 | `pola_normalize_(s)` | Menormalisasi string (trim + lowercase) supaya perbandingan kategori/toko case-insensitive — misal "Setoran cabang BABAKAN" == "Setoran Cabang Babakan". |
+| 3 | `pola_dayKey_(date)` | Mengonversi Date → string `"yyyy-MM-dd"` di timezone Asia/Jakarta — jadi **hari kunci** untuk mencocokkan baris ke tanggalTarget atau window 14 hari. |
+| 4 | `pola_dateFromDayKey_(dayKey)` | Kebalikan dari `pola_dayKey_()` — mengonversi `"yyyy-MM-dd"` → Date object (UTC noon) untuk perhitungan window 14 hari. |
+| 5 | `pola_buildPesan_(targetKey, reminders)` | Membangun SATU pesan gabungan multi-baris dari semua reminder — format `"📋 Pola transaksi belum tercatat — YYYY-MM-DD\n1. ..."`. |
+| 6 | `pola_kirimNotif_(pesan)` | Mengirim pesan ke ntfy.sh via POST (topic `buku-kas-checker`). Retry 2x, delay 2s. Error tidak throw. — **satu-satunya titik eksekusi notifikasi** di seluruh file ini. |
+
+**Catatan:** 4 fungsi sisanya dari 10 yang disebut di bagian 3.2 laporan sebelumnya adalah **konstanta** (`POLA_KATEGORI_WAJIB`, `POLA_KOMBINASI_WAJIB`, `POLA_WINDOW_HARI`, `POLA_THRESHOLD`) — bukan fungsi, tapi parameter yang mengontrol threshold dan aturan wajib.
+
+---
+
+### 5. Contoh Skenario Hipotetis
+
+#### Skenario 1: Pola rutin terdeteksi → NOTIFIKASI DIKIRIM
+
+**Setup hari Kamis, 28 Agustus 2026 (`targetKey = "2026-08-28"`):**
+
+| Tanggal | Kategori | BelanjaDi | Catatan |
+|---------|----------|-----------|--------|
+| 2026-08-27 | Setoran Cabang Babakan | | Muncul |
+| 2026-08-26 | Setoran Cabang Babakan | | Muncul |
+| 2026-08-25 | Setoran Cabang Babakan | | Muncul |
+| 2026-08-24 | Setoran Cabang Babakan | | Muncul |
+| 2026-08-23 | Setoran Cabang Babakan | | Muncul |
+| 2026-08-22 | Setoran Cabang Babakan | | Muncul |
+| 2026-08-21 | Setoran Cabang Babakan | | Muncul |
+| 2026-08-20 | Setoran Cabang Babakan | | Muncul |
+| **2026-08-28** | *(tidak ada Setoran Babakan)* | | **TIDAK tercatat di target** |
+
+**Logic:**
+- `Setoran Cabang Babakan` muncul 8 hari unik dari 14 → `8/14 = 57% ≥ 50%` → **pola rutin**
+- `munculTarget["setoran cabang babakan|"] = false` → belum tercatat
+- → **MASUK reminder** (Mekanisme A)
+- Selain itu, `Setoran Cabang Babakan` juga ada di `POLA_KATEGORI_WAJIB` — tapi sudah masuk via Mekanisme A, jadi Mekanisme B skip (sudahDiReminder = true)
+
+**Hasil:** Notifikasi terkirim dengan isi:
+```
+📋 Pola transaksi belum tercatat — 2026-08-28
+1. Setoran Cabang Babakan — muncul 8/14 hari terakhir, belum tercatat
+```
+
+---
+
+#### Skenario 2: Semua pola sudah tercatat → TIDAK ADA NOTIFIKASI
+
+**Setup hari Jumat, 29 Agustus 2026 (`targetKey = "2026-08-29"`):**
+
+| Tanggal | Kategori | BelanjaDi |
+|---------|----------|----------|
+| 2026-08-28 | Tunjangan | | Muncul |
+| 2026-08-27 | Setoran Cabang Babakan | | Muncul |
+| 2026-08-26 | Setoran Cabang Depan RS | | Muncul |
+| ... (window 14 hari) | ... | | Total 8 hari unik per kategori |
+| **2026-08-29** | Tunjangan | | **TERCATAT** |
+| **2026-08-29** | Setoran Cabang Babakan | | **TERCATAT** |
+| **2026-08-29** | Setoran Cabang Depan RS | | **TERCATAT** |
+| **2026-08-29** | Belanja | Surya | **TERCATAT** |
+
+**Logic:**
+- `Tunjangan`: 8/14 ≥ 50% → pola rutin, tapi `munculTarget` = true → **TIDAK masuk reminder**
+- `Setoran Cabang Babakan`: 8/14 ≥ 50% → pola rutin, tapi `munculTarget` = true → **TIDAK masuk reminder**
+- `Setoran Cabang Depan RS`: 8/14 ≥ 50% → pola rutin, tapi `munculTarget` = true → **TIDAK masuk reminder**
+- Mekanisme B (kategori wajib): semua sudah `wajibMunculTarget` = true → **skip semua**
+- Mekanisme C (Belanja|Surya): sudah `munculTarget` = true → **skip**
+
+**Hasil:** `reminders.length === 0` → **TIDAK kirim notif**, return `{ status: "ok", reminders: [] }`.
+
+---
+
+#### Skenario 3: Kombinasi wajib hilang → NOTIFIKASI DIKIRIM (walaupun kategori "Belanja" lain ada)
+
+**Setup hari Sabtu, 30 Agustus 2026 (`targetKey = "2026-08-30"`):**
+
+| Tanggal | Kategori | BelanjaDi |
+|---------|----------|----------|
+| **2026-08-30** | Belanja | Indomaret | **TERCATAT** |
+| **2026-08-30** | Belanja | Alfamart | **TERCATAT** |
+| **2026-08-30** | *(tidak ada Belanja di Surya)* | | |
+
+**Logic:**
+- `POLA_KOMBINASI_WAJIB` cek: `munculTarget["belanja|surya"]` → false (tidak tercatat)
+- `munculTarget` punya `belanja|indomaret` dan `belanja|alfamart` — tapi ini key BERBEDA, tidak cocok dengan `belanja|surya`
+- → **MASUK reminder** (Mekanisme C)
+
+**Hasil:** Notifikasi terkirim:
+```
+📋 Pola transaksi belum tercatat — 2026-08-30
+1. Belanja (Surya) — wajib (aturan tetap)
+```
+
+**Catatan:** Kategori "Belanja" di Indomaret/Alfamart TIDAK memicu reminder — hanya kombinasi spesifik "Belanja" + "Surya" yang diwajibkan.
+
+---
+
+### Ringkasan Cepat: Kapan Notif Dikirim vs Tidak
+
+| Kondisi | Notif? |
+|---------|--------|
+| Semua pola rutin (≥50% dari 14 hari) sudah tercatat di tanggalTarget | ❌ Tidak |
+| Kategori wajib (`POLA_KATEGORI_WAJIB`) sudah tercatat di tanggalTarget | ❌ Tidak |
+| Kombinasi wajib (`POLA_KOMBINASI_WAJIB`) sudah tercatat di tanggalTarget | ❌ Tidak |
+| Ada pola rutin yang belum tercatat | ✅ Ya (satu notif gabungan) |
+| Ada kategori wajib yang belum tercatat | ✅ Ya (satu notif gabungan) |
+| Ada kombinasi wajib yang belum tercatat | ✅ Ya (satu notif gabungan) |
+| Sheet "Input" kosong atau tidak ada | ❌ Tidak (return error/ok kosong) |
+| tanggalTarget tidak valid / gagal parse | ❌ Tidak (return error) |
+
+### Eksekusi Fungsi Selama Investigasi (Section Ini)
+❌ **TIDAK ada fungsi yang dieksekusi** — analisis murni static (baca kode). Skenario hipotetis di atas **tidak dijalankan**, hanya ilustrasi tertulis.
