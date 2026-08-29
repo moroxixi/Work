@@ -1,9 +1,0 @@
-[Unit]
-Description=Notif kolom Z (Bbkn) sheet Report 2026 — mode cek-z
-After=network-online.target
-Wants=network-online.target
-
-[Service]
-Type=oneshot
-WorkingDirectory=/home/moroxixi/HomeLab/Work/Script
-ExecStart=/usr/bin/python3 /home/moroxixi/HomeLab/Work/Script/notif_total_harian.py --mode cek-z

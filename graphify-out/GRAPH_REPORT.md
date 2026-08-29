@@ -1,16 +1,16 @@
 # Graph Report - Work  (2026-08-29)
 
 ## Corpus Check
-- 30 files · ~37,425 words
+- 30 files · ~37,087 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
-- 444 nodes · 637 edges · 32 communities (27 shown, 5 thin omitted)
+- 444 nodes · 630 edges · 32 communities (27 shown, 5 thin omitted)
 - Extraction: 98% EXTRACTED · 2% INFERRED · 0% AMBIGUOUS · INFERRED: 14 edges (avg confidence: 0.5)
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `3f5ea59e`
+- Built from commit: `7c1a47dd`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -51,7 +51,7 @@
 3. `hitungRekomendasiProduk()` - 9 edges
 4. `Investigasi Konsolidasi Notifikasi ntfy — `report.gs.js`` - 9 edges
 5. `Detail Mekanisme Kolom Z (follow-up)` - 9 edges
-6. `mode_cek_z()` - 8 edges
+6. `cek_dan_kirim_total_harian()` - 8 edges
 7. `simpanDataTempura()` - 8 edges
 8. `simpanDataWonton()` - 8 edges
 9. `report_kirimNotif_()` - 8 edges
@@ -139,12 +139,12 @@ Cohesion: 0.32
 Nodes (7): fs, interceptNetwork(), MOCK_SHARED_UTILS_JS, mockRows(), path, { test, expect }, todayTimestamp()
 
 ### Community 24 - "notif_total_harian.py"
-Cohesion: 0.35
-Nodes (12): cfg_get(), fetch_webapp(), is_dry_run(), main(), mode_cek_z(), mode_fallback_2300(), now_wib(), Env var override duluan, baru config file. (+4 more)
+Cohesion: 0.27
+Nodes (12): cek_dan_kirim_total_harian(), cfg_get(), fetch_webapp(), is_dry_run(), main(), now_wib(), Ambil baris hari ini dari webapp, kirim Total (kolom AB) via ntfy., Env var override duluan, baru config file. (+4 more)
 
 ### Community 25 - "Deploy Manual (WAJIB oleh Rofi — freebuff tidak menjalankan ini)"
 Cohesion: 0.20
-Nodes (9): 1. Tempel kode ke `report.gs`, 2. Deploy ulang sebagai Web App, 3. Isi `config.local.env`, 4. Aktifkan linger (sekali saja, kalau belum aktif), 5. Pasang & aktifkan timer, Deploy Manual (WAJIB oleh Rofi — freebuff tidak menjalankan ini), Script — Notif Kolom Z (Bbkn) / Total Harian Sheet "Report 2026", Struktur (+1 more)
+Nodes (9): 1. Tempel kode ke `report.gs`, 2. Deploy ulang sebagai Web App, 3. Isi `config.local.env`, 4. Aktifkan linger (sekali saja, kalau belum aktif), 5. Pasang & aktifkan timer, Deploy Manual (WAJIB oleh Rofi — freebuff tidak menjalankan ini), Script — Notif Total Harian Sheet "Report 2026", Struktur (+1 more)
 
 ### Community 26 - "report.gs.js"
 Cohesion: 0.16
