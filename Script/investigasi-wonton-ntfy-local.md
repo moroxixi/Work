@@ -259,3 +259,161 @@ Setelah penulisan laporan ini, hanya `Script/investigasi-wonton-ntfy-local.md` y
 - `Wonton/Config/config.js` ✓
 - `Script/notif_total_harian.py` ✓
 - `Script/notif_checker_poller.py` ✓
+
+---
+
+## Detail Mekanisme Kolom Z (follow-up)
+
+> **Tanggal:** 2026-08-29
+> **Metode:** Static analysis — tidak ada fungsi ntfy/trigger yang dieksekusi.
+
+### Temuan Utama: TIDAK ADA fungsi GAS trigger yang membaca "kolom Z"
+
+**Tiga fungsi trigger di `setupTriggers()` (report.gs.js line 724) TIDAK membaca "kolom Z":**
+
+| Fungsi | Trigger Jadwal | Sheet yang Dibaca | Kolom yang Dicek |
+|--------|---------------|-------------------|------------------|
+| `checkDuplicatesAnomalies()` (line 427) | Every 30 menit | Input_Tempura, Input_Wonton | Timestamp, Cabang, Check_Status |
+| `checkMissingReports()` (line 486) | 22:30 & 23:59 daily | Input_Tempura, Input_Wonton | Timestamp, Cabang |
+
+Kedua fungsi di atas hanya membaca sheet `Input_Tempura` / `Input_Wonton` (spreadsheet `1eGJG0wxFsSMCFdTz87qHzaikrS8uT3PEpi9ECdJEPaI`). **Tidak ada yang membuka sheet "Report 2026" atau membaca kolom Z.**
+
+---
+
+### 1. Fungsi yang Membaca "Kolom Z": `handleTotalHarian_()` (line 615)
+
+- **Nama fungsi:** `handleTotalHarian_(token)`
+- **Lokasi:** `report.gs.js` line 615–682
+- **Sheet:** `"Report 2026"` (fallback by gid `794081767`) dari spreadsheet `SPREADSHEET_ID`
+- **Bukan fungsi trigger** — dipanggil sebagai **HTTP GET endpoint** via `doGet()` (line 70):
+  ```
+  if (params.action === "totalHarian") {
+    return handleTotalHarian_(params.token);
+  }
+  ```
+- **Pemicu:** Script Python lokal `notif_total_harian.py` memanggil webapp endpoint `?action=totalHarian&token=...`
+
+#### ⚠️ DISCREPANCY: Kolom Y, bukan Kolom Z
+
+Kode aktual membaca **index 24 (kolom Y)**, bukan kolom Z:
+
+```javascript
+// Line 666-668:
+// Ambil nilai langsung berdasarkan Index
+// Index 24 = Kolom Y  (Babakan/Bbkn)
+// Index 27 = Kolom AB (Total)
+const valBbkn = (row[24] !== "" && row[24] !== null && row[24] !== undefined) ? row[24] : null;
+const valTotal = (row[27] !== "" && row[27] !== null && row[27] !== undefined) ? row[27] : null;
+```
+
+**Index mapping (0-based):**
+- Index 24 = **Kolom Y** (25th column) → isi: nilai Babakan/Bbkn
+- Index 27 = **Kolom AB** (28th column) → isi: Total
+
+Tapi property yang dikembalikan bernama `kolomZ` (line 676):
+```javascript
+kolomZ: valBbkn, // Nama properti tetap 'kolomZ' agar API penerima tidak crash
+```
+
+**Kesimpulan:** Nama "kolom Z" adalah **penamaan historis/legacy**. Di spreadsheet asli, data Bbkn berada di **kolom Y**, bukan kolom Z. Nama property `kolomZ` dipertahankan agar API consumer (notif_total_harian.py) tidak crash.
+
+---
+
+### 2. Arti/Isi Kolom Z (Y) dan Logic Pengecekan
+
+**Isi kolom Y:** Nilai nominal setoran cabang Babakan (Bbkn) — bisa angka (Rp) atau kosong/null.
+
+**Logic pengecekan "terisi atau tidak":**
+
+Di GAS (`handleTotalHarian_`, line 666-667):
+```javascript
+const valBbkn = (row[24] !== "" && row[24] !== null && row[24] !== undefined)
+  ? row[24]
+  : null;
+```
+Jika cell kosong, null, atau undefined → dikembalikan sebagai `null`.
+
+Di Python (`notif_total_harian.py`, mode `cek-z`):
+```python
+kolom_z = data.get("kolomZ")
+if kolom_z is None or str(kolom_z).strip() == "":
+    # Belum terisi — tunggu fallback 23:00
+    return 0
+```
+
+Artinya: kolom dianggap **"terisi"** jika bukan null, bukan string kosong, dan bukan whitespace-only.
+
+---
+
+### 3. Trigger yang Memanggil Fungsi Checker Kolom Z
+
+**TIDAK ADA GAS trigger yang memanggil `handleTotalHarian_()`.** Fungsi ini hanya dipanggil via HTTP GET dari script Python lokal.
+
+Pemicu lokal berupa **systemd timers:**
+
+| Timer | Interval | Service | Mode |
+|-------|----------|---------|------|
+| `notif-cek-kolom-z.timer` | Setiap 15 menit (`*:0/15`) | `notif-cek-kolom-z.service` | `--mode cek-z` (gating window 21:30–23:00 WIB) |
+| `notif-fallback-2300.timer` | Setiap hari jam 23:00 | `notif-fallback-2300.service` | `--mode fallback-2300` |
+
+**Alur:**
+1. Timer 15 menit → `notif_total_harian.py --mode cek-z`
+2. Script cek waktu: hanya jalan di window 21:30–23:00 WIB
+3. Fetch webapp → `handleTotalHarian_()` di GAS → return JSON `{ok, kolomZ, total, link}`
+4. Jika `kolomZ` terisi DAN belum pernah kirim hari ini → kirim ntfy
+5. Jika jam 23:00 dan masih belum terisi → `notif_total_harian.py --mode fallback-2300` kirim notif "kolom Z belum terisi"
+
+---
+
+### 4. Struktur Kolom Terkait (Sheet "Report 2026")
+
+| Kolom | Index (0-based) | Isi | Keterangan |
+|-------|----------------|-----|------------|
+| **A** | 0 | Tanggal | Format `dd/MM/yyyy`, data mulai dari baris 3 |
+| **Y** | 24 | Babakan (Bbkn) | Nilai setoran — inilah yang disebut "kolom Z" secara historis |
+| **AB** | 27 | Total | Total rekap harian |
+
+- Data di sheet "Report 2026" dimulai dari **baris 3** (baris 1-2 = header)
+- **Satu baris per hari** — fungsi `handleTotalHarian_()` scan baris untuk mencocokkan tanggal hari ini di kolom A
+
+---
+
+### 5. Pesan yang Dikirim ke Ntfy
+
+**Tidak ada `report_kirimNotif_()` yang dipanggil dari fungsi checker kolom Z di GAS.**
+
+Pengiriman notif dilakukan oleh script Python lokal via `send_ntfy()` (topic sama: `report-checker`):
+
+| Mode | Judul | Isi Pesan | Kondisi |
+|------|-------|-----------|--------|
+| `cek-z` | `"Kolom Bbkn Terisi"` | `"Kolom Bbkn (Z) terisi untuk {tanggal}.\nTotal (AB): {total}"` | Kolom Y terisi + belum pernah kirim hari ini |
+| `fallback-2300` | `"Rekap Jam 23:00 (Kolom Z belum terisi)"` | `"Rekap Jam 23:00 — kolom Z (Bbkn) belum terisi.\nTotal (AB): {total}"` | Kolom Y masih kosong di jam 23:00 |
+
+Dedup via file `state/last-sent-date.txt` (isi: YYYY-MM-DD) — hanya kirim sekali per hari.
+
+---
+
+### Ringkasan Cepat
+
+| Aspek | Nilai |
+|-------|-------|
+| **Fungsi GAS yang baca kolom Z** | `handleTotalHarian_()` (line 615) — HTTP endpoint, bukan trigger |
+| **Sheet** | `"Report 2026"` (gid 794081767) |
+| **Kolom aktual** | **Y** (index 24), bukan Z — nama "kolomZ" adalah legacy naming |
+| **Kolom AB** | Index 27 = Total |
+| **Kolom A** | Tanggal (dd/MM/yyyy), data dari baris 3 |
+| **Struktur baris** | Satu baris per hari |
+| **Trigger GAS yang memanggil** | **Tidak ada** — dipanggil via HTTP GET dari Python lokal |
+| **Timer lokal** | `notif-cek-kolom-z.timer` (every 15min, gated 21:30-23:00) + `notif-fallback-2300.timer` (23:00) |
+| **ntfy message** | Lihat tabel di atas — dikirim Python, bukan GAS |
+| **Fungsi ntfy/trigger dieksekusi saat investigasi?** | ❌ TIDAK — static analysis saja |
+
+---
+
+### Validasi Git Diff (Section Ini)
+
+Setelah penulisan section ini, hanya `Script/investigasi-wonton-ntfy-local.md` yang berubah. File-file berikut **TIDAK diubah:**
+- `Wonton/Apps-Script/report.gs.js` ✓
+- `Wonton/Config/config.js` ✓
+- `Script/notif_total_harian.py` ✓
+- `Script/notif_checker_poller.py` ✓
