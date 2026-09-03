@@ -1,5 +1,5 @@
 // Buku Kas
-const ENDPOINT_URL = "https://script.google.com/macros/s/AKfycbxmII4hzsJdPyiM7_Ym2mwYzvva1qEa6jdg0LFwxOLIkapRbgHcwGl9WTWGPXSxaSbv/exec";
+const ENDPOINT_URL = "https://script.google.com/macros/s/AKfycbw6JV7nQ4KJbCAhMEzBLp-fPo5WEDvvYpuaNuyhUH7vYQLnO7V3WbdY8eNy0wJXB3pR/exec";
 // Scan Struk
 const SCRIPT_URL = "https://script.google.com/macros/s/AKfycby8fW1-pVmFbL95pk7WNtLr4RovMkHDC6h1mJ7jCEmyh_Yxh_cCkOVYEHW22wCaTYBh/exec";
 // Report
