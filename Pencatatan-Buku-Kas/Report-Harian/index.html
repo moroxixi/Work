@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Report Harian — Rekap Pengeluaran</title>
+<link rel="stylesheet" href="style.css">
+<link rel="prefetch" href="../index.html">
+<link rel="prefetch" href="../Riwayat/index.html">
+<link rel="prefetch" href="../Stok/index.html">
+<link rel="prefetch" href="../Scan-Struk/index.html">
+<link rel="prefetch" href="../shared-utils.js">
+<style>#page-loader{position:fixed;top:0;left:0;height:3px;background:linear-gradient(90deg,var(--ink,#232b27),var(--masuk,#2f6e52));z-index:9999;pointer-events:none;width:0;opacity:0;transition:width .35s cubic-bezier(.4,0,.2,1),opacity .15s}#page-loader.active{opacity:1}@media(prefers-reduced-motion:reduce){#page-loader{transition:none}#page-loader.active{width:90%}}</style>
+</head>
+<body>
+
+<div class="wrap">
+  <nav class="quicknav" aria-label="Navigasi cepat" data-page="report-harian" data-depth="1"></nav>
+
+  <header class="topbar">
+    <h1>Report Harian</h1>
+    <p class="subtitle" id="tanggalLabel">Memuat tanggal...</p>
+  </header>
+
+  <div class="nav-bar">
+    <button type="button" id="btnKemarin" class="nav-btn">&larr; Kemarin</button>
+    <button type="button" id="btnHariIni" class="nav-btn nav-btn-primary">Hari Ini</button>
+    <label class="nav-btn nav-btn-date" for="datePicker">
+      <span>Pilih Tanggal</span>
+      <input type="date" id="datePicker">
+    </label>
+  </div>
+
+  <div class="toolbar">
+    <button type="button" id="btnRefresh" class="refresh-btn">
+      <span id="refreshIcon" class="refresh-icon">&#8635;</span> Refresh
+    </button>
+  </div>
+
+  <div id="summaryBar" class="summary-bar" hidden>
+    <div class="summary-item summary-rekap">
+      <span class="summary-label">Kolom terisi</span>
+      <span class="summary-value" id="summaryText">0 dari 0</span>
+    </div>
+  </div>
+
+  <div id="listWrap" class="list-wrap">
+    <p class="loading-msg" id="loadingMsg">Memuat data...</p>
+    <p class="empty-msg" id="emptyMsg" hidden>Belum ada data untuk tanggal ini.</p>
+    <p class="error-msg" id="errorMsg" hidden></p>
+    <div id="itemList"></div>
+  </div>
+</div>
+
+<div id="page-loader" role="progressbar" aria-hidden="true"></div>
+<script src="../nav.js"></script>
+<script src="https://moroxixi.github.io/Work/Pencatatan-Buku-Kas/config.js"></script>
+<script src="https://moroxixi.github.io/Work/Pencatatan-Buku-Kas/shared-utils.js"></script>
+<script src="script.js"></script>
+<script>document.addEventListener('click',function(e){var a=e.target.closest('a[href]');if(!a||a.hostname!==location.hostname||!a.href.includes('Pencatatan-Buku-Kas'))return;var l=document.getElementById('page-loader');if(l){l.classList.add('active');l.style.width='75%';setTimeout(function(){l.style.width='90%'},200)}})</script>
+</body>
+</html>

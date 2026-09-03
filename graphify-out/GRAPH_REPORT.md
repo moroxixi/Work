@@ -1,16 +1,16 @@
 # Graph Report - Work  (2026-09-03)
 
 ## Corpus Check
-- 32 files · ~42,042 words
+- 33 files · ~42,827 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
-- 506 nodes · 681 edges · 35 communities (30 shown, 5 thin omitted)
+- 530 nodes · 710 edges · 35 communities (30 shown, 5 thin omitted)
 - Extraction: 98% EXTRACTED · 2% INFERRED · 0% AMBIGUOUS · INFERRED: 13 edges (avg confidence: 0.5)
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `28579d8d`
+- Built from commit: `53de8048`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -43,7 +43,7 @@
 - Investigasi Konsolidasi Notifikasi ntfy — `report.gs.js`
 - notif_checker_poller.py
 - test_checker_poller.py
-- Detail Mekanisme Kolom Z (follow-up)
+- Report-Harian/script.js
 - Investigasi Mekanisme Ntfy — Pencatatan-Buku-Kas/Apps-Script/buku-kas.gs.js
 - Detail Logic Pola Transaksi (follow-up)
 - Investigasi — Sumber Data "Rekap Pengeluaran Harian" & Struktur Quicknav (Pencatatan-Buku-Kas)
@@ -86,8 +86,8 @@ Cohesion: 0.08
 Nodes (38): applyRekomendasiToDom(), btnHariIni, btnKemarin, btnRefresh, buatCatatan(), currentDate, datePicker, emptyMsg (+30 more)
 
 ### Community 3 - "2. Daftar Lengkap Pemanggil `report_kirimNotif_()`"
-Cohesion: 0.05
-Nodes (36): 1. Alur Lengkap `report_kirimNotif_(pesan, judul)`, 2.1 `simpanDataTempura()` — Duplikat Tempura, 2.2 `simpanDataWonton()` — Duplikat Wonton, 2.3 `flagAnomaliRow_()` — Anomali, 2.4 `kirimKeBukuKas()` — Gagal Kirim ke Buku Kas, 2.5 `kirimSetoranWontonKeBukuKas()` — Cabang Tidak Dikenali, 2.6 `checkDuplicatesAnomaliesForSheet()` — Duplikat/Anomali (Checker Berkala), 2.7 `checkMissingReports()` — Cabang Tanpa Nama (dalam loop) (+28 more)
+Cohesion: 0.04
+Nodes (46): 1. Alur Lengkap `report_kirimNotif_(pesan, judul)`, 1. Fungsi yang Membaca "Kolom Z": `handleTotalHarian_()` (line 615), 2.1 `simpanDataTempura()` — Duplikat Tempura, 2.2 `simpanDataWonton()` — Duplikat Wonton, 2.3 `flagAnomaliRow_()` — Anomali, 2.4 `kirimKeBukuKas()` — Gagal Kirim ke Buku Kas, 2.5 `kirimSetoranWontonKeBukuKas()` — Cabang Tidak Dikenali, 2.6 `checkDuplicatesAnomaliesForSheet()` — Duplikat/Anomali (Checker Berkala) (+38 more)
 
 ### Community 4 - "Rekap/script.js"
 Cohesion: 0.14
@@ -165,9 +165,9 @@ Nodes (12): 1. Daftar fungsi cek di `report.gs.js` + status pemanggilan `report_
 Cohesion: 0.17
 Nodes (18): build_message(), cfg_get(), checker_key(), compute_fingerprint(), fetch_checker_status(), is_dry_run(), main(), _normalize_problem_detail() (+10 more)
 
-### Community 31 - "Detail Mekanisme Kolom Z (follow-up)"
-Cohesion: 0.20
-Nodes (10): 1. Fungsi yang Membaca "Kolom Z": `handleTotalHarian_()` (line 615), 2. Arti/Isi Kolom Z (Y) dan Logic Pengecekan, 3. Trigger yang Memanggil Fungsi Checker Kolom Z, 4. Struktur Kolom Terkait (Sheet "Report 2026"), 5. Pesan yang Dikirim ke Ntfy, Detail Mekanisme Kolom Z (follow-up), ⚠️ DISCREPANCY: Kolom Y, bukan Kolom Z, Ringkasan Cepat (+2 more)
+### Community 31 - "Report-Harian/script.js"
+Cohesion: 0.11
+Nodes (22): btnHariIni, btnKemarin, btnRefresh, cacheTimestamps, currentDate, datePicker, emptyMsg, errorMsg (+14 more)
 
 ### Community 32 - "Investigasi Mekanisme Ntfy — Pencatatan-Buku-Kas/Apps-Script/buku-kas.gs.js"
 Cohesion: 0.05
@@ -182,7 +182,7 @@ Cohesion: 0.11
 Nodes (17): 1.1.1 `buku-kas.gs.js` (Kas Harian + Riwayat) — endpoint `ENDPOINT_URL`, 1.1.2 `scan-struk.gs` (Scan Struk) — endpoint `SCRIPT_URL`, 1.1.3 `report.gs.js` (Report/Stok) — endpoint `STOK_SCRIPT_URL`, 1.1 Inventaris backend & handler yang return data sheet, 1.2 Apakah ada fungsi yang sudah return tabel "Rekap Pengeluaran Harian"?, 1.3 `config.js` & `shared-utils.js` — fungsi fetch generik yang bisa dipakai ulang?, 1. Sumber Data "Rekap Pengeluaran Harian", 2.1 `nav.js` = 1 komponen shared, dirender DYNAMIC di semua 5 halaman (+9 more)
 
 ## Knowledge Gaps
-- **231 isolated node(s):** `all`, `menuBtn`, `drawer`, `overlay`, `drawerClose` (+226 more)
+- **246 isolated node(s):** `all`, `menuBtn`, `drawer`, `overlay`, `drawerClose` (+241 more)
   These have ≤1 connection - possible missing edges or undocumented components.
 - **5 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
 
@@ -190,16 +190,16 @@ Nodes (17): 1.1.1 `buku-kas.gs.js` (Kas Harian + Riwayat) — endpoint `ENDPOINT
 _Questions this graph is uniquely positioned to answer:_
 
 - **Why does `Investigasi Mekanisme Ntfy — Pencatatan-Buku-Kas/Apps-Script/buku-kas.gs.js` connect `Investigasi Mekanisme Ntfy — Pencatatan-Buku-Kas/Apps-Script/buku-kas.gs.js` to `Detail Logic Pola Transaksi (follow-up)`?**
-  _High betweenness centrality (0.010) - this node is a cross-community bridge._
-- **Why does `Investigasi Mekanisme Ntfy — Wonton/Apps-Script/report.gs.js` connect `2. Daftar Lengkap Pemanggil `report_kirimNotif_()`` to `Detail Mekanisme Kolom Z (follow-up)`?**
-  _High betweenness centrality (0.007) - this node is a cross-community bridge._
+  _High betweenness centrality (0.009) - this node is a cross-community bridge._
 - **Why does `Detail Logic Pola Transaksi (follow-up)` connect `Detail Logic Pola Transaksi (follow-up)` to `Investigasi Mekanisme Ntfy — Pencatatan-Buku-Kas/Apps-Script/buku-kas.gs.js`?**
   _High betweenness centrality (0.005) - this node is a cross-community bridge._
 - **What connects `all`, `menuBtn`, `drawer` to the rest of the system?**
-  _231 weakly-connected nodes found - possible documentation gaps or missing edges._
+  _246 weakly-connected nodes found - possible documentation gaps or missing edges._
 - **Should `Riwayat/script.js` be split into smaller, more focused modules?**
   _Cohesion score 0.044444444444444446 - nodes in this community are weakly interconnected._
 - **Should `Pencatatan-Buku-Kas/script.js` be split into smaller, more focused modules?**
   _Cohesion score 0.08817204301075268 - nodes in this community are weakly interconnected._
 - **Should `Stok/script.js` be split into smaller, more focused modules?**
   _Cohesion score 0.07692307692307693 - nodes in this community are weakly interconnected._
+- **Should `2. Daftar Lengkap Pemanggil `report_kirimNotif_()`` be split into smaller, more focused modules?**
+  _Cohesion score 0.0425531914893617 - nodes in this community are weakly interconnected._
