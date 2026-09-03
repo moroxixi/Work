@@ -423,6 +423,9 @@ select.text-input { appearance: none; }
 .quicknav-stok .quicknav-icon { color: var(--masuk); }
 .quicknav-stok:active { background: var(--masuk-soft); border-color: var(--masuk); }
 
+.quicknav-report-harian .quicknav-icon { color: #b7791f; }
+.quicknav-report-harian:active { background: #faf3e2; border-color: #b7791f; }
+
 .quicknav-item:focus-visible {
   outline: 2px solid var(--ink);
   outline-offset: 2px;

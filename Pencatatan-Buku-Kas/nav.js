@@ -17,7 +17,7 @@
 (function () {
   'use strict';
 
-  // 4 item utama. `href` relatif terhadap ROOT Pencatatan-Buku-Kas/;
+  // 5 item utama. `href` relatif terhadap ROOT Pencatatan-Buku-Kas/;
   // prefix '../' ditambahkan sesuai data-depth halaman pemuat.
   var MAIN_ITEMS = [
     {
@@ -43,6 +43,12 @@
       label: 'Stok',
       href: 'Stok/index.html',
       icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3.5 8 12 4l8.5 4-8.5 4-8.5-4Z"/><path d="M3.5 8v8L12 20l8.5-4V8"/><path d="M12 12v8"/></svg>'
+    },
+    {
+      key: 'report-harian',
+      label: 'Report Harian',
+      href: 'Report-Harian/index.html',
+      icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="4" width="14" height="16" rx="2"/><path d="M9 2.5h6v3H9z"/><path d="M9 11l2 2 4-4"/></svg>'
     }
   ];
 
