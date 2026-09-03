@@ -14,6 +14,12 @@
 const SHEET_NAME = "Input";
 const CHANGE_MARKER_KEY = "LAST_CHANGE_INPUT";
 
+// Sheet rekap harian — sheet TERPISAH di spreadsheet yang sama dengan "Input".
+// Satu baris per tanggal: kolom A = Tanggal, kolom B.. = toko/kategori.
+// Nama kolom dibaca DINAMIS dari row 1 (lihat handleRekapHarian_), tidak
+// di-hardcode supaya bebas beda dari nama chip di app.
+const SHEET_REKAP_NAME = "Rekap Pengeluaran Harian";
+
 // Kategori yang PASTI otomatis dari setoran Tempura/Wonton (lihat Business.md Section 14)
 const KATEGORI_OTOMATIS_PASTI = [
   "Setoran Cabang Tempura",
@@ -89,6 +95,7 @@ function doGet(e) {
     const marker = PropertiesService.getScriptProperties().getProperty(CHANGE_MARKER_KEY) || "";
     return jsonOut_({ lastChange: marker });
   }
+  if (params.action === "rekapHarian") return handleRekapHarian_(params.tanggal);
 
   // Perilaku lama (cek endpoint aktif dari browser)
   return ContentService
@@ -135,6 +142,119 @@ function handleList_(tanggalStr) {
   rows.sort((a, b) => b.row - a.row);
 
   return jsonOut_({ status: "ok", rows: rows });
+}
+
+// ==== Endpoint "Rekap Pengeluaran Harian" ====
+// Baca satu baris (per tanggal) dari sheet rekap: kolom A = Tanggal,
+// kolom B.. = toko/kategori. Header dibaca DINAMIS dari row 1 — nama kolom
+// di sheet boleh beda dari nama chip di app, tidak ada mapping manual.
+function handleRekapHarian_(tanggal) {
+  const parsed = parseTanggalIso_(tanggal);
+  if (!parsed) {
+    return jsonOut_({ status: "error", message: "Parameter tanggal wajib diisi (format YYYY-MM-DD)." });
+  }
+
+  const sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName(SHEET_REKAP_NAME);
+  if (!sheet) {
+    return jsonOut_({ status: "error", message: "Sheet '" + SHEET_REKAP_NAME + "' tidak ditemukan." });
+  }
+
+  const lastRow = sheet.getLastRow();
+  const lastCol = sheet.getLastColumn();
+  if (lastRow < 2 || lastCol < 2) {
+    return jsonOut_({ status: "ok", found: false, rows: [] });
+  }
+
+  // Header dinamis: row 1, kolom B..lastCol (kolom A diasumsikan "Tanggal").
+  const headers = sheet.getRange(1, 2, 1, lastCol - 1).getValues()[0];
+
+  // Cari baris yang tanggalnya cocok. Kolom A bisa Date object asli (yang
+  // diformat tampil sebagai teks lengkap "Selasa, 01 September 2026") ATAU
+  // string — bandingkan komponen tanggal aktual, JANGAN string mentah.
+  const dates = sheet.getRange(2, 1, lastRow - 1, 1).getValues();
+  let targetRow = -1;
+  for (let i = 0; i < dates.length; i++) {
+    const d = parseSheetTanggal_(dates[i][0]);
+    if (d && d.y === parsed.y && d.m === parsed.m && d.d === parsed.d) {
+      targetRow = i + 2; // baris asli di sheet (header = baris 1)
+      break;
+    }
+  }
+
+  if (targetRow === -1) {
+    return jsonOut_({ status: "ok", found: false, rows: [] });
+  }
+
+  const values = sheet.getRange(targetRow, 2, 1, lastCol - 1).getValues()[0];
+  const rows = [];
+  for (let c = 0; c < headers.length; c++) {
+    rows.push({
+      label: headers[c] === null || headers[c] === undefined ? "" : String(headers[c]).trim(),
+      value: values[c],
+      filled: isRekapCellFilled_(values[c])
+    });
+  }
+
+  return jsonOut_({ status: "ok", found: true, rows: rows });
+}
+
+// Parse "YYYY-MM-DD" -> { y, m (0-based), d } atau null kalau format salah.
+function parseTanggalIso_(str) {
+  const s = String(str || "").trim();
+  const m = s.match(/^(\d{4})-(\d{1,2})-(\d{1,2})$/);
+  if (!m) return null;
+  const y = Number(m[1]);
+  const mo = Number(m[2]) - 1;
+  const d = Number(m[3]);
+  if (mo < 0 || mo > 11 || d < 1 || d > 31) return null;
+  return { y: y, m: mo, d: d };
+}
+
+// Nama bulan Indonesia (lowercase) buat parsing teks tanggal lengkap.
+const BULAN_ID_ = ["januari", "februari", "maret", "april", "mei", "juni",
+  "juli", "agustus", "september", "oktober", "november", "desember"];
+
+// Parse sel kolom A (Tanggal) -> { y, m (0-based), d } atau null.
+// Mendukung: Date object asli (zona Asia/Jakarta, sama seperti
+// formatTimestampCell_), "Selasa, 01 September 2026", "01/09/2026".
+function parseSheetTanggal_(value) {
+  if (value instanceof Date && !isNaN(value.getTime())) {
+    const iso = Utilities.formatDate(value, "Asia/Jakarta", "yyyy-MM-dd");
+    return parseTanggalIso_(iso);
+  }
+  const s = String(value || "").trim();
+  if (s === "") return null;
+
+  let m = s.match(/(\d{1,2})\s+([A-Za-z]+)\s+(\d{4})/);
+  if (m) {
+    const bulanIdx = BULAN_ID_.indexOf(m[2].toLowerCase());
+    if (bulanIdx !== -1) return { y: Number(m[3]), m: bulanIdx, d: Number(m[1]) };
+  }
+
+  m = s.match(/(\d{1,2})[/\-.]((?:\d{1,2}))[/\-.]((?:\d{4}))/);
+  if (m) return { y: Number(m[3]), m: Number(m[2]) - 1, d: Number(m[1]) };
+
+  return null;
+}
+
+// Kriteria "terisi": sel dianggap BELUM terisi kalau null/undefined, string
+// kosong/whitespace, "-", atau bernilai nol dalam format apa pun (0, 0.0,
+// "0", "Rp0", "Rp 0"). Tidak ada util format Rupiah di file ini (format Rp
+// dibuat di frontend), jadi parsing angka dilakukan manual di sini.
+function isRekapCellFilled_(value) {
+  if (value === null || value === undefined) return false;
+  const s = String(value).trim();
+  if (s === "" || s === "-") return false;
+
+  const n = Number(value);
+  if (isFinite(n)) return n !== 0;
+
+  // Fallback string berformat Rp: "Rp1.500" -> "1500", "Rp0" -> "0".
+  const cleaned = s.replace(/[Rp\s.]/gi, "").replace(",", ".");
+  const n2 = Number(cleaned);
+  if (isFinite(n2)) return n2 !== 0;
+
+  return true; // teks non-numerik (mis. status/catatan) dianggap terisi
 }
 
 function handleEdit_(data) {

@@ -175,8 +175,8 @@
     "semantic_hash": ""
   },
   "Pencatatan-Buku-Kas/Apps-Script/buku-kas.gs.js": {
-    "mtime": 1788003658.8235872,
-    "ast_hash": "2575adca4103959db423f8974390c63d",
+    "mtime": 1788415188.734352,
+    "ast_hash": "060d1181d8f1b37c07bf174f6f3ae15f",
     "semantic_hash": ""
   },
   "Script/investigasi-konsolidasi-ntfy.md": {
@@ -217,6 +217,11 @@
   "Script/investigasi-bukukas-ntfy-local.md": {
     "mtime": 1788003703.6202545,
     "ast_hash": "b967f4bc8774a324b40197bb30fc4fef",
+    "semantic_hash": ""
+  },
+  "Script/investigasi-report-harian-quicknav.md": {
+    "mtime": 1788414673.2309992,
+    "ast_hash": "57311039500dd1bc7723c9231649c08c",
     "semantic_hash": ""
   }
 }

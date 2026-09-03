@@ -1,4 +1,4 @@
-# Folder Tree (44 files tracked)
+# Folder Tree (45 files tracked)
 
 > Auto-generated dari manifest.json — jangan edit manual. Regenerate: gen-folder-tree.py <path-manifest.json>
 
@@ -47,6 +47,7 @@
 │   ├── README.md
 │   ├── investigasi-bukukas-ntfy-local.md
 │   ├── investigasi-konsolidasi-ntfy.md
+│   ├── investigasi-report-harian-quicknav.md
 │   ├── investigasi-wonton-ntfy-local.md
 │   ├── notif_checker_poller.py
 │   ├── notif_total_harian.py
