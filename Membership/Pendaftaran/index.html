@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MAO — Pendaftaran Membership</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- ═══════════════════════════════════════════════════════════════════════ -->
+  <!-- FORM PENDAFTARAN -->
+  <!-- ═══════════════════════════════════════════════════════════════════════ -->
+  <div id="form-section" class="section">
+    <div class="form-card">
+
+      <!-- Logo / Branding -->
+      <div class="brand">
+        <svg class="chili-icon" viewBox="0 0 64 80" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+          <!-- Cabai merah sederhana -->
+          <defs>
+            <linearGradient id="chiliGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stop-color="#ff4d1c"/>
+              <stop offset="100%" stop-color="#ffb300"/>
+            </linearGradient>
+          </defs>
+          <ellipse cx="32" cy="52" rx="14" ry="26" fill="url(#chiliGrad)" transform="rotate(-8 32 52)"/>
+          <path d="M32 26 Q34 12 38 6 Q36 14 34 22" stroke="#4caf50" stroke-width="3" fill="none" stroke-linecap="round"/>
+          <ellipse cx="30" cy="26" rx="8" ry="5" fill="#388e3c"/>
+        </svg>
+        <h1>MAO</h1>
+        <p class="tagline">Membership Registration</p>
+      </div>
+
+      <form id="pendaftaranForm" novalidate>
+        <!-- Nama -->
+        <div class="form-group">
+          <label for="Nama">Nama Lengkap <span class="req">*</span></label>
+          <input type="text" id="Nama" name="Nama" placeholder="Masukkan nama lengkap" required>
+        </div>
+
+        <!-- Domisili -->
+        <div class="form-group">
+          <label for="Domisili">Domisili / Alamat <span class="req">*</span></label>
+          <input type="text" id="Domisili" name="Domisili" placeholder="Kota / alamat domisili" required>
+        </div>
+
+        <!-- Tanggal Lahir -->
+        <div class="form-group">
+          <label for="TanggalLahir">Tanggal Lahir <span class="req">*</span></label>
+          <input type="date" id="TanggalLahir" name="TanggalLahir" required>
+        </div>
+
+        <!-- Jenis Kelamin -->
+        <div class="form-group">
+          <label for="JenisKelamin">Jenis Kelamin <span class="req">*</span></label>
+          <select id="JenisKelamin" name="JenisKelamin" required>
+            <option value="" disabled selected>Pilih Jenis Kelamin</option>
+            <option value="Laki-laki">Laki-laki</option>
+            <option value="Perempuan">Perempuan</option>
+          </select>
+        </div>
+
+        <!-- Status -->
+        <div class="form-group">
+          <label for="Status">Status <span class="req">*</span></label>
+          <select id="Status" name="Status" required>
+            <option value="" disabled selected>Pilih Status</option>
+            <option value="Pelajar/Mahasiswa">Pelajar / Mahasiswa</option>
+            <option value="Pekerja/Karyawan">Pekerja / Karyawan</option>
+            <option value="Ibu Rumah Tangga">Ibu Rumah Tangga</option>
+            <option value="Wiraswasta">Wiraswasta</option>
+            <option value="Lainnya">Lainnya</option>
+          </select>
+        </div>
+
+        <!-- Nomor WhatsApp -->
+        <div class="form-group">
+          <label for="NomorWhatsApp">Nomor WhatsApp <span class="req">*</span></label>
+          <input type="tel" id="NomorWhatsApp" name="NomorWhatsApp" placeholder="08xxxxxxxxxx" required>
+          <span class="hint">Diawali 08 atau 62, 9–15 digit</span>
+        </div>
+
+        <!-- Checkbox Persetujuan -->
+        <div class="form-group checkbox-group">
+          <label class="checkbox-label">
+            <input type="checkbox" id="persetujuan" name="persetujuan" required>
+            <span>Saya setuju data ini digunakan untuk keperluan membership MAO</span>
+          </label>
+        </div>
+
+        <!-- Submit -->
+        <button type="submit" id="submitBtn" class="btn-submit">
+          <span class="btn-text">Daftar Sekarang</span>
+          <span class="btn-loading" hidden>⏳ Mengirim…</span>
+        </button>
+
+        <!-- Error Message -->
+        <div id="errorMsg" class="error-msg" hidden></div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════════════════════ -->
+  <!-- KARTU MEMBERSHIP (tersembunyi, dimunculkan setelah submit sukses) -->
+  <!-- ═══════════════════════════════════════════════════════════════════════ -->
+  <div id="card-section" class="section" hidden>
+    <div class="form-card">
+      <h2 class="card-title">🎉 Pendaftaran Berhasil!</h2>
+
+      <div id="membershipCard" class="membership-card">
+        <div class="card-inner">
+          <!-- SVG Cabai kecil -->
+          <svg class="card-chili" viewBox="0 0 32 40" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+            <defs>
+              <linearGradient id="cardChiliGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stop-color="#ff4d1c"/>
+                <stop offset="100%" stop-color="#ffb300"/>
+              </linearGradient>
+            </defs>
+            <ellipse cx="16" cy="26" rx="7" ry="13" fill="url(#cardChiliGrad)" transform="rotate(-8 16 26)"/>
+            <path d="M16 13 Q17 6 19 3 Q18 7 17 11" stroke="#4caf50" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+            <ellipse cx="15" cy="13" rx="4" ry="2.5" fill="#388e3c"/>
+          </svg>
+
+          <div class="card-brand">MAO</div>
+          <div class="card-kode" id="cardKode"></div>
+
+          <div class="card-details">
+            <div class="card-row">
+              <span class="card-label">Nama</span>
+              <span class="card-value" id="cardNama"></span>
+            </div>
+            <div class="card-row">
+              <span class="card-label">Tanggal Daftar</span>
+              <span class="card-value" id="cardTanggal"></span>
+            </div>
+          </div>
+
+          <div class="card-footer">Kartu Membership Resmi MAO</div>
+        </div>
+      </div>
+
+      <button id="downloadBtn" class="btn-submit btn-download">
+        📥 Download Kartu
+      </button>
+
+      <button id="backBtn" class="btn-submit btn-back">
+        ← Kembali ke Form
+      </button>
+    </div>
+  </div>
+
+  <!-- html2canvas CDN -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js" crossorigin="anonymous"></script>
+  <script src="script.js"></script>
+</body>
+</html>

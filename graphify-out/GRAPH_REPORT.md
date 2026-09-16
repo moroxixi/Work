@@ -1,16 +1,16 @@
-# Graph Report - Work  (2026-09-03)
+# Graph Report - Work  (2026-09-16)
 
 ## Corpus Check
-- 33 files · ~42,858 words
+- 35 files · ~44,659 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
-- 530 nodes · 710 edges · 35 communities (30 shown, 5 thin omitted)
+- 556 nodes · 739 edges · 37 communities (32 shown, 5 thin omitted)
 - Extraction: 98% EXTRACTED · 2% INFERRED · 0% AMBIGUOUS · INFERRED: 13 edges (avg confidence: 0.5)
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `e8588e49`
+- Built from commit: `316a8d7a`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -47,6 +47,8 @@
 - Investigasi Mekanisme Ntfy — Pencatatan-Buku-Kas/Apps-Script/buku-kas.gs.js
 - Detail Logic Pola Transaksi (follow-up)
 - Investigasi — Sumber Data "Rekap Pengeluaran Harian" & Struktur Quicknav (Pencatatan-Buku-Kas)
+- Pendaftaran/script.js
+- code.gs.js
 
 ## God Nodes (most connected - your core abstractions)
 1. `Investigasi Mekanisme Ntfy — Pencatatan-Buku-Kas/Apps-Script/buku-kas.gs.js` - 10 edges
@@ -71,7 +73,7 @@
 ## Import Cycles
 - None detected.
 
-## Communities (35 total, 5 thin omitted)
+## Communities (37 total, 5 thin omitted)
 
 ### Community 0 - "Riwayat/script.js"
 Cohesion: 0.04
@@ -181,8 +183,16 @@ Nodes (15): 1. Definisi "Pola" yang Dicek, 2. Perbedaan `checkPolaPagi()` vs `ch
 Cohesion: 0.11
 Nodes (17): 1.1.1 `buku-kas.gs.js` (Kas Harian + Riwayat) — endpoint `ENDPOINT_URL`, 1.1.2 `scan-struk.gs` (Scan Struk) — endpoint `SCRIPT_URL`, 1.1.3 `report.gs.js` (Report/Stok) — endpoint `STOK_SCRIPT_URL`, 1.1 Inventaris backend & handler yang return data sheet, 1.2 Apakah ada fungsi yang sudah return tabel "Rekap Pengeluaran Harian"?, 1.3 `config.js` & `shared-utils.js` — fungsi fetch generik yang bisa dipakai ulang?, 1. Sumber Data "Rekap Pengeluaran Harian", 2.1 `nav.js` = 1 komponen shared, dirender DYNAMIC di semua 5 halaman (+9 more)
 
+### Community 35 - "Pendaftaran/script.js"
+Cohesion: 0.11
+Nodes (12): backBtn, btnLoading, btnText, cardKode, cardNama, cardSection, cardTanggal, downloadBtn (+4 more)
+
+### Community 36 - "code.gs.js"
+Cohesion: 0.43
+Nodes (6): doGet(), doPost(), generateKodeMembership_(), hitungUmur_(), json_(), trim_()
+
 ## Knowledge Gaps
-- **246 isolated node(s):** `all`, `menuBtn`, `drawer`, `overlay`, `drawerClose` (+241 more)
+- **258 isolated node(s):** `all`, `menuBtn`, `drawer`, `overlay`, `drawerClose` (+253 more)
   These have ≤1 connection - possible missing edges or undocumented components.
 - **5 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
 
@@ -190,11 +200,11 @@ Nodes (17): 1.1.1 `buku-kas.gs.js` (Kas Harian + Riwayat) — endpoint `ENDPOINT
 _Questions this graph is uniquely positioned to answer:_
 
 - **Why does `Investigasi Mekanisme Ntfy — Pencatatan-Buku-Kas/Apps-Script/buku-kas.gs.js` connect `Investigasi Mekanisme Ntfy — Pencatatan-Buku-Kas/Apps-Script/buku-kas.gs.js` to `Detail Logic Pola Transaksi (follow-up)`?**
-  _High betweenness centrality (0.009) - this node is a cross-community bridge._
+  _High betweenness centrality (0.008) - this node is a cross-community bridge._
 - **Why does `Detail Logic Pola Transaksi (follow-up)` connect `Detail Logic Pola Transaksi (follow-up)` to `Investigasi Mekanisme Ntfy — Pencatatan-Buku-Kas/Apps-Script/buku-kas.gs.js`?**
-  _High betweenness centrality (0.005) - this node is a cross-community bridge._
+  _High betweenness centrality (0.004) - this node is a cross-community bridge._
 - **What connects `all`, `menuBtn`, `drawer` to the rest of the system?**
-  _246 weakly-connected nodes found - possible documentation gaps or missing edges._
+  _258 weakly-connected nodes found - possible documentation gaps or missing edges._
 - **Should `Riwayat/script.js` be split into smaller, more focused modules?**
   _Cohesion score 0.044444444444444446 - nodes in this community are weakly interconnected._
 - **Should `Pencatatan-Buku-Kas/script.js` be split into smaller, more focused modules?**
