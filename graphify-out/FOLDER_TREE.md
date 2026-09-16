@@ -1,4 +1,4 @@
-# Folder Tree (50 files tracked)
+# Folder Tree (52 files tracked)
 
 > Auto-generated dari manifest.json — jangan edit manual. Regenerate: gen-folder-tree.py <path-manifest.json>
 
@@ -13,7 +13,10 @@
 ├── Membership/
 │   ├── Apps-Script/
 │   │   └── code.gs.js
-│   └── Pendaftaran/
+│   ├── Pendaftaran/
+│   │   ├── index.html
+│   │   └── script.js
+│   └── Submit/
 │       ├── index.html
 │       └── script.js
 ├── Pencatatan-Buku-Kas/

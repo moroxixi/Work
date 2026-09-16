@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MAO — Submit Pesanan</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <div class="section">
+    <div class="form-card">
+
+      <!-- Branding -->
+      <div class="brand">
+        <svg class="chili-icon" viewBox="0 0 64 80" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+          <defs>
+            <linearGradient id="chiliGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stop-color="#ff4d1c"/>
+              <stop offset="100%" stop-color="#ffb300"/>
+            </linearGradient>
+          </defs>
+          <ellipse cx="32" cy="52" rx="14" ry="26" fill="url(#chiliGrad)" transform="rotate(-8 32 52)"/>
+          <path d="M32 26 Q34 12 38 6 Q36 14 34 22" stroke="#4caf50" stroke-width="3" fill="none" stroke-linecap="round"/>
+          <ellipse cx="30" cy="26" rx="8" ry="5" fill="#388e3c"/>
+        </svg>
+        <h1>MAO</h1>
+        <p class="tagline">Submit Pesanan</p>
+      </div>
+
+      <!-- Loading state awal -->
+      <div id="loadingState" class="loading-state">
+        <div class="spinner"></div>
+        <p>Memuat data…</p>
+      </div>
+
+      <!-- Form content (sembunyi dulu sampai data loaded) -->
+      <form id="orderForm" novalidate hidden>
+
+        <!-- Kode Membership -->
+        <div class="form-group">
+          <label for="kodeMembership">Kode Membership <span class="req">*</span></label>
+          <select id="kodeMembership" name="kodeMembership" required>
+            <option value="" disabled selected>Pilih Kode Membership</option>
+          </select>
+          <span id="kodeEmptyMsg" class="hint" hidden>Belum ada kode membership terdaftar</span>
+          <a href="../Pendaftaran/index.html" class="link-daftar">Belum punya kode? Daftar di sini →</a>
+        </div>
+
+        <!-- Menu List -->
+        <div class="form-group">
+          <label>Pesan Menu <span class="req">*</span></label>
+          <div id="menuList" class="menu-list"></div>
+          <span id="menuEmptyMsg" class="hint" hidden>Menu belum tersedia, hubungi admin</span>
+        </div>
+
+        <!-- Upload Foto -->
+        <div class="form-group">
+          <label for="fotoInput">Foto Pesanan <span class="req">*</span></label>
+          <div class="upload-area" id="uploadArea">
+            <input type="file" id="fotoInput" name="fotoInput" accept="image/*" capture="environment" hidden>
+            <div id="uploadPlaceholder" class="upload-placeholder">
+              <span class="upload-icon">📷</span>
+              <span>Klik untuk upload foto pesanan</span>
+            </div>
+            <img id="fotoPreview" class="foto-preview" hidden alt="Preview foto">
+          </div>
+          <span class="hint">Format: JPG/PNG, max 10MB sebelum kompresi</span>
+        </div>
+
+        <!-- Submit -->
+        <button type="submit" id="submitBtn" class="btn-submit">
+          <span class="btn-text">Kirim Pesanan</span>
+          <span class="btn-loading" hidden>⏳ Mengirim…</span>
+        </button>
+
+        <!-- Error -->
+        <div id="errorMsg" class="error-msg" hidden></div>
+
+        <!-- Success -->
+        <div id="successMsg" class="success-msg" hidden></div>
+      </form>
+
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>

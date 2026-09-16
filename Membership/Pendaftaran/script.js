@@ -95,6 +95,7 @@ form.addEventListener("submit", async function (e) {
 
   try {
     const params = new URLSearchParams({
+      action:        "daftar",
       Nama:          validation.data.Nama,
       Domisili:      validation.data.Domisili,
       TanggalLahir:  validation.data.TanggalLahir,
