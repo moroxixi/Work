@@ -77,7 +77,24 @@
                display:none + foto preview mengisi kotak. Tidak ada elemen
                yang ditumpuk (overlap). -->
           <div class="upload-area" id="uploadArea">
-            <input type="file" id="fotoInput" name="fotoInput" accept="image/*" capture="user" hidden>
+            <input type="file" id="fotoInput" name="fotoInput" accept="image/*" hidden>
+            <input type="file" id="fotoInputCamera" accept="image/*" capture="user" hidden>
+            <!-- Photo picker modal -->
+            <div id="photoPickerModal" class="photo-picker-modal" hidden>
+              <div class="photo-picker-backdrop"></div>
+              <div class="photo-picker-sheet">
+                <p class="photo-picker-title">Pilih sumber foto</p>
+                <button type="button" class="photo-picker-option" id="photoPickerCamera">
+                  <span class="photo-picker-icon">📷</span>
+                  <span>Ambil Foto</span>
+                </button>
+                <button type="button" class="photo-picker-option" id="photoPickerGallery">
+                  <span class="photo-picker-icon">🖼️</span>
+                  <span>Pilih dari Galeri</span>
+                </button>
+                <button type="button" class="photo-picker-cancel" id="photoPickerCancel">Batal</button>
+              </div>
+            </div>
             <div id="uploadPlaceholder" class="upload-placeholder">
               <span class="upload-icon">🤳</span>
               <span class="upload-text">Tap untuk pilih / ambil foto</span>
@@ -157,9 +174,27 @@
     </div>
   </div>
 
+  <!-- Loading overlay full-screen -->
+  <div id="loadingOverlay" class="loading-overlay" hidden>
+    <div class="loading-overlay-content">
+      <div class="loading-overlay-spinner"></div>
+      <p class="loading-overlay-text">Mengirim data…</p>
+    </div>
+  </div>
+
+  <!-- Quicknav (diisi dinamis oleh ../nav.js) -->
+  <nav class="quicknav" aria-label="Navigasi cepat" data-page="pendaftaran"></nav>
+
+  <!-- Floater: butuh bantuan / hubungi admin -->
+  <div class="floater-help">
+    <span>Bingung atau ada data yang mau diedit?</span>
+    <a href="https://wa.me/6283156569954?text=Halo%20Admin,%20saya%20mau%20tanya%20soal%20halaman%20Pendaftaran.%20" target="_blank" rel="noopener">Hubungi Admin 📱</a>
+  </div>
+
   <!-- html2canvas CDN -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js" crossorigin="anonymous"></script>
   <script src="../config.js"></script>
+  <script src="../nav.js"></script>
   <script src="script.js"></script>
 </body>
 </html>

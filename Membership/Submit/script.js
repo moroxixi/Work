@@ -26,8 +26,13 @@ const kodeSelect       = document.getElementById("kodeMembership");
 const menuListEl       = document.getElementById("menuList");
 const menuEmptyMsg     = document.getElementById("menuEmptyMsg");
 const fotoInput        = document.getElementById("fotoInput");
+const fotoInputCamera  = document.getElementById("fotoInputCamera");
 const uploadArea       = document.getElementById("uploadArea");
 const fotoPreview      = document.getElementById("fotoPreview");
+const photoPickerModal = document.getElementById("photoPickerModal");
+const photoPickerCamera = document.getElementById("photoPickerCamera");
+const photoPickerGallery = document.getElementById("photoPickerGallery");
+const photoPickerCancel = document.getElementById("photoPickerCancel");
 const submitBtn        = document.getElementById("submitBtn");
 const btnText          = submitBtn.querySelector(".btn-text");
 const btnLoading       = submitBtn.querySelector(".btn-loading");
@@ -157,9 +162,67 @@ function renderMenuList(menuList) {
 
 // ─── PHOTO UPLOAD + COMPRESSION ─────────────────────────────────────────────
 
-// Click upload area → trigger file input
+// Click upload area → show photo picker modal
 uploadArea.addEventListener("click", function () {
+  photoPickerModal.hidden = false;
+});
+
+// Photo picker: Ambil Foto → open camera
+document.getElementById("photoPickerCamera").addEventListener("click", function () {
+  photoPickerModal.hidden = true;
+  fotoInputCamera.click();
+});
+
+// Photo picker: Pilih dari Galeri → open file picker
+document.getElementById("photoPickerGallery").addEventListener("click", function () {
+  photoPickerModal.hidden = true;
   fotoInput.click();
+});
+
+// Photo picker: Batal
+document.getElementById("photoPickerCancel").addEventListener("click", function () {
+  photoPickerModal.hidden = true;
+});
+
+// Close modal when tapping backdrop
+document.querySelector(".photo-picker-backdrop").addEventListener("click", function () {
+  photoPickerModal.hidden = true;
+});
+
+// Camera input change handler — same logic as gallery fotoInput
+fotoInputCamera.addEventListener("change", async function () {
+  var file = fotoInputCamera.files[0];
+  if (!file) return;
+
+  if (file.size > 10 * 1024 * 1024) {
+    showError("Ukuran foto terlalu besar (maksimal 10MB). Silakan pilih foto lain.");
+    fotoInputCamera.value = "";
+    return;
+  }
+
+  hideError();
+  compressedBase64 = null;
+
+  try {
+    var result = await MAO_CONFIG.compressImageToBase64(file);
+    compressedBase64 = result.base64;
+    compressedMimeType = result.mimeType;
+    compressedFileName = (kodeSelect.value || "unknown") + "_" + Date.now() + ".jpg";
+  } catch (err) {
+    console.error("Compression error:", err);
+    try {
+      compressedBase64 = await blobToBase64(file);
+      compressedMimeType = file.type || "image/jpeg";
+      compressedFileName = file.name || "foto.jpg";
+    } catch (fallbackErr) {
+      console.error("Fallback base64 error:", fallbackErr);
+    }
+  }
+
+  if (previewObjectUrl) URL.revokeObjectURL(previewObjectUrl);
+  previewObjectUrl = URL.createObjectURL(file);
+  fotoPreview.src = previewObjectUrl;
+  uploadArea.classList.add("has-photo");
 });
 
 // File selected
@@ -227,6 +290,7 @@ orderForm.addEventListener("submit", async function (e) {
   }
 
   setLoading(true);
+  showOverlay();
 
   // Snapshot untuk laporan — dibuat SEBELUM resetForm() mengosongkan state.
   // fotoBase64/fotoMimeType di sini adalah data terkompresi yang SAMA dengan
@@ -266,11 +330,30 @@ orderForm.addEventListener("submit", async function (e) {
       // termasuk submit ini). Simpan di snapshot supaya ikut ter-render.
       reportData.totalPoin = json.totalPoin;
 
-      // Form dibersihkan, lalu laporan ditampilkan pakai snapshot di atas.
-      // resetForm() HANYA me-revoke previewObjectUrl (foto form), bukan
-      // reportObjectUrl — jadi foto laporan tetap utuh sampai di-download.
+      // Simpan hasil submit ke localStorage → redirect ke halaman Hasil.
+      // Halaman Hasil akan membaca data dari sana dan merender laporan.
+      // Data otomatis dibersihkan setelah 24 jam ( expiry check di Hasil ).
+      try {
+        localStorage.setItem("mao_submit_result", JSON.stringify({
+          kodeMembership: reportData.kodeMembership,
+          items: reportData.items,
+          waktu: reportData.waktu.toISOString(),
+          fotoBase64: reportData.fotoBase64,
+          fotoMimeType: reportData.fotoMimeType,
+          totalPoin: reportData.totalPoin,
+          _savedAt: Date.now()
+        }));
+      } catch (storageErr) {
+        console.error("localStorage save failed:", storageErr);
+        // Fallback: tampilkan laporan di halaman ini kalau storage penuh
+        resetForm();
+        showReport(reportData);
+        return;
+      }
+
+      // Bersihkan form, lalu redirect ke halaman Hasil
       resetForm();
-      showReport(reportData);
+      window.location.href = "../Hasil/index.html";
     } else {
       showError(json.error || "Terjadi kesalahan di server.");
     }
@@ -282,6 +365,7 @@ orderForm.addEventListener("submit", async function (e) {
       err.message + ")"
     );
   } finally {
+    hideOverlay();
     setLoading(false);
   }
 });
@@ -407,6 +491,16 @@ downloadLaporanBtn.addEventListener("click", async function () {
 });
 
 // Bagikan laporan sebagai gambar via Web Share API, fallback → download + wa.me
+// DIAGNOSIS (Task 4):
+// Bug utama: handler punya early `return` di dalam `try` block (setelah
+// menangkap AbortError saat user membatalkan share sheet). Return ini
+// melewati `finally`, sehingga tombol stuck di "⏳ Menyiapkan…" +
+// disabled=true secara permanen — user lihat tombol "tidak berfungsi".
+//
+// Perbaikan: hapus early return, gunakan flag `shared` supaya fallback
+// hanya jalan kalau share BENAR-BENAR gagal (bukan cancel). Tambah
+// try-catch di pembuatan File blob supaya error canvas/rendering
+// menghasilkan pesan yang bisa dimengerti user.
 shareLaporanBtn.addEventListener("click", async function () {
   try {
     shareLaporanBtn.disabled = true;
@@ -416,13 +510,24 @@ shareLaporanBtn.addEventListener("click", async function () {
     var canvas = await renderLaporanCanvas();
     var fileName = buildLaporanFileName();
 
-    var blob = await canvasToBlob(canvas);
+    // Buat File blob — wrap di try-catch supaya error canvas/rendering
+    // tidak menghasilkan pesan error yang membingungkan.
+    var blob;
+    try {
+      blob = await canvasToBlob(canvas);
+    } catch (blobErr) {
+      console.error("Canvas to blob error:", blobErr);
+      showReportError("Gagal membuat gambar laporan. Coba screenshot manual.");
+      return; // finally tetap jalan → tombol di-reset
+    }
     var file = new File([blob], fileName, { type: "image/png" });
 
     var canShareFiles =
       typeof navigator.share === "function" &&
       typeof navigator.canShare === "function" &&
       navigator.canShare({ files: [file] });
+
+    var shared = false;
 
     if (canShareFiles) {
       try {
@@ -431,27 +536,34 @@ shareLaporanBtn.addEventListener("click", async function () {
           title: "Laporan Pesanan MAO",
           text: SHARE_CAPTION
         });
+        shared = true;
       } catch (err) {
         // User membatalkan share sheet → AbortError. Ini perilaku NORMAL,
-        // bukan kegagalan sistem → DIABAIKAN senyap (tanpa pesan error).
-        if (err && err.name === "AbortError") return;
-        throw err; // error lain (bukan cancel) tetap dilempar ke handler luar
+        // bukan kegagalan sistem → JANGAN tampilkan error, biarkan tombol
+        // di-reset oleh finally block.
+        if (err && err.name === "AbortError") {
+          shared = true; // anggap "berhasil" supaya fallback tidak jalan
+        } else {
+          // Errorlain (bukan cancel) — fallback ke download
+          console.error("Web Share API error:", err);
+        }
       }
-      return; // sukses share — jangan jalankan fallback
     }
 
-    // ── Fallback: Web Share API tidak didukung ──
-    // a. Auto-download gambar dari canvas yang sama (tanpa render ulang)
-    triggerCanvasDownload(canvas, fileName);
-    // b. Buka WhatsApp dengan caption teks (WA tidak bisa attach gambar via URL scheme)
-    window.open(
-      "https://wa.me/?text=" + encodeURIComponent(SHARE_CAPTION),
-      "_blank"
-    );
-    // c. Instruksi singkat ke user
-    showReportInfo(
-      "Gambar laporan sudah didownload — silakan lampirkan manual di chat WhatsApp yang baru terbuka."
-    );
+    // Fallback: Web Share API tidak didukung, atau share gagal (bukan cancel)
+    if (!shared) {
+      // a. Auto-download gambar dari canvas yang sama (tanpa render ulang)
+      triggerCanvasDownload(canvas, fileName);
+      // b. Buka WhatsApp dengan caption teks (WA tidak bisa attach gambar via URL scheme)
+      window.open(
+        "https://wa.me/?text=" + encodeURIComponent(SHARE_CAPTION),
+        "_blank"
+      );
+      // c. Instruksi singkat ke user
+      showReportInfo(
+        "Gambar laporan sudah didownload — silakan lampirkan manual di chat WhatsApp yang baru terbuka."
+      );
+    }
   } catch (err) {
     console.error("Bagikan laporan error:", err);
     showReportError("Gagal membagikan laporan. Coba screenshot manual atau ulangi.");
@@ -575,6 +687,7 @@ function resetForm() {
 
   // Reset foto (revoke object URL preview form; reportObjectUrl TIDAK disentuh)
   fotoInput.value = "";
+  fotoInputCamera.value = "";
   compressedBase64 = null;
   compressedMimeType = "";
   compressedFileName = "";
@@ -588,6 +701,16 @@ function resetForm() {
   // Kode membership sengaja TIDAK direset di sini; "Buat Pesanan Baru"
   // yang mengembalikannya ke placeholder (biar tetap bisa submit ulang
   // kalau form ini dipakai lagi tanpa lewat laporan).
+}
+
+const loadingOverlay = document.getElementById("loadingOverlay");
+
+function showOverlay() {
+  loadingOverlay.hidden = false;
+}
+
+function hideOverlay() {
+  loadingOverlay.hidden = true;
 }
 
 function setLoading(isLoading) {

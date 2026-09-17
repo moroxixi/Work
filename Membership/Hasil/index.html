@@ -1,0 +1,729 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>MAO — Laporan Pesanan</title>
+  <style>
+    /* ═══════════════════════════════════════════════════════════════════════
+       MAO Hasil — Dark Theme + Red-Orange Gradient Accents
+       Standalone page (inline CSS) — reads data from localStorage
+       ═══════════════════════════════════════════════════════════════════════ */
+
+    :root {
+      --bg:        #0a0a0a;
+      --surface:   #141414;
+      --surface2:  #1c1c1c;
+      --border:    #2a2a2a;
+      --text:      #f0f0f0;
+      --text-dim:  #888;
+      --accent1:   #ff4d1c;
+      --accent2:   #ffb300;
+      --gradient:  linear-gradient(135deg, #ff4d1c, #ffb300);
+      --gradient-h: linear-gradient(90deg, #ff4d1c, #ffb300);
+      --danger:    #ff4444;
+      --success:   #4caf50;
+      --radius:    12px;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      display: flex;
+      align-items: flex-start;
+      justify-content: center;
+      padding: calc(24px + env(safe-area-inset-top)) calc(16px + env(safe-area-inset-right))
+        calc(24px + env(safe-area-inset-bottom)) calc(16px + env(safe-area-inset-left));
+      line-height: 1.5;
+    }
+
+    .page { width: 100%; max-width: 480px; padding-bottom: 130px; }
+    .section { width: 100%; max-width: 480px; }
+
+    .form-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 32px 28px;
+      box-shadow: 0 8px 32px rgba(255, 77, 28, 0.08);
+    }
+
+    .card-title {
+      text-align: center;
+      font-size: 1.3rem;
+      font-weight: 800;
+      margin-bottom: 20px;
+      background: var(--gradient);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    /* ─── Laporan Card ─────────────────────────────────────────────────── */
+    .laporan-card {
+      background: #101010;
+      border: 1px solid var(--border);
+      border-top: 3px solid var(--accent1);
+      border-radius: var(--radius);
+      padding: 24px 20px 20px;
+      text-align: center;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, 'Courier New', monospace;
+    }
+
+    .laporan-logo {
+      display: block;
+      width: 64px;
+      height: auto;
+      margin: 0 auto 12px;
+      border-radius: 12px;
+    }
+
+    .laporan-title {
+      font-size: 1.05rem;
+      font-weight: 800;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      background: var(--gradient);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: 16px;
+    }
+
+    .laporan-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      gap: 12px;
+      padding: 5px 0;
+      font-size: 0.82rem;
+      text-align: left;
+    }
+
+    .laporan-label { color: var(--text-dim); flex-shrink: 0; }
+
+    .laporan-value {
+      font-weight: 700;
+      color: var(--text);
+      text-align: right;
+      min-width: 0;
+      overflow-wrap: anywhere;
+    }
+
+    .laporan-poin {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 2px;
+      margin-top: 14px;
+      padding: 12px 14px;
+      border-radius: 10px;
+      background: var(--gradient-h);
+      box-shadow: 0 4px 16px rgba(255, 77, 28, 0.25);
+    }
+
+    .laporan-poin-label {
+      font-size: 0.7rem;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: rgba(255, 255, 255, 0.9);
+    }
+
+    .laporan-poin-value {
+      font-size: 1.5rem;
+      font-weight: 800;
+      color: #fff;
+      text-shadow: 0 1px 3px rgba(0, 0, 0, 0.28);
+      font-variant-numeric: tabular-nums;
+    }
+
+    .laporan-divider {
+      border-top: 1px dashed rgba(255, 255, 255, 0.18);
+      margin: 14px 0;
+    }
+
+    .laporan-items { display: flex; flex-direction: column; gap: 6px; }
+
+    .laporan-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      gap: 12px;
+      font-size: 0.85rem;
+    }
+
+    .laporan-item-name {
+      text-align: left;
+      color: var(--text);
+      min-width: 0;
+      overflow-wrap: anywhere;
+    }
+
+    .laporan-item-qty {
+      flex-shrink: 0;
+      font-weight: 700;
+      color: var(--accent2);
+      font-variant-numeric: tabular-nums;
+    }
+
+    .laporan-foto {
+      display: block;
+      width: 100%;
+      max-height: 280px;
+      object-fit: contain;
+      border-radius: 8px;
+      background: var(--surface2);
+    }
+
+    .laporan-footer {
+      margin-top: 16px;
+      font-size: 0.7rem;
+      color: var(--text-dim);
+      letter-spacing: 0.06em;
+    }
+
+    /* ─── Buttons ──────────────────────────────────────────────────────── */
+    .btn-submit {
+      width: 100%;
+      min-height: 48px;
+      padding: 14px;
+      font-size: 1rem;
+      font-weight: 700;
+      color: #fff;
+      background: var(--gradient-h);
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      margin-top: 8px;
+      transition: opacity 0.2s, transform 0.1s;
+      letter-spacing: 0.02em;
+    }
+
+    .btn-submit:hover { opacity: 0.9; }
+    .btn-submit:active { transform: scale(0.98); }
+    .btn-submit:disabled { opacity: 0.5; cursor: not-allowed; }
+
+    .btn-share {
+      background: var(--accent2);
+      color: #1a1200;
+    }
+
+    .btn-back {
+      margin-top: 10px;
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      color: var(--text-dim);
+    }
+
+    .btn-back:hover { border-color: var(--accent1); color: var(--text); }
+
+    .btn-report { margin-top: 10px; }
+
+    /* ─── Messages ─────────────────────────────────────────────────────── */
+    .error-msg {
+      margin-top: 14px;
+      padding: 12px 14px;
+      background: rgba(255, 68, 68, 0.1);
+      border: 1px solid rgba(255, 68, 68, 0.3);
+      border-radius: 8px;
+      color: var(--danger);
+      font-size: 0.85rem;
+      text-align: center;
+    }
+
+    .info-msg {
+      margin-top: 14px;
+      padding: 12px 14px;
+      background: rgba(255, 179, 0, 0.1);
+      border: 1px solid rgba(255, 179, 0, 0.3);
+      border-radius: 8px;
+      color: var(--accent2);
+      font-size: 0.85rem;
+      text-align: center;
+    }
+
+    .disclaimer {
+      margin-top: 18px;
+      padding: 0 6px;
+      font-size: 0.72rem;
+      line-height: 1.55;
+      color: #7a7a7a;
+      text-align: center;
+    }
+
+    /* ─── Expired / Error state ────────────────────────────────────────── */
+    .expired-state {
+      text-align: center;
+      padding: 40px 20px;
+      color: var(--text-dim);
+    }
+
+    .expired-state p { margin-top: 12px; font-size: 0.9rem; }
+
+    .expired-state a {
+      display: inline-block;
+      margin-top: 20px;
+      padding: 12px 24px;
+      background: var(--gradient-h);
+      color: #fff;
+      text-decoration: none;
+      border-radius: 8px;
+      font-weight: 700;
+    }
+
+    /* ─── Quicknav ─────────────────────────────────────────────────────── */
+    .quicknav {
+      position: fixed;
+      bottom: 52px;
+      left: 0;
+      right: 0;
+      display: flex;
+      gap: 6px;
+      padding: 6px 12px;
+      padding-bottom: calc(6px + env(safe-area-inset-bottom));
+      background: rgba(10, 10, 10, 0.92);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      border-top: 1px solid var(--border);
+      z-index: 99;
+    }
+
+    .quicknav-item {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+      padding: 8px 4px 6px;
+      background: var(--surface);
+      border: 1.5px solid var(--border);
+      border-radius: 10px;
+      text-decoration: none;
+      color: var(--text-dim);
+      transition: background 0.12s, border-color 0.12s, transform 0.15s;
+    }
+
+    .quicknav-item:active { transform: scale(0.95); }
+
+    .quicknav-item.is-active {
+      border-color: var(--accent1);
+      color: var(--text);
+      background: rgba(255, 77, 28, 0.1);
+    }
+
+    .quicknav-icon { display: flex; width: 20px; height: 20px; }
+    .quicknav-icon svg { width: 100%; height: 100%; }
+    .quicknav-label {
+      font-size: 10.5px;
+      font-weight: 600;
+      letter-spacing: 0.01em;
+      white-space: nowrap;
+    }
+
+    /* ─── Floater ──────────────────────────────────────────────────────── */
+    .floater-help {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 12px 16px;
+      padding-bottom: calc(12px + env(safe-area-inset-bottom));
+      background: rgba(20, 20, 20, 0.95);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      border-top: 1px solid var(--border);
+      font-size: 0.8rem;
+      color: var(--text-dim);
+      z-index: 100;
+    }
+
+    .floater-help a {
+      color: var(--accent2);
+      font-weight: 700;
+      text-decoration: none;
+      white-space: nowrap;
+    }
+
+    .floater-help a:hover { text-decoration: underline; }
+
+    /* ─── Loading overlay ──────────────────────────────────────────────── */
+    .loading-overlay {
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(10, 10, 10, 0.85);
+      backdrop-filter: blur(4px);
+      -webkit-backdrop-filter: blur(4px);
+      z-index: 500;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .loading-overlay-content { text-align: center; }
+
+    .loading-overlay-spinner {
+      width: 48px; height: 48px;
+      border: 4px solid var(--border);
+      border-top-color: var(--accent1);
+      border-radius: 50%;
+      margin: 0 auto 16px;
+      animation: spin 0.8s linear infinite;
+    }
+
+    .loading-overlay-text { color: var(--text); font-size: 1rem; font-weight: 600; }
+
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    @media (max-width: 480px) { .form-card { padding: 24px 18px; } }
+  </style>
+</head>
+<body>
+
+  <div class="page">
+
+    <!-- Report section — tampilkan kalau data valid -->
+    <div id="reportSection" class="section" hidden>
+      <div class="form-card">
+        <h2 class="card-title">🎉 Pesanan Terkirim!</h2>
+
+        <div id="laporanCard" class="laporan-card">
+          <img src="../assets/logo-mao.jpeg" alt="MAO" class="laporan-logo">
+          <div class="laporan-title">Bukti Pesanan MAO</div>
+
+          <div class="laporan-row">
+            <span class="laporan-label">Kode Membership</span>
+            <span class="laporan-value" id="laporanKode"></span>
+          </div>
+          <div class="laporan-row">
+            <span class="laporan-label">Waktu Submit</span>
+            <span class="laporan-value" id="laporanWaktu"></span>
+          </div>
+
+          <div class="laporan-poin">
+            <span class="laporan-poin-label">Poin kamu sekarang</span>
+            <span class="laporan-poin-value" id="laporanPoin">0 poin</span>
+          </div>
+
+          <div class="laporan-divider"></div>
+          <div id="laporanItems" class="laporan-items"></div>
+          <div class="laporan-divider"></div>
+
+          <img id="laporanFoto" class="laporan-foto" alt="Foto bukti pesanan">
+
+          <div class="laporan-footer">Dokumen ini dibuat otomatis oleh sistem MAO</div>
+        </div>
+
+        <button id="downloadLaporanBtn" class="btn-submit btn-report">📥 Download Laporan</button>
+        <button id="shareLaporanBtn" class="btn-submit btn-share btn-report">📤 Bagikan</button>
+        <a href="../Submit/index.html" class="btn-submit btn-back btn-report" style="text-align:center;text-decoration:none;display:block;">＋ Buat Pesanan Baru</a>
+
+        <div id="reportInfoMsg" class="info-msg" hidden></div>
+        <div id="reportErrorMsg" class="error-msg" hidden></div>
+      </div>
+    </div>
+
+    <!-- Expired / no data state -->
+    <div id="expiredSection" class="section" hidden>
+      <div class="form-card">
+        <div class="expired-state">
+          <p style="font-size:2rem;">📋</p>
+          <p>Data laporan tidak ditemukan atau sudah kedaluwarsa (lebih dari 24 jam).</p>
+          <a href="../Submit/index.html">Submit Pesanan Baru →</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Disclaimer -->
+    <p class="disclaimer">
+      Apabila ditemukan ketidaksesuaian antara pesanan yang diinput dengan foto bukti
+      yang dilampirkan, admin berhak menghapus data submission tersebut.
+    </p>
+
+    <!-- Quicknav -->
+    <nav class="quicknav" aria-label="Navigasi cepat" data-page="hasil"></nav>
+
+  </div>
+
+  <!-- Loading overlay -->
+  <div id="loadingOverlay" class="loading-overlay" hidden>
+    <div class="loading-overlay-content">
+      <div class="loading-overlay-spinner"></div>
+      <p class="loading-overlay-text">Memproses…</p>
+    </div>
+  </div>
+
+  <!-- Floater -->
+  <div class="floater-help">
+    <span>Bingung atau ada data yang mau diedit?</span>
+    <a href="https://wa.me/6283156569954?text=Halo%20Admin,%20saya%20mau%20tanya%20soal%20halaman%20Submit%20Pesanan.%20" target="_blank" rel="noopener">Hubungi Admin 📱</a>
+  </div>
+
+  <!-- html2canvas CDN -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js" crossorigin="anonymous"></script>
+  <script src="../config.js"></script>
+  <script src="../nav.js"></script>
+  <script>
+  /**
+   * MAO Hasil — Laporan Pesanan (standalone page)
+   *
+   * Reads submit result from localStorage (key: "mao_submit_result").
+   * Data expires after 24 hours. Renders report card with download + share.
+   */
+  (function () {
+    'use strict';
+
+    var STORAGE_KEY = 'mao_submit_result';
+    var EXPIRY_MS = 24 * 60 * 60 * 1000; // 24 hours
+
+    // ─── DOM References ──────────────────────────────────────────────────
+    var reportSection   = document.getElementById('reportSection');
+    var expiredSection  = document.getElementById('expiredSection');
+    var laporanCard     = document.getElementById('laporanCard');
+    var laporanKode     = document.getElementById('laporanKode');
+    var laporanWaktu    = document.getElementById('laporanWaktu');
+    var laporanPoin     = document.getElementById('laporanPoin');
+    var laporanItems    = document.getElementById('laporanItems');
+    var laporanFoto     = document.getElementById('laporanFoto');
+    var downloadBtn     = document.getElementById('downloadLaporanBtn');
+    var shareBtn        = document.getElementById('shareLaporanBtn');
+    var reportInfoMsg   = document.getElementById('reportInfoMsg');
+    var reportErrorMsg  = document.getElementById('reportErrorMsg');
+    var loadingOverlay  = document.getElementById('loadingOverlay');
+
+    var SHARE_CAPTION = 'Saya telah membeli beberapa porsi di MAO Wonton dan Mie Jebew 🌶️';
+
+    var reportObjectUrl = null;
+    var reportKode = '';
+    var reportWaktu = null;
+
+    // ─── Load from localStorage ──────────────────────────────────────────
+    var data = null;
+    try {
+      var raw = localStorage.getItem(STORAGE_KEY);
+      if (raw) {
+        data = JSON.parse(raw);
+        // Check expiry
+        if (data._savedAt && (Date.now() - data._savedAt > EXPIRY_MS)) {
+          localStorage.removeItem(STORAGE_KEY);
+          data = null;
+        }
+      }
+    } catch (e) {
+      console.error('Failed to read localStorage:', e);
+      data = null;
+    }
+
+    if (!data) {
+      expiredSection.hidden = false;
+      return;
+    }
+
+    // ─── Render report ──────────────────────────────────────────────────
+    reportKode = data.kodeMembership;
+    // Deserialize waktu (stored as ISO string)
+    reportWaktu = new Date(data.waktu);
+
+    laporanKode.textContent = data.kodeMembership;
+    laporanWaktu.textContent = formatWaktu(reportWaktu);
+
+    var poin = Number(data.totalPoin) || 0;
+    laporanPoin.textContent = poin.toLocaleString('id-ID') + ' poin';
+
+    laporanItems.innerHTML = '';
+    (data.items || []).forEach(function (item) {
+      var row = document.createElement('div');
+      row.className = 'laporan-item';
+      var nama = document.createElement('span');
+      nama.className = 'laporan-item-name';
+      nama.textContent = item.namaMenu;
+      var qty = document.createElement('span');
+      qty.className = 'laporan-item-qty';
+      qty.textContent = '× ' + item.qty;
+      row.appendChild(nama);
+      row.appendChild(qty);
+      laporanItems.appendChild(row);
+    });
+
+    // Rebuild foto from base64
+    if (data.fotoBase64) {
+      var blob = base64ToBlob(data.fotoBase64, data.fotoMimeType || 'image/jpeg');
+      reportObjectUrl = URL.createObjectURL(blob);
+      laporanFoto.src = reportObjectUrl;
+    }
+
+    reportSection.hidden = false;
+
+    // Clean up localStorage after successful display (one-time read)
+    try { localStorage.removeItem(STORAGE_KEY); } catch (e) { /* ignore */ }
+
+    // ─── Download handler ───────────────────────────────────────────────
+    downloadBtn.addEventListener('click', async function () {
+      try {
+        downloadBtn.disabled = true;
+        downloadBtn.textContent = '⏳ Generating…';
+        var canvas = await renderLaporanCanvas();
+        var link = document.createElement('a');
+        link.download = buildLaporanFileName();
+        link.href = canvas.toDataURL('image/png');
+        link.click();
+      } catch (err) {
+        console.error('Download error:', err);
+        showReportError('Gagal membuat laporan. Coba screenshot manual.');
+      } finally {
+        downloadBtn.disabled = false;
+        downloadBtn.textContent = '📥 Download Laporan';
+      }
+    });
+
+    // ─── Share handler ──────────────────────────────────────────────────
+    shareBtn.addEventListener('click', async function () {
+      try {
+        shareBtn.disabled = true;
+        shareBtn.textContent = '⏳ Menyiapkan…';
+        hideReportInfo();
+
+        var canvas = await renderLaporanCanvas();
+        var fileName = buildLaporanFileName();
+
+        var blob;
+        try {
+          blob = await canvasToBlob(canvas);
+        } catch (blobErr) {
+          console.error('Canvas to blob error:', blobErr);
+          showReportError('Gagal membuat gambar laporan. Coba screenshot manual.');
+          return;
+        }
+        var file = new File([blob], fileName, { type: 'image/png' });
+
+        var canShareFiles =
+          typeof navigator.share === 'function' &&
+          typeof navigator.canShare === 'function' &&
+          navigator.canShare({ files: [file] });
+
+        var shared = false;
+
+        if (canShareFiles) {
+          try {
+            await navigator.share({
+              files: [file],
+              title: 'Laporan Pesanan MAO',
+              text: SHARE_CAPTION
+            });
+            shared = true;
+          } catch (err) {
+            if (err && err.name === 'AbortError') {
+              shared = true;
+            } else {
+              console.error('Web Share API error:', err);
+            }
+          }
+        }
+
+        if (!shared) {
+          var link = document.createElement('a');
+          link.download = fileName;
+          link.href = canvas.toDataURL('image/png');
+          link.click();
+          window.open(
+            'https://wa.me/?text=' + encodeURIComponent(SHARE_CAPTION),
+            '_blank'
+          );
+          showReportInfo(
+            'Gambar laporan sudah didownload — silakan lampirkan manual di chat WhatsApp yang baru terbuka.'
+          );
+        }
+      } catch (err) {
+        console.error('Share error:', err);
+        showReportError('Gagal membagikan laporan. Coba screenshot manual.');
+      } finally {
+        shareBtn.disabled = false;
+        shareBtn.textContent = '📤 Bagikan';
+      }
+    });
+
+    // ─── Helpers ────────────────────────────────────────────────────────
+    async function renderLaporanCanvas() {
+      await waitForImage(laporanFoto);
+      return html2canvas(laporanCard, { backgroundColor: '#0a0a0a', scale: 2 });
+    }
+
+    function buildLaporanFileName() {
+      return 'Laporan-Pesanan-' + sanitizeFilePart(reportKode) + '-' + formatStampFile(reportWaktu) + '.png';
+    }
+
+    function canvasToBlob(canvas) {
+      return new Promise(function (resolve, reject) {
+        canvas.toBlob(function (blob) {
+          if (blob) resolve(blob);
+          else reject(new Error('Gagal membuat Blob PNG dari canvas'));
+        }, 'image/png');
+      });
+    }
+
+    function waitForImage(img) {
+      if (img.complete && img.naturalWidth > 0) return Promise.resolve();
+      return new Promise(function (resolve) {
+        img.addEventListener('load', resolve, { once: true });
+        img.addEventListener('error', resolve, { once: true });
+      });
+    }
+
+    function base64ToBlob(base64, mimeType) {
+      var byteChars = atob(base64);
+      var sliceSize = 512;
+      var byteArrays = [];
+      for (var offset = 0; offset < byteChars.length; offset += sliceSize) {
+        var slice = byteChars.slice(offset, offset + sliceSize);
+        var bytes = new Uint8Array(slice.length);
+        for (var i = 0; i < slice.length; i++) {
+          bytes[i] = slice.charCodeAt(i);
+        }
+        byteArrays.push(bytes);
+      }
+      return new Blob(byteArrays, { type: mimeType || 'image/jpeg' });
+    }
+
+    function formatWaktu(d) {
+      var tanggal = d.toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' });
+      var jam = pad2(d.getHours());
+      var menit = pad2(d.getMinutes());
+      return tanggal + ', ' + jam + ':' + menit;
+    }
+
+    function formatStampFile(d) {
+      return d.getFullYear() + pad2(d.getMonth() + 1) + pad2(d.getDate()) + '-' + pad2(d.getHours()) + pad2(d.getMinutes());
+    }
+
+    function pad2(n) { return String(n).padStart(2, '0'); }
+
+    function sanitizeFilePart(str) {
+      return String(str).replace(/[^A-Za-z0-9._-]+/g, '-').replace(/^-+|-+$/g, '');
+    }
+
+    function showReportError(msg) {
+      reportErrorMsg.textContent = msg;
+      reportErrorMsg.hidden = false;
+    }
+
+    function showReportInfo(msg) {
+      reportInfoMsg.textContent = msg;
+      reportInfoMsg.hidden = false;
+    }
+
+    function hideReportInfo() {
+      reportInfoMsg.hidden = true;
+      reportInfoMsg.textContent = '';
+    }
+  })();
+  </script>
+</body>
+</html>

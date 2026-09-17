@@ -26,8 +26,13 @@ const cardFotoProfil  = document.getElementById("cardFotoProfil");
 const downloadBtn     = document.getElementById("downloadBtn");
 const backBtn         = document.getElementById("backBtn");
 const fotoInput       = document.getElementById("fotoInput");
+const fotoInputCamera = document.getElementById("fotoInputCamera");
 const uploadArea      = document.getElementById("uploadArea");
 const fotoPreview     = document.getElementById("fotoPreview");
+const photoPickerModal = document.getElementById("photoPickerModal");
+const photoPickerCamera = document.getElementById("photoPickerCamera");
+const photoPickerGallery = document.getElementById("photoPickerGallery");
+const photoPickerCancel = document.getElementById("photoPickerCancel");
 
 // ─── STATE ──────────────────────────────────────────────────────────────
 let compressedBase64 = null;   // foto profil terkompresi (base64, via config.js)
@@ -112,6 +117,7 @@ form.addEventListener("submit", async function (e) {
   }
 
   setLoading(true);
+  showOverlay();
 
   try {
     const params = new URLSearchParams({
@@ -148,6 +154,7 @@ form.addEventListener("submit", async function (e) {
         ")"
     );
   } finally {
+    hideOverlay();
     setLoading(false);
   }
 });
@@ -228,9 +235,66 @@ backBtn.addEventListener("click", function () {
 
 // ─── FOTO PROFIL: UPLOAD + KOMPRESI (shared fn di ../config.js) ───────────
 
-// Tap area upload → buka picker / kamera depan (capture="user" di HTML)
+// Tap area upload → tampilkan photo picker modal
 uploadArea.addEventListener("click", function () {
+  photoPickerModal.hidden = false;
+});
+
+// Photo picker: Ambil Foto → buka kamera
+document.getElementById("photoPickerCamera").addEventListener("click", function () {
+  photoPickerModal.hidden = true;
+  fotoInputCamera.click();
+});
+
+// Photo picker: Pilih dari Galeri → buka file picker
+document.getElementById("photoPickerGallery").addEventListener("click", function () {
+  photoPickerModal.hidden = true;
   fotoInput.click();
+});
+
+// Photo picker: Batal
+document.getElementById("photoPickerCancel").addEventListener("click", function () {
+  photoPickerModal.hidden = true;
+});
+
+// Close modal when tapping backdrop
+document.querySelector(".photo-picker-backdrop").addEventListener("click", function () {
+  photoPickerModal.hidden = true;
+});
+
+// Camera input change handler — same logic as gallery fotoInput
+fotoInputCamera.addEventListener("change", async function () {
+  var file = fotoInputCamera.files[0];
+  if (!file) return;
+
+  if (file.size > 10 * 1024 * 1024) {
+    showError("Ukuran foto terlalu besar (maksimal 10MB). Silakan pilih foto lain.");
+    fotoInputCamera.value = "";
+    return;
+  }
+
+  hideError();
+  resetFotoState();
+  fotoBlob = file;
+
+  try {
+    var result = await MAO_CONFIG.compressImageToBase64(file);
+    compressedBase64 = result.base64;
+    compressedMimeType = result.mimeType;
+    compressedFileName = (document.getElementById("Nama").value.trim() || "member") +
+      "_" + Date.now() + ".jpg";
+  } catch (err) {
+    console.error("Compression error:", err);
+    try {
+      compressedBase64 = await blobToBase64(file);
+      compressedMimeType = file.type || "image/jpeg";
+      compressedFileName = file.name || "foto.jpg";
+    } catch (fallbackErr) {
+      console.error("Fallback base64 error:", fallbackErr);
+    }
+  }
+
+  showFotoPreview(file);
 });
 
 fotoInput.addEventListener("change", async function () {
@@ -288,6 +352,7 @@ function showFotoPreview(file) {
 // State kosong: cabut class .has-preview → placeholder kembali tampil
 function resetFotoState() {
   fotoInput.value = "";
+  fotoInputCamera.value = "";
   compressedBase64 = null;
   compressedMimeType = "";
   compressedFileName = "";
@@ -313,6 +378,16 @@ function blobToBase64(blob) {
 }
 
 // ─── UI HELPERS ─────────────────────────────────────────────────────────────
+
+const loadingOverlay = document.getElementById("loadingOverlay");
+
+function showOverlay() {
+  loadingOverlay.hidden = false;
+}
+
+function hideOverlay() {
+  loadingOverlay.hidden = true;
+}
 
 function setLoading(isLoading) {
   submitBtn.disabled = isLoading;
