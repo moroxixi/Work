@@ -261,10 +261,12 @@ input[type="date"]::-webkit-calendar-picker-indicator {
   background: var(--gradient-h);
 }
 
-.card-chili {
-  width: 32px;
-  height: 40px;
-  margin-bottom: 8px;
+.card-logo {
+  width: 84px;
+  height: auto;
+  margin: 0 auto 10px;
+  border-radius: 14px;
+  display: block;
 }
 
 .card-brand {
@@ -289,6 +291,25 @@ input[type="date"]::-webkit-calendar-picker-indicator {
 .card-details {
   text-align: left;
   padding: 0 8px;
+}
+
+/* Baris berisi 2 kolom berdampingan (Umur | Tanggal Daftar) */
+.card-row-pair {
+  display: flex;
+  gap: 16px;
+  padding: 7px 0;
+}
+
+.card-col {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.card-col .card-value {
+  text-align: left;
 }
 
 .card-row {
@@ -322,6 +343,56 @@ input[type="date"]::-webkit-calendar-picker-indicator {
   color: var(--text-dim);
   letter-spacing: 0.08em;
   text-transform: uppercase;
+}
+
+/* ─── Upload Foto Profil (class identik dengan Submit — konsisten) ─────── */
+.upload-area {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 96px; /* tombol besar, nyaman ditap di HP */
+  border: 2px dashed var(--border);
+  border-radius: 12px;
+  padding: 20px 16px;
+  text-align: center;
+  cursor: pointer;
+  transition: border-color 0.2s, background 0.2s;
+}
+
+.upload-area:hover {
+  border-color: var(--accent1);
+  background: rgba(255, 77, 28, 0.04);
+}
+
+.upload-area:active {
+  background: rgba(255, 77, 28, 0.1);
+}
+
+.upload-area.has-photo {
+  padding: 10px;
+  border-style: solid;
+  border-color: var(--accent1);
+}
+
+.upload-placeholder {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  color: var(--text);
+  font-size: 0.95rem;
+  font-weight: 600;
+}
+
+.upload-icon {
+  font-size: 2.2rem;
+}
+
+.foto-preview {
+  max-width: 100%;
+  max-height: 200px;
+  border-radius: 6px;
+  object-fit: contain;
 }
 
 /* ─── Responsive ───────────────────────────────────────────────────────── */

@@ -2,11 +2,19 @@
  * MAO Membership — Google Apps Script Backend
  *
  * Deploy as Web App dengan doPost & doGet.
- * Jalankan setupSheetHeaders() sekali manual lewat editor untuk menulis header.
+ * Jalankan setupSheetHeaders() sekali manual lewat editor untuk menulis header
+ * (sekaligus rename tab pertama menjadi "Member" — hanya jika baris 1 kosong).
+ *
+ * PENTING: setelah update ini, jalankan ULANG setupSheetHeaders() sekali dari
+ * editor — jumlah kolom header berubah dari 9 menjadi 10 (tambah kolom
+ * "Foto Profil (URL Drive)").
  */
 
 // ─── KONFIGURASI ────────────────────────────────────────────────────────────
 var SHEET_ID = "17s9Y-lL07n-mN0fWmezQvVqMIcY8MaqjpESx_x6TcFA";
+
+// Nama tab untuk data Pendaftaran/Member (di-rename oleh setupSheetHeaders)
+var SHEET_NAME_MEMBER = "Member";
 
 // Urutan kolom FINAL — dipakai bersama oleh setupSheetHeaders() DAN doPost()
 var COLUMNS = [
@@ -18,7 +26,8 @@ var COLUMNS = [
   "Umur",
   "Jenis Kelamin",
   "Status",
-  "Nomor WhatsApp"
+  "Nomor WhatsApp",
+  "Foto Profil (URL Drive)"
 ];
 
 // Charset untuk kode unik (hindari karakter ambigu: 0/O/1/I)
@@ -40,10 +49,12 @@ var COLUMNS_SUBMIT_PESANAN = [
 
 /**
  * Jalankan MANUAL sekali dari editor Apps Script untuk menulis header.
- * Cek dulu apakah baris 1 sudah ada isi — kalau sudah, skip & log peringatan.
+ * Sekalian me-rename tab pertama menjadi "Member" — HANYA jika baris 1
+ * masih kosong (idempoten: kalau baris 1 sudah ada isi, skip & log peringatan,
+ * rename pun tidak dilakukan).
  */
 function setupSheetHeaders() {
-  var sheet = SpreadsheetApp.openById(SHEET_ID).getSheets()[0];
+  var sheet = getMemberSheet_();
   var firstRow = sheet.getRange(1, 1, 1, COLUMNS.length).getValues()[0];
 
   // Defensive check: kalau semua sel di baris 1 kosong, lanjut tulis
@@ -53,14 +64,39 @@ function setupSheetHeaders() {
 
   if (hasContent) {
     Logger.log(
-      "⚠️ Baris 1 sudah ada isi. Header TIDAK ditulis ulang. Data existing: " +
+      "⚠️ Baris 1 sudah ada isi. Header TIDAK ditulis ulang & tab TIDAK di-rename. Data existing: " +
         JSON.stringify(firstRow)
     );
     return;
   }
 
+  // Baris 1 masih kosong → aman rename tab ke "Member"
+  if (sheet.getName() !== SHEET_NAME_MEMBER) {
+    sheet.setName(SHEET_NAME_MEMBER);
+    Logger.log("✅ Tab pertama di-rename menjadi '" + SHEET_NAME_MEMBER + "'.");
+  }
+
   sheet.getRange(1, 1, 1, COLUMNS.length).setValues([COLUMNS]);
-  Logger.log("✅ Header berhasil ditulis: " + COLUMNS.join(", "));
+  Logger.log("✅ Header berhasil ditulis (" + COLUMNS.length + " kolom): " + COLUMNS.join(", "));
+}
+
+// ─── SHEET ACCESS (tab Member) ──────────────────────────────────────────────
+
+/**
+ * Single point of access untuk tab Pendaftaran/Member.
+ * Coba by name dulu ("Member"), fallback ke tab pertama kalau belum di-rename
+ * (misal setupSheetHeaders belum pernah dijalankan).
+ */
+function getMemberSheet_() {
+  var ss = SpreadsheetApp.openById(SHEET_ID);
+  var sheet = ss.getSheetByName(SHEET_NAME_MEMBER);
+  if (!sheet) {
+    console.log(
+      "⚠️ Tab '" + SHEET_NAME_MEMBER + "' tidak ditemukan — fallback ke tab pertama (getSheets()[0])."
+    );
+    sheet = ss.getSheets()[0];
+  }
+  return sheet;
 }
 
 // ─── GENERATE KODE UNIK ─────────────────────────────────────────────────────
@@ -186,12 +222,15 @@ function setupSheetTambahanMembership() {
 // ─── FOTO FOLDER ───────────────────────────────────────────────────────────
 
 /**
- * Dapatkan atau buat folder "MAO Membership - Bukti Foto" di Drive.
- * Cache folder ID di Script Properties supaya tidak search berulang.
+ * Dapatkan atau buat folder Drive berdasarkan nama.
+ * Cache folder ID di Script Properties (key = propKey) supaya tidak
+ * search berulang.
+ * @param {string} folderName - nama folder di Drive
+ * @param {string} propKey - key Script Properties untuk cache folder ID
  */
-function getOrCreateFotoFolder_() {
+function getOrCreateFolder_(folderName, propKey) {
   var props = PropertiesService.getScriptProperties();
-  var cachedId = props.getProperty("FOTO_PRODUK_FOLDER_ID");
+  var cachedId = props.getProperty(propKey);
 
   // Coba pakai cached ID dulu
   if (cachedId) {
@@ -200,22 +239,22 @@ function getOrCreateFotoFolder_() {
       return folder;
     } catch (e) {
       // ID tidak valid / folder dihapus — lanjut cari/buat baru
-      Logger.log("⚠️ Cached folder ID invalid, mencari ulang...");
+      Logger.log("⚠️ Cached folder ID invalid (" + propKey + "), mencari ulang...");
     }
   }
 
   // Cari folder by name
-  var folders = DriveApp.getFoldersByName("MAO Membership - Bukti Foto");
+  var folders = DriveApp.getFoldersByName(folderName);
   if (folders.hasNext()) {
     var folder = folders.next();
-    props.setProperty("FOTO_PRODUK_FOLDER_ID", folder.getId());
+    props.setProperty(propKey, folder.getId());
     return folder;
   }
 
   // Belum ada → buat baru
-  var newFolder = DriveApp.createFolder("MAO Membership - Bukti Foto");
-  props.setProperty("FOTO_PRODUK_FOLDER_ID", newFolder.getId());
-  Logger.log("✅ Folder 'MAO Membership - Bukti Foto' dibuat: " + newFolder.getId());
+  var newFolder = DriveApp.createFolder(folderName);
+  props.setProperty(propKey, newFolder.getId());
+  Logger.log("✅ Folder '" + folderName + "' dibuat: " + newFolder.getId());
   return newFolder;
 }
 
@@ -236,7 +275,7 @@ function doPost(e) {
 // ─── doPost: REGISTRASI PENDAFTARAN ────────────────────────────────────────
 
 function doPostPendaftaran_(e) {
-  var sheet = SpreadsheetApp.openById(SHEET_ID).getSheets()[0];
+  var sheet = getMemberSheet_();
 
   // Ambil parameter (URLSearchParams → e.parameter)
   var nama = trim_(e.parameter.Nama);
@@ -245,6 +284,9 @@ function doPostPendaftaran_(e) {
   var jenisKelamin = trim_(e.parameter.JenisKelamin);
   var status = trim_(e.parameter.Status);
   var nomorWhatsApp = trim_(e.parameter.NomorWhatsApp);
+  var fotoBase64 = trim_(e.parameter.fotoBase64);
+  var fotoMimeType = trim_(e.parameter.fotoMimeType);
+  var fotoNamaFile = trim_(e.parameter.fotoNamaFile);
 
   // Validasi semua field required
   var errors = [];
@@ -262,11 +304,27 @@ function doPostPendaftaran_(e) {
     });
   }
 
+  // Foto profil wajib (pesan error persis sesuai kontrak)
+  if (!fotoBase64) {
+    return json_({ success: false, error: "Foto wajib diupload" });
+  }
+
   // Generate kode unik
   var kodeMembership = generateKodeMembership_(sheet);
 
   // Hitung umur server-side (single source of truth)
   var umur = hitungUmur_(tanggalLahir);
+
+  // Upload foto profil ke folder Drive khusus (terpisah dari foto produk Submit)
+  var fotoBlob = Utilities.newBlob(
+    Utilities.base64Decode(fotoBase64),
+    fotoMimeType || "image/jpeg",
+    fotoNamaFile || "foto.jpg"
+  );
+  var folder = getOrCreateFolder_("MAO Membership - Foto Profil", "FOTO_PROFIL_FOLDER_ID");
+  var fotoFile = folder.createFile(fotoBlob);
+  fotoFile.setSharing(DriveApp.Access.ANYONE_WITH_LINK, DriveApp.Permission.VIEW);
+  var fotoUrl = fotoFile.getUrl();
 
   // Timestamp
   var timestamp = new Date();
@@ -281,7 +339,8 @@ function doPostPendaftaran_(e) {
     umur,              // Umur (dihitung server-side)
     jenisKelamin,      // Jenis Kelamin
     status,            // Status
-    nomorWhatsApp      // Nomor WhatsApp
+    nomorWhatsApp,     // Nomor WhatsApp
+    fotoUrl            // Foto Profil (URL Drive)
   ];
 
   sheet.appendRow(row);
@@ -290,7 +349,10 @@ function doPostPendaftaran_(e) {
   return json_({
     success: true,
     kodeMembership: kodeMembership,
-    nama: nama
+    nama: nama,
+    domisili: domisili,
+    umur: umur,
+    fotoUrl: fotoUrl
   });
 }
 
@@ -309,7 +371,7 @@ function doPostSubmitOrder_(e) {
   }
 
   var ss = SpreadsheetApp.openById(SHEET_ID);
-  var pendaftaranSheet = ss.getSheets()[0];
+  var pendaftaranSheet = getMemberSheet_();
   var kodeCol = COLUMNS.indexOf("Kode Membership") + 1;
   var lastRow = pendaftaranSheet.getLastRow();
   var kodeExists = false;
@@ -360,7 +422,7 @@ function doPostSubmitOrder_(e) {
     fotoMimeType || "image/jpeg",
     fotoNamaFile || "foto.jpg"
   );
-  var folder = getOrCreateFotoFolder_();
+  var folder = getOrCreateFolder_("MAO Membership - Bukti Foto", "FOTO_PRODUK_FOLDER_ID");
   var file = folder.createFile(fotoBlob);
   file.setSharing(DriveApp.Access.ANYONE_WITH_LINK, DriveApp.Permission.VIEW);
   var fotoUrl = file.getUrl();
@@ -412,8 +474,8 @@ function doGet(e) {
 function doGetFormData_(e) {
   var ss = SpreadsheetApp.openById(SHEET_ID);
 
-  // Ambil daftar Kode Membership dari tab Pendaftaran (index 0)
-  var pendaftaranSheet = ss.getSheets()[0];
+  // Ambil daftar Kode Membership dari tab Member (Pendaftaran)
+  var pendaftaranSheet = getMemberSheet_();
   var kodeCol = COLUMNS.indexOf("Kode Membership") + 1;
   var lastRow = pendaftaranSheet.getLastRow();
   var kodeList = [];

@@ -69,6 +69,20 @@
           <span class="hint">Diawali 08, 9–15 digit</span>
         </div>
 
+        <!-- Foto Profil -->
+        <div class="form-group">
+          <label for="fotoInput">Foto Profil <span class="req">*</span></label>
+          <div class="upload-area" id="uploadArea">
+            <input type="file" id="fotoInput" name="fotoInput" accept="image/*" capture="user" hidden>
+            <div id="uploadPlaceholder" class="upload-placeholder">
+              <span class="upload-icon">🤳</span>
+              <span class="upload-text">Tap untuk pilih / ambil foto</span>
+            </div>
+            <img id="fotoPreview" class="foto-preview" hidden alt="Preview foto profil">
+          </div>
+          <span class="hint">Format: JPG/PNG, max 10MB sebelum kompresi</span>
+        </div>
+
         <!-- Checkbox Persetujuan -->
         <div class="form-group checkbox-group">
           <label class="checkbox-label">
@@ -98,18 +112,8 @@
 
       <div id="membershipCard" class="membership-card">
         <div class="card-inner">
-          <!-- SVG Cabai kecil -->
-          <svg class="card-chili" viewBox="0 0 32 40" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-            <defs>
-              <linearGradient id="cardChiliGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-                <stop offset="0%" stop-color="#ff4d1c"/>
-                <stop offset="100%" stop-color="#ffb300"/>
-              </linearGradient>
-            </defs>
-            <ellipse cx="16" cy="26" rx="7" ry="13" fill="url(#cardChiliGrad)" transform="rotate(-8 16 26)"/>
-            <path d="M16 13 Q17 6 19 3 Q18 7 17 11" stroke="#4caf50" stroke-width="1.5" fill="none" stroke-linecap="round"/>
-            <ellipse cx="15" cy="13" rx="4" ry="2.5" fill="#388e3c"/>
-          </svg>
+          <!-- Logo brand (statis, bukan foto profil — hindari CORS saat html2canvas capture) -->
+          <img src="../assets/logo-mao.jpeg" alt="MAO" class="card-logo">
 
           <div class="card-brand">MAO</div>
           <div class="card-kode" id="cardKode"></div>
@@ -120,8 +124,18 @@
               <span class="card-value" id="cardNama"></span>
             </div>
             <div class="card-row">
-              <span class="card-label">Tanggal Daftar</span>
-              <span class="card-value" id="cardTanggal"></span>
+              <span class="card-label">Domisili</span>
+              <span class="card-value" id="cardDomisili"></span>
+            </div>
+            <div class="card-row-pair">
+              <div class="card-col">
+                <span class="card-label">Umur</span>
+                <span class="card-value" id="cardUmur"></span>
+              </div>
+              <div class="card-col">
+                <span class="card-label">Tanggal Daftar</span>
+                <span class="card-value" id="cardTanggal"></span>
+              </div>
             </div>
           </div>
 

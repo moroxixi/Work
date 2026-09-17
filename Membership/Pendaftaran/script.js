@@ -1,8 +1,9 @@
 /**
  * MAO Membership — Client-side Registration Script
  *
- * Validates form, POSTs to Apps Script Web App via URLSearchParams,
- * displays membership card on success, and enables PNG download.
+ * Validates form (termasuk foto profil wajib), POSTs to Apps Script Web App
+ * via URLSearchParams, displays membership card on success, and enables PNG
+ * download. Kompresi foto pakai shared function di ../config.js.
  */
 
 // ─── ENDPOINT ───────────────────────────────────────────────────────────────
@@ -22,6 +23,17 @@ const cardNama        = document.getElementById("cardNama");
 const cardTanggal     = document.getElementById("cardTanggal");
 const downloadBtn     = document.getElementById("downloadBtn");
 const backBtn         = document.getElementById("backBtn");
+const fotoInput       = document.getElementById("fotoInput");
+const uploadArea      = document.getElementById("uploadArea");
+const uploadPlaceholder = document.getElementById("uploadPlaceholder");
+const fotoPreview     = document.getElementById("fotoPreview");
+const cardDomisili    = document.getElementById("cardDomisili");
+const cardUmur        = document.getElementById("cardUmur");
+
+// ─── STATE ──────────────────────────────────────────────────────────────
+let compressedBase64 = null;   // foto profil terkompresi (base64, via config.js)
+let compressedMimeType = "";
+let compressedFileName = "";
 
 // ─── SET MAX DATE (tidak boleh masa depan) ──────────────────────────────────
 (function setMaxDate() {
@@ -77,6 +89,11 @@ function validateForm() {
     return { ok: false, msg: "Anda harus menyetujui penggunaan data untuk melanjutkan." };
   }
 
+  // Foto profil wajib dipilih (dan berhasil dikompresi)
+  if (!compressedBase64) {
+    return { ok: false, msg: "Foto profil wajib diupload." };
+  }
+
   return { ok: true, data: fields };
 }
 
@@ -103,6 +120,9 @@ form.addEventListener("submit", async function (e) {
       JenisKelamin:  validation.data.JenisKelamin,
       Status:        validation.data.Status,
       NomorWhatsApp: validation.data.NomorWhatsApp,
+      fotoBase64:    compressedBase64,
+      fotoMimeType:  compressedMimeType,
+      fotoNamaFile:  compressedFileName,
     });
 
     const resp = await fetch(MAO_CONFIG.GAS_WEB_APP_URL, {
@@ -135,6 +155,8 @@ form.addEventListener("submit", async function (e) {
 function showCard(data) {
   cardKode.textContent = data.kodeMembership;
   cardNama.textContent = data.nama;
+  cardDomisili.textContent = data.domisili;
+  cardUmur.textContent = data.umur + " tahun";
 
   // Tanggal daftar = hari ini
   const now = new Date();
@@ -178,8 +200,79 @@ backBtn.addEventListener("click", function () {
   cardSection.hidden = true;
   formSection.hidden = false;
   form.reset();
+  resetFotoState();
   hideError();
 });
+
+// ─── FOTO PROFIL: UPLOAD + KOMPRESI (shared fn di ../config.js) ───────────
+
+// Tap area upload → buka picker / kamera depan (capture="user" di HTML)
+uploadArea.addEventListener("click", function () {
+  fotoInput.click();
+});
+
+fotoInput.addEventListener("change", async function () {
+  var file = fotoInput.files[0];
+  if (!file) return;
+
+  // Validasi ukuran asli sebelum kompresi (max 10MB)
+  if (file.size > 10 * 1024 * 1024) {
+    showError("Ukuran foto terlalu besar (maksimal 10MB). Silakan pilih foto lain.");
+    fotoInput.value = "";
+    return;
+  }
+
+  hideError();
+  resetFotoState();
+
+  try {
+    var result = await MAO_CONFIG.compressImageToBase64(file);
+    compressedBase64 = result.base64;
+    compressedMimeType = result.mimeType;
+    compressedFileName = (document.getElementById("Nama").value.trim() || "member") +
+      "_" + Date.now() + ".jpg";
+  } catch (err) {
+    console.error("Compression error:", err);
+    // Fallback: pakai file asli kalau canvas gagal
+    try {
+      compressedBase64 = await blobToBase64(file);
+      compressedMimeType = file.type || "image/jpeg";
+      compressedFileName = file.name || "foto.jpg";
+    } catch (fallbackErr) {
+      console.error("Fallback base64 error:", fallbackErr);
+    }
+  }
+
+  // Tampilkan preview (dari file asli — visual identik dengan hasil kompresi)
+  var previewUrl = URL.createObjectURL(file);
+  fotoPreview.src = previewUrl;
+  fotoPreview.hidden = false;
+  uploadPlaceholder.hidden = true;
+  uploadArea.classList.add("has-photo");
+});
+
+function resetFotoState() {
+  fotoInput.value = "";
+  compressedBase64 = null;
+  compressedMimeType = "";
+  compressedFileName = "";
+  fotoPreview.hidden = true;
+  fotoPreview.src = "";
+  uploadPlaceholder.hidden = false;
+  uploadArea.classList.remove("has-photo");
+}
+
+function blobToBase64(blob) {
+  return new Promise(function (resolve, reject) {
+    var reader = new FileReader();
+    reader.onload = function () {
+      var base64 = reader.result.split(",")[1];
+      resolve(base64);
+    };
+    reader.onerror = function () { reject(new Error("Gagal convert blob ke base64")); };
+    reader.readAsDataURL(blob);
+  });
+}
 
 // ─── UI HELPERS ─────────────────────────────────────────────────────────────
 

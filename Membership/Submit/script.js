@@ -2,7 +2,8 @@
  * MAO Membership — Submit Pesanan (Client-side)
  *
  * Fetches kode membership + menu list from GAS on load,
- * renders menu stepper, compresses photo client-side,
+ * renders menu stepper, compresses photo client-side via
+ * MAO_CONFIG.compressImageToBase64 (shared, di ../config.js),
  * and POSTs order data via URLSearchParams.
  */
 
@@ -29,7 +30,7 @@ const successMsg       = document.getElementById("successMsg");
 
 // ─── STATE ──────────────────────────────────────────────────────────────────
 let menuData = [];       // [{namaMenu, qty}] — qty starts at 0
-let compressedBlob = null; // compressed foto blob before submit
+let compressedBase64 = null; // foto terkompresi (base64) sebelum submit
 let compressedMimeType = "";
 let compressedFileName = "";
 
@@ -147,89 +148,33 @@ fotoInput.addEventListener("change", async function () {
   }
 
   hideError();
-  compressedBlob = null;
+  compressedBase64 = null;
 
   try {
-    var result = await compressImage(file);
-    compressedBlob = result.blob;
+    // Kompresi via shared function di ../config.js
+    var result = await MAO_CONFIG.compressImageToBase64(file);
+    compressedBase64 = result.base64;
     compressedMimeType = result.mimeType;
-    compressedFileName = result.fileName;
-
-    // Tampilkan preview
-    var previewUrl = URL.createObjectURL(result.blob);
-    fotoPreview.src = previewUrl;
-    fotoPreview.hidden = false;
-    uploadPlaceholder.hidden = true;
-    uploadArea.classList.add("has-photo");
-
+    compressedFileName = (kodeSelect.value || "unknown") + "_" + Date.now() + ".jpg";
   } catch (err) {
     console.error("Compression error:", err);
     // Fallback: pakai file asli kalau canvas gagal
-    compressedBlob = file;
-    compressedMimeType = file.type || "image/jpeg";
-    compressedFileName = file.name || "foto.jpg";
-
-    var previewUrl = URL.createObjectURL(file);
-    fotoPreview.src = previewUrl;
-    fotoPreview.hidden = false;
-    uploadPlaceholder.hidden = true;
-    uploadArea.classList.add("has-photo");
+    try {
+      compressedBase64 = await blobToBase64(file);
+      compressedMimeType = file.type || "image/jpeg";
+      compressedFileName = file.name || "foto.jpg";
+    } catch (fallbackErr) {
+      console.error("Fallback base64 error:", fallbackErr);
+    }
   }
+
+  // Tampilkan preview (dari file asli — visual identik dengan hasil kompresi)
+  var previewUrl = URL.createObjectURL(file);
+  fotoPreview.src = previewUrl;
+  fotoPreview.hidden = false;
+  uploadPlaceholder.hidden = true;
+  uploadArea.classList.add("has-photo");
 });
-
-/**
- * Compress image via canvas: resize max dimension to 1280px, JPEG quality 0.7
- * @returns {Promise<{blob: Blob, mimeType: string, fileName: string}>}
- */
-function compressImage(file) {
-  return new Promise(function (resolve, reject) {
-    var reader = new FileReader();
-    reader.onload = function (e) {
-      var img = new Image();
-      img.onload = function () {
-        try {
-          var canvas = document.createElement("canvas");
-          var maxDim = 1280;
-          var w = img.width;
-          var h = img.height;
-
-          if (w > h && w > maxDim) {
-            h = Math.round(h * (maxDim / w));
-            w = maxDim;
-          } else if (h >= w && h > maxDim) {
-            w = Math.round(w * (maxDim / h));
-            h = maxDim;
-          }
-
-          canvas.width = w;
-          canvas.height = h;
-          var ctx = canvas.getContext("2d");
-          ctx.drawImage(img, 0, 0, w, h);
-
-          canvas.toBlob(function (blob) {
-            if (blob) {
-              var ts = Date.now();
-              var kode = kodeSelect.value || "unknown";
-              resolve({
-                blob: blob,
-                mimeType: "image/jpeg",
-                fileName: kode + "_" + ts + ".jpg"
-              });
-            } else {
-              reject(new Error("canvas.toBlob returned null"));
-            }
-          }, "image/jpeg", 0.7);
-        } catch (err) {
-          reject(err);
-        }
-      };
-      img.onerror = function () { reject(new Error("Gagal memuat gambar")); };
-      img.src = e.target.result;
-    };
-    reader.onerror = function () { reject(new Error("Gagal membaca file")); };
-    reader.readAsDataURL(file);
-  });
-}
 
 // ─── SUBMIT HANDLER ─────────────────────────────────────────────────────────
 
@@ -251,7 +196,7 @@ orderForm.addEventListener("submit", async function (e) {
     return;
   }
 
-  if (!compressedBlob) {
+  if (!compressedBase64) {
     showError("Foto pesanan wajib diupload.");
     return;
   }
@@ -259,9 +204,6 @@ orderForm.addEventListener("submit", async function (e) {
   setLoading(true);
 
   try {
-    // Convert blob ke base64
-    var base64 = await blobToBase64(compressedBlob);
-
     var itemsJson = JSON.stringify(
       selectedItems.map(function (item) {
         return { namaMenu: item.namaMenu, qty: item.qty };
@@ -272,7 +214,7 @@ orderForm.addEventListener("submit", async function (e) {
       action: "submitOrder",
       kodeMembership: kode,
       itemsJson: itemsJson,
-      fotoBase64: base64,
+      fotoBase64: compressedBase64,
       fotoMimeType: compressedMimeType,
       fotoNamaFile: compressedFileName
     });
@@ -328,7 +270,7 @@ function resetForm() {
 
   // Reset foto
   fotoInput.value = "";
-  compressedBlob = null;
+  compressedBase64 = null;
   compressedMimeType = "";
   compressedFileName = "";
   fotoPreview.hidden = true;
