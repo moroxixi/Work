@@ -20,6 +20,7 @@ const formSection     = document.getElementById("form-section");
 const cardSection     = document.getElementById("card-section");
 const cardKode        = document.getElementById("cardKode");
 const cardNama        = document.getElementById("cardNama");
+const cardDomisili    = document.getElementById("cardDomisili");
 const cardTanggal     = document.getElementById("cardTanggal");
 const downloadBtn     = document.getElementById("downloadBtn");
 const backBtn         = document.getElementById("backBtn");
@@ -153,6 +154,7 @@ form.addEventListener("submit", async function (e) {
 function showCard(data) {
   cardKode.textContent = data.kodeMembership;
   cardNama.textContent = data.nama;
+  cardDomisili.textContent = data.domisili;   // dari response doPost (Umur TIDAK ditampilkan)
 
   // Tanggal daftar = hari ini
   const now = new Date();

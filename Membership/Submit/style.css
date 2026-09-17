@@ -39,10 +39,27 @@ body {
   line-height: 1.5;
 }
 
-/* ─── Section wrapper ──────────────────────────────────────────────────── */
+/* ─── Page + Section wrapper ───────────────────────────────────────────── */
+.page {
+  width: 100%;
+  max-width: 480px;
+}
+
 .section {
   width: 100%;
   max-width: 480px;
+}
+
+/* ─── Card title (dipakai di header laporan) ───────────────────────────── */
+.card-title {
+  text-align: center;
+  font-size: 1.3rem;
+  font-weight: 800;
+  margin-bottom: 20px;
+  background: var(--gradient);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
 }
 
 /* ─── Card ─────────────────────────────────────────────────────────────── */
@@ -235,7 +252,14 @@ select {
   font-variant-numeric: tabular-nums; /* lebar digit konsisten 1 vs 2 digit */
 }
 
-/* ─── Upload Area ──────────────────────────────────────────────────────── */
+/* ─── Upload Area ────────────────────────────────────────────────────────
+   Dua state dikontrol satu class: .has-photo pada #uploadArea.
+     state kosong (tanpa class)  → placeholder (icon + teks) tampil
+     state terisi (.has-photo)  → placeholder display:none (hilang total,
+                                   bukan ditumpuk), foto preview mengisi kotak
+   Dipakai sebagai pengganti atribut `hidden` pada placeholder — karena
+   `display:flex` di author stylesheet selalu MENANG atas rule UA
+   `[hidden]{display:none}`, sehingga `hidden` saja tidak pernah menyembunyikan. */
 .upload-area {
   display: flex;
   align-items: center;
@@ -246,6 +270,7 @@ select {
   padding: 20px 16px;
   text-align: center;
   cursor: pointer;
+  overflow: hidden;
   transition: border-color 0.2s, background 0.2s;
 }
 
@@ -274,15 +299,25 @@ select {
   font-weight: 600;
 }
 
+/* Sembunyikan placeholder SEUTUHNYA saat foto sudah dipilih */
+.upload-area.has-photo .upload-placeholder {
+  display: none;
+}
+
 .upload-icon {
   font-size: 2.2rem;
 }
 
 .foto-preview {
+  display: none;
   max-width: 100%;
   max-height: 200px;
   border-radius: 6px;
   object-fit: contain;
+}
+
+.upload-area.has-photo .foto-preview {
+  display: block;
 }
 
 /* ─── Buttons ──────────────────────────────────────────────────────────── */
@@ -332,16 +367,136 @@ select {
   text-align: center;
 }
 
-.success-msg {
-  margin-top: 14px;
-  padding: 14px;
-  background: rgba(76, 175, 80, 0.1);
-  border: 1px solid rgba(76, 175, 80, 0.3);
-  border-radius: 8px;
-  color: var(--success);
-  font-size: 0.9rem;
+/* ─── Buttons sekunder (di luar laporan) ───────────────────────────────── */
+.btn-report {
+  position: static; /* netralkan position:sticky dari .btn-submit */
+}
+
+.btn-back {
+  margin-top: 10px;
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  color: var(--text-dim);
+}
+
+.btn-back:hover {
+  border-color: var(--accent1);
+  color: var(--text);
+}
+
+/* ─── Laporan Pesanan (struk / bukti transfer) ─────────────────────────── */
+.laporan-card {
+  background: #101010;
+  border: 1px solid var(--border);
+  border-top: 3px solid var(--accent1);
+  border-radius: var(--radius);
+  padding: 24px 20px 20px;
   text-align: center;
-  font-weight: 600;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, 'Courier New', monospace;
+}
+
+.laporan-logo {
+  display: block;
+  width: 64px;
+  height: auto;
+  margin: 0 auto 12px;
+  border-radius: 12px;
+}
+
+.laporan-title {
+  font-size: 1.05rem;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  background: var(--gradient);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  margin-bottom: 16px;
+}
+
+.laporan-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 12px;
+  padding: 5px 0;
+  font-size: 0.82rem;
+  text-align: left;
+}
+
+.laporan-label {
+  color: var(--text-dim);
+  flex-shrink: 0;
+}
+
+.laporan-value {
+  font-weight: 700;
+  color: var(--text);
+  text-align: right;
+  min-width: 0; /* boleh menyusut, cegah overflow kode panjang */
+  overflow-wrap: anywhere;
+}
+
+/* Garis putus-putus sebagai pemisah section (ala struk) */
+.laporan-divider {
+  border-top: 1px dashed rgba(255, 255, 255, 0.18);
+  margin: 14px 0;
+}
+
+.laporan-items {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+/* Baris item: nama menu rata kiri, qty rata kanan */
+.laporan-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 12px;
+  font-size: 0.85rem;
+}
+
+.laporan-item-name {
+  text-align: left;
+  color: var(--text);
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.laporan-item-qty {
+  flex-shrink: 0;
+  font-weight: 700;
+  color: var(--accent2);
+  font-variant-numeric: tabular-nums;
+}
+
+.laporan-foto {
+  display: block;
+  width: 100%;
+  max-height: 280px;
+  object-fit: contain;
+  border-radius: 8px;
+  background: var(--surface2);
+}
+
+.laporan-footer {
+  margin-top: 16px;
+  font-size: 0.7rem;
+  color: var(--text-dim);
+  letter-spacing: 0.06em;
+}
+
+/* ─── Disclaimer statis (selalu tampil, di luar form) ──────────────────── */
+.disclaimer {
+  margin-top: 18px;
+  padding: 0 6px;
+  font-size: 0.72rem;
+  line-height: 1.55;
+  color: #7a7a7a;
+  text-align: center;
 }
 
 /* ─── Responsive ───────────────────────────────────────────────────────── */

@@ -8,74 +8,136 @@
 </head>
 <body>
 
-  <div class="section">
-    <div class="form-card">
+  <div class="page">
 
-      <!-- Branding -->
-      <div class="brand">
-        <img src="../assets/logo-mao.jpeg" alt="MAO" class="brand-logo">
-        <p class="tagline">Submit Pesanan</p>
-      </div>
+    <!-- ═══════════════════════════════════════════════════════════════════════ -->
+    <!-- FORM PESANAN -->
+    <!-- ═══════════════════════════════════════════════════════════════════════ -->
+    <div id="formSection" class="section">
+      <div class="form-card">
 
-      <!-- Loading state awal -->
-      <div id="loadingState" class="loading-state">
-        <div class="spinner"></div>
-        <p>Memuat data…</p>
-      </div>
-
-      <!-- Form content (sembunyi dulu sampai data loaded) -->
-      <form id="orderForm" novalidate hidden>
-
-        <!-- Kode Membership -->
-        <div class="form-group">
-          <label for="kodeMembership">Kode Membership <span class="req">*</span></label>
-          <select id="kodeMembership" name="kodeMembership" required>
-            <option value="" disabled selected>Pilih Kode Membership</option>
-          </select>
-          
-          <a href="../Pendaftaran/index.html" class="link-daftar">Belum punya kode? Daftar di sini →</a>
+        <!-- Branding -->
+        <div class="brand">
+          <img src="../assets/logo-mao.jpeg" alt="MAO" class="brand-logo">
+          <p class="tagline">Submit Pesanan</p>
         </div>
 
-        <!-- Menu List -->
-        <div class="form-group">
-          <label>Pesan Menu <span class="req">*</span></label>
-          <div id="menuList" class="menu-list"></div>
-          <!-- Teks admin diubah menjadi link WhatsApp dengan placeholder/pesan otomatis -->
-          <span id="menuEmptyMsg" class="hint" hidden>
-            Menu belum tersedia, hubungi <a href="https://wa.me/6283156569954?text=Halo%20Admin,%20saya%20mau%20tanya%20soal%20halaman%20Submit%20Pesanan.%20" target="_blank" style="color: #007bff; text-decoration: underline;">admin</a>
-          </span>
+        <!-- Loading state awal -->
+        <div id="loadingState" class="loading-state">
+          <div class="spinner"></div>
+          <p>Memuat data…</p>
         </div>
 
-        <!-- Upload Foto -->
-        <div class="form-group">
-          <label for="fotoInput">Foto Pesanan <span class="req">*</span></label>
-          <div class="upload-area" id="uploadArea">
-            <input type="file" id="fotoInput" name="fotoInput" accept="image/*" capture="environment" hidden>
-            <div id="uploadPlaceholder" class="upload-placeholder">
-              <span class="upload-icon">📷</span>
-              <span class="upload-text">Tap untuk pilih / ambil foto</span>
-            </div>
-            <img id="fotoPreview" class="foto-preview" hidden alt="Preview foto">
+        <!-- Form content (sembunyi dulu sampai data loaded) -->
+        <form id="orderForm" novalidate hidden>
+
+          <!-- Kode Membership -->
+          <div class="form-group">
+            <label for="kodeMembership">Kode Membership <span class="req">*</span></label>
+            <select id="kodeMembership" name="kodeMembership" required>
+              <option value="" disabled selected>Pilih Kode Membership</option>
+            </select>
+            
+            <a href="../Pendaftaran/index.html" class="link-daftar">Belum punya kode? Daftar di sini →</a>
           </div>
-          <span class="hint">Format: JPG/PNG, max 10MB sebelum kompresi</span>
+
+          <!-- Menu List -->
+          <div class="form-group">
+            <label>Pesan Menu <span class="req">*</span></label>
+            <div id="menuList" class="menu-list"></div>
+            <!-- Teks admin diubah menjadi link WhatsApp dengan placeholder/pesan otomatis -->
+            <span id="menuEmptyMsg" class="hint" hidden>
+              Menu belum tersedia, hubungi <a href="https://wa.me/6283156569954?text=Halo%20Admin,%20saya%20mau%20tanya%20soal%20halaman%20Submit%20Pesanan.%20" target="_blank" style="color: #007bff; text-decoration: underline;">admin</a>
+            </span>
+          </div>
+
+          <!-- Upload Foto -->
+          <div class="form-group">
+            <label for="fotoInput">Foto Pesanan <span class="req">*</span></label>
+            <!-- Dua state dikontrol class .has-photo pada #uploadArea (CSS yang
+                 menyembunyikan placeholder), bukan tumpuk z-index/atribut hidden. -->
+            <div class="upload-area" id="uploadArea">
+              <input type="file" id="fotoInput" name="fotoInput" accept="image/*" capture="environment" hidden>
+              <div id="uploadPlaceholder" class="upload-placeholder">
+                <span class="upload-icon">📷</span>
+                <span class="upload-text">Tap untuk pilih / ambil foto</span>
+              </div>
+              <img id="fotoPreview" class="foto-preview" alt="Preview foto">
+            </div>
+            <span class="hint">Format: JPG/PNG, max 10MB sebelum kompresi</span>
+          </div>
+
+          <!-- Submit -->
+          <button type="submit" id="submitBtn" class="btn-submit">
+            <span class="btn-text">Kirim Pesanan</span>
+            <span class="btn-loading" hidden>⏳ Mengirim…</span>
+          </button>
+
+          <!-- Error -->
+          <div id="errorMsg" class="error-msg" hidden></div>
+
+        </form>
+
+      </div>
+    </div>
+
+    <!-- ═══════════════════════════════════════════════════════════════════════ -->
+    <!-- LAPORAN PESANAN (tersembunyi, dimunculkan setelah submit sukses) -->
+    <!-- Dijadikan gambar PNG via html2canvas → user share manual ke WhatsApp -->
+    <!-- ═══════════════════════════════════════════════════════════════════════ -->
+    <div id="reportSection" class="section" hidden>
+      <div class="form-card">
+        <h2 class="card-title">🎉 Pesanan Terkirim!</h2>
+
+        <div id="laporanCard" class="laporan-card">
+          <!-- Logo statis (bukan foto Drive — hindari CORS saat html2canvas capture) -->
+          <img src="../assets/logo-mao.jpeg" alt="MAO" class="laporan-logo">
+          <div class="laporan-title">Bukti Pesanan MAO</div>
+
+          <div class="laporan-row">
+            <span class="laporan-label">Kode Membership</span>
+            <span class="laporan-value" id="laporanKode"></span>
+          </div>
+          <div class="laporan-row">
+            <span class="laporan-label">Waktu Submit</span>
+            <span class="laporan-value" id="laporanWaktu"></span>
+          </div>
+
+          <div class="laporan-divider"></div>
+
+          <!-- Item pesanan (nama menu kiri, qty kanan) — diisi dari state form di client -->
+          <div id="laporanItems" class="laporan-items"></div>
+
+          <div class="laporan-divider"></div>
+
+          <!-- Foto bukti: Blob LOKAL via URL.createObjectURL, bukan URL Google Drive -->
+          <img id="laporanFoto" class="laporan-foto" alt="Foto bukti pesanan">
+
+          <div class="laporan-footer">Dokumen ini dibuat otomatis oleh sistem MAO</div>
         </div>
 
-        <!-- Submit -->
-        <button type="submit" id="submitBtn" class="btn-submit">
-          <span class="btn-text">Kirim Pesanan</span>
-          <span class="btn-loading" hidden>⏳ Mengirim…</span>
+        <button id="downloadLaporanBtn" class="btn-submit btn-report">
+          📥 Download Laporan
         </button>
 
-        <!-- Error -->
-        <div id="errorMsg" class="error-msg" hidden></div>
+        <button id="newOrderBtn" class="btn-submit btn-back btn-report">
+          ＋ Buat Pesanan Baru
+        </button>
 
-        <!-- Success -->
-        <div id="successMsg" class="success-msg" hidden></div>
-      </form>
-
+        <div id="reportErrorMsg" class="error-msg" hidden></div>
+      </div>
     </div>
+
+    <!-- Disclaimer statis (di luar form, selalu tampil di kedua state) -->
+    <p class="disclaimer">
+      Apabila ditemukan ketidaksesuaian antara pesanan yang diinput dengan foto bukti
+      yang dilampirkan, admin berhak menghapus data submission tersebut.
+    </p>
+
   </div>
 
+  <!-- html2canvas CDN — versi PINNED, sama persis dengan Pendaftaran/index.html -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js" crossorigin="anonymous"></script>
   <script src="../config.js"></script>
   <script src="script.js"></script>
 </body>

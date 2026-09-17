@@ -5,6 +5,13 @@
  * renders menu stepper, compresses photo client-side via
  * MAO_CONFIG.compressImageToBase64 (shared, di ../config.js),
  * and POSTs order data via URLSearchParams.
+ *
+ * Setelah submit SUKSES: form disembunyikan dan muncul "Laporan Pesanan"
+ * (ala struk) yang bisa di-download jadi PNG via html2canvas — pola sama
+ * dengan kartu membership di Pendaftaran. Foto di laporan memakai Blob LOKAL
+ * (hasil kompresi yang sama dengan yang dikirim ke server), BUKAN URL Drive,
+ * supaya aman dari CORS/tainted canvas saat html2canvas capture.
+ * Tidak ada integrasi Web Share API / WhatsApp gateway.
  */
 
 // ─── ENDPOINT ───────────────────────────────────────────────────────────────
@@ -13,26 +20,40 @@
 
 // ─── DOM REFERENCES ─────────────────────────────────────────────────────────
 const loadingState     = document.getElementById("loadingState");
+const formSection      = document.getElementById("formSection");
 const orderForm        = document.getElementById("orderForm");
 const kodeSelect       = document.getElementById("kodeMembership");
-const kodeEmptyMsg     = document.getElementById("kodeEmptyMsg");
 const menuListEl       = document.getElementById("menuList");
 const menuEmptyMsg     = document.getElementById("menuEmptyMsg");
 const fotoInput        = document.getElementById("fotoInput");
 const uploadArea       = document.getElementById("uploadArea");
-const uploadPlaceholder= document.getElementById("uploadPlaceholder");
 const fotoPreview      = document.getElementById("fotoPreview");
 const submitBtn        = document.getElementById("submitBtn");
 const btnText          = submitBtn.querySelector(".btn-text");
 const btnLoading       = submitBtn.querySelector(".btn-loading");
 const errorMsg         = document.getElementById("errorMsg");
-const successMsg       = document.getElementById("successMsg");
+
+// Laporan Pesanan
+const reportSection    = document.getElementById("reportSection");
+const laporanCard      = document.getElementById("laporanCard");
+const laporanKode      = document.getElementById("laporanKode");
+const laporanWaktu     = document.getElementById("laporanWaktu");
+const laporanItems     = document.getElementById("laporanItems");
+const laporanFoto      = document.getElementById("laporanFoto");
+const downloadLaporanBtn = document.getElementById("downloadLaporanBtn");
+const newOrderBtn      = document.getElementById("newOrderBtn");
+const reportErrorMsg   = document.getElementById("reportErrorMsg");
 
 // ─── STATE ──────────────────────────────────────────────────────────────────
 let menuData = [];       // [{namaMenu, qty}] — qty starts at 0
 let compressedBase64 = null; // foto terkompresi (base64) sebelum submit
 let compressedMimeType = "";
 let compressedFileName = "";
+
+let previewObjectUrl = null; // object URL preview di form (di-revoke saat ganti/reset)
+let reportObjectUrl = null;  // object URL foto di laporan (di-revoke saat "Buat Pesanan Baru")
+let reportKode = "";         // snapshot kode membership untuk nama file laporan
+let reportWaktu = null;      // snapshot waktu submit (Date)
 
 // ─── INIT: fetch kode list + menu list ─────────────────────────────────────
 
@@ -71,7 +92,6 @@ function renderKodeList(kodeList) {
     kodeSelect.disabled = true;
     kodeSelect.innerHTML =
       '<option value="" disabled selected>Belum ada kode membership terdaftar</option>';
-    kodeEmptyMsg.hidden = false;
     submitBtn.disabled = true;
     return;
   }
@@ -168,11 +188,10 @@ fotoInput.addEventListener("change", async function () {
     }
   }
 
-  // Tampilkan preview (dari file asli — visual identik dengan hasil kompresi)
-  var previewUrl = URL.createObjectURL(file);
-  fotoPreview.src = previewUrl;
-  fotoPreview.hidden = false;
-  uploadPlaceholder.hidden = true;
+  // Preview lokal (object URL lama di-revoke supaya tidak menumpuk / leak)
+  if (previewObjectUrl) URL.revokeObjectURL(previewObjectUrl);
+  previewObjectUrl = URL.createObjectURL(file);
+  fotoPreview.src = previewObjectUrl;
   uploadArea.classList.add("has-photo");
 });
 
@@ -181,7 +200,6 @@ fotoInput.addEventListener("change", async function () {
 orderForm.addEventListener("submit", async function (e) {
   e.preventDefault();
   hideError();
-  hideSuccess();
 
   // Validasi
   var kode = kodeSelect.value;
@@ -203,12 +221,21 @@ orderForm.addEventListener("submit", async function (e) {
 
   setLoading(true);
 
+  // Snapshot untuk laporan — dibuat SEBELUM resetForm() mengosongkan state.
+  // fotoBase64/fotoMimeType di sini adalah data terkompresi yang SAMA dengan
+  // yang dikirim ke server; tidak ada kompresi ulang untuk laporan.
+  var reportData = {
+    kodeMembership: kode,
+    items: selectedItems.map(function (item) {
+      return { namaMenu: item.namaMenu, qty: item.qty };
+    }),
+    waktu: new Date(),
+    fotoBase64: compressedBase64,
+    fotoMimeType: compressedMimeType
+  };
+
   try {
-    var itemsJson = JSON.stringify(
-      selectedItems.map(function (item) {
-        return { namaMenu: item.namaMenu, qty: item.qty };
-      })
-    );
+    var itemsJson = JSON.stringify(reportData.items);
 
     var params = new URLSearchParams({
       action: "submitOrder",
@@ -228,8 +255,11 @@ orderForm.addEventListener("submit", async function (e) {
     var json = await resp.json();
 
     if (json.success) {
-      showSuccess("Pesanan berhasil dikirim! (" + json.jumlahItem + " item tercatat)");
+      // Form dibersihkan, lalu laporan ditampilkan pakai snapshot di atas.
+      // resetForm() HANYA me-revoke previewObjectUrl (foto form), bukan
+      // reportObjectUrl — jadi foto laporan tetap utuh sampai di-download.
       resetForm();
+      showReport(reportData);
     } else {
       showError(json.error || "Terjadi kesalahan di server.");
     }
@@ -243,6 +273,115 @@ orderForm.addEventListener("submit", async function (e) {
   } finally {
     setLoading(false);
   }
+});
+
+// ─── LAPORAN PESANAN ────────────────────────────────────────────────────────
+
+/**
+ * Render + tampilkan laporan. Foto digambar dari Blob LOKAL yang dibangun ulang
+ * dari `compressedBase64` (byte persis sama dengan yang dikirim ke server),
+ * bukan dari URL Google Drive — supaya html2canvas tidak kena CORS.
+ *
+ * @param {{kodeMembership:{string}, items:Array, waktu:Date, fotoBase64:string, fotoMimeType:string}} data
+ */
+function showReport(data) {
+  reportKode = data.kodeMembership;
+  reportWaktu = data.waktu;
+
+  laporanKode.textContent = data.kodeMembership;
+  laporanWaktu.textContent = formatWaktu(data.waktu);
+
+  // Daftar item — hanya qty > 0, dari state form di client (tanpa fetch ulang)
+  laporanItems.innerHTML = "";
+  data.items.forEach(function (item) {
+    var row = document.createElement("div");
+    row.className = "laporan-item";
+
+    var nama = document.createElement("span");
+    nama.className = "laporan-item-name";
+    nama.textContent = item.namaMenu;
+
+    var qty = document.createElement("span");
+    qty.className = "laporan-item-qty";
+    qty.textContent = "× " + item.qty;
+
+    row.appendChild(nama);
+    row.appendChild(qty);
+    laporanItems.appendChild(row);
+  });
+
+  // Foto bukti: Blob lokal dari base64 terkompresi
+  if (reportObjectUrl) {
+    URL.revokeObjectURL(reportObjectUrl);
+    reportObjectUrl = null;
+  }
+  reportObjectUrl = URL.createObjectURL(
+    base64ToBlob(data.fotoBase64, data.fotoMimeType)
+  );
+  laporanFoto.src = reportObjectUrl;
+
+  hideReportError();
+  formSection.hidden = true;
+  reportSection.hidden = false;
+  reportSection.scrollIntoView({ behavior: "smooth" });
+}
+
+// Download laporan sebagai PNG (pola sama dengan kartu Pendaftaran)
+downloadLaporanBtn.addEventListener("click", async function () {
+  try {
+    downloadLaporanBtn.disabled = true;
+    downloadLaporanBtn.textContent = "⏳ Generating…";
+
+    // Pastikan <img> foto selesai dimuat sebelum capture (cegah gambar kosong)
+    await waitForImage(laporanFoto);
+
+    var canvas = await html2canvas(laporanCard, {
+      backgroundColor: "#0a0a0a",
+      scale: 2
+    });
+
+    var link = document.createElement("a");
+    link.download =
+      "Laporan-Pesanan-" +
+      sanitizeFilePart(reportKode) +
+      "-" +
+      formatStampFile(reportWaktu) +
+      ".png";
+    link.href = canvas.toDataURL("image/png");
+    link.click();
+  } catch (err) {
+    console.error("Download laporan error:", err);
+    showReportError("Gagal membuat laporan. Coba screenshot manual atau ulangi.");
+  } finally {
+    downloadLaporanBtn.disabled = false;
+    downloadLaporanBtn.textContent = "📥 Download Laporan";
+  }
+});
+
+// Kembali ke form untuk pesanan baru (tanpa refetch kode/menu dari server)
+newOrderBtn.addEventListener("click", function () {
+  // Foto laporan sudah tidak dipakai → revoke supaya tidak menahan memori
+  if (reportObjectUrl) {
+    URL.revokeObjectURL(reportObjectUrl);
+    reportObjectUrl = null;
+  }
+  laporanFoto.removeAttribute("src");
+  laporanItems.innerHTML = "";
+  reportKode = "";
+  reportWaktu = null;
+
+  hideReportError();
+  hideError();
+
+  reportSection.hidden = true;
+  formSection.hidden = false;
+
+  // Reset qty ke 0 + buang foto preview (resetForm me-revoke previewObjectUrl),
+  // lalu dropdown kode membership balik ke placeholder.
+  resetForm();
+  kodeSelect.value = "";
+
+  formSection.scrollIntoView({ behavior: "smooth" });
 });
 
 // ─── HELPERS ────────────────────────────────────────────────────────────────
@@ -260,6 +399,67 @@ function blobToBase64(blob) {
   });
 }
 
+/**
+ * Bangun Blob dari base64 (tanpa prefix data URL) — byte identik dengan yang
+ * diupload ke server. Dipakai untuk sumber gambar laporan via object URL lokal.
+ */
+function base64ToBlob(base64, mimeType) {
+  var byteChars = atob(base64);
+  var sliceSize = 512;
+  var byteArrays = [];
+
+  for (var offset = 0; offset < byteChars.length; offset += sliceSize) {
+    var slice = byteChars.slice(offset, offset + sliceSize);
+    var bytes = new Uint8Array(slice.length);
+    for (var i = 0; i < slice.length; i++) {
+      bytes[i] = slice.charCodeAt(i);
+    }
+    byteArrays.push(bytes);
+  }
+
+  return new Blob(byteArrays, { type: mimeType || "image/jpeg" });
+}
+
+/** Tunggu <img> selesai decode sebelum html2canvas capture. */
+function waitForImage(img) {
+  if (img.complete && img.naturalWidth > 0) return Promise.resolve();
+  return new Promise(function (resolve) {
+    img.addEventListener("load", resolve, { once: true });
+    img.addEventListener("error", resolve, { once: true });
+  });
+}
+
+/** "17 September 2026, 14:30" */
+function formatWaktu(d) {
+  var tanggal = d.toLocaleDateString("id-ID", {
+    day: "numeric", month: "long", year: "numeric"
+  });
+  var jam = pad2(d.getHours());
+  var menit = pad2(d.getMinutes());
+  return tanggal + ", " + jam + ":" + menit;
+}
+
+/** "20260917-1430" */
+function formatStampFile(d) {
+  return (
+    d.getFullYear() +
+    pad2(d.getMonth() + 1) +
+    pad2(d.getDate()) +
+    "-" +
+    pad2(d.getHours()) +
+    pad2(d.getMinutes())
+  );
+}
+
+function pad2(n) {
+  return String(n).padStart(2, "0");
+}
+
+/** Buang karakter yang tidak aman untuk nama file. */
+function sanitizeFilePart(str) {
+  return String(str).replace(/[^A-Za-z0-9._-]+/g, "-").replace(/^-+|-+$/g, "");
+}
+
 function resetForm() {
   // Reset qty semua ke 0
   menuData.forEach(function (item, idx) {
@@ -268,18 +468,21 @@ function resetForm() {
     if (el) el.textContent = "0";
   });
 
-  // Reset foto
+  // Reset foto (revoke object URL preview form; reportObjectUrl TIDAK disentuh)
   fotoInput.value = "";
   compressedBase64 = null;
   compressedMimeType = "";
   compressedFileName = "";
-  fotoPreview.hidden = true;
-  fotoPreview.src = "";
-  uploadPlaceholder.hidden = false;
+  if (previewObjectUrl) {
+    URL.revokeObjectURL(previewObjectUrl);
+    previewObjectUrl = null;
+  }
+  fotoPreview.removeAttribute("src");
   uploadArea.classList.remove("has-photo");
 
-  // Kode membership tidak di-reset (biar user bisa submit lagi dengan kode yang sama)
-  // kodeSelect.value = "";
+  // Kode membership sengaja TIDAK direset di sini; "Buat Pesanan Baru"
+  // yang mengembalikannya ke placeholder (biar tetap bisa submit ulang
+  // kalau form ini dipakai lagi tanpa lewat laporan).
 }
 
 function setLoading(isLoading) {
@@ -291,7 +494,6 @@ function setLoading(isLoading) {
 function showError(msg) {
   errorMsg.textContent = msg;
   errorMsg.hidden = false;
-  successMsg.hidden = true;
 }
 
 function hideError() {
@@ -299,15 +501,14 @@ function hideError() {
   errorMsg.textContent = "";
 }
 
-function showSuccess(msg) {
-  successMsg.textContent = msg;
-  successMsg.hidden = false;
-  errorMsg.hidden = true;
+function showReportError(msg) {
+  reportErrorMsg.textContent = msg;
+  reportErrorMsg.hidden = false;
 }
 
-function hideSuccess() {
-  successMsg.hidden = true;
-  successMsg.textContent = "";
+function hideReportError() {
+  reportErrorMsg.hidden = true;
+  reportErrorMsg.textContent = "";
 }
 
 function escapeHtml(str) {
