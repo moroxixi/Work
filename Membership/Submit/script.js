@@ -42,8 +42,14 @@ const laporanPoin      = document.getElementById("laporanPoin");
 const laporanItems     = document.getElementById("laporanItems");
 const laporanFoto      = document.getElementById("laporanFoto");
 const downloadLaporanBtn = document.getElementById("downloadLaporanBtn");
+const shareLaporanBtn  = document.getElementById("shareLaporanBtn");
 const newOrderBtn      = document.getElementById("newOrderBtn");
+const reportInfoMsg    = document.getElementById("reportInfoMsg");
 const reportErrorMsg   = document.getElementById("reportErrorMsg");
+
+// Caption share general — TIDAK menyebut data pribadi apa pun.
+const SHARE_CAPTION =
+  "Saya telah membeli beberapa porsi di MAO Wonton dan Mie Jebew 🌶️";
 
 // ─── STATE ──────────────────────────────────────────────────────────────────
 let menuData = [];       // [{namaMenu, qty}] — qty starts at 0
@@ -330,10 +336,57 @@ function showReport(data) {
   );
   laporanFoto.src = reportObjectUrl;
 
+  hideReportInfo();
   hideReportError();
   formSection.hidden = true;
   reportSection.hidden = false;
   reportSection.scrollIntoView({ behavior: "smooth" });
+}
+
+// ─── RENDER LAPORAN (html2canvas) — dipakai bersama Download & Bagikan ─────
+
+/**
+ * Satu-satunya tempat html2canvas dipanggil untuk laporan. Dipakai bersama oleh
+ * tombol "Download Laporan" dan "Bagikan" supaya capture hanya 1x per aksi.
+ * Pastikan <img> foto selesai dimuat dulu (cegah gambar kosong).
+ *
+ * @returns {Promise<HTMLCanvasElement>}
+ */
+async function renderLaporanCanvas() {
+  await waitForImage(laporanFoto);
+  return html2canvas(laporanCard, {
+    backgroundColor: "#0a0a0a",
+    scale: 2
+  });
+}
+
+/** Nama file laporan yang konsisten untuk Download maupun Bagikan. */
+function buildLaporanFileName() {
+  return (
+    "Laporan-Pesanan-" +
+    sanitizeFilePart(reportKode) +
+    "-" +
+    formatStampFile(reportWaktu) +
+    ".png"
+  );
+}
+
+/** Trigger download dari canvas yang SUDAH dirender (tidak render ulang). */
+function triggerCanvasDownload(canvas, fileName) {
+  var link = document.createElement("a");
+  link.download = fileName;
+  link.href = canvas.toDataURL("image/png");
+  link.click();
+}
+
+/** Promise wrapper untuk HTMLCanvasElement.toBlob. */
+function canvasToBlob(canvas) {
+  return new Promise(function (resolve, reject) {
+    canvas.toBlob(function (blob) {
+      if (blob) resolve(blob);
+      else reject(new Error("Gagal membuat Blob PNG dari canvas"));
+    }, "image/png");
+  });
 }
 
 // Download laporan sebagai PNG (pola sama dengan kartu Pendaftaran)
@@ -342,29 +395,69 @@ downloadLaporanBtn.addEventListener("click", async function () {
     downloadLaporanBtn.disabled = true;
     downloadLaporanBtn.textContent = "⏳ Generating…";
 
-    // Pastikan <img> foto selesai dimuat sebelum capture (cegah gambar kosong)
-    await waitForImage(laporanFoto);
-
-    var canvas = await html2canvas(laporanCard, {
-      backgroundColor: "#0a0a0a",
-      scale: 2
-    });
-
-    var link = document.createElement("a");
-    link.download =
-      "Laporan-Pesanan-" +
-      sanitizeFilePart(reportKode) +
-      "-" +
-      formatStampFile(reportWaktu) +
-      ".png";
-    link.href = canvas.toDataURL("image/png");
-    link.click();
+    var canvas = await renderLaporanCanvas();
+    triggerCanvasDownload(canvas, buildLaporanFileName());
   } catch (err) {
     console.error("Download laporan error:", err);
     showReportError("Gagal membuat laporan. Coba screenshot manual atau ulangi.");
   } finally {
     downloadLaporanBtn.disabled = false;
     downloadLaporanBtn.textContent = "📥 Download Laporan";
+  }
+});
+
+// Bagikan laporan sebagai gambar via Web Share API, fallback → download + wa.me
+shareLaporanBtn.addEventListener("click", async function () {
+  try {
+    shareLaporanBtn.disabled = true;
+    shareLaporanBtn.textContent = "⏳ Menyiapkan…";
+    hideReportInfo();
+
+    var canvas = await renderLaporanCanvas();
+    var fileName = buildLaporanFileName();
+
+    var blob = await canvasToBlob(canvas);
+    var file = new File([blob], fileName, { type: "image/png" });
+
+    var canShareFiles =
+      typeof navigator.share === "function" &&
+      typeof navigator.canShare === "function" &&
+      navigator.canShare({ files: [file] });
+
+    if (canShareFiles) {
+      try {
+        await navigator.share({
+          files: [file],
+          title: "Laporan Pesanan MAO",
+          text: SHARE_CAPTION
+        });
+      } catch (err) {
+        // User membatalkan share sheet → AbortError. Ini perilaku NORMAL,
+        // bukan kegagalan sistem → DIABAIKAN senyap (tanpa pesan error).
+        if (err && err.name === "AbortError") return;
+        throw err; // error lain (bukan cancel) tetap dilempar ke handler luar
+      }
+      return; // sukses share — jangan jalankan fallback
+    }
+
+    // ── Fallback: Web Share API tidak didukung ──
+    // a. Auto-download gambar dari canvas yang sama (tanpa render ulang)
+    triggerCanvasDownload(canvas, fileName);
+    // b. Buka WhatsApp dengan caption teks (WA tidak bisa attach gambar via URL scheme)
+    window.open(
+      "https://wa.me/?text=" + encodeURIComponent(SHARE_CAPTION),
+      "_blank"
+    );
+    // c. Instruksi singkat ke user
+    showReportInfo(
+      "Gambar laporan sudah didownload — silakan lampirkan manual di chat WhatsApp yang baru terbuka."
+    );
+  } catch (err) {
+    console.error("Bagikan laporan error:", err);
+    showReportError("Gagal membagikan laporan. Coba screenshot manual atau ulangi.");
+  } finally {
+    shareLaporanBtn.disabled = false;
+    shareLaporanBtn.textContent = "📤 Bagikan";
   }
 });
 
@@ -381,6 +474,7 @@ newOrderBtn.addEventListener("click", function () {
   reportKode = "";
   reportWaktu = null;
 
+  hideReportInfo();
   hideReportError();
   hideError();
 
@@ -520,6 +614,16 @@ function showReportError(msg) {
 function hideReportError() {
   reportErrorMsg.hidden = true;
   reportErrorMsg.textContent = "";
+}
+
+function showReportInfo(msg) {
+  reportInfoMsg.textContent = msg;
+  reportInfoMsg.hidden = false;
+}
+
+function hideReportInfo() {
+  reportInfoMsg.hidden = true;
+  reportInfoMsg.textContent = "";
 }
 
 function escapeHtml(str) {

@@ -367,9 +367,28 @@ select {
   text-align: center;
 }
 
+/* Pesan info (bukan error) — mis. instruksi fallback share */
+.info-msg {
+  margin-top: 14px;
+  padding: 12px 14px;
+  background: rgba(255, 179, 0, 0.1);
+  border: 1px solid rgba(255, 179, 0, 0.3);
+  border-radius: 8px;
+  color: var(--accent2);
+  font-size: 0.85rem;
+  text-align: center;
+}
+
 /* ─── Buttons sekunder (di luar laporan) ───────────────────────────────── */
 .btn-report {
   position: static; /* netralkan position:sticky dari .btn-submit */
+}
+
+/* Tombol Bagikan — berada di antara Download (gradient) & Buat Pesanan Baru
+   (sekunder), jadi dibedakan dgn solid amber accent2 agar tetap jelas. */
+.btn-share {
+  background: var(--accent2);
+  color: #1a1200;
 }
 
 .btn-back {

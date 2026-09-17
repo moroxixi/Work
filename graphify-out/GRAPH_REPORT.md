@@ -1,16 +1,16 @@
 # Graph Report - Work  (2026-09-17)
 
 ## Corpus Check
-- 37 files · ~50,337 words
+- 37 files · ~50,754 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
-- 615 nodes · 817 edges · 39 communities (33 shown, 6 thin omitted)
+- 623 nodes · 829 edges · 43 communities (35 shown, 8 thin omitted)
 - Extraction: 98% EXTRACTED · 2% INFERRED · 0% AMBIGUOUS · INFERRED: 13 edges (avg confidence: 0.5)
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `fcda614f`
+- Built from commit: `4f5124ec`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -51,6 +51,10 @@
 - code.gs.js
 - Submit/script.js
 - Membership/config.js
+- buildLaporanFileName
+- showReport
+- escapeHtml
+- renderLaporanCanvas
 
 ## God Nodes (most connected - your core abstractions)
 1. `Investigasi Mekanisme Ntfy — Pencatatan-Buku-Kas/Apps-Script/buku-kas.gs.js` - 10 edges
@@ -65,6 +69,8 @@
 10. `report_kirimNotif_()` - 8 edges
 
 ## Surprising Connections (you probably didn't know these)
+- `showReport()` --calls--> `formatWaktu()`  [EXTRACTED]
+  Membership/Submit/script.js → Membership/Submit/script.js  _Bridges community 40 → community 39_
 - `fetchList()` --calls--> `renderList()`  [EXTRACTED]
   Pencatatan-Buku-Kas/Riwayat/script.js → Pencatatan-Buku-Kas/Riwayat/script.js  _Bridges community 10 → community 14_
 - `fetchMonthList()` --calls--> `monthKeyOf()`  [EXTRACTED]
@@ -75,7 +81,7 @@
 ## Import Cycles
 - None detected.
 
-## Communities (39 total, 6 thin omitted)
+## Communities (43 total, 8 thin omitted)
 
 ### Community 0 - "Riwayat/script.js"
 Cohesion: 0.04
@@ -195,22 +201,30 @@ Nodes (13): doGet(), doGetFormData_(), doPost(), doPostPendaftaran_(), doPostSub
 
 ### Community 37 - "Submit/script.js"
 Cohesion: 0.05
-Nodes (32): base64ToBlob(), btnLoading, btnText, downloadLaporanBtn, errorMsg, escapeHtml(), formatStampFile(), formatWaktu() (+24 more)
+Nodes (26): btnLoading, btnText, downloadLaporanBtn, errorMsg, formSection, fotoInput, fotoPreview, kodeSelect (+18 more)
+
+### Community 39 - "buildLaporanFileName"
+Cohesion: 0.40
+Nodes (5): buildLaporanFileName(), formatStampFile(), formatWaktu(), pad2(), sanitizeFilePart()
+
+### Community 40 - "showReport"
+Cohesion: 0.50
+Nodes (4): base64ToBlob(), hideReportError(), hideReportInfo(), showReport()
 
 ## Knowledge Gaps
-- **288 isolated node(s):** `all`, `menuBtn`, `drawer`, `overlay`, `drawerClose` (+283 more)
+- **290 isolated node(s):** `all`, `menuBtn`, `drawer`, `overlay`, `drawerClose` (+285 more)
   These have ≤1 connection - possible missing edges or undocumented components.
-- **6 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
+- **8 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
 
 ## Suggested Questions
 _Questions this graph is uniquely positioned to answer:_
 
 - **Why does `Investigasi Mekanisme Ntfy — Pencatatan-Buku-Kas/Apps-Script/buku-kas.gs.js` connect `Investigasi Mekanisme Ntfy — Pencatatan-Buku-Kas/Apps-Script/buku-kas.gs.js` to `Detail Logic Pola Transaksi (follow-up)`?**
-  _High betweenness centrality (0.007) - this node is a cross-community bridge._
+  _High betweenness centrality (0.006) - this node is a cross-community bridge._
 - **Why does `Detail Logic Pola Transaksi (follow-up)` connect `Detail Logic Pola Transaksi (follow-up)` to `Investigasi Mekanisme Ntfy — Pencatatan-Buku-Kas/Apps-Script/buku-kas.gs.js`?**
   _High betweenness centrality (0.003) - this node is a cross-community bridge._
 - **What connects `all`, `menuBtn`, `drawer` to the rest of the system?**
-  _288 weakly-connected nodes found - possible documentation gaps or missing edges._
+  _290 weakly-connected nodes found - possible documentation gaps or missing edges._
 - **Should `Riwayat/script.js` be split into smaller, more focused modules?**
   _Cohesion score 0.044444444444444446 - nodes in this community are weakly interconnected._
 - **Should `Pencatatan-Buku-Kas/script.js` be split into smaller, more focused modules?**
