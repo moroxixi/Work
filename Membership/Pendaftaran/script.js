@@ -25,15 +25,13 @@ const downloadBtn     = document.getElementById("downloadBtn");
 const backBtn         = document.getElementById("backBtn");
 const fotoInput       = document.getElementById("fotoInput");
 const uploadArea      = document.getElementById("uploadArea");
-const uploadPlaceholder = document.getElementById("uploadPlaceholder");
 const fotoPreview     = document.getElementById("fotoPreview");
-const cardDomisili    = document.getElementById("cardDomisili");
-const cardUmur        = document.getElementById("cardUmur");
 
 // ─── STATE ──────────────────────────────────────────────────────────────
 let compressedBase64 = null;   // foto profil terkompresi (base64, via config.js)
 let compressedMimeType = "";
 let compressedFileName = "";
+let previewObjectUrl = null;    // object URL preview aktif (di-revoke saat ganti/reset)
 
 // ─── SET MAX DATE (tidak boleh masa depan) ──────────────────────────────────
 (function setMaxDate() {
@@ -155,8 +153,6 @@ form.addEventListener("submit", async function (e) {
 function showCard(data) {
   cardKode.textContent = data.kodeMembership;
   cardNama.textContent = data.nama;
-  cardDomisili.textContent = data.domisili;
-  cardUmur.textContent = data.umur + " tahun";
 
   // Tanggal daftar = hari ini
   const now = new Date();
@@ -244,22 +240,33 @@ fotoInput.addEventListener("change", async function () {
   }
 
   // Tampilkan preview (dari file asli — visual identik dengan hasil kompresi)
-  var previewUrl = URL.createObjectURL(file);
-  fotoPreview.src = previewUrl;
-  fotoPreview.hidden = false;
-  uploadPlaceholder.hidden = true;
-  uploadArea.classList.add("has-photo");
+  showFotoPreview(file);
 });
 
+/**
+ * State terisi: ganti class .has-preview pada #uploadArea. CSS yang mengatur
+ * placeholder disembunyikan (display:none) dan preview tampil mengisi kotak —
+ * jadi tidak pernah ada dua elemen yang tampil bersamaan.
+ */
+function showFotoPreview(file) {
+  if (previewObjectUrl) URL.revokeObjectURL(previewObjectUrl);
+  previewObjectUrl = URL.createObjectURL(file);
+  fotoPreview.src = previewObjectUrl;
+  uploadArea.classList.add("has-preview");
+}
+
+// State kosong: cabut class .has-preview → placeholder kembali tampil
 function resetFotoState() {
   fotoInput.value = "";
   compressedBase64 = null;
   compressedMimeType = "";
   compressedFileName = "";
-  fotoPreview.hidden = true;
-  fotoPreview.src = "";
-  uploadPlaceholder.hidden = false;
-  uploadArea.classList.remove("has-photo");
+  if (previewObjectUrl) {
+    URL.revokeObjectURL(previewObjectUrl);
+    previewObjectUrl = null;
+  }
+  fotoPreview.removeAttribute("src");
+  uploadArea.classList.remove("has-preview");
 }
 
 function blobToBase64(blob) {

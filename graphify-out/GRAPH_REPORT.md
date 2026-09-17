@@ -1,16 +1,16 @@
 # Graph Report - Work  (2026-09-17)
 
 ## Corpus Check
-- 37 files · ~48,703 words
+- 37 files · ~48,772 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
-- 599 nodes · 795 edges · 39 communities (33 shown, 6 thin omitted)
+- 597 nodes · 793 edges · 39 communities (33 shown, 6 thin omitted)
 - Extraction: 98% EXTRACTED · 2% INFERRED · 0% AMBIGUOUS · INFERRED: 13 edges (avg confidence: 0.5)
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `924f35e4`
+- Built from commit: `1954fcbd`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -187,7 +187,7 @@ Nodes (17): 1.1.1 `buku-kas.gs.js` (Kas Harian + Riwayat) — endpoint `ENDPOINT
 
 ### Community 35 - "Pendaftaran/script.js"
 Cohesion: 0.08
-Nodes (18): backBtn, btnLoading, btnText, cardDomisili, cardKode, cardNama, cardSection, cardTanggal (+10 more)
+Nodes (15): backBtn, btnLoading, btnText, cardKode, cardNama, cardSection, cardTanggal, downloadBtn (+7 more)
 
 ### Community 36 - "code.gs.js"
 Cohesion: 0.35
@@ -198,7 +198,7 @@ Cohesion: 0.08
 Nodes (18): btnLoading, btnText, errorMsg, escapeHtml(), fotoInput, fotoPreview, kodeEmptyMsg, kodeSelect (+10 more)
 
 ## Knowledge Gaps
-- **281 isolated node(s):** `all`, `menuBtn`, `drawer`, `overlay`, `drawerClose` (+276 more)
+- **278 isolated node(s):** `all`, `menuBtn`, `drawer`, `overlay`, `drawerClose` (+273 more)
   These have ≤1 connection - possible missing edges or undocumented components.
 - **6 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
 
@@ -210,7 +210,7 @@ _Questions this graph is uniquely positioned to answer:_
 - **Why does `Detail Logic Pola Transaksi (follow-up)` connect `Detail Logic Pola Transaksi (follow-up)` to `Investigasi Mekanisme Ntfy — Pencatatan-Buku-Kas/Apps-Script/buku-kas.gs.js`?**
   _High betweenness centrality (0.004) - this node is a cross-community bridge._
 - **What connects `all`, `menuBtn`, `drawer` to the rest of the system?**
-  _281 weakly-connected nodes found - possible documentation gaps or missing edges._
+  _278 weakly-connected nodes found - possible documentation gaps or missing edges._
 - **Should `Riwayat/script.js` be split into smaller, more focused modules?**
   _Cohesion score 0.044444444444444446 - nodes in this community are weakly interconnected._
 - **Should `Pencatatan-Buku-Kas/script.js` be split into smaller, more focused modules?**

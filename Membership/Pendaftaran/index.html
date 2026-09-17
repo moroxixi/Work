@@ -72,13 +72,18 @@
         <!-- Foto Profil -->
         <div class="form-group">
           <label for="fotoInput">Foto Profil <span class="req">*</span></label>
+          <!-- Visibility 2 state dikontrol class .has-preview pada #uploadArea:
+               state kosong → placeholder tampil; state terisi → placeholder
+               display:none + foto preview mengisi kotak. Tidak ada elemen
+               yang ditumpuk (overlap). -->
           <div class="upload-area" id="uploadArea">
             <input type="file" id="fotoInput" name="fotoInput" accept="image/*" capture="user" hidden>
             <div id="uploadPlaceholder" class="upload-placeholder">
               <span class="upload-icon">🤳</span>
               <span class="upload-text">Tap untuk pilih / ambil foto</span>
             </div>
-            <img id="fotoPreview" class="foto-preview" hidden alt="Preview foto profil">
+            <img id="fotoPreview" class="foto-preview" alt="Preview foto profil">
+            <span class="upload-change-hint">✏️ Ganti foto</span>
           </div>
           <span class="hint">Format: JPG/PNG, max 10MB sebelum kompresi</span>
         </div>
@@ -124,13 +129,8 @@
               <span class="card-value" id="cardNama"></span>
             </div>
             <div class="card-row">
-              <span class="card-label">Domisili</span>
-              <span class="card-value" id="cardDomisili"></span>
-            </div>
-              <div class="card-col">
-                <span class="card-label">Tanggal Daftar</span>
-                <span class="card-value" id="cardTanggal"></span>
-              </div>
+              <span class="card-label">Tanggal Daftar</span>
+              <span class="card-value" id="cardTanggal"></span>
             </div>
           </div>
 

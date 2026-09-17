@@ -285,38 +285,19 @@ input[type="date"]::-webkit-calendar-picker-indicator {
   font-weight: 700;
   color: var(--accent2);
   letter-spacing: 0.1em;
-  margin-bottom: 18px;
+  margin-bottom: 22px;
 }
 
 .card-details {
   text-align: left;
-  padding: 0 8px;
-}
-
-/* Baris berisi 2 kolom berdampingan (Umur | Tanggal Daftar) */
-.card-row-pair {
-  display: flex;
-  gap: 16px;
-  padding: 7px 0;
-}
-
-.card-col {
-  flex: 1;
-  min-width: 0;
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-}
-
-.card-col .card-value {
-  text-align: left;
+  padding: 0 10px;
 }
 
 .card-row {
   display: flex;
   justify-content: space-between;
   gap: 12px;
-  padding: 7px 0;
+  padding: 11px 0;
   border-bottom: 1px solid rgba(255, 255, 255, 0.06);
 }
 
@@ -326,36 +307,44 @@ input[type="date"]::-webkit-calendar-picker-indicator {
 
 .card-label {
   color: var(--text-dim);
-  font-size: 0.8rem;
+  font-size: 0.85rem;
 }
 
 .card-value {
   font-weight: 600;
-  font-size: 0.9rem;
+  font-size: 0.95rem;
   min-width: 0; /* boleh menyusut, cegah overflow nama panjang */
   overflow-wrap: anywhere;
   text-align: right;
 }
 
 .card-footer {
-  margin-top: 18px;
+  margin-top: 24px;
   font-size: 0.7rem;
   color: var(--text-dim);
   letter-spacing: 0.08em;
   text-transform: uppercase;
 }
 
-/* ─── Upload Foto Profil (class identik dengan Submit — konsisten) ─────── */
+/* ─── Upload Foto Profil ─────────────────────────────────────────────────
+   Dua state dikontrol satu class: .has-preview pada #uploadArea.
+     state kosong (tanpa class) → placeholder (icon + teks) tampil
+     state terisi (.has-preview) → placeholder display:none (hilang total,
+                                   bukan ditumpuk), foto preview mengisi kotak
+   Tinggi kotak dipatok tetap (height, bukan min-height) supaya layout tidak
+   melompat saat berpindah state. */
 .upload-area {
+  position: relative;            /* jangkar badge "Ganti foto" */
   display: flex;
   align-items: center;
   justify-content: center;
-  min-height: 96px; /* tombol besar, nyaman ditap di HP */
+  height: 180px;
   border: 2px dashed var(--border);
   border-radius: 12px;
-  padding: 20px 16px;
+  padding: 16px;
   text-align: center;
   cursor: pointer;
+  overflow: hidden;
   transition: border-color 0.2s, background 0.2s;
 }
 
@@ -368,10 +357,12 @@ input[type="date"]::-webkit-calendar-picker-indicator {
   background: rgba(255, 77, 28, 0.1);
 }
 
-.upload-area.has-photo {
-  padding: 10px;
+/* State terisi */
+.upload-area.has-preview {
+  padding: 0;
   border-style: solid;
   border-color: var(--accent1);
+  background: var(--surface2);
 }
 
 .upload-placeholder {
@@ -384,15 +375,44 @@ input[type="date"]::-webkit-calendar-picker-indicator {
   font-weight: 600;
 }
 
+/* Sembunyikan placeholder SEUTUHNYA saat foto sudah dipilih */
+.upload-area.has-preview .upload-placeholder {
+  display: none;
+}
+
 .upload-icon {
   font-size: 2.2rem;
 }
 
 .foto-preview {
-  max-width: 100%;
-  max-height: 200px;
-  border-radius: 6px;
-  object-fit: contain;
+  display: none;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.upload-area.has-preview .foto-preview {
+  display: block;
+}
+
+/* Badge kecil penanda area masih bisa ditap untuk ganti foto */
+.upload-change-hint {
+  display: none;
+  position: absolute;
+  right: 8px;
+  bottom: 8px;
+  padding: 3px 8px;
+  border-radius: 999px;
+  background: rgba(0, 0, 0, 0.6);
+  color: rgba(255, 255, 255, 0.9);
+  font-size: 0.65rem;
+  font-weight: 600;
+  letter-spacing: 0.03em;
+  pointer-events: none;          /* tap tetap tercatat di .upload-area */
+}
+
+.upload-area.has-preview .upload-change-hint {
+  display: inline-block;
 }
 
 /* ─── Responsive ───────────────────────────────────────────────────────── */
