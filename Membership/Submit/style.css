@@ -438,6 +438,37 @@ select {
   overflow-wrap: anywhere;
 }
 
+/* Badge poin reward — paling menonjol di laporan. Pakai background gradient
+   solid + teks putih (bukan background-clip:text) supaya aman saat html2canvas
+   capture (background-clip:text sering tidak ter-render oleh html2canvas). */
+.laporan-poin {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  margin-top: 14px;
+  padding: 12px 14px;
+  border-radius: 10px;
+  background: var(--gradient-h);
+  box-shadow: 0 4px 16px rgba(255, 77, 28, 0.25);
+}
+
+.laporan-poin-label {
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.laporan-poin-value {
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: #fff;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.28);
+  font-variant-numeric: tabular-nums;
+}
+
 /* Garis putus-putus sebagai pemisah section (ala struk) */
 .laporan-divider {
   border-top: 1px dashed rgba(255, 255, 255, 0.18);

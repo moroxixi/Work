@@ -38,6 +38,7 @@ const reportSection    = document.getElementById("reportSection");
 const laporanCard      = document.getElementById("laporanCard");
 const laporanKode      = document.getElementById("laporanKode");
 const laporanWaktu     = document.getElementById("laporanWaktu");
+const laporanPoin      = document.getElementById("laporanPoin");
 const laporanItems     = document.getElementById("laporanItems");
 const laporanFoto      = document.getElementById("laporanFoto");
 const downloadLaporanBtn = document.getElementById("downloadLaporanBtn");
@@ -255,6 +256,10 @@ orderForm.addEventListener("submit", async function (e) {
     var json = await resp.json();
 
     if (json.success) {
+      // totalPoin = poin KUMULATIF dari server (seluruh riwayat 1 kode, sudah
+      // termasuk submit ini). Simpan di snapshot supaya ikut ter-render.
+      reportData.totalPoin = json.totalPoin;
+
       // Form dibersihkan, lalu laporan ditampilkan pakai snapshot di atas.
       // resetForm() HANYA me-revoke previewObjectUrl (foto form), bukan
       // reportObjectUrl — jadi foto laporan tetap utuh sampai di-download.
@@ -282,7 +287,7 @@ orderForm.addEventListener("submit", async function (e) {
  * dari `compressedBase64` (byte persis sama dengan yang dikirim ke server),
  * bukan dari URL Google Drive — supaya html2canvas tidak kena CORS.
  *
- * @param {{kodeMembership:{string}, items:Array, waktu:Date, fotoBase64:string, fotoMimeType:string}} data
+ * @param {{kodeMembership:{string}, items:Array, waktu:Date, fotoBase64:string, fotoMimeType:string, totalPoin:number}} data
  */
 function showReport(data) {
   reportKode = data.kodeMembership;
@@ -290,6 +295,11 @@ function showReport(data) {
 
   laporanKode.textContent = data.kodeMembership;
   laporanWaktu.textContent = formatWaktu(data.waktu);
+
+  // Pemisah ribuan ala Indonesia ("1.200 poin") via toLocaleString('id-ID').
+  // Fallback ke 0 kalau field tidak ada, supaya baris ini tidak pernah kosong.
+  var poin = Number(data.totalPoin) || 0;
+  laporanPoin.textContent = poin.toLocaleString("id-ID") + " poin";
 
   // Daftar item — hanya qty > 0, dari state form di client (tanpa fetch ulang)
   laporanItems.innerHTML = "";
@@ -367,6 +377,7 @@ newOrderBtn.addEventListener("click", function () {
   }
   laporanFoto.removeAttribute("src");
   laporanItems.innerHTML = "";
+  laporanPoin.textContent = "0 poin";
   reportKode = "";
   reportWaktu = null;
 

@@ -45,6 +45,9 @@ var COLUMNS_SUBMIT_PESANAN = [
   "Foto Produk (URL Drive)"
 ];
 
+// Konversi poin: 1 Qty = 100 poin
+var POIN_PER_QTY = 100;
+
 // ─── SETUP HEADER ───────────────────────────────────────────────────────────
 
 /**
@@ -448,17 +451,63 @@ function doPostSubmitOrder_(e) {
     jumlahItem++;
   }
 
-  Logger.log("✅ Pesanan diterima: " + kodeMembership + ", " + jumlahItem + " item");
+  // f. Hitung total poin KUMULATIF untuk kode ini — dipanggil SETELAH append
+  // di atas supaya submission yang baru saja masuk ikut terhitung.
+  var totalPoin = hitungTotalPoin_(submitSheet, kodeMembership);
+
+  Logger.log("✅ Pesanan diterima: " + kodeMembership + ", " + jumlahItem + " item, total " + totalPoin + " poin");
 
   return json_({
     success: true,
-    jumlahItem: jumlahItem
+    jumlahItem: jumlahItem,
+    totalPoin: totalPoin
   });
+}
+
+// ─── HITUNG TOTAL POIN (kumulatif per Kode Membership) ─────────────────────
+
+/**
+ * Jumlahkan kolom "Qty" dari SELURUH riwayat di tab "Submit Pesanan" yang
+ * Kode Membership-nya cocok, lalu konversi ke poin (1 Qty = POIN_PER_QTY).
+ *
+ * CATATAN: fungsi ini full-scan seluruh baris tiap kali dipanggil. Ini
+ * keterbatasan yang diterima untuk skala data saat ini — kalau nanti data
+ * sudah sangat banyak, scan ini bisa jadi lambat dan perlu cache/index.
+ *
+ * @param {Sheet} sheet - tab "Submit Pesanan"
+ * @param {string} kodeMembership - kode yang dicari
+ * @returns {number} total poin (integer)
+ */
+function hitungTotalPoin_(sheet, kodeMembership) {
+  var lastRow = sheet.getLastRow();
+  if (lastRow < 2) return 0; // hanya header / kosong
+
+  // Ambil kolom "Kode Membership" & "Qty" sekaligus (2 kolom, 1-indexed)
+  var kodeCol = COLUMNS_SUBMIT_PESANAN.indexOf("Kode Membership") + 1;
+  var qtyCol = COLUMNS_SUBMIT_PESANAN.indexOf("Qty") + 1;
+  var target = String(kodeMembership).trim();
+
+  var values = sheet.getRange(2, kodeCol, lastRow - 1, qtyCol - kodeCol + 1).getValues();
+
+  var totalQty = 0;
+  for (var i = 0; i < values.length; i++) {
+    var kodeRow = String(values[i][0]).trim();
+    if (kodeRow !== target) continue;
+
+    // Data Qty bisa kotor (non-angka/kosong) → anggap 0, jangan biarkan NaN
+    var qtyNum = Number(values[i][values[i].length - 1]);
+    if (!isNaN(qtyNum)) {
+      totalQty += qtyNum;
+    }
+  }
+
+  return totalQty * POIN_PER_QTY;
 }
 
 // ─── doGet ──────────────────────────────────────────────────────────────────
 
 function doGet(e) {
+
   var action = trim_(e.parameter.action);
 
   if (action === "getFormData") {
