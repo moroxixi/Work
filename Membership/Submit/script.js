@@ -7,7 +7,8 @@
  */
 
 // ─── ENDPOINT ───────────────────────────────────────────────────────────────
-const GAS_WEB_APP_URL = "https://script.google.com/macros/s/AKfycbxpujqY0krSmEz7QoaetDJuL105ObmNTjRdnpb0KC7d7SR4JyMeEY4AsWf71KaM-uS6pw/exec";
+// URL GAS Web App kini terpusat di ../config.js (global MAO_CONFIG),
+// di-load sebelum script ini via index.html.
 
 // ─── DOM REFERENCES ─────────────────────────────────────────────────────────
 const loadingState     = document.getElementById("loadingState");
@@ -36,7 +37,7 @@ let compressedFileName = "";
 
 (async function init() {
   try {
-    const resp = await fetch(GAS_WEB_APP_URL + "?action=getFormData");
+    const resp = await fetch(MAO_CONFIG.GAS_WEB_APP_URL + "?action=getFormData");
     const json = await resp.json();
 
     if (!json.success) {
@@ -276,7 +277,7 @@ orderForm.addEventListener("submit", async function (e) {
       fotoNamaFile: compressedFileName
     });
 
-    var resp = await fetch(GAS_WEB_APP_URL, {
+    var resp = await fetch(MAO_CONFIG.GAS_WEB_APP_URL, {
       method: "POST",
       headers: { "Content-Type": "application/x-www-form-urlencoded" },
       body: params.toString()

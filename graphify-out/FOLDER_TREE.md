@@ -19,9 +19,9 @@
 │   ├── Submit/
 │   │   ├── index.html
 │   │   └── script.js
-│   └── assets/
-│       ├── logo-mao.jpeg
-│       └── logo-mao.png
+│   ├── assets/
+│   │   └── logo-mao.jpeg
+│   └── config.js
 ├── Pencatatan-Buku-Kas/
 │   ├── Apps-Script/
 │   │   └── buku-kas.gs.js

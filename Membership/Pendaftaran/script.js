@@ -6,7 +6,8 @@
  */
 
 // ─── ENDPOINT ───────────────────────────────────────────────────────────────
-const GAS_WEB_APP_URL = "https://script.google.com/macros/s/AKfycbxpujqY0krSmEz7QoaetDJuL105ObmNTjRdnpb0KC7d7SR4JyMeEY4AsWf71KaM-uS6pw/exec";
+// URL GAS Web App kini terpusat di ../config.js (global MAO_CONFIG),
+// di-load sebelum script ini via index.html.
 
 // ─── DOM REFERENCES ─────────────────────────────────────────────────────────
 const form            = document.getElementById("pendaftaranForm");
@@ -104,7 +105,7 @@ form.addEventListener("submit", async function (e) {
       NomorWhatsApp: validation.data.NomorWhatsApp,
     });
 
-    const resp = await fetch(GAS_WEB_APP_URL, {
+    const resp = await fetch(MAO_CONFIG.GAS_WEB_APP_URL, {
       method: "POST",
       headers: { "Content-Type": "application/x-www-form-urlencoded" },
       body: params.toString(),

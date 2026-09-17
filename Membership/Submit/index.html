@@ -2,7 +2,7 @@
 <html lang="id">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <title>MAO — Submit Pesanan</title>
   <link rel="stylesheet" href="style.css">
 </head>
@@ -13,18 +13,7 @@
 
       <!-- Branding -->
       <div class="brand">
-        <svg class="chili-icon" viewBox="0 0 64 80" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-          <defs>
-            <linearGradient id="chiliGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-              <stop offset="0%" stop-color="#ff4d1c"/>
-              <stop offset="100%" stop-color="#ffb300"/>
-            </linearGradient>
-          </defs>
-          <ellipse cx="32" cy="52" rx="14" ry="26" fill="url(#chiliGrad)" transform="rotate(-8 32 52)"/>
-          <path d="M32 26 Q34 12 38 6 Q36 14 34 22" stroke="#4caf50" stroke-width="3" fill="none" stroke-linecap="round"/>
-          <ellipse cx="30" cy="26" rx="8" ry="5" fill="#388e3c"/>
-        </svg>
-        <h1>MAO</h1>
+        <img src="../assets/logo-mao.jpeg" alt="MAO" class="brand-logo">
         <p class="tagline">Submit Pesanan</p>
       </div>
 
@@ -61,7 +50,7 @@
             <input type="file" id="fotoInput" name="fotoInput" accept="image/*" capture="environment" hidden>
             <div id="uploadPlaceholder" class="upload-placeholder">
               <span class="upload-icon">📷</span>
-              <span>Klik untuk upload foto pesanan</span>
+              <span class="upload-text">Tap untuk pilih / ambil foto</span>
             </div>
             <img id="fotoPreview" class="foto-preview" hidden alt="Preview foto">
           </div>
@@ -84,6 +73,7 @@
     </div>
   </div>
 
+  <script src="../config.js"></script>
   <script src="script.js"></script>
 </body>
 </html>

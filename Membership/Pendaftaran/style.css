@@ -32,6 +32,8 @@ body {
   align-items: center;
   justify-content: center;
   padding: 24px 16px;
+  padding: calc(24px + env(safe-area-inset-top)) calc(16px + env(safe-area-inset-right))
+    calc(24px + env(safe-area-inset-bottom)) calc(16px + env(safe-area-inset-left));
   line-height: 1.5;
 }
 
@@ -56,20 +58,12 @@ body {
   margin-bottom: 28px;
 }
 
-.chili-icon {
-  width: 56px;
-  height: 70px;
-  margin-bottom: 12px;
-}
-
-.brand h1 {
-  font-size: 2.5rem;
-  font-weight: 900;
-  letter-spacing: 0.12em;
-  background: var(--gradient);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
+.brand-logo {
+  display: block;
+  height: auto;
+  max-width: min(70%, 200px);
+  margin: 0 auto 14px;
+  border-radius: 18px;
 }
 
 .tagline {
@@ -102,7 +96,7 @@ input[type="date"],
 select {
   width: 100%;
   padding: 12px 14px;
-  font-size: 0.95rem;
+  font-size: 16px; /* ≥16px: cegah auto-zoom iOS saat fokus */
   background: var(--surface2);
   border: 1px solid var(--border);
   border-radius: 8px;
@@ -151,7 +145,8 @@ input[type="date"]::-webkit-calendar-picker-indicator {
 .checkbox-label {
   display: flex;
   align-items: flex-start;
-  gap: 10px;
+  gap: 12px;
+  padding: 10px 0; /* perluas area sentuh label + checkbox ≥44px */
   cursor: pointer;
   font-size: 0.85rem;
   font-weight: 400;
@@ -160,9 +155,9 @@ input[type="date"]::-webkit-calendar-picker-indicator {
 }
 
 .checkbox-label input[type="checkbox"] {
-  margin-top: 3px;
-  width: 18px;
-  height: 18px;
+  margin-top: 2px;
+  width: 22px;
+  height: 22px;
   accent-color: var(--accent1);
   flex-shrink: 0;
   cursor: pointer;
@@ -171,6 +166,7 @@ input[type="date"]::-webkit-calendar-picker-indicator {
 /* ─── Buttons ──────────────────────────────────────────────────────────── */
 .btn-submit {
   width: 100%;
+  min-height: 48px;
   padding: 14px;
   font-size: 1rem;
   font-weight: 700;
@@ -298,6 +294,7 @@ input[type="date"]::-webkit-calendar-picker-indicator {
 .card-row {
   display: flex;
   justify-content: space-between;
+  gap: 12px;
   padding: 7px 0;
   border-bottom: 1px solid rgba(255, 255, 255, 0.06);
 }
@@ -314,6 +311,9 @@ input[type="date"]::-webkit-calendar-picker-indicator {
 .card-value {
   font-weight: 600;
   font-size: 0.9rem;
+  min-width: 0; /* boleh menyusut, cegah overflow nama panjang */
+  overflow-wrap: anywhere;
+  text-align: right;
 }
 
 .card-footer {
@@ -328,8 +328,5 @@ input[type="date"]::-webkit-calendar-picker-indicator {
 @media (max-width: 480px) {
   .form-card {
     padding: 24px 18px;
-  }
-  .brand h1 {
-    font-size: 2rem;
   }
 }

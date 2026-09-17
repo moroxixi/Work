@@ -34,6 +34,8 @@ body {
   align-items: flex-start;
   justify-content: center;
   padding: 24px 16px;
+  padding: calc(24px + env(safe-area-inset-top)) calc(16px + env(safe-area-inset-right))
+    calc(24px + env(safe-area-inset-bottom)) calc(16px + env(safe-area-inset-left));
   line-height: 1.5;
 }
 
@@ -58,20 +60,12 @@ body {
   margin-bottom: 28px;
 }
 
-.chili-icon {
-  width: 56px;
-  height: 70px;
-  margin-bottom: 12px;
-}
-
-.brand h1 {
-  font-size: 2.5rem;
-  font-weight: 900;
-  letter-spacing: 0.12em;
-  background: var(--gradient);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
+.brand-logo {
+  display: block;
+  height: auto;
+  max-width: min(70%, 200px);
+  margin: 0 auto 14px;
+  border-radius: 18px;
 }
 
 .tagline {
@@ -122,7 +116,7 @@ label {
 select {
   width: 100%;
   padding: 12px 14px;
-  font-size: 0.95rem;
+  font-size: 16px; /* ≥16px: cegah auto-zoom iOS saat fokus */
   background: var(--surface2);
   border: 1px solid var(--border);
   border-radius: 8px;
@@ -158,8 +152,10 @@ select {
 }
 
 .link-daftar {
-  display: inline-block;
-  margin-top: 8px;
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px; /* target tap minimum */
+  margin-top: 4px;
   font-size: 0.8rem;
   color: var(--accent2);
   text-decoration: none;
@@ -181,29 +177,32 @@ select {
   display: flex;
   align-items: center;
   justify-content: space-between;
+  gap: 10px;
+  min-height: 56px;
   background: var(--surface2);
   border: 1px solid var(--border);
   border-radius: 8px;
-  padding: 10px 14px;
+  padding: 10px 12px;
 }
 
 .menu-name {
   font-size: 0.9rem;
   font-weight: 500;
   flex: 1;
-  min-width: 0;
+  min-width: 0; /* elastis, nama panjang wrap tanpa dorong stepper keluar row */
+  overflow-wrap: anywhere;
 }
 
 .stepper {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 8px;
   flex-shrink: 0;
 }
 
 .stepper button {
-  width: 32px;
-  height: 32px;
+  width: 44px; /* target tap minimum 44x44 */
+  height: 44px;
   border: 1px solid var(--border);
   border-radius: 6px;
   background: var(--surface);
@@ -230,16 +229,21 @@ select {
 .qty-value {
   font-size: 1rem;
   font-weight: 700;
-  min-width: 24px;
+  min-width: 32px; /* muat 2 digit (10-99) tanpa menggeser tombol "+" */
   text-align: center;
   color: var(--accent2);
+  font-variant-numeric: tabular-nums; /* lebar digit konsisten 1 vs 2 digit */
 }
 
 /* ─── Upload Area ──────────────────────────────────────────────────────── */
 .upload-area {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 96px; /* tombol besar, nyaman ditap di HP */
   border: 2px dashed var(--border);
-  border-radius: 8px;
-  padding: 20px;
+  border-radius: 12px;
+  padding: 20px 16px;
   text-align: center;
   cursor: pointer;
   transition: border-color 0.2s, background 0.2s;
@@ -248,6 +252,10 @@ select {
 .upload-area:hover {
   border-color: var(--accent1);
   background: rgba(255, 77, 28, 0.04);
+}
+
+.upload-area:active {
+  background: rgba(255, 77, 28, 0.1);
 }
 
 .upload-area.has-photo {
@@ -261,12 +269,13 @@ select {
   flex-direction: column;
   align-items: center;
   gap: 8px;
-  color: var(--text-dim);
-  font-size: 0.85rem;
+  color: var(--text);
+  font-size: 0.95rem;
+  font-weight: 600;
 }
 
 .upload-icon {
-  font-size: 2rem;
+  font-size: 2.2rem;
 }
 
 .foto-preview {
@@ -278,8 +287,13 @@ select {
 
 /* ─── Buttons ──────────────────────────────────────────────────────────── */
 .btn-submit {
+  position: sticky; /* ikut ke bawah saat scroll daftar menu panjang */
+  bottom: 0;
+  z-index: 10;
   width: 100%;
+  min-height: 48px;
   padding: 14px;
+  padding-bottom: calc(14px + env(safe-area-inset-bottom));
   font-size: 1rem;
   font-weight: 700;
   color: #fff;
@@ -288,6 +302,7 @@ select {
   border-radius: 8px;
   cursor: pointer;
   margin-top: 8px;
+  box-shadow: 0 -4px 16px rgba(0, 0, 0, 0.35); /* pisahkan dari konten di belakangnya */
   transition: opacity 0.2s, transform 0.1s;
   letter-spacing: 0.02em;
 }
@@ -334,7 +349,15 @@ select {
   .form-card {
     padding: 24px 18px;
   }
-  .brand h1 {
-    font-size: 2rem;
+}
+
+/* Layar sangat sempit (≤360px): rapatkan stepper tanpa mengecilkan
+   tombol di bawah 44px, jaga nama menu tetap punya ruang */
+@media (max-width: 360px) {
+  .stepper {
+    gap: 6px;
+  }
+  .qty-value {
+    min-width: 28px;
   }
 }
