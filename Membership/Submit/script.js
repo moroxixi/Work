@@ -7,7 +7,7 @@
  */
 
 // ─── ENDPOINT ───────────────────────────────────────────────────────────────
-const GAS_WEB_APP_URL = "<GAS_WEB_APP_URL_DI_SINI>";
+const GAS_WEB_APP_URL = "https://script.google.com/macros/s/AKfycbxpujqY0krSmEz7QoaetDJuL105ObmNTjRdnpb0KC7d7SR4JyMeEY4AsWf71KaM-uS6pw/exec";
 
 // ─── DOM REFERENCES ─────────────────────────────────────────────────────────
 const loadingState     = document.getElementById("loadingState");
