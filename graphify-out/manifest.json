@@ -235,23 +235,23 @@
     "semantic_hash": ""
   },
   "Membership/Apps-Script/code.gs.js": {
-    "mtime": 1789630507.0218196,
-    "ast_hash": "202b8e12756a05ebf0415497b9b73004",
+    "mtime": 1789658849.072511,
+    "ast_hash": "619d833352a5d561b2da9ee6562a7427",
     "semantic_hash": ""
   },
   "Membership/Pendaftaran/script.js": {
-    "mtime": 1789657600.665797,
-    "ast_hash": "55d10925ca405c57a6f3b50730d2e25a",
+    "mtime": 1789658882.0258455,
+    "ast_hash": "d7d0ea55f28f0bfaa34a14327501c8b1",
     "semantic_hash": ""
   },
   "Membership/Pendaftaran/index.html": {
-    "mtime": 1789656981.21244,
-    "ast_hash": "df0f0b0d21dd7511dc8cc50c26f98e6a",
+    "mtime": 1789658863.145845,
+    "ast_hash": "a959ea7d7887177eacbe06a4e34ca426",
     "semantic_hash": ""
   },
   "Membership/Submit/script.js": {
-    "mtime": 1789657573.2324626,
-    "ast_hash": "7fa1c4c9f639da7582f65a717cc17884",
+    "mtime": 1789658895.3491795,
+    "ast_hash": "5e611b73929321b88d0ba49347423949",
     "semantic_hash": ""
   },
   "Membership/Submit/index.html": {
@@ -270,13 +270,23 @@
     "semantic_hash": ""
   },
   "Membership/nav.js": {
-    "mtime": 1789657338.1791203,
-    "ast_hash": "5782922701df5097dbad9786d1f8924e",
+    "mtime": 1789658959.0858486,
+    "ast_hash": "b6698b9ea146ed03485ff1fb161bc65b",
     "semantic_hash": ""
   },
   "Membership/Hasil/index.html": {
-    "mtime": 1789657290.8824518,
-    "ast_hash": "5bd555168fd0e194f0d6deb1382f093c",
+    "mtime": 1789659004.2391837,
+    "ast_hash": "55a0e507db7eb4cefdbc1d017b7391bb",
+    "semantic_hash": ""
+  },
+  "Membership/Hadiah/index.html": {
+    "mtime": 1789658923.3125138,
+    "ast_hash": "01cfb38ac3e3d2897cb47172bb40357e",
+    "semantic_hash": ""
+  },
+  "Membership/Leaderboard/index.html": {
+    "mtime": 1789658944.9191813,
+    "ast_hash": "5eecf8aeba18774be1197d9e1b917c6b",
     "semantic_hash": ""
   }
 }

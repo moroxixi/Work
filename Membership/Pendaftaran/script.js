@@ -25,6 +25,7 @@ const cardTanggal     = document.getElementById("cardTanggal");
 const cardFotoProfil  = document.getElementById("cardFotoProfil");
 const downloadBtn     = document.getElementById("downloadBtn");
 const backBtn         = document.getElementById("backBtn");
+const cardUsername    = document.getElementById("cardUsername");
 const fotoInput       = document.getElementById("fotoInput");
 const fotoInputCamera = document.getElementById("fotoInputCamera");
 const uploadArea      = document.getElementById("uploadArea");
@@ -61,6 +62,7 @@ function validateForm() {
     JenisKelamin:  document.getElementById("JenisKelamin").value,
     Status:        document.getElementById("Status").value,
     NomorWhatsApp: document.getElementById("NomorWhatsApp").value.trim(),
+    Username:      document.getElementById("Username").value.trim(),
   };
 
   // Required: semua harus ada
@@ -88,6 +90,11 @@ function validateForm() {
   }
   if (phone.length < 9 || phone.length > 15) {
     return { ok: false, msg: "Nomor WhatsApp harus 9–15 digit." };
+  }
+
+  // Username: huruf, angka, underscore, 3–20 karakter
+  if (!/^[A-Za-z0-9_]{3,20}$/.test(fields.Username)) {
+    return { ok: false, msg: "Username hanya boleh berisi huruf, angka, dan underscore (3–20 karakter)." };
   }
 
   // Checkbox persetujuan
@@ -128,6 +135,7 @@ form.addEventListener("submit", async function (e) {
       JenisKelamin:  validation.data.JenisKelamin,
       Status:        validation.data.Status,
       NomorWhatsApp: validation.data.NomorWhatsApp,
+      Username:      validation.data.Username,
       fotoBase64:    compressedBase64,
       fotoMimeType:  compressedMimeType,
       fotoNamaFile:  compressedFileName,
@@ -144,6 +152,7 @@ form.addEventListener("submit", async function (e) {
     if (json.success) {
       showCard(json);
     } else {
+      // Pesan spesifik untuk error username_taken
       showError(json.error || "Terjadi kesalahan di server. Silakan coba lagi.");
     }
   } catch (err) {
@@ -165,6 +174,7 @@ function showCard(data) {
   cardKode.textContent = data.kodeMembership;
   cardNama.textContent = data.nama;
   cardDomisili.textContent = data.domisili;   // dari response doPost (Umur TIDAK ditampilkan)
+  cardUsername.textContent = "@" + (data.username || "");
 
   // Tanggal daftar = hari ini
   const now = new Date();

@@ -6,8 +6,7 @@
  * (sekaligus rename tab pertama menjadi "Member" — hanya jika baris 1 kosong).
  *
  * PENTING: setelah update ini, jalankan ULANG setupSheetHeaders() sekali dari
- * editor — jumlah kolom header berubah dari 9 menjadi 10 (tambah kolom
- * "Foto Profil (URL Drive)").
+ * editor — jumlah kolom header adalah 11 (termasuk kolom "Username" di ujung).
  */
 
 // ─── KONFIGURASI ────────────────────────────────────────────────────────────
@@ -27,7 +26,8 @@ var COLUMNS = [
   "Jenis Kelamin",
   "Status",
   "Nomor WhatsApp",
-  "Foto Profil (URL Drive)"
+  "Foto Profil (URL Drive)",
+  "Username"
 ];
 
 // Charset untuk kode unik (hindari karakter ambigu: 0/O/1/I)
@@ -44,6 +44,9 @@ var COLUMNS_SUBMIT_PESANAN = [
   "Qty",
   "Foto Produk (URL Drive)"
 ];
+
+// Header untuk tab "Hadiah"
+var COLUMNS_HADIAH = ["Judul", "Poin Dibutuhkan", "URL Foto Hadiah"];
 
 // Konversi poin: 1 Qty = 100 poin
 var POIN_PER_QTY = 100;
@@ -220,6 +223,25 @@ function setupSheetTambahanMembership() {
       Logger.log("✅ Header 'Submit Pesanan' ditulis.");
     }
   }
+
+  // ── Tab "Hadiah" ──
+  var sheetHadiah = ss.getSheetByName("Hadiah");
+  if (!sheetHadiah) {
+    sheetHadiah = ss.insertSheet("Hadiah");
+    sheetHadiah.getRange(1, 1, 1, COLUMNS_HADIAH.length).setValues([COLUMNS_HADIAH]);
+    Logger.log("✅ Tab 'Hadiah' dibuat dengan header.");
+  } else {
+    var firstRow3 = sheetHadiah.getRange(1, 1, 1, COLUMNS_HADIAH.length).getValues()[0];
+    var hasContent3 = firstRow3.some(function (cell) {
+      return cell !== "" && cell !== null && cell !== undefined;
+    });
+    if (hasContent3) {
+      Logger.log("⚠️ Tab 'Hadiah' sudah ada isi. Skip.");
+    } else {
+      sheetHadiah.getRange(1, 1, 1, COLUMNS_HADIAH.length).setValues([COLUMNS_HADIAH]);
+      Logger.log("✅ Header 'Hadiah' ditulis.");
+    }
+  }
 }
 
 // ─── FOTO FOLDER ───────────────────────────────────────────────────────────
@@ -287,6 +309,7 @@ function doPostPendaftaran_(e) {
   var jenisKelamin = trim_(e.parameter.JenisKelamin);
   var status = trim_(e.parameter.Status);
   var nomorWhatsApp = trim_(e.parameter.NomorWhatsApp);
+  var username = trim_(e.parameter.Username);
   var fotoBase64 = trim_(e.parameter.fotoBase64);
   var fotoMimeType = trim_(e.parameter.fotoMimeType);
   var fotoNamaFile = trim_(e.parameter.fotoNamaFile);
@@ -299,6 +322,16 @@ function doPostPendaftaran_(e) {
   if (!jenisKelamin) errors.push("Jenis Kelamin wajib diisi");
   if (!status) errors.push("Status wajib diisi");
   if (!nomorWhatsApp) errors.push("Nomor WhatsApp wajib diisi");
+  if (!username) errors.push("Username wajib diisi");
+
+  // Validasi format username: huruf, angka, underscore, 3-20 karakter
+  if (username && !/^[A-Za-z0-9_]{3,20}$/.test(username)) {
+    return json_({
+      success: false,
+      error: "Username hanya boleh berisi huruf, angka, dan underscore (3–20 karakter).",
+      errorType: "username_format"
+    });
+  }
 
   if (errors.length > 0) {
     return json_({
@@ -310,6 +343,24 @@ function doPostPendaftaran_(e) {
   // Foto profil wajib (pesan error persis sesuai kontrak)
   if (!fotoBase64) {
     return json_({ success: false, error: "Foto wajib diupload" });
+  }
+
+  // Validasi username UNIK — cek ke seluruh kolom Username di sheet
+  var usernameCol = COLUMNS.indexOf("Username") + 1; // 1-indexed
+  var lastRow = sheet.getLastRow();
+  if (lastRow >= 2) {
+    var existingUsernames = sheet
+      .getRange(2, usernameCol, lastRow - 1, 1)
+      .getValues()
+      .map(function (r) { return String(r[0]).trim().toLowerCase(); })
+      .filter(function (v) { return v !== ""; });
+    if (existingUsernames.indexOf(username.toLowerCase()) !== -1) {
+      return json_({
+        success: false,
+        error: "Username \"" + username + "\" sudah dipakai. Silakan pilih username lain.",
+        errorType: "username_taken"
+      });
+    }
   }
 
   // Generate kode unik
@@ -343,11 +394,12 @@ function doPostPendaftaran_(e) {
     jenisKelamin,      // Jenis Kelamin
     status,            // Status
     nomorWhatsApp,     // Nomor WhatsApp
-    fotoUrl            // Foto Profil (URL Drive)
+    fotoUrl,           // Foto Profil (URL Drive)
+    username           // Username
   ];
 
   sheet.appendRow(row);
-  Logger.log("✅ Pendaftaran baru: " + nama + " → " + kodeMembership);
+  Logger.log("✅ Pendaftaran baru: " + nama + " (" + username + ") → " + kodeMembership);
 
   return json_({
     success: true,
@@ -355,7 +407,8 @@ function doPostPendaftaran_(e) {
     nama: nama,
     domisili: domisili,
     umur: umur,
-    fotoUrl: fotoUrl
+    fotoUrl: fotoUrl,
+    username: username
   });
 }
 
@@ -514,6 +567,14 @@ function doGet(e) {
     return doGetFormData_(e);
   }
 
+  if (action === "getLeaderboard") {
+    return doGetLeaderboard_(e);
+  }
+
+  if (action === "getHadiah") {
+    return doGetHadiah_(e);
+  }
+
   // Default: health check
   return json_({ status: "MAO Membership API OK" });
 }
@@ -523,18 +584,29 @@ function doGet(e) {
 function doGetFormData_(e) {
   var ss = SpreadsheetApp.openById(SHEET_ID);
 
-  // Ambil daftar Kode Membership dari tab Member (Pendaftaran)
+  // Ambil daftar Kode Membership + Username dari tab Member (Pendaftaran)
   var pendaftaranSheet = getMemberSheet_();
   var kodeCol = COLUMNS.indexOf("Kode Membership") + 1;
+  var usernameCol = COLUMNS.indexOf("Username") + 1;
   var lastRow = pendaftaranSheet.getLastRow();
   var kodeList = [];
+  var memberList = [];
 
   if (lastRow >= 2) {
-    kodeList = pendaftaranSheet
-      .getRange(2, kodeCol, lastRow - 1, 1)
-      .getValues()
-      .map(function (r) { return String(r[0]).trim(); })
-      .filter(function (v) { return v !== ""; });
+    // Ambil kode (kolom B) dan username (kolom K) sekaligus
+    var kodeLastCol = Math.max(kodeCol, usernameCol);
+    var data = pendaftaranSheet
+      .getRange(2, kodeCol, lastRow - 1, kodeLastCol - kodeCol + 1)
+      .getValues();
+
+    data.forEach(function (r) {
+      var kode = String(r[0]).trim();
+      var uname = String(r[kodeLastCol - kodeCol]).trim();
+      if (kode !== "") {
+        kodeList.push(kode);
+        memberList.push({ kode: kode, username: uname || "" });
+      }
+    });
   }
 
   // Ambil daftar Nama Menu dari tab "Daftar Menu"
@@ -554,8 +626,142 @@ function doGetFormData_(e) {
   return json_({
     success: true,
     kodeList: kodeList,
+    memberList: memberList,
     menuList: menuList
   });
+}
+
+// ─── doGet: LEADERBOARD ────────────────────────────────────────────────────
+
+/**
+ * Return data leaderboard: username, kode member, poin.
+ * HANYA 3 field ini — TIDAK expose nama, foto, kontak, dll (endpoint publik).
+ * Urutan: poin DESC. Tie-break: timestamp transaksi paling awal ASC.
+ */
+function doGetLeaderboard_(e) {
+  var ss = SpreadsheetApp.openById(SHEET_ID);
+  var pendaftaranSheet = getMemberSheet_();
+  var submitSheet = ss.getSheetByName("Submit Pesanan");
+
+  if (!submitSheet) {
+    return json_({ success: true, leaderboard: [] });
+  }
+
+  // 1. Ambil semua member: kode + username
+  var lastRow = pendaftaranSheet.getLastRow();
+  var kodeCol = COLUMNS.indexOf("Kode Membership") + 1;
+  var usernameCol = COLUMNS.indexOf("Username") + 1;
+  var members = {};
+
+  if (lastRow >= 2) {
+    var kodeLastCol = Math.max(kodeCol, usernameCol);
+    var data = pendaftaranSheet
+      .getRange(2, kodeCol, lastRow - 1, kodeLastCol - kodeCol + 1)
+      .getValues();
+    data.forEach(function (r) {
+      var kode = String(r[0]).trim();
+      var uname = String(r[kodeLastCol - kodeCol]).trim();
+      if (kode !== "") {
+        members[kode] = uname || "";
+      }
+    });
+  }
+
+  // 2. Hitung poin + timestamp paling awal per kode dari Submit Pesanan
+  var subLastRow = submitSheet.getLastRow();
+  var subKodeCol = COLUMNS_SUBMIT_PESANAN.indexOf("Kode Membership") + 1;
+  var subQtyCol = COLUMNS_SUBMIT_PESANAN.indexOf("Qty") + 1;
+  var subTimeCol = COLUMNS_SUBMIT_PESANAN.indexOf("Timestamp") + 1;
+
+  var poinMap = {};    // kode → totalQty
+  var firstTime = {};  // kode → Date paling awal
+
+  if (subLastRow >= 2) {
+    var subData = submitSheet
+      .getRange(2, 1, subLastRow - 1, COLUMNS_SUBMIT_PESANAN.length)
+      .getValues();
+    subData.forEach(function (r) {
+      var kode = String(r[subKodeCol - 1]).trim();
+      if (!kode) return;
+      var qty = Number(r[subQtyCol - 1]);
+      if (isNaN(qty)) qty = 0;
+      var ts = r[subTimeCol - 1];
+      if (!(kode in poinMap)) {
+        poinMap[kode] = 0;
+        firstTime[kode] = ts;
+      }
+      poinMap[kode] += qty;
+      // Simpan timestamp paling awal
+      if (ts instanceof Date && (!firstTime[kode] || ts < firstTime[kode])) {
+        firstTime[kode] = ts;
+      }
+    });
+  }
+
+  // 3. Susun leaderboard
+  var leaderboard = [];
+  Object.keys(members).forEach(function (kode) {
+    var poin = (poinMap[kode] || 0) * POIN_PER_QTY;
+    leaderboard.push({
+      username: members[kode],
+      kode: kode,
+      poin: poin,
+      _ts: firstTime[kode] || new Date(9999, 11, 31) // fallback: very late = sort last
+    });
+  });
+
+  // 4. Sort: poin DESC, tie-break timestamp ASC (yang lebih awal di atas)
+  leaderboard.sort(function (a, b) {
+    if (b.poin !== a.poin) return b.poin - a.poin; // poin DESC
+    var tA = a._ts instanceof Date ? a._ts.getTime() : 0;
+    var tB = b._ts instanceof Date ? b._ts.getTime() : 0;
+    return tA - tB; // timestamp ASC (lebih awal di atas)
+  });
+
+  // 5. Hapus field internal _ts sebelum return
+  var result = leaderboard.map(function (item) {
+    return { username: item.username, kode: item.kode, poin: item.poin };
+  });
+
+  return json_({ success: true, leaderboard: result });
+}
+
+// ─── doGet: HADIAH ──────────────────────────────────────────────────────────
+
+/**
+ * Return isi tab "Hadiah" sebagai JSON.
+ * Kalau tab belum ada → return array kosong (bukan error).
+ */
+function doGetHadiah_(e) {
+  var ss = SpreadsheetApp.openById(SHEET_ID);
+  var sheet = ss.getSheetByName("Hadiah");
+
+  if (!sheet) {
+    return json_({ success: true, hadiah: [] });
+  }
+
+  var lastRow = sheet.getLastRow();
+  if (lastRow < 2) {
+    return json_({ success: true, hadiah: [] });
+  }
+
+  var data = sheet.getRange(2, 1, lastRow - 1, COLUMNS_HADIAH.length).getValues();
+  var hadiah = [];
+
+  data.forEach(function (r) {
+    var judul = String(r[0]).trim();
+    var poinDibutuhkan = parseInt(r[1], 10);
+    var urlFoto = String(r[2] || "").trim();
+    if (judul !== "" && !isNaN(poinDibutuhkan)) {
+      hadiah.push({
+        judul: judul,
+        poinDibutuhkan: poinDibutuhkan,
+        urlFoto: urlFoto
+      });
+    }
+  });
+
+  return json_({ success: true, hadiah: hadiah });
 }
 
 // ─── HELPER ─────────────────────────────────────────────────────────────────

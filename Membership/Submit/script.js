@@ -78,7 +78,7 @@ let reportWaktu = null;      // snapshot waktu submit (Date)
       throw new Error(json.error || "Gagal memuat data");
     }
 
-    renderKodeList(json.kodeList || []);
+    renderKodeList(json.memberList || []);
     renderMenuList(json.menuList || []);
 
     // Tampilkan form, sembunyikan loading
@@ -94,11 +94,10 @@ let reportWaktu = null;      // snapshot waktu submit (Date)
 
 // ─── RENDER KODE MEMBERSHIP DROPDOWN ───────────────────────────────────────
 
-function renderKodeList(kodeList) {
+function renderKodeList(memberList) {
   // Filter: skip kosong, skip header-like values
-  const clean = kodeList
-    .map(function (k) { return String(k).trim(); })
-    .filter(function (k) { return k !== "" && k !== "Kode Membership"; });
+  const clean = memberList
+    .filter(function (m) { return m.kode !== "" && m.kode !== "Kode Membership"; });
 
   if (clean.length === 0) {
     kodeSelect.disabled = true;
@@ -108,10 +107,14 @@ function renderKodeList(kodeList) {
     return;
   }
 
-  clean.forEach(function (kode) {
+  clean.forEach(function (member) {
     var opt = document.createElement("option");
-    opt.value = kode;
-    opt.textContent = kode;
+    // Value: kode murni saja (yang dikirim ke backend)
+    opt.value = member.kode;
+    // Tampilan: "KODE - username" kalau ada username, hanya kode kalau tidak
+    opt.textContent = member.username
+      ? member.kode + " - " + member.username
+      : member.kode;
     kodeSelect.appendChild(opt);
   });
 }
