@@ -258,5 +258,15 @@
     "mtime": 1789565845.7736506,
     "ast_hash": "ba298af42a18258f1d4b970bd745e47e",
     "semantic_hash": ""
+  },
+  "Membership/assets/logo-mao.jpeg": {
+    "mtime": 1784452694.4831352,
+    "ast_hash": "a809e297cfb5bc1a655f309dd8229bdb",
+    "semantic_hash": ""
+  },
+  "Membership/assets/logo-mao.png": {
+    "mtime": 1789622615.7344694,
+    "ast_hash": "d41d8cd98f00b204e9800998ecf8427e",
+    "semantic_hash": ""
   }
 }
