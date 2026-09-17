@@ -209,6 +209,21 @@ input[type="date"]::-webkit-calendar-picker-indicator {
   color: var(--text);
 }
 
+/* Tombol ke halaman Submit — aksi primer setelah daftar, jadi lebih menonjol
+   dari "Kembali ke Form" (solid accent, bukan abu-abu). */
+.btn-submit-pesanan {
+  display: block;
+  text-align: center;
+  text-decoration: none;
+  margin-top: 10px;
+  background: var(--accent1);
+  color: #fff;
+}
+
+.btn-submit-pesanan:hover {
+  background: #ff5f33;
+}
+
 /* ─── Error Message ────────────────────────────────────────────────────── */
 .error-msg {
   margin-top: 14px;
@@ -261,12 +276,18 @@ input[type="date"]::-webkit-calendar-picker-indicator {
   background: var(--gradient-h);
 }
 
-.card-logo {
-  width: 84px;
-  height: auto;
-  margin: 0 auto 10px;
-  border-radius: 14px;
+/* Foto profil user di kartu — avatar bulat + ring aksen merah-oranye.
+   Solid border (bukan border-image/gradient) supaya aman di html2canvas. */
+.card-foto {
   display: block;
+  width: 104px;
+  height: 104px;
+  margin: 0 auto 12px;
+  border-radius: 50%;
+  object-fit: cover;
+  background: var(--surface2);
+  border: 3px solid var(--accent1);
+  box-shadow: 0 0 0 3px rgba(255, 179, 0, 0.22);
 }
 
 .card-brand {

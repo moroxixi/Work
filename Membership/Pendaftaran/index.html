@@ -71,7 +71,7 @@
 
         <!-- Foto Profil -->
         <div class="form-group">
-          <label for="fotoInput">Foto Profil <span class="req">*</span></label>
+          <label for="fotoInput">Foto <span class="req">*</span></label>
           <!-- Visibility 2 state dikontrol class .has-preview pada #uploadArea:
                state kosong → placeholder tampil; state terisi → placeholder
                display:none + foto preview mengisi kotak. Tidak ada elemen
@@ -117,8 +117,9 @@
 
       <div id="membershipCard" class="membership-card">
         <div class="card-inner">
-          <!-- Logo brand (statis, bukan foto profil — hindari CORS saat html2canvas capture) -->
-          <img src="../assets/logo-mao.jpeg" alt="MAO" class="card-logo">
+          <!-- Foto profil user dari Blob lokal (src diisi JS saat sukses) — bukan
+               Drive URL, supaya aman dari CORS saat html2canvas capture. -->
+          <img id="cardFotoProfil" alt="Foto Profil" class="card-foto">
 
           <div class="card-brand">MAO</div>
           <div class="card-kode" id="cardKode"></div>
@@ -149,6 +150,10 @@
       <button id="backBtn" class="btn-submit btn-back">
         ← Kembali ke Form
       </button>
+
+      <a href="../Submit/index.html" class="btn-submit btn-submit-pesanan">
+        🛒 Submit Pesanan Sekarang
+      </a>
     </div>
   </div>
 

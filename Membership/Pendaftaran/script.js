@@ -22,6 +22,7 @@ const cardKode        = document.getElementById("cardKode");
 const cardNama        = document.getElementById("cardNama");
 const cardDomisili    = document.getElementById("cardDomisili");
 const cardTanggal     = document.getElementById("cardTanggal");
+const cardFotoProfil  = document.getElementById("cardFotoProfil");
 const downloadBtn     = document.getElementById("downloadBtn");
 const backBtn         = document.getElementById("backBtn");
 const fotoInput       = document.getElementById("fotoInput");
@@ -33,6 +34,8 @@ let compressedBase64 = null;   // foto profil terkompresi (base64, via config.js
 let compressedMimeType = "";
 let compressedFileName = "";
 let previewObjectUrl = null;    // object URL preview aktif (di-revoke saat ganti/reset)
+let fotoBlob = null;            // File asli terpilih — Blob SAMA yang di-compress & dikirim; dipakai ulang untuk foto di kartu
+let cardObjectUrl = null;       // object URL foto di kartu membership (di-revoke saat "Kembali ke Form")
 
 // ─── SET MAX DATE (tidak boleh masa depan) ──────────────────────────────────
 (function setMaxDate() {
@@ -161,6 +164,18 @@ function showCard(data) {
   const opts = { day: "numeric", month: "long", year: "numeric" };
   cardTanggal.textContent = now.toLocaleDateString("id-ID", opts);
 
+  // Foto kartu: reuse Blob lokal yang sama dengan yang dikirim ke server
+  // (bukan Drive URL) → aman dari CORS saat html2canvas capture. Object URL
+  // ini TIDAK di-revoke di sini; baru dicabut saat "Kembali ke Form".
+  if (cardObjectUrl) {
+    URL.revokeObjectURL(cardObjectUrl);
+    cardObjectUrl = null;
+  }
+  if (fotoBlob) {
+    cardObjectUrl = URL.createObjectURL(fotoBlob);
+    cardFotoProfil.src = cardObjectUrl;
+  }
+
   formSection.hidden = true;
   cardSection.hidden = false;
   cardSection.scrollIntoView({ behavior: "smooth" });
@@ -195,6 +210,15 @@ downloadBtn.addEventListener("click", async function () {
 // ─── BACK TO FORM ──────────────────────────────────────────────────────────
 
 backBtn.addEventListener("click", function () {
+  // Kartu sudah tidak dipakai → cabut object URL foto kartu (cegah memory leak).
+  // Baru di titik ini, bukan lebih awal, supaya foto tetap tampil saat render
+  // maupun saat user men-download kartu lebih dulu.
+  if (cardObjectUrl) {
+    URL.revokeObjectURL(cardObjectUrl);
+    cardObjectUrl = null;
+  }
+  cardFotoProfil.removeAttribute("src");
+
   cardSection.hidden = true;
   formSection.hidden = false;
   form.reset();
@@ -222,6 +246,10 @@ fotoInput.addEventListener("change", async function () {
 
   hideError();
   resetFotoState();
+
+  // Simpan referensi File/Blob utk dipakai ulang di kartu membership
+  // (instance yang sama dengan yang di-compress & dikirim ke server).
+  fotoBlob = file;
 
   try {
     var result = await MAO_CONFIG.compressImageToBase64(file);
@@ -263,6 +291,7 @@ function resetFotoState() {
   compressedBase64 = null;
   compressedMimeType = "";
   compressedFileName = "";
+  fotoBlob = null;
   if (previewObjectUrl) {
     URL.revokeObjectURL(previewObjectUrl);
     previewObjectUrl = null;
