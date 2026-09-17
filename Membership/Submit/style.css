@@ -317,6 +317,10 @@ select {
   justify-content: center;
 }
 
+.photo-picker-modal[hidden] {
+  display: none !important;
+}
+
 .photo-picker-backdrop {
   position: absolute;
   top: 0;
@@ -647,6 +651,13 @@ select {
   display: flex;
   align-items: center;
   justify-content: center;
+}
+
+/* Hidden state harus di-prioritaskan — CSS display:flex sebelumnya
+   meng-override atribut HTML hidden, menyebabkan overlay tampil
+   saat page load. Specificity: .class[attr] > .class */
+.loading-overlay[hidden] {
+  display: none !important;
 }
 
 .loading-overlay-content {
