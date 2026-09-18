@@ -164,6 +164,22 @@ function renderMenuList(menuList) {
 }
 
 // ─── PHOTO UPLOAD + COMPRESSION ─────────────────────────────────────────────
+//
+// ROOT CAUSE BUG PICKER DOBEL (sudah diperbaiki) — pola yang sama dengan
+// Pendaftaran/script.js: modal picker DAN kedua <input type="file"> berada
+// DI DALAM #uploadArea. Semua klik di dalamnya (tombol Galeri/Kamera,
+// backdrop, Batal — termasuk klik programatik .click() pada input file)
+// dulu BUBBLE naik ke handler #uploadArea yang membuka modal lagi. Akibatnya:
+// modal "ditutup" lalu langsung terbuka ulang saat picker native muncul →
+// action sheet iOS tampil dobel, dan setelah memilih foto modal tetap
+// menutupi layar → user stuck.
+//
+// FIX: hanya #uploadArea yang membuka modal; SEMUA handler lain memanggil
+// e.stopPropagation() supaya klik mereka tidak pernah sampai ke #uploadArea.
+// Reset input.value dilakukan di AWAL change handler (pola halaman Ibridge:
+// Ibridge/templates/index.html mengosongkan e.target.value segera setelah
+// membaca e.target.files) supaya memilih file yang sama lagi tetap
+// memicu event change.
 
 // Click upload area → show photo picker modal
 uploadArea.addEventListener("click", function () {
@@ -171,24 +187,28 @@ uploadArea.addEventListener("click", function () {
 });
 
 // Photo picker: Ambil Foto → open camera
-document.getElementById("photoPickerCamera").addEventListener("click", function () {
+photoPickerCamera.addEventListener("click", function (e) {
+  e.stopPropagation(); // jangan bubble ke #uploadArea (buka modal lagi)
   photoPickerModal.hidden = true;
   fotoInputCamera.click();
 });
 
 // Photo picker: Pilih dari Galeri → open file picker
-document.getElementById("photoPickerGallery").addEventListener("click", function () {
+photoPickerGallery.addEventListener("click", function (e) {
+  e.stopPropagation(); // jangan bubble ke #uploadArea (buka modal lagi)
   photoPickerModal.hidden = true;
   fotoInput.click();
 });
 
 // Photo picker: Batal
-document.getElementById("photoPickerCancel").addEventListener("click", function () {
+photoPickerCancel.addEventListener("click", function (e) {
+  e.stopPropagation(); // jangan bubble ke #uploadArea (buka modal lagi)
   photoPickerModal.hidden = true;
 });
 
 // Close modal when tapping backdrop
-document.querySelector(".photo-picker-backdrop").addEventListener("click", function () {
+photoPickerModal.querySelector(".photo-picker-backdrop").addEventListener("click", function (e) {
+  e.stopPropagation(); // jangan bubble ke #uploadArea (buka modal lagi)
   photoPickerModal.hidden = true;
 });
 
@@ -197,9 +217,13 @@ fotoInputCamera.addEventListener("change", async function () {
   var file = fotoInputCamera.files[0];
   if (!file) return;
 
+  // Reset input SEKARANG (bukan nanti): pilih file yang sama lagi tetap
+  // memicu change, dan file di bawah sudah diamankan di variabel `file`.
+  fotoInputCamera.value = "";
+  fotoInput.value = "";
+
   if (file.size > 10 * 1024 * 1024) {
     showError("Ukuran foto terlalu besar (maksimal 10MB). Silakan pilih foto lain.");
-    fotoInputCamera.value = "";
     return;
   }
 
@@ -233,10 +257,14 @@ fotoInput.addEventListener("change", async function () {
   var file = fotoInput.files[0];
   if (!file) return;
 
+  // Reset input SEKARANG (pola Ibridge): pilih file yang sama lagi tetap
+  // memicu change, dan file di bawah sudah diamankan di variabel `file`.
+  fotoInput.value = "";
+  fotoInputCamera.value = "";
+
   // Validasi ukuran asli sebelum kompresi (max 10MB)
   if (file.size > 10 * 1024 * 1024) {
     showError("Ukuran foto terlalu besar (maksimal 10MB). Silakan pilih foto lain.");
-    fotoInput.value = "";
     return;
   }
 

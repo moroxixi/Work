@@ -244,6 +244,21 @@ backBtn.addEventListener("click", function () {
 });
 
 // ─── FOTO PROFIL: UPLOAD + KOMPRESI (shared fn di ../config.js) ───────────
+//
+// ROOT CAUSE BUG PICKER DOBEL (sudah diperbaiki):
+// Modal picker DAN kedua <input type="file"> berada DI DALAM #uploadArea.
+// Semua klik di dalamnya (tombol Galeri/Kamera, backdrop, Batal — termasuk
+// klik programatik .click() pada input file) dulu BUBBLE naik ke handler
+// #uploadArea yang membuka modal lagi. Akibatnya: modal "ditutup" lalu
+// langsung terbuka ulang saat picker native muncul → action sheet iOS
+// tampil dobel, dan setelah memilih foto modal tetap menutupi layar.
+//
+// FIX: hanya #uploadArea yang membuka modal; SEMUA handler lain memanggil
+// e.stopPropagation() supaya klik mereka tidak pernah sampai ke #uploadArea.
+// Reset input.value dilakukan di AWAL change handler (pola halaman Ibridge:
+// Ibridge/templates/index.html mengosongkan e.target.value segera setelah
+// membaca e.target.files) supaya memilih file yang sama lagi tetap
+// memicu event change.
 
 // Tap area upload → tampilkan photo picker modal
 uploadArea.addEventListener("click", function () {
@@ -251,24 +266,28 @@ uploadArea.addEventListener("click", function () {
 });
 
 // Photo picker: Ambil Foto → buka kamera
-document.getElementById("photoPickerCamera").addEventListener("click", function () {
+photoPickerCamera.addEventListener("click", function (e) {
+  e.stopPropagation(); // jangan bubble ke #uploadArea (buka modal lagi)
   photoPickerModal.hidden = true;
   fotoInputCamera.click();
 });
 
 // Photo picker: Pilih dari Galeri → buka file picker
-document.getElementById("photoPickerGallery").addEventListener("click", function () {
+photoPickerGallery.addEventListener("click", function (e) {
+  e.stopPropagation(); // jangan bubble ke #uploadArea (buka modal lagi)
   photoPickerModal.hidden = true;
   fotoInput.click();
 });
 
 // Photo picker: Batal
-document.getElementById("photoPickerCancel").addEventListener("click", function () {
+photoPickerCancel.addEventListener("click", function (e) {
+  e.stopPropagation(); // jangan bubble ke #uploadArea (buka modal lagi)
   photoPickerModal.hidden = true;
 });
 
 // Close modal when tapping backdrop
-document.querySelector(".photo-picker-backdrop").addEventListener("click", function () {
+photoPickerModal.querySelector(".photo-picker-backdrop").addEventListener("click", function (e) {
+  e.stopPropagation(); // jangan bubble ke #uploadArea (buka modal lagi)
   photoPickerModal.hidden = true;
 });
 
@@ -277,14 +296,18 @@ fotoInputCamera.addEventListener("change", async function () {
   var file = fotoInputCamera.files[0];
   if (!file) return;
 
+  // Reset input SEKARANG (bukan nanti): pilih file yang sama lagi tetap
+  // memicu change, dan file di bawah sudah diamankan di variabel `file`.
+  fotoInputCamera.value = "";
+  fotoInput.value = "";
+
   if (file.size > 10 * 1024 * 1024) {
     showError("Ukuran foto terlalu besar (maksimal 10MB). Silakan pilih foto lain.");
-    fotoInputCamera.value = "";
     return;
   }
 
   hideError();
-  resetFotoState();
+  resetFotoState(); // bersihkan state preview/kompresi LAMA (input sudah dikosongkan di atas)
   fotoBlob = file;
 
   try {
@@ -311,15 +334,19 @@ fotoInput.addEventListener("change", async function () {
   var file = fotoInput.files[0];
   if (!file) return;
 
+  // Reset input SEKARANG (pola Ibridge): pilih file yang sama lagi tetap
+  // memicu change, dan file di bawah sudah diamankan di variabel `file`.
+  fotoInput.value = "";
+  fotoInputCamera.value = "";
+
   // Validasi ukuran asli sebelum kompresi (max 10MB)
   if (file.size > 10 * 1024 * 1024) {
     showError("Ukuran foto terlalu besar (maksimal 10MB). Silakan pilih foto lain.");
-    fotoInput.value = "";
     return;
   }
 
   hideError();
-  resetFotoState();
+  resetFotoState(); // bersihkan state preview/kompresi LAMA (input sudah dikosongkan di atas)
 
   // Simpan referensi File/Blob utk dipakai ulang di kartu membership
   // (instance yang sama dengan yang di-compress & dikirim ke server).
@@ -359,10 +386,11 @@ function showFotoPreview(file) {
   uploadArea.classList.add("has-preview");
 }
 
-// State kosong: cabut class .has-preview → placeholder kembali tampil
+// State kosong: cabut class .has-preview → placeholder kembali tampil.
+// CATATAN: input file TIDAK dikosongkan di sini — dikosongkan di awal change
+// handler (sebelum await). Kalau dikosongkan setelah await, ada race dengan
+// pemilihan berikutnya dan bisa menggagalkan event change berikutnya.
 function resetFotoState() {
-  fotoInput.value = "";
-  fotoInputCamera.value = "";
   compressedBase64 = null;
   compressedMimeType = "";
   compressedFileName = "";
