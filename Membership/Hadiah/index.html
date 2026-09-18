@@ -123,6 +123,70 @@
       max-width: 100%; text-align: center;
     }
 
+    /* Request Hadiah: tombol + modal bottom-sheet (pola sama dgn photo-picker
+       modal di Pendaftaran/Submit: fixed backdrop + sheet, [hidden] di-prioritaskan) */
+    /* .btn-submit / .form-group / label: dibawa dari style.css halaman lain
+       (halaman ini standalone dgn CSS inline, tidak load style.css) */
+    .btn-submit {
+      width: 100%; min-height: 48px; padding: 14px;
+      font-size: 1rem; font-weight: 700; color: #fff;
+      background: var(--gradient-h); border: none; border-radius: 8px;
+      cursor: pointer; transition: opacity 0.2s, transform 0.1s;
+      letter-spacing: 0.02em;
+    }
+    .btn-submit:hover { opacity: 0.9; }
+    .btn-submit:active { transform: scale(0.98); }
+    .btn-submit:disabled { opacity: 0.5; cursor: not-allowed; }
+    .form-group { margin-bottom: 18px; text-align: left; }
+    .form-group label {
+      display: block; font-size: 0.85rem; font-weight: 600;
+      margin-bottom: 6px; color: var(--text);
+    }
+    .req { color: var(--accent1); }
+    .hadiah-request-btn { margin-top: 16px; }
+    .req-modal {
+      position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+      z-index: 200; display: flex; align-items: flex-end; justify-content: center;
+    }
+    .req-modal[hidden] { display: none !important; }
+    .req-modal-backdrop {
+      position: absolute; top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0, 0, 0, 0.6);
+    }
+    .req-modal-sheet {
+      position: relative; width: 100%; max-width: 480px;
+      background: var(--surface); border-radius: 16px 16px 0 0;
+      padding: 20px 16px; padding-bottom: calc(20px + env(safe-area-inset-bottom));
+      animation: slideUpReq 0.2s ease-out;
+    }
+    @keyframes slideUpReq { from { transform: translateY(100%); } to { transform: translateY(0); } }
+    .req-modal-title {
+      text-align: center; font-size: 0.9rem; font-weight: 700;
+      color: var(--text); margin-bottom: 16px;
+    }
+    .req-input, .req-textarea {
+      width: 100%; padding: 12px 14px; font-size: 16px;
+      background: var(--surface2); border: 1px solid var(--border);
+      border-radius: 8px; color: var(--text); outline: none;
+      transition: border-color 0.2s, box-shadow 0.2s;
+      font-family: inherit; line-height: 1.5;
+      -webkit-appearance: none;
+    }
+    .req-input:focus, .req-textarea:focus {
+      border-color: var(--accent1); box-shadow: 0 0 0 3px rgba(255, 77, 28, 0.15);
+    }
+    .req-textarea { resize: vertical; min-height: 84px; }
+    .req-msg {
+      margin-top: 14px; padding: 12px 14px; border-radius: 8px;
+      background: rgba(255, 179, 0, 0.1); border: 1px solid rgba(255, 179, 0, 0.3);
+      color: var(--accent2); font-size: 0.85rem; text-align: center;
+    }
+    .req-cancel {
+      display: block; width: 100%; padding: 12px; margin-top: 4px;
+      background: none; border: none; color: var(--text-dim);
+      font-size: 0.9rem; font-weight: 600; cursor: pointer;
+    }
+
     /* Floater */
     .floater-help {
       position: fixed; bottom: 0; left: 0; right: 0;
@@ -165,6 +229,28 @@
         <p style="font-size:2rem;">⚠️</p>
         <p id="errorMsg"></p>
         <a href="javascript:location.reload()">Coba Lagi</a>
+      </div>
+
+      <!-- Request hadiah: buka form kecil (modal) untuk katalog custom -->
+      <button type="button" id="requestHadiahBtn" class="btn-submit hadiah-request-btn">🎁 Request Hadiah</button>
+    </div>
+
+    <!-- Modal: Request Hadiah -->
+    <div id="requestHadiahModal" class="req-modal" hidden>
+      <div class="req-modal-backdrop"></div>
+      <div class="req-modal-sheet">
+        <p class="req-modal-title">Request Hadiah</p>
+        <div class="form-group">
+          <label for="reqKode">Kode Membership <span class="req">*</span></label>
+          <input type="text" id="reqKode" class="req-input" placeholder="MAO-XXXXXX" autocomplete="off">
+        </div>
+        <div class="form-group">
+          <label for="reqText">Hadiah yang diinginkan <span class="req">*</span></label>
+          <textarea id="reqText" class="req-textarea" rows="3" placeholder="Tulis nama hadiah yang kamu inginkan…"></textarea>
+        </div>
+        <div id="reqMsg" class="req-msg" hidden></div>
+        <button type="button" id="reqSubmitBtn" class="btn-submit">Kirim Request</button>
+        <button type="button" id="reqCancelBtn" class="req-cancel">Batal</button>
       </div>
     </div>
 
@@ -262,6 +348,80 @@
     }
 
     loadHadiah();
+
+    // ─── Request Hadiah: modal + submit ke backend ────────────────────────
+    // POST action=requestHadiah → doPostRequestHadiah_() di code.gs.js.
+    // Baris request ditulis ke tab "Hadiah" (kolom Kode Membership +
+    // Request Cust; kolom katalog dikosongkan) — tidak mengubah katalog.
+    var requestHadiahBtn  = document.getElementById('requestHadiahBtn');
+    var requestHadiahModal = document.getElementById('requestHadiahModal');
+    var reqKode           = document.getElementById('reqKode');
+    var reqText           = document.getElementById('reqText');
+    var reqSubmitBtn      = document.getElementById('reqSubmitBtn');
+    var reqCancelBtn      = document.getElementById('reqCancelBtn');
+    var reqMsg            = document.getElementById('reqMsg');
+
+    function showReqMsg(msg) {
+      reqMsg.textContent = msg;
+      reqMsg.hidden = false;
+    }
+
+    function hideReqMsg() {
+      reqMsg.hidden = true;
+      reqMsg.textContent = '';
+    }
+
+    function openReqModal() {
+      hideReqMsg();
+      requestHadiahModal.hidden = false;
+    }
+
+    function closeReqModal() {
+      requestHadiahModal.hidden = true;
+    }
+
+    requestHadiahBtn.addEventListener('click', openReqModal);
+    reqCancelBtn.addEventListener('click', closeReqModal);
+    requestHadiahModal.querySelector('.req-modal-backdrop').addEventListener('click', closeReqModal);
+
+    reqSubmitBtn.addEventListener('click', async function () {
+      var kode = reqKode.value.trim();
+      var teks = reqText.value.trim();
+
+      hideReqMsg();
+      if (!kode) { showReqMsg('Kode membership wajib diisi.'); return; }
+      if (!teks) { showReqMsg('Tulis hadiah yang diinginkan.'); return; }
+
+      reqSubmitBtn.disabled = true;
+      reqSubmitBtn.textContent = '⏳ Mengirim…';
+
+      try {
+        var params = new URLSearchParams({
+          action: 'requestHadiah',
+          kodeMembership: kode,
+          requestText: teks
+        });
+        var resp = await fetch(MAO_CONFIG.GAS_WEB_APP_URL, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+          body: params.toString()
+        });
+        var json = await resp.json();
+        if (json.success) {
+          reqKode.value = '';
+          reqText.value = '';
+          showReqMsg('✅ Request terkirim! Admin akan meninjaunya.');
+        } else {
+          showReqMsg(json.error || 'Gagal mengirim request. Coba lagi.');
+        }
+      } catch (err) {
+        console.error('Request hadiah error:', err);
+        showReqMsg('Gagal mengirim request. Periksa koneksi internet atau coba lagi.');
+      } finally {
+        reqSubmitBtn.disabled = false;
+        reqSubmitBtn.textContent = 'Kirim Request';
+      }
+    });
   })();
   </script>
 </body>

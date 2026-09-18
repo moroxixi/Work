@@ -183,6 +183,92 @@ select {
   text-decoration: underline;
 }
 
+/* ─── Kode Membership: searchable combobox ──────────────────────────────
+   Menggantikan <select> scroll-list. Input teks #kodeSearch untuk filter,
+   nilai terpilih disimpan di hidden input #kodeMembership (name tetap
+   "kodeMembership" supaya kontrak submit tidak berubah). Dropdown hasil
+   filter diposisikan absolute di bawah input. */
+.kode-combo {
+  position: relative;
+}
+
+.kode-search {
+  width: 100%;
+  padding: 12px 14px;
+  font-size: 16px; /* ≥16px: cegah auto-zoom iOS saat fokus */
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  color: var(--text);
+  outline: none;
+  transition: border-color 0.2s, box-shadow 0.2s;
+  -webkit-appearance: none;
+}
+
+.kode-search:focus {
+  border-color: var(--accent1);
+  box-shadow: 0 0 0 3px rgba(255, 77, 28, 0.15);
+}
+
+.kode-search::placeholder {
+  color: #555;
+}
+
+.kode-search:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.kode-dropdown {
+  position: absolute;
+  top: calc(100% + 4px);
+  left: 0;
+  right: 0;
+  max-height: 240px;
+  overflow-y: auto;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
+  z-index: 60;
+}
+
+.kode-option {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 12px 14px;
+  cursor: pointer;
+  color: var(--text);
+  font-size: 0.95rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+}
+
+.kode-option:last-child {
+  border-bottom: none;
+}
+
+.kode-option .kode-username {
+  font-size: 0.75rem;
+  color: var(--text-dim);
+  overflow-wrap: anywhere;
+  text-align: right;
+}
+
+.kode-option:hover,
+.kode-option.is-highlight {
+  background: rgba(255, 77, 28, 0.12);
+}
+
+.kode-option-empty {
+  padding: 12px 14px;
+  font-size: 0.85rem;
+  color: var(--text-dim);
+  text-align: center;
+  cursor: default;
+}
+
 /* ─── Menu List ────────────────────────────────────────────────────────── */
 .menu-list {
   display: flex;
@@ -409,14 +495,14 @@ select {
 }
 
 /* ─── Buttons ──────────────────────────────────────────────────────────── */
+/* Ukuran .btn-submit disamakan PERSIS dengan tombol Kirim di
+   Pendaftaran/style.css (width 100%, min-height 48px, padding 14px,
+   font-size 1rem, weight 700). Position:sticky/bottom/box-shadow yang
+   dulu membuat tombol ini berbeda ukuran-perilaku dihapus. */
 .btn-submit {
-  position: sticky; /* ikut ke bawah saat scroll daftar menu panjang */
-  bottom: 100px; /* di atas floater + quicknav */
-  z-index: 10;
   width: 100%;
   min-height: 48px;
   padding: 14px;
-  padding-bottom: calc(14px + env(safe-area-inset-bottom));
   font-size: 1rem;
   font-weight: 700;
   color: #fff;
@@ -425,7 +511,6 @@ select {
   border-radius: 8px;
   cursor: pointer;
   margin-top: 8px;
-  box-shadow: 0 -4px 16px rgba(0, 0, 0, 0.35); /* pisahkan dari konten di belakangnya */
   transition: opacity 0.2s, transform 0.1s;
   letter-spacing: 0.02em;
 }
@@ -465,11 +550,6 @@ select {
   color: var(--accent2);
   font-size: 0.85rem;
   text-align: center;
-}
-
-/* ─── Buttons sekunder (di luar laporan) ───────────────────────────────── */
-.btn-report {
-  position: static; /* netralkan position:sticky dari .btn-submit */
 }
 
 /* Tombol Bagikan — berada di antara Download (gradient) & Buat Pesanan Baru

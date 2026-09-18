@@ -22,7 +22,9 @@
 const loadingState     = document.getElementById("loadingState");
 const formSection      = document.getElementById("formSection");
 const orderForm        = document.getElementById("orderForm");
-const kodeSelect       = document.getElementById("kodeMembership");
+const kodeSearch       = document.getElementById("kodeSearch");
+const kodeHidden       = document.getElementById("kodeMembership"); // nilai terpilih (hidden input — id/name & kontrak submit tetap sama)
+const kodeDropdown     = document.getElementById("kodeDropdown");
 const menuListEl       = document.getElementById("menuList");
 const menuEmptyMsg     = document.getElementById("menuEmptyMsg");
 const fotoInput        = document.getElementById("fotoInput");
@@ -92,32 +94,114 @@ let reportWaktu = null;      // snapshot waktu submit (Date)
   }
 })();
 
-// ─── RENDER KODE MEMBERSHIP DROPDOWN ───────────────────────────────────────
+// ─── RENDER KODE MEMBERSHIP: SEARCHABLE COMBOBOX ───────────────────────────
+// Sumber data: memberList hasil fetch getFormData (backend) — cara fetch
+// TIDAK diubah. Filter combobox jalan di atas struktur data ini.
+
+let memberData = []; // [{kode, username}] — sumber filter #kodeSearch
 
 function renderKodeList(memberList) {
   // Filter: skip kosong, skip header-like values
-  const clean = memberList
-    .filter(function (m) { return m.kode !== "" && m.kode !== "Kode Membership"; });
+  memberData = (memberList || []).filter(function (m) {
+    return m.kode !== "" && m.kode !== "Kode Membership";
+  });
 
-  if (clean.length === 0) {
-    kodeSelect.disabled = true;
-    kodeSelect.innerHTML =
-      '<option value="" disabled selected>Belum ada kode membership terdaftar</option>';
+  if (memberData.length === 0) {
+    kodeSearch.disabled = true;
+    kodeSearch.placeholder = "Belum ada kode membership terdaftar";
     submitBtn.disabled = true;
     return;
   }
 
-  clean.forEach(function (member) {
-    var opt = document.createElement("option");
-    // Value: kode murni saja (yang dikirim ke backend)
-    opt.value = member.kode;
-    // Tampilan: "KODE - username" kalau ada username, hanya kode kalau tidak
-    opt.textContent = member.username
-      ? member.kode + " - " + member.username
-      : member.kode;
-    kodeSelect.appendChild(opt);
+  renderKodeOptions("");
+}
+
+/** Render isi dropdown hasil filter. Query kosong = tampilkan semua. */
+function renderKodeOptions(query) {
+  var q = String(query || "").trim().toLowerCase();
+  var filtered = memberData.filter(function (m) {
+    if (!q) return true;
+    return m.kode.toLowerCase().indexOf(q) !== -1 ||
+      (m.username || "").toLowerCase().indexOf(q) !== -1;
+  });
+
+  kodeDropdown.innerHTML = "";
+
+  if (filtered.length === 0) {
+    var empty = document.createElement("div");
+    empty.className = "kode-option-empty";
+    empty.textContent = "Tidak ada kode yang cocok.";
+    kodeDropdown.appendChild(empty);
+    return;
+  }
+
+  filtered.forEach(function (m) {
+    var opt = document.createElement("div");
+    opt.className = "kode-option";
+    opt.setAttribute("data-kode", m.kode);
+
+    var kodeEl = document.createElement("span");
+    kodeEl.textContent = m.kode;
+
+    var unameEl = document.createElement("span");
+    unameEl.className = "kode-username";
+    unameEl.textContent = m.username ? "@" + m.username : "";
+
+    opt.appendChild(kodeEl);
+    opt.appendChild(unameEl);
+    kodeDropdown.appendChild(opt);
   });
 }
+
+/** Set nilai terpilih: hidden input diisi kode murni (yang dikirim ke backend). */
+function selectKode(kode) {
+  var member = null;
+  for (var i = 0; i < memberData.length; i++) {
+    if (memberData[i].kode === kode) { member = memberData[i]; break; }
+  }
+
+  kodeHidden.value = kode;
+  kodeSearch.value = (member && member.username) ? kode + " - " + member.username : kode;
+  hideKodeDropdown();
+}
+
+function openKodeDropdown() { kodeDropdown.hidden = false; }
+function hideKodeDropdown() { kodeDropdown.hidden = true; }
+
+// Filter realtime saat mengetik; nilai terpilih lama dibatalkan
+kodeSearch.addEventListener("input", function () {
+  kodeHidden.value = "";
+  renderKodeOptions(kodeSearch.value);
+  openKodeDropdown();
+});
+
+// Fokus (tap) input → tampilkan daftar
+kodeSearch.addEventListener("focus", function () {
+  renderKodeOptions(kodeSearch.value);
+  openKodeDropdown();
+});
+
+// Blur → tutup dropdown (delay 150ms sebagai fallback;
+// jalur utama penutupan adalah mousedown option di bawah)
+kodeSearch.addEventListener("blur", function () {
+  setTimeout(hideKodeDropdown, 150);
+});
+
+// Pilih option pakai mousedown + preventDefault supaya input TIDAK kehilangan
+// fokus (blur) sebelum nilai ter-set — pola combobox vanilla standar.
+kodeDropdown.addEventListener("mousedown", function (e) {
+  var opt = e.target.closest(".kode-option");
+  if (!opt) return;
+  e.preventDefault();
+  selectKode(opt.getAttribute("data-kode"));
+});
+
+// Klik di luar combobox → tutup dropdown
+document.addEventListener("click", function (e) {
+  if (!kodeDropdown.hidden && !e.target.closest("#kodeCombo")) {
+    hideKodeDropdown();
+  }
+});
 
 // ─── RENDER MENU LIST WITH STEPPER ─────────────────────────────────────────
 
@@ -234,7 +318,7 @@ fotoInputCamera.addEventListener("change", async function () {
     var result = await MAO_CONFIG.compressImageToBase64(file);
     compressedBase64 = result.base64;
     compressedMimeType = result.mimeType;
-    compressedFileName = (kodeSelect.value || "unknown") + "_" + Date.now() + ".jpg";
+    compressedFileName = (kodeHidden.value || "unknown") + "_" + Date.now() + ".jpg";
   } catch (err) {
     console.error("Compression error:", err);
     try {
@@ -276,7 +360,7 @@ fotoInput.addEventListener("change", async function () {
     var result = await MAO_CONFIG.compressImageToBase64(file);
     compressedBase64 = result.base64;
     compressedMimeType = result.mimeType;
-    compressedFileName = (kodeSelect.value || "unknown") + "_" + Date.now() + ".jpg";
+    compressedFileName = (kodeHidden.value || "unknown") + "_" + Date.now() + ".jpg";
   } catch (err) {
     console.error("Compression error:", err);
     // Fallback: pakai file asli kalau canvas gagal
@@ -303,7 +387,7 @@ orderForm.addEventListener("submit", async function (e) {
   hideError();
 
   // Validasi
-  var kode = kodeSelect.value;
+  var kode = kodeHidden.value;
   if (!kode) {
     showError("Pilih kode membership terlebih dahulu.");
     return;
@@ -625,9 +709,10 @@ newOrderBtn.addEventListener("click", function () {
   formSection.hidden = false;
 
   // Reset qty ke 0 + buang foto preview (resetForm me-revoke previewObjectUrl),
-  // lalu dropdown kode membership balik ke placeholder.
+  // lalu combobox kode membership balik kosong.
   resetForm();
-  kodeSelect.value = "";
+  kodeHidden.value = "";
+  kodeSearch.value = "";
 
   formSection.scrollIntoView({ behavior: "smooth" });
 });

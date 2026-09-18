@@ -33,11 +33,17 @@
 
           <!-- Kode Membership -->
           <div class="form-group">
-            <label for="kodeMembership">Kode Membership <span class="req">*</span></label>
-            <select id="kodeMembership" name="kodeMembership" required>
-              <option value="" disabled selected>Pilih Kode Membership</option>
-            </select>
-            
+            <label for="kodeSearch">Kode Membership <span class="req">*</span></label>
+            <!-- Searchable combobox (vanilla JS): ketik untuk memfilter daftar
+                 kode member. Nilai terpilih disimpan di #kodeMembership
+                 (hidden input) — id/name & kontrak submit tetap sama seperti
+                 <select> yang lama. Daftar diisi dari getFormData (backend). -->
+            <div class="kode-combo" id="kodeCombo">
+              <input type="text" id="kodeSearch" class="kode-search" placeholder="Ketik untuk cari kode / username…" autocomplete="off">
+              <input type="hidden" id="kodeMembership" name="kodeMembership">
+              <div id="kodeDropdown" class="kode-dropdown" hidden></div>
+            </div>
+
             <a href="../Pendaftaran/index.html" class="link-daftar">Belum punya kode? Daftar di sini →</a>
           </div>
 
@@ -82,6 +88,12 @@
               <img id="fotoPreview" class="foto-preview" alt="Preview foto">
             </div>
             <span class="hint">Format: JPG/PNG, max 10MB sebelum kompresi</span>
+            <!-- Disclaimer dipindah ke sini (tepat di bawah hint JPG/PNG).
+                 Isi teks tidak diubah, hanya posisi elemen. -->
+            <p class="disclaimer">
+              Apabila ditemukan ketidaksesuaian antara pesanan yang diinput dengan foto bukti
+              yang dilampirkan, admin berhak menghapus data submission tersebut.
+            </p>
           </div>
 
           <!-- Submit -->
@@ -155,12 +167,6 @@
         <div id="reportErrorMsg" class="error-msg" hidden></div>
       </div>
     </div>
-
-    <!-- Disclaimer statis (di luar form, selalu tampil di kedua state) -->
-    <p class="disclaimer">
-      Apabila ditemukan ketidaksesuaian antara pesanan yang diinput dengan foto bukti
-      yang dilampirkan, admin berhak menghapus data submission tersebut.
-    </p>
 
     <!-- Quicknav (diisi dinamis oleh ../nav.js) -->
     <nav class="quicknav" aria-label="Navigasi cepat" data-page="submit"></nav>

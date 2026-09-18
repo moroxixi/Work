@@ -7,6 +7,11 @@
  *
  * PENTING: setelah update ini, jalankan ULANG setupSheetHeaders() sekali dari
  * editor — jumlah kolom header adalah 11 (termasuk kolom "Username" di ujung).
+ *
+ * 2026-09-18: fitur Request Hadiah. Tab "Hadiah" sekarang punya 5 kolom
+ * (COLUMNS_HADIAH). Untuk sheet yang SUDAH berjalan dengan header lama (3
+ * kolom), jalankan setupSheetTambahanMembership() sekali dari editor — dia
+ * akan meng-extend baris header tab "Hadiah" ke 5 kolom.
  */
 
 // ─── KONFIGURASI ────────────────────────────────────────────────────────────
@@ -45,8 +50,13 @@ var COLUMNS_SUBMIT_PESANAN = [
   "Foto Produk (URL Drive)"
 ];
 
-// Header untuk tab "Hadiah"
-var COLUMNS_HADIAH = ["Judul", "Poin Dibutuhkan", "URL Foto Hadiah"];
+// Header untuk tab "Hadiah" — 3 kolom katalog + 2 kolom request (2026-09-18).
+// Kolom katalog (A–C) = katalog hadiah yang dirender ke halaman Hadiah.
+// Kolom request (D–E) = baris hasil fitur "Request Hadiah" (kode member +
+// teks permintaan); kolom katalog A–C SENGAJA dikosongkan pada baris request.
+// doGetHadiah_ hanya me-render baris dengan Judul + Poin terisi, jadi baris
+// request TIDAK muncul di katalog.
+var COLUMNS_HADIAH = ["Judul", "Poin Dibutuhkan", "URL Foto Hadiah", "Kode Membership", "Request Cust"];
 
 // Konversi poin: 1 Qty = 100 poin
 var POIN_PER_QTY = 100;
@@ -225,21 +235,25 @@ function setupSheetTambahanMembership() {
   }
 
   // ── Tab "Hadiah" ──
+  // Header sekarang 5 kolom (katalog + request). Untuk sheet yang sudah ada
+  // dgn header lama 3 kolom: baris 1 di-EXTEND ke COLUMNS_HADIAH (data katalog
+  // di baris 2+ tidak disentuh), bukan sekadar skip — supaya kolom
+  // "Kode Membership" & "Request Cust" punya header sebelum request masuk.
   var sheetHadiah = ss.getSheetByName("Hadiah");
   if (!sheetHadiah) {
     sheetHadiah = ss.insertSheet("Hadiah");
     sheetHadiah.getRange(1, 1, 1, COLUMNS_HADIAH.length).setValues([COLUMNS_HADIAH]);
     Logger.log("✅ Tab 'Hadiah' dibuat dengan header.");
   } else {
-    var firstRow3 = sheetHadiah.getRange(1, 1, 1, COLUMNS_HADIAH.length).getValues()[0];
-    var hasContent3 = firstRow3.some(function (cell) {
-      return cell !== "" && cell !== null && cell !== undefined;
+    var headerRow3 = sheetHadiah.getRange(1, 1, 1, COLUMNS_HADIAH.length).getValues()[0];
+    var headerMatch = COLUMNS_HADIAH.every(function (col, i) {
+      return String(headerRow3[i] || "").trim() === col;
     });
-    if (hasContent3) {
-      Logger.log("⚠️ Tab 'Hadiah' sudah ada isi. Skip.");
+    if (headerMatch) {
+      Logger.log("✅ Header tab 'Hadiah' sudah sesuai. Skip.");
     } else {
       sheetHadiah.getRange(1, 1, 1, COLUMNS_HADIAH.length).setValues([COLUMNS_HADIAH]);
-      Logger.log("✅ Header 'Hadiah' ditulis.");
+      Logger.log("✅ Header tab 'Hadiah' di-extend/diperbarui ke " + COLUMNS_HADIAH.length + " kolom.");
     }
   }
 }
@@ -288,9 +302,13 @@ function getOrCreateFolder_(folderName, propKey) {
 function doPost(e) {
   var action = trim_(e.parameter.action);
 
-  // ── Routing: submitOrder vs daftar (atau default tanpa action) ──
+  // ── Routing: submitOrder / requestHadiah / daftar (default) ──
   if (action === "submitOrder") {
     return doPostSubmitOrder_(e);
+  }
+
+  if (action === "requestHadiah") {
+    return doPostRequestHadiah_(e);
   }
 
   // Default: registrasi Pendaftaran (backward-compat tanpa action atau action=daftar)
@@ -726,11 +744,72 @@ function doGetLeaderboard_(e) {
   return json_({ success: true, leaderboard: result });
 }
 
+// ─── doPost: REQUEST HADIAH ────────────────────────────────────────────────
+
+/**
+ * Catat permintaan hadiah custom dari user ke tab "Hadiah" sebagai BARIS BARU:
+ * kolom "Kode Membership" + "Request Cust" terisi, kolom katalog (Judul, Poin,
+ * URL Foto) dikosongkan. Baris request ini TIDAK muncul di katalog halaman
+ * Hadiah karena doGetHadiah_ hanya me-render baris yang Judul + Poinya valid.
+ *
+ * Kolom katalog bisa diisi admin belakangan kalau request disetujui — atau
+ * baris request dipakai sebagai checklist admin. (Pola konsisten dgn
+ * doPostPendaftaran_/doPostSubmitOrder_: validasi → validasi sheet → append.)
+ *
+ * Parameter: kodeMembership (wajib, harus terdaftar di tab Member),
+ *            requestText (wajib, teks bebas).
+ */
+function doPostRequestHadiah_(e) {
+  var kodeMembership = trim_(e.parameter.kodeMembership);
+  var requestText = trim_(e.parameter.requestText);
+
+  if (!kodeMembership) {
+    return json_({ success: false, error: "Kode membership wajib diisi" });
+  }
+  if (!requestText) {
+    return json_({ success: false, error: "Teks request hadiah wajib diisi" });
+  }
+
+  // Validasi kode member terdaftar (pola sama dengan doPostSubmitOrder_)
+  var pendaftaranSheet = getMemberSheet_();
+  var kodeCol = COLUMNS.indexOf("Kode Membership") + 1;
+  var lastRow = pendaftaranSheet.getLastRow();
+  var kodeExists = false;
+  if (lastRow >= 2) {
+    var existingCodes = pendaftaranSheet
+      .getRange(2, kodeCol, lastRow - 1, 1)
+      .getValues()
+      .map(function (r) { return String(r[0]).trim(); })
+      .filter(function (v) { return v !== ""; });
+    kodeExists = existingCodes.indexOf(kodeMembership) !== -1;
+  }
+  if (!kodeExists) {
+    return json_({ success: false, error: "Kode membership tidak ditemukan" });
+  }
+
+  var hadiahSheet = SpreadsheetApp.openById(SHEET_ID).getSheetByName("Hadiah");
+  if (!hadiahSheet) {
+    return json_({ success: false, error: "Tab 'Hadiah' belum dibuat. Jalankan setupSheetTambahanMembership() terlebih dahulu." });
+  }
+
+  // Baris request: katalog kosong ("") di kolom A–C, request di D–E
+  var row = ["", "", "", kodeMembership, requestText];
+  hadiahSheet.appendRow(row);
+
+  Logger.log("🎁 Request hadiah: " + kodeMembership + " → " + requestText);
+
+  return json_({ success: true });
+}
+
 // ─── doGet: HADIAH ──────────────────────────────────────────────────────────
 
 /**
- * Return isi tab "Hadiah" sebagai JSON.
+ * Return isi tab "Hadiah" (katalog) sebagai JSON.
  * Kalau tab belum ada → return array kosong (bukan error).
+ *
+ * Filter baris: hanya baris dengan Judul terisi DAN Poin angka yang masuk.
+ * Baris "Request Cust" (kolom katalog kosong) otomatis ter-skip oleh filter
+ * ini — aman meski tab Hadiah juga berisi baris request.
  */
 function doGetHadiah_(e) {
   var ss = SpreadsheetApp.openById(SHEET_ID);

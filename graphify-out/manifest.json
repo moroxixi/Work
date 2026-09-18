@@ -235,8 +235,8 @@
     "semantic_hash": ""
   },
   "Membership/Apps-Script/code.gs.js": {
-    "mtime": 1789658849.072511,
-    "ast_hash": "619d833352a5d561b2da9ee6562a7427",
+    "mtime": 1789739387.611586,
+    "ast_hash": "9d69ca15ee752ce1f0f88f8f29100b19",
     "semantic_hash": ""
   },
   "Membership/Pendaftaran/script.js": {
@@ -245,18 +245,18 @@
     "semantic_hash": ""
   },
   "Membership/Pendaftaran/index.html": {
-    "mtime": 1789736028.1981251,
-    "ast_hash": "9a762ae733bfbe5021090f61d6ceef6b",
+    "mtime": 1789738960.9082365,
+    "ast_hash": "a9ca43ae1086dbad8842c5f1bf1aca45",
     "semantic_hash": ""
   },
   "Membership/Submit/script.js": {
-    "mtime": 1789736146.1981297,
-    "ast_hash": "bacc12a632d82f4fa4d517e9f19153dd",
+    "mtime": 1789739175.9482446,
+    "ast_hash": "7d396b92f9e8efa0368c0d512d1af0d5",
     "semantic_hash": ""
   },
   "Membership/Submit/index.html": {
-    "mtime": 1789656986.579107,
-    "ast_hash": "0639b8b12c2564c0408925635749e14a",
+    "mtime": 1789739087.7682414,
+    "ast_hash": "ba7dab9908724a183b66580873dfbf72",
     "semantic_hash": ""
   },
   "Membership/assets/logo-mao.jpeg": {
@@ -280,13 +280,13 @@
     "semantic_hash": ""
   },
   "Membership/Hadiah/index.html": {
-    "mtime": 1789658923.3125138,
-    "ast_hash": "01cfb38ac3e3d2897cb47172bb40357e",
+    "mtime": 1789739525.9149246,
+    "ast_hash": "ebe26f0efceefd212d57c7a01ea54afe",
     "semantic_hash": ""
   },
   "Membership/Leaderboard/index.html": {
-    "mtime": 1789658944.9191813,
-    "ast_hash": "5eecf8aeba18774be1197d9e1b917c6b",
+    "mtime": 1789739200.081579,
+    "ast_hash": "d66e121591cd52a970bae2e21624ecf2",
     "semantic_hash": ""
   }
 }

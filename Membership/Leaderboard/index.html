@@ -228,6 +228,15 @@
       return div.innerHTML;
     }
 
+    /**
+     * Formatter skor — SATU titik format poin untuk seluruh halaman.
+     * Data mentah dari backend (item.poin, number) diformat di sini, bukan
+     * saat render, supaya semua render (list penuh & hasil filter) konsisten.
+     */
+    function formatPoin(n) {
+      return (Number(n) || 0).toLocaleString('id-ID') + ' poin';
+    }
+
     function renderList(data) {
       lbList.innerHTML = '';
       data.forEach(function (item, idx) {
@@ -239,7 +248,7 @@
             '<div class="lb-username">@' + escapeHtml(item.username || '-') + '</div>' +
             '<div class="lb-kode">' + escapeHtml(item.kode) + '</div>' +
           '</div>' +
-          '<span class="lb-poin">' + item.poin.toLocaleString('id-ID') + '</span>';
+          '<span class="lb-poin">' + formatPoin(item.poin) + '</span>';
         lbList.appendChild(div);
       });
     }

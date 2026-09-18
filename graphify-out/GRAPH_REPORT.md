@@ -1,16 +1,16 @@
 # Graph Report - Work  (2026-09-18)
 
 ## Corpus Check
-- 38 files · ~57,484 words
+- 38 files · ~59,027 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
-- 645 nodes · 856 edges · 44 communities (35 shown, 9 thin omitted)
-- Extraction: 98% EXTRACTED · 2% INFERRED · 0% AMBIGUOUS · INFERRED: 13 edges (avg confidence: 0.5)
+- 653 nodes · 870 edges · 46 communities (35 shown, 11 thin omitted)
+- Extraction: 99% EXTRACTED · 1% INFERRED · 0% AMBIGUOUS · INFERRED: 13 edges (avg confidence: 0.5)
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `87bc91ad`
+- Built from commit: `60da4b97`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -56,6 +56,8 @@
 - escapeHtml
 - renderLaporanCanvas
 - Membership/nav.js
+- hideKodeDropdown
+- renderKodeList
 
 ## God Nodes (most connected - your core abstractions)
 1. `Investigasi Mekanisme Ntfy — Pencatatan-Buku-Kas/Apps-Script/buku-kas.gs.js` - 10 edges
@@ -64,10 +66,10 @@
 4. `Investigasi Konsolidasi Notifikasi ntfy — `report.gs.js`` - 9 edges
 5. `Detail Mekanisme Kolom Z (follow-up)` - 9 edges
 6. `doPostPendaftaran_()` - 8 edges
-7. `cek_dan_kirim_total_harian()` - 8 edges
-8. `simpanDataTempura()` - 8 edges
-9. `simpanDataWonton()` - 8 edges
-10. `report_kirimNotif_()` - 8 edges
+7. `json_()` - 8 edges
+8. `cek_dan_kirim_total_harian()` - 8 edges
+9. `simpanDataTempura()` - 8 edges
+10. `simpanDataWonton()` - 8 edges
 
 ## Surprising Connections (you probably didn't know these)
 - `showReport()` --calls--> `formatWaktu()`  [EXTRACTED]
@@ -82,7 +84,7 @@
 ## Import Cycles
 - None detected.
 
-## Communities (44 total, 9 thin omitted)
+## Communities (46 total, 11 thin omitted)
 
 ### Community 0 - "Riwayat/script.js"
 Cohesion: 0.04
@@ -198,11 +200,11 @@ Nodes (24): backBtn, btnLoading, btnText, cardDomisili, cardFotoProfil, cardKode
 
 ### Community 36 - "code.gs.js"
 Cohesion: 0.30
-Nodes (15): doGet(), doGetFormData_(), doGetHadiah_(), doGetLeaderboard_(), doPost(), doPostPendaftaran_(), doPostSubmitOrder_(), generateKodeMembership_() (+7 more)
+Nodes (16): doGet(), doGetFormData_(), doGetHadiah_(), doGetLeaderboard_(), doPost(), doPostPendaftaran_(), doPostRequestHadiah_(), doPostSubmitOrder_() (+8 more)
 
 ### Community 37 - "Submit/script.js"
 Cohesion: 0.04
-Nodes (32): btnLoading, btnText, downloadLaporanBtn, errorMsg, formSection, fotoInput, fotoInputCamera, fotoPreview (+24 more)
+Nodes (35): btnLoading, btnText, downloadLaporanBtn, errorMsg, formSection, fotoInput, fotoInputCamera, fotoPreview (+27 more)
 
 ### Community 39 - "buildLaporanFileName"
 Cohesion: 0.40
@@ -213,9 +215,9 @@ Cohesion: 0.50
 Nodes (4): base64ToBlob(), hideReportError(), hideReportInfo(), showReport()
 
 ## Knowledge Gaps
-- **303 isolated node(s):** `all`, `menuBtn`, `drawer`, `overlay`, `drawerClose` (+298 more)
+- **306 isolated node(s):** `all`, `menuBtn`, `drawer`, `overlay`, `drawerClose` (+301 more)
   These have ≤1 connection - possible missing edges or undocumented components.
-- **9 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
+- **11 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
 
 ## Suggested Questions
 _Questions this graph is uniquely positioned to answer:_
@@ -225,7 +227,7 @@ _Questions this graph is uniquely positioned to answer:_
 - **Why does `Detail Logic Pola Transaksi (follow-up)` connect `Detail Logic Pola Transaksi (follow-up)` to `Investigasi Mekanisme Ntfy — Pencatatan-Buku-Kas/Apps-Script/buku-kas.gs.js`?**
   _High betweenness centrality (0.003) - this node is a cross-community bridge._
 - **What connects `all`, `menuBtn`, `drawer` to the rest of the system?**
-  _303 weakly-connected nodes found - possible documentation gaps or missing edges._
+  _306 weakly-connected nodes found - possible documentation gaps or missing edges._
 - **Should `Riwayat/script.js` be split into smaller, more focused modules?**
   _Cohesion score 0.044444444444444446 - nodes in this community are weakly interconnected._
 - **Should `Pencatatan-Buku-Kas/script.js` be split into smaller, more focused modules?**
