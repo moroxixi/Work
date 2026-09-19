@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>MAO Admin — Cek Pesanan</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <div class="page">
+    <div class="form-card">
+
+      <div class="brand">
+        <img src="../../assets/logo-mao.jpeg" alt="MAO" class="brand-logo">
+        <p class="tagline">Admin — Verifikasi Pesanan</p>
+      </div>
+
+      <!-- Loading state -->
+      <div id="loadingState" class="state-msg">
+        <div class="spinner"></div>
+        <p>Memuat daftar pesanan…</p>
+      </div>
+
+      <!-- Error state -->
+      <div id="errorState" class="state-msg" hidden>
+        <p style="font-size:2rem;">⚠️</p>
+        <p id="errorMsg"></p>
+        <button type="button" id="retryBtn" class="btn-submit btn-retry">Coba Lagi</button>
+      </div>
+
+      <!-- Daftar pesanan -->
+      <div id="listSection" hidden>
+        <p class="list-info" id="pesananCount"></p>
+        <div id="pesananList" class="pesanan-list"></div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Lightbox: perbesar foto bukti -->
+  <div id="lightbox" class="lightbox" hidden>
+    <div class="lightbox-backdrop"></div>
+    <div class="lightbox-body">
+      <img id="lightboxImg" class="lightbox-img" alt="Foto bukti pesanan">
+      <button type="button" id="lightboxCloseBtn" class="lightbox-close">Tutup</button>
+    </div>
+  </div>
+
+  <!-- Modal konfirmasi hapus (destructive → wajib konfirmasi dulu) -->
+  <div id="deleteModal" class="sheet-modal" hidden>
+    <div class="sheet-modal-backdrop"></div>
+    <div class="sheet-modal-sheet">
+      <p class="sheet-modal-title">Hapus pesanan ini?</p>
+      <p class="sheet-modal-text" id="deleteModalText"></p>
+      <div id="deleteModalMsg" class="sheet-modal-msg" hidden></div>
+      <button type="button" id="deleteConfirmBtn" class="btn-submit btn-danger">Ya, Hapus</button>
+      <button type="button" id="deleteCancelBtn" class="sheet-modal-cancel">Batal</button>
+    </div>
+  </div>
+
+  <!-- PIN gate (dikelola ../admin-auth.js) -->
+  <div id="adminPinGate" class="pin-gate" hidden>
+    <div class="pin-gate-backdrop"></div>
+    <div class="pin-gate-sheet">
+      <p class="pin-gate-title">Akses Admin</p>
+      <p class="pin-gate-text">Masukkan PIN admin untuk membuka halaman ini.</p>
+      <input type="password" id="adminPinInput" class="pin-gate-input"
+             inputmode="numeric" autocomplete="off" placeholder="PIN admin">
+      <div id="adminPinMsg" class="pin-gate-msg" hidden></div>
+      <button type="button" id="adminPinSubmitBtn" class="btn-submit">Buka Halaman Admin</button>
+    </div>
+  </div>
+
+  <!-- Floater -->
+  <div class="floater-help">
+    <span>Ada kendala verifikasi?</span>
+    <a href="https://wa.me/6283156569954?text=Halo%20Admin,%20saya%20mau%20tanya%20soal%20verifikasi%20pesanan.%20" target="_blank" rel="noopener">Hubungi Admin 📱</a>
+  </div>
+
+  <script src="../../config.js"></script>
+  <script src="../admin-auth.js"></script>
+  <script src="script.js"></script>
+</body>
+</html>

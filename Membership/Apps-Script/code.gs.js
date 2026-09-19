@@ -311,6 +311,32 @@ function doPost(e) {
     return doPostRequestHadiah_(e);
   }
 
+  // ── Admin actions (setiap handler admin re-validasi PIN sendiri —
+  //    lihat checkAdminPin_; PIN tidak pernah di-hardcode di source) ──
+  if (action === "verifyAdminPin") {
+    return doPostVerifyAdminPin_(e);
+  }
+
+  if (action === "adminListPesanan") {
+    return doPostAdminListPesanan_(e);
+  }
+
+  if (action === "adminDeletePesanan") {
+    return doPostAdminDeletePesanan_(e);
+  }
+
+  if (action === "adminGetMemberList") {
+    return doPostAdminGetMemberList_(e);
+  }
+
+  if (action === "adminGetMemberDetail") {
+    return doPostAdminGetMemberDetail_(e);
+  }
+
+  if (action === "adminUpdateMember") {
+    return doPostAdminUpdateMember_(e);
+  }
+
   // Default: registrasi Pendaftaran — HANYA untuk request tanpa action
   // atau action="daftar" secara eksplisit. Action lain yang tidak dikenal
   // TIDAK boleh jatuh ke sini: kalau client lebih baru dari deployment
@@ -920,6 +946,385 @@ function doGetHadiah_(e) {
   });
 
   return json_({ success: true, hadiah: hadiah });
+}
+
+// ─── ADMIN: PIN GATE (shared) ────────────────────────────────────────────────
+//
+// PIN admin TIDAK PERNAH di-hardcode di source (client maupun server).
+// Nilainya di-set manual oleh Rofi lewat editor Apps Script:
+//   Project Settings → Script Properties → tambah property "ADMIN_PIN".
+//
+// Setiap action admin WAJIB memanggil checkAdminPin_() sebagai validasi
+// PERTAMA — bukan cuma sekali di gate awal halaman — supaya client yang
+// menembus gate UI tetap ditolak di level backend.
+
+/**
+ * Re-validasi PIN per request. Return null kalau PIN valid;
+ * return response JSON "PIN salah" (generik, tanpa detail) kalau gagal.
+ *
+ * CATATAN: kalau property ADMIN_PIN belum di-set sama sekali, SEMUA request
+ * admin ditolak (fail-closed) — bukan di-bypass. Pesan error tetap generik.
+ *
+ * @param {string} pin - PIN yang dikirim client (string mentah)
+ * @return {Object|null} null = lolos; object = response tolak siap-return
+ */
+function checkAdminPin_(pin) {
+  var expected = PropertiesService.getScriptProperties().getProperty("ADMIN_PIN");
+
+  // Fail-closed: property belum di-set / kosong → tolak semua.
+  // String(expected) menjaga kalau ter-set sebagai angka dari UI properties.
+  if (!expected || String(expected).length === 0) {
+    return json_({ success: false, error: "PIN salah", errorType: "unauthorized" });
+  }
+
+  if (String(pin || "").trim() !== String(expected)) {
+    return json_({ success: false, error: "PIN salah", errorType: "unauthorized" });
+  }
+
+  return null; // PIN valid
+}
+
+/**
+ * Action: verifyAdminPin — dipanggil admin-auth.js saat gate dibuka.
+ * Sukses → client menyimpan flag di sessionStorage (client-side only).
+ * Backend tetap re-validasi PIN di SETIAP action admin berikutnya.
+ */
+function doPostVerifyAdminPin_(e) {
+  var pin = trim_(e.parameter.pin);
+  var reject = checkAdminPin_(pin);
+  if (reject) return reject;
+
+  // TIDAK mengembalikan PIN-nya, dan tidak ada info lain yang bocor.
+  return json_({ success: true });
+}
+
+// ─── ADMIN: LIST PESANAN (Check-Pesanan) ───────────────────────────────────
+
+/**
+ * Action: adminListPesanan — seluruh isi tab "Submit Pesanan" untuk
+ * verifikasi manual admin: Timestamp, Kode Membership, Nama Menu, Qty,
+ * URL foto bukti, dan rowIndex absolut (baris sheet) sebagai row reference
+ * untuk delete + snapshot revalidation.
+ * PIN wajib valid.
+ */
+function doPostAdminListPesanan_(e) {
+  var reject = checkAdminPin_(trim_(e.parameter.pin));
+  if (reject) return reject;
+
+  var ss = SpreadsheetApp.openById(SHEET_ID);
+  var sheet = ss.getSheetByName("Submit Pesanan");
+  if (!sheet) {
+    return json_({ success: false, error: "Tab 'Submit Pesanan' belum dibuat. Jalankan setupSheetTambahanMembership() terlebih dahulu." });
+  }
+
+  var lastRow = sheet.getLastRow();
+  if (lastRow < 2) {
+    return json_({ success: true, pesanan: [] });
+  }
+
+  var data = sheet.getRange(2, 1, lastRow - 1, COLUMNS_SUBMIT_PESANAN.length).getValues();
+  var pesanan = [];
+
+  data.forEach(function (r, i) {
+    var kode = String(r[COLUMNS_SUBMIT_PESANAN.indexOf("Kode Membership")]).trim();
+    var namaMenu = String(r[COLUMNS_SUBMIT_PESANAN.indexOf("Nama Menu")]).trim();
+    // Skip baris kosong total (kode + menu kosong) — biasanya sisa hapus manual.
+    if (!kode && !namaMenu) return;
+
+    pesanan.push({
+      rowIndex: i + 2, // baris sheet absolut (baris 1 = header)
+      timestamp: r[COLUMNS_SUBMIT_PESANAN.indexOf("Timestamp")] instanceof Date
+        ? r[COLUMNS_SUBMIT_PESANAN.indexOf("Timestamp")].toISOString()
+        : String(r[COLUMNS_SUBMIT_PESANAN.indexOf("Timestamp")]),
+      kodeMembership: kode,
+      namaMenu: namaMenu,
+      qty: r[COLUMNS_SUBMIT_PESANAN.indexOf("Qty")],
+      fotoUrl: String(r[COLUMNS_SUBMIT_PESANAN.indexOf("Foto Produk (URL Drive)")] || "").trim()
+    });
+  });
+
+  // Terbaru dulu biar pesanan baru langsung terlihat di atas.
+  pesanan.sort(function (a, b) {
+    var ta = Date.parse(a.timestamp) || 0;
+    var tb = Date.parse(b.timestamp) || 0;
+    return tb - ta;
+  });
+
+  return json_({ success: true, pesanan: pesanan });
+}
+
+// ─── ADMIN: DELETE PESANAN ────────────────────────────────────────────────
+
+/**
+ * Action: adminDeletePesanan — hapus SATU baris pesanan.
+ * Urutan wajib: validasi PIN → revalidasi snapshot baris (timestamp+kode
+ * + nama menu + qty harus masih persis sama dengan yang client lihat) →
+ * sheet.deleteRow(). Kalau snapshot tidak cocok → TOLAK (baris mungkin
+ * sudah bergeser/diubah orang lain) dan minta client refresh list —
+ * JANGAN pernah menghapus baris yang salah.
+ *
+ * Menggunakan deleteRow (baris terhapus betulan, baris di bawah naik),
+ * BUKAN clearContent (yang menyisakan baris kosong di tengah data).
+ */
+function doPostAdminDeletePesanan_(e) {
+  var reject = checkAdminPin_(trim_(e.parameter.pin));
+  if (reject) return reject;
+
+  var rowIndex = parseInt(e.parameter.rowIndex, 10);
+  var snapTimestamp = trim_(e.parameter.snapTimestamp);
+  var snapKode = trim_(e.parameter.snapKode);
+  var snapNamaMenu = trim_(e.parameter.snapNamaMenu);
+  var snapQty = trim_(e.parameter.snapQty);
+
+  // Baris 1 = header → tidak boleh jadi target delete.
+  if (isNaN(rowIndex) || rowIndex < 2) {
+    return json_({ success: false, error: "rowIndex tidak valid" });
+  }
+
+  var ss = SpreadsheetApp.openById(SHEET_ID);
+  var sheet = ss.getSheetByName("Submit Pesanan");
+  if (!sheet) {
+    return json_({ success: false, error: "Tab 'Submit Pesanan' belum dibuat. Jalankan setupSheetTambahanMembership() terlebih dahulu." });
+  }
+
+  if (rowIndex > sheet.getLastRow()) {
+    return json_({ success: false, error: "Baris sudah tidak ada. Refresh list.", errorType: "stale" });
+  }
+
+  // Revalidasi snapshot: baca ulang baris target dan bandingkan.
+  var cur = sheet.getRange(rowIndex, 1, 1, COLUMNS_SUBMIT_PESANAN.length).getValues()[0];
+  var curTimestamp = cur[COLUMNS_SUBMIT_PESANAN.indexOf("Timestamp")] instanceof Date
+    ? cur[COLUMNS_SUBMIT_PESANAN.indexOf("Timestamp")].toISOString()
+    : String(cur[COLUMNS_SUBMIT_PESANAN.indexOf("Timestamp")]);
+  var curKode = String(cur[COLUMNS_SUBMIT_PESANAN.indexOf("Kode Membership")]).trim();
+  var curNamaMenu = String(cur[COLUMNS_SUBMIT_PESANAN.indexOf("Nama Menu")]).trim();
+  var curQty = String(cur[COLUMNS_SUBMIT_PESANAN.indexOf("Qty")]).trim();
+
+  var same =
+    curTimestamp === snapTimestamp &&
+    curKode === snapKode &&
+    curNamaMenu === snapNamaMenu &&
+    curQty === snapQty;
+
+  if (!same) {
+    return json_({
+      success: false,
+      error: "Data baris sudah berubah/bergeser. Refresh list lalu ulangi.",
+      errorType: "stale"
+    });
+  }
+
+  sheet.deleteRow(rowIndex);
+  Logger.log("🗑️ Pesanan dihapus (admin): baris " + rowIndex + " — " + snapKode + " / " + snapNamaMenu);
+
+  return json_({ success: true });
+}
+
+// ─── ADMIN: LIST MEMBER (ringkas, untuk dropdown halaman Admin/Member) ────
+
+/**
+ * Action: adminGetMemberList — daftar RINGKAS member (kode + username saja)
+ * untuk isi searchable dropdown. Data pribadi (WA, tanggal lahir, domisili,
+ * foto) TIDAK ikut — itu baru keluar via adminGetMemberDetail setelah admin
+ * memilih member (dan tetap di balik PIN).
+ * PIN wajib valid.
+ */
+function doPostAdminGetMemberList_(e) {
+  var reject = checkAdminPin_(trim_(e.parameter.pin));
+  if (reject) return reject;
+
+  var sheet = getMemberSheet_();
+  var kodeCol = COLUMNS.indexOf("Kode Membership") + 1;
+  var usernameCol = COLUMNS.indexOf("Username") + 1;
+  var lastRow = sheet.getLastRow();
+  var memberList = [];
+
+  if (lastRow >= 2) {
+    var kodeLastCol = Math.max(kodeCol, usernameCol);
+    var data = sheet.getRange(2, kodeCol, lastRow - 1, kodeLastCol - kodeCol + 1).getValues();
+    data.forEach(function (r) {
+      var kode = String(r[0]).trim();
+      var uname = String(r[kodeLastCol - kodeCol]).trim();
+      if (kode !== "") {
+        memberList.push({ kode: kode, username: uname || "" });
+      }
+    });
+  }
+
+  return json_({ success: true, memberList: memberList });
+}
+
+// ─── ADMIN: DETAIL MEMBER ─────────────────────────────────────────────────
+
+/**
+ * Action: adminGetMemberDetail — data lengkap satu member (semua kolom
+ * tab Member) untuk form edit di halaman Admin/Member.
+ * Endpoint publik TIDAK boleh expose data pribadi tanpa PIN — makanya ini
+ * POST + PIN, bukan GET publik.
+ * PIN wajib valid. rowIndex absolut disertakan untuk revalidasi saat update.
+ */
+function doPostAdminGetMemberDetail_(e) {
+  var reject = checkAdminPin_(trim_(e.parameter.pin));
+  if (reject) return reject;
+
+  var kode = trim_(e.parameter.kodeMembership);
+  if (!kode) {
+    return json_({ success: false, error: "Kode membership wajib diisi" });
+  }
+
+  var sheet = getMemberSheet_();
+  var kodeCol = COLUMNS.indexOf("Kode Membership") + 1;
+  var lastRow = sheet.getLastRow();
+  if (lastRow < 2) {
+    return json_({ success: false, error: "Kode membership tidak ditemukan" });
+  }
+
+  var data = sheet.getRange(2, 1, lastRow - 1, COLUMNS.length).getValues();
+  for (var i = 0; i < data.length; i++) {
+    if (String(data[i][kodeCol - 1]).trim() !== kode) continue;
+
+    var sheetRow = i + 2; // baris sheet absolut
+    var ts = data[i][COLUMNS.indexOf("Tanggal Lahir")];
+    // Tanggal lahir dikirim apa adanya (string sheet); client menormalisasi
+    // ke format YYYY-MM-DD untuk <input type="date">.
+    return json_({
+      success: true,
+      member: {
+        rowIndex: sheetRow,
+        kodeMembership: kode,
+        nama: String(data[i][COLUMNS.indexOf("Nama")]).trim(),
+        domisili: String(data[i][COLUMNS.indexOf("Domisili")]).trim(),
+        tanggalLahir: String(ts),
+        umur: data[i][COLUMNS.indexOf("Umur")],
+        jenisKelamin: String(data[i][COLUMNS.indexOf("Jenis Kelamin")]).trim(),
+        status: String(data[i][COLUMNS.indexOf("Status")]).trim(),
+        nomorWhatsApp: String(data[i][COLUMNS.indexOf("Nomor WhatsApp")]).trim(),
+        fotoUrl: String(data[i][COLUMNS.indexOf("Foto Profil (URL Drive)")]).trim(),
+        username: String(data[i][COLUMNS.indexOf("Username")]).trim()
+      }
+    });
+  }
+
+  return json_({ success: false, error: "Kode membership tidak ditemukan" });
+}
+
+// ─── ADMIN: UPDATE MEMBER ─────────────────────────────────────────────────
+
+/**
+ * Action: adminUpdateMember — update baris member di sheet.
+ * Urutan wajib: validasi PIN → revalidasi snapshot rowIndex (kode+nama
+ * harus masih cocok, cegah update ke baris yang salah) → validasi field →
+ * KODE MEMBERSHIP DILARANG berubah (field-nya DIABAIKAN dari payload —
+ * defense-in-depth, tidak percaya client) → username unik (exclude member
+ * yang sedang diedit) → tulis ulang baris.
+ */
+function doPostAdminUpdateMember_(e) {
+  var reject = checkAdminPin_(trim_(e.parameter.pin));
+  if (reject) return reject;
+
+  var rowIndex = parseInt(e.parameter.rowIndex, 10);
+  var snapKode = trim_(e.parameter.snapKode);
+  var nama = trim_(e.parameter.Nama);
+  var domisili = trim_(e.parameter.Domisili);
+  var tanggalLahir = trim_(e.parameter.TanggalLahir);
+  var jenisKelamin = trim_(e.parameter.JenisKelamin);
+  var status = trim_(e.parameter.Status);
+  var nomorWhatsApp = trim_(e.parameter.NomorWhatsApp);
+  var username = trim_(e.parameter.Username);
+  // e.parameter.kodeMembership SENGAJA TIDAK dibaca — Kode Membership
+  // tidak pernah bisa diubah lewat endpoint ini (defense-in-depth;
+  // kalau client mengirimnya, field ini diabaikan total).
+
+  if (isNaN(rowIndex) || rowIndex < 2) {
+    return json_({ success: false, error: "rowIndex tidak valid" });
+  }
+
+  var sheet = getMemberSheet_();
+  var lastRow = sheet.getLastRow();
+  if (rowIndex > lastRow) {
+    return json_({ success: false, error: "Baris member sudah tidak ada. Muat ulang halaman.", errorType: "stale" });
+  }
+
+  // Revalidasi: baris di rowIndex harus masih baris member yang diedit.
+  var kodeCol = COLUMNS.indexOf("Kode Membership") + 1;
+  var namaCol = COLUMNS.indexOf("Nama") + 1;
+  var curKode = String(sheet.getRange(rowIndex, kodeCol, 1, 1).getValues()[0][0]).trim();
+  if (curKode !== snapKode) {
+    return json_({
+      success: false,
+      error: "Data member sudah berubah/bergeser. Muat ulang halaman lalu ulangi.",
+      errorType: "stale"
+    });
+  }
+
+  // Validasi field required (pola doPostPendaftaran_)
+  var errors = [];
+  if (!nama) errors.push("Nama wajib diisi");
+  if (!domisili) errors.push("Domisili wajib diisi");
+  if (!tanggalLahir) errors.push("Tanggal Lahir wajib diisi");
+  if (!jenisKelamin) errors.push("Jenis Kelamin wajib diisi");
+  if (!status) errors.push("Status wajib diisi");
+  if (!nomorWhatsApp) errors.push("Nomor WhatsApp wajib diisi");
+  if (!username) errors.push("Username wajib diisi");
+  if (errors.length > 0) {
+    return json_({ success: false, error: "Field tidak lengkap: " + errors.join("; ") });
+  }
+
+  if (!/^[A-Za-z0-9_]{3,20}$/.test(username)) {
+    return json_({
+      success: false,
+      error: "Username hanya boleh berisi huruf, angka, dan underscore (3–20 karakter).",
+      errorType: "username_format"
+    });
+  }
+
+  if (!/^08\d/.test(nomorWhatsApp) && !/^62\d/.test(nomorWhatsApp)) {
+    return json_({ success: false, error: "Nomor WhatsApp harus diawali 08 atau 62." });
+  }
+
+  // Username unik — EXCLUDE member yang sedang diedit sendiri: scan semua
+  // baris, kecuali baris(rowIndex). Jadi admin boleh menyimpan username
+  // yang memang milik member ini (tidak dianggap collision), tapi tidak
+  // boleh menyamakan dengan username member LAIN.
+  var usernameCol = COLUMNS.indexOf("Username") + 1;
+  if (lastRow >= 2) {
+    var unameData = sheet.getRange(2, usernameCol, lastRow - 1, 1).getValues();
+    var target = username.toLowerCase();
+    for (var i = 0; i < unameData.length; i++) {
+      if (i + 2 === rowIndex) continue; // diri sendiri → skip
+      if (String(unameData[i][0]).trim().toLowerCase() === target) {
+        return json_({
+          success: false,
+          error: "Username \"" + username + "\" sudah dipakai member lain.",
+          errorType: "username_taken"
+        });
+      }
+    }
+  }
+
+  // Tanggal lahir: simpan sebagai Date object (konsisten format kolom);
+  // umur dihitung ulang server-side (single source of truth).
+  var parts = tanggalLahir.split("-");
+  var tglLahirDate = new Date(parseInt(parts[0], 10), parseInt(parts[1], 10) - 1, parseInt(parts[2], 10));
+  var umur = hitungUmur_(tanggalLahir);
+
+  // Tulis ulang kolom member yang boleh diubah, urutan = COLUMNS:
+  //   Nama(3), Domisili(4), TanggalLahir(5), Umur(6)  → 1x setValues (blok)
+  //   JenisKelamin(7), Status(8)                      → 1x setValues (blok)
+  //   NomorWhatsApp(9) dan Username(11) → sel tunggal (kolom Foto(10) di
+  //   antaranya TIDAK disentuh — foto tidak termasuk field edit di sini).
+  // Kolom Kode Membership (2) TIDAK disentuh — nilainya tetap.
+  sheet.getRange(rowIndex, namaCol, 1, 4).setValues([[nama, domisili, tglLahirDate, umur]]);
+  sheet.getRange(rowIndex, COLUMNS.indexOf("Jenis Kelamin") + 1, 1, 2)
+    .setValues([[jenisKelamin, status]]);
+  sheet.getRange(rowIndex, COLUMNS.indexOf("Nomor WhatsApp") + 1, 1, 1)
+    .setValues([[nomorWhatsApp]]);
+  sheet.getRange(rowIndex, COLUMNS.indexOf("Username") + 1, 1, 1)
+    .setValues([[username]]);
+
+  Logger.log("✏️ Member diupdate (admin): " + snapKode + " → " + username);
+
+  return json_({ success: true });
 }
 
 // ─── HELPER ─────────────────────────────────────────────────────────────────

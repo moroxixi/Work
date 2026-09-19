@@ -1,16 +1,16 @@
 # Graph Report - Work  (2026-09-19)
 
 ## Corpus Check
-- 38 files · ~60,301 words
+- 41 files · ~65,732 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
-- 664 nodes · 887 edges · 46 communities (35 shown, 11 thin omitted)
-- Extraction: 99% EXTRACTED · 1% INFERRED · 0% AMBIGUOUS · INFERRED: 13 edges (avg confidence: 0.5)
+- 710 nodes · 990 edges · 49 communities (38 shown, 11 thin omitted)
+- Extraction: 99% EXTRACTED · 1% INFERRED · 0% AMBIGUOUS · INFERRED: 14 edges (avg confidence: 0.5)
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `e445bd6c`
+- Built from commit: `820491cf`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -58,18 +58,21 @@
 - Membership/nav.js
 - hideKodeDropdown
 - renderKodeList
+- Member/script.js
+- admin-auth.js
+- Check-Pesanan/script.js
 
 ## God Nodes (most connected - your core abstractions)
-1. `json_()` - 10 edges
-2. `Investigasi Mekanisme Ntfy — Pencatatan-Buku-Kas/Apps-Script/buku-kas.gs.js` - 10 edges
-3. `2. Daftar Lengkap Pemanggil `report_kirimNotif_()`` - 10 edges
-4. `hitungRekomendasiProduk()` - 9 edges
-5. `Investigasi Konsolidasi Notifikasi ntfy — `report.gs.js`` - 9 edges
-6. `Detail Mekanisme Kolom Z (follow-up)` - 9 edges
-7. `getMemberSheet_()` - 8 edges
-8. `doPostPendaftaran_()` - 8 edges
-9. `cek_dan_kirim_total_harian()` - 8 edges
-10. `simpanDataTempura()` - 8 edges
+1. `json_()` - 17 edges
+2. `trim_()` - 13 edges
+3. `doPost()` - 12 edges
+4. `getMemberSheet_()` - 11 edges
+5. `Investigasi Mekanisme Ntfy — Pencatatan-Buku-Kas/Apps-Script/buku-kas.gs.js` - 10 edges
+6. `2. Daftar Lengkap Pemanggil `report_kirimNotif_()`` - 10 edges
+7. `hitungRekomendasiProduk()` - 9 edges
+8. `Investigasi Konsolidasi Notifikasi ntfy — `report.gs.js`` - 9 edges
+9. `Detail Mekanisme Kolom Z (follow-up)` - 9 edges
+10. `renderList()` - 8 edges
 
 ## Surprising Connections (you probably didn't know these)
 - `showReport()` --calls--> `formatWaktu()`  [EXTRACTED]
@@ -84,7 +87,7 @@
 ## Import Cycles
 - None detected.
 
-## Communities (46 total, 11 thin omitted)
+## Communities (49 total, 11 thin omitted)
 
 ### Community 0 - "Riwayat/script.js"
 Cohesion: 0.04
@@ -199,8 +202,8 @@ Cohesion: 0.05
 Nodes (32): backBtn, btnLoading, btnText, cardDomisili, cardFotoProfil, cardKode, cardNama, cardSection (+24 more)
 
 ### Community 36 - "code.gs.js"
-Cohesion: 0.30
-Nodes (17): doGet(), doGetFormData_(), doGetHadiah_(), doGetLeaderboard_(), doGetMemberByUsername_(), doPost(), doPostPendaftaran_(), doPostRequestHadiah_() (+9 more)
+Cohesion: 0.27
+Nodes (24): checkAdminPin_(), doGet(), doGetFormData_(), doGetHadiah_(), doGetLeaderboard_(), doGetMemberByUsername_(), doPost(), doPostAdminDeletePesanan_() (+16 more)
 
 ### Community 37 - "Submit/script.js"
 Cohesion: 0.04
@@ -214,6 +217,18 @@ Nodes (5): buildLaporanFileName(), formatStampFile(), formatWaktu(), pad2(), san
 Cohesion: 0.50
 Nodes (4): base64ToBlob(), hideReportError(), hideReportInfo(), showReport()
 
+### Community 46 - "Member/script.js"
+Cohesion: 0.23
+Nodes (8): closeDropdown(), fillForm(), hideFormMsg(), loadMemberList(), selectMember(), showError(), showState(), toInputDate()
+
+### Community 47 - "admin-auth.js"
+Cohesion: 0.30
+Nodes (10): handlePinSubmit(), hideGate(), hideGateMsg(), init(), isAuthed(), markAuthed(), runReadyCallbacks(), showGate() (+2 more)
+
+### Community 48 - "Check-Pesanan/script.js"
+Cohesion: 0.35
+Nodes (9): driveImageUrl(), escapeHtml(), formatWaktu(), loadList(), openDeleteModal(), openLightbox(), renderList(), showError() (+1 more)
+
 ## Knowledge Gaps
 - **312 isolated node(s):** `all`, `menuBtn`, `drawer`, `overlay`, `drawerClose` (+307 more)
   These have ≤1 connection - possible missing edges or undocumented components.
@@ -223,7 +238,7 @@ Nodes (4): base64ToBlob(), hideReportError(), hideReportInfo(), showReport()
 _Questions this graph is uniquely positioned to answer:_
 
 - **Why does `Investigasi Mekanisme Ntfy — Pencatatan-Buku-Kas/Apps-Script/buku-kas.gs.js` connect `Investigasi Mekanisme Ntfy — Pencatatan-Buku-Kas/Apps-Script/buku-kas.gs.js` to `Detail Logic Pola Transaksi (follow-up)`?**
-  _High betweenness centrality (0.006) - this node is a cross-community bridge._
+  _High betweenness centrality (0.005) - this node is a cross-community bridge._
 - **Why does `Detail Logic Pola Transaksi (follow-up)` connect `Detail Logic Pola Transaksi (follow-up)` to `Investigasi Mekanisme Ntfy — Pencatatan-Buku-Kas/Apps-Script/buku-kas.gs.js`?**
   _High betweenness centrality (0.003) - this node is a cross-community bridge._
 - **What connects `all`, `menuBtn`, `drawer` to the rest of the system?**

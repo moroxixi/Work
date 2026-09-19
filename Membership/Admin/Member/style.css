@@ -1,0 +1,397 @@
+/* ═══════════════════════════════════════════════════════════════════════════
+   MAO Admin — Member (dark theme, pola sama dgn halaman lain)
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+:root {
+  --bg:        #0a0a0a;
+  --surface:   #141414;
+  --surface2:  #1c1c1c;
+  --border:    #2a2a2a;
+  --text:      #f0f0f0;
+  --text-dim:  #888;
+  --accent1:   #ff4d1c;
+  --accent2:   #ffb300;
+  --gradient:  linear-gradient(135deg, #ff4d1c, #ffb300);
+  --gradient-h: linear-gradient(90deg, #ff4d1c, #ffb300);
+  --danger:    #ff4444;
+  --radius:    12px;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding: calc(24px + env(safe-area-inset-top)) calc(16px + env(safe-area-inset-right))
+    calc(24px + env(safe-area-inset-bottom)) calc(16px + env(safe-area-inset-left));
+  line-height: 1.5;
+}
+
+.page { width: 100%; max-width: 480px; padding-bottom: 90px; }
+
+.form-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 32px 28px;
+  box-shadow: 0 8px 32px rgba(255, 77, 28, 0.08);
+}
+
+.brand { text-align: center; margin-bottom: 28px; }
+
+.brand-logo {
+  display: block;
+  height: auto;
+  max-width: min(70%, 200px);
+  margin: 0 auto 14px;
+  border-radius: 18px;
+}
+
+.tagline {
+  color: var(--text-dim);
+  font-size: 0.85rem;
+  margin-top: 4px;
+  letter-spacing: 0.04em;
+}
+
+/* ─── State msgs ─────────────────────────────────────────────────────────── */
+.state-msg { text-align: center; padding: 40px 20px; color: var(--text-dim); }
+.state-msg p { margin-top: 12px; font-size: 0.9rem; }
+
+.spinner {
+  width: 36px; height: 36px;
+  border: 3px solid var(--border);
+  border-top-color: var(--accent1);
+  border-radius: 50%;
+  margin: 0 auto 12px;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin { to { transform: rotate(360deg); } }
+
+.btn-retry {
+  display: inline-block;
+  width: auto;
+  padding: 12px 24px;
+  margin-top: 20px;
+}
+
+/* ─── Form ───────────────────────────────────────────────────────────────── */
+.form-group { margin-bottom: 18px; }
+
+label {
+  display: block;
+  font-size: 0.85rem;
+  font-weight: 600;
+  margin-bottom: 6px;
+  color: var(--text);
+}
+
+.req { color: var(--accent1); }
+
+input[type="text"],
+input[type="tel"],
+input[type="date"],
+input[type="password"],
+select {
+  width: 100%;
+  padding: 12px 14px;
+  font-size: 16px; /* ≥16px: cegah auto-zoom iOS saat fokus */
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  color: var(--text);
+  outline: none;
+  transition: border-color 0.2s, box-shadow 0.2s;
+  -webkit-appearance: none;
+}
+
+input:focus,
+select:focus {
+  border-color: var(--accent1);
+  box-shadow: 0 0 0 3px rgba(255, 77, 28, 0.15);
+}
+
+input::placeholder { color: #555; }
+
+select {
+  cursor: pointer;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23888' stroke-width='1.5' fill='none'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 14px center;
+  padding-right: 36px;
+}
+
+input[type="date"]::-webkit-calendar-picker-indicator {
+  filter: invert(0.7);
+  cursor: pointer;
+}
+
+.hint {
+  display: block;
+  font-size: 0.75rem;
+  color: var(--text-dim);
+  margin-top: 4px;
+}
+
+.form-status {
+  font-size: 0.8rem;
+  color: var(--text-dim);
+  text-align: center;
+  margin-bottom: 18px;
+  overflow-wrap: anywhere;
+}
+
+.form-msg {
+  margin-bottom: 14px;
+  padding: 12px 14px;
+  border-radius: 8px;
+  background: rgba(255, 179, 0, 0.1);
+  border: 1px solid rgba(255, 179, 0, 0.3);
+  color: var(--accent2);
+  font-size: 0.85rem;
+  text-align: center;
+  overflow-wrap: anywhere;
+}
+
+/* Kode Membership read-only: tampil jelas sebagai info, bukan input biasa */
+.kode-readonly {
+  background: var(--surface);
+  border-style: dashed;
+  color: var(--accent2);
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  cursor: not-allowed;
+  opacity: 1;
+}
+
+/* ─── Buttons ────────────────────────────────────────────────────────────── */
+.btn-submit {
+  width: 100%;
+  min-height: 48px;
+  padding: 14px;
+  font-size: 1rem;
+  font-weight: 700;
+  color: #fff;
+  background: var(--gradient-h);
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  margin-top: 8px;
+  transition: opacity 0.2s, transform 0.1s;
+  letter-spacing: 0.02em;
+}
+
+.btn-submit:hover { opacity: 0.9; }
+.btn-submit:active { transform: scale(0.98); }
+.btn-submit:disabled { opacity: 0.5; cursor: not-allowed; }
+
+.btn-cancel {
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  color: var(--text-dim);
+}
+
+.btn-cancel:hover {
+  border-color: var(--accent1);
+  color: var(--text);
+}
+
+/* ─── Searchable combobox (pola sama dgn Submit/style.css) ───────────────── */
+.kode-combo { position: relative; }
+
+.kode-search {
+  width: 100%;
+  padding: 12px 14px;
+  font-size: 16px;
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  color: var(--text);
+  outline: none;
+  transition: border-color 0.2s, box-shadow 0.2s;
+  -webkit-appearance: none;
+}
+
+.kode-search:focus {
+  border-color: var(--accent1);
+  box-shadow: 0 0 0 3px rgba(255, 77, 28, 0.15);
+}
+
+.kode-search::placeholder { color: #555; }
+
+.kode-search:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.kode-dropdown {
+  position: absolute;
+  top: calc(100% + 4px);
+  left: 0;
+  right: 0;
+  max-height: 240px;
+  overflow-y: auto;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
+  z-index: 60;
+}
+
+.kode-option {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 12px 14px;
+  cursor: pointer;
+  color: var(--text);
+  font-size: 0.95rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+}
+
+.kode-option:last-child { border-bottom: none; }
+
+.kode-option .kode-username {
+  font-size: 0.75rem;
+  color: var(--text-dim);
+  overflow-wrap: anywhere;
+  text-align: right;
+}
+
+.kode-option:hover {
+  background: rgba(255, 77, 28, 0.12);
+}
+
+.kode-option-empty {
+  padding: 12px 14px;
+  font-size: 0.85rem;
+  color: var(--text-dim);
+  text-align: center;
+  cursor: default;
+}
+
+/* ─── PIN gate (dikelola ../admin-auth.js) ───────────────────────────────── */
+.pin-gate {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  z-index: 500;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+}
+
+.pin-gate[hidden] { display: none !important; }
+
+.pin-gate-backdrop {
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(0, 0, 0, 0.85);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+}
+
+.pin-gate-sheet {
+  position: relative;
+  width: 100%;
+  max-width: 480px;
+  background: var(--surface);
+  border-radius: 16px 16px 0 0;
+  padding: 24px 16px;
+  padding-bottom: calc(24px + env(safe-area-inset-bottom));
+  animation: slideUp 0.2s ease-out;
+}
+
+@keyframes slideUp {
+  from { transform: translateY(100%); }
+  to { transform: translateY(0); }
+}
+
+.pin-gate-title {
+  text-align: center;
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--text);
+  margin-bottom: 6px;
+}
+
+.pin-gate-text {
+  text-align: center;
+  font-size: 0.85rem;
+  color: var(--text-dim);
+  margin-bottom: 16px;
+}
+
+.pin-gate-input {
+  width: 100%;
+  padding: 12px 14px;
+  font-size: 18px;
+  letter-spacing: 0.3em;
+  text-align: center;
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  color: var(--text);
+  outline: none;
+  transition: border-color 0.2s, box-shadow 0.2s;
+  -webkit-appearance: none;
+}
+
+.pin-gate-input:focus {
+  border-color: var(--accent1);
+  box-shadow: 0 0 0 3px rgba(255, 77, 28, 0.15);
+}
+
+.pin-gate-msg {
+  margin-top: 12px;
+  padding: 12px 14px;
+  border-radius: 8px;
+  background: rgba(255, 68, 68, 0.1);
+  border: 1px solid rgba(255, 68, 68, 0.3);
+  color: var(--danger);
+  font-size: 0.85rem;
+  text-align: center;
+}
+
+.pin-gate .btn-submit { margin-top: 12px; }
+
+/* ─── Floater ────────────────────────────────────────────────────────────── */
+.floater-help {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 12px 16px;
+  padding-bottom: calc(12px + env(safe-area-inset-bottom));
+  background: rgba(20, 20, 20, 0.95);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border-top: 1px solid var(--border);
+  font-size: 0.8rem;
+  color: var(--text-dim);
+  z-index: 100;
+}
+
+.floater-help a {
+  color: var(--accent2);
+  font-weight: 700;
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.floater-help a:hover { text-decoration: underline; }
+
+/* ─── Responsive ─────────────────────────────────────────────────────────── */
+@media (max-width: 480px) {
+  .form-card { padding: 24px 18px; }
+}

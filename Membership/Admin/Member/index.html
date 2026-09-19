@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>MAO Admin — Data Member</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <div class="page">
+    <div class="form-card">
+
+      <div class="brand">
+        <img src="../../assets/logo-mao.jpeg" alt="MAO" class="brand-logo">
+        <p class="tagline">Admin — Edit Data Member</p>
+      </div>
+
+      <!-- Loading state awal (fetch daftar member) -->
+      <div id="loadingState" class="state-msg">
+        <div class="spinner"></div>
+        <p>Memuat daftar member…</p>
+      </div>
+
+      <!-- Error state -->
+      <div id="errorState" class="state-msg" hidden>
+        <p style="font-size:2rem;">⚠️</p>
+        <p id="errorMsg"></p>
+        <button type="button" id="retryBtn" class="btn-submit btn-retry">Coba Lagi</button>
+      </div>
+
+      <!-- Search + pilih member -->
+      <div id="searchSection" hidden>
+        <div class="form-group">
+          <label for="kodeSearch">Cari member (kode / username)</label>
+          <div class="kode-combo">
+            <input type="text" id="kodeSearch" class="kode-search"
+                   placeholder="Ketik untuk cari kode / username…" autocomplete="off">
+            <div id="kodeDropdown" class="kode-dropdown" hidden></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Form edit member (muncul setelah member dipilih) -->
+      <form id="memberForm" novalidate hidden>
+        <p class="form-status" id="formStatus"></p>
+
+        <!-- Kode Membership: READ-ONLY (hanya info, tidak bisa diketik) -->
+        <div class="form-group">
+          <label for="kodeMembership">Kode Membership (tidak bisa diubah)</label>
+          <input type="text" id="kodeMembership" class="kode-readonly"
+                 value="" readonly disabled tabindex="-1">
+        </div>
+
+        <div class="form-group">
+          <label for="Nama">Nama Lengkap <span class="req">*</span></label>
+          <input type="text" id="Nama" name="Nama" placeholder="Nama lengkap" required>
+        </div>
+
+        <div class="form-group">
+          <label for="Username">Username <span class="req">*</span></label>
+          <input type="text" id="Username" name="Username" placeholder="contoh: RexCakep_999" required>
+          <span class="hint">3–20 karakter: huruf, angka, underscore</span>
+        </div>
+
+        <div class="form-group">
+          <label for="Domisili">Domisili / Alamat <span class="req">*</span></label>
+          <input type="text" id="Domisili" name="Domisili" placeholder="Kota / alamat domisili" required>
+        </div>
+
+        <div class="form-group">
+          <label for="TanggalLahir">Tanggal Lahir <span class="req">*</span></label>
+          <input type="date" id="TanggalLahir" name="TanggalLahir" required>
+        </div>
+
+        <div class="form-group">
+          <label for="JenisKelamin">Jenis Kelamin <span class="req">*</span></label>
+          <select id="JenisKelamin" name="JenisKelamin" required>
+            <option value="" disabled>Pilih Jenis Kelamin</option>
+            <option value="Laki-laki">Laki-laki</option>
+            <option value="Perempuan">Perempuan</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="Status">Status <span class="req">*</span></label>
+          <select id="Status" name="Status" required>
+            <option value="" disabled>Pilih Status</option>
+            <option value="Pelajar/Mahasiswa">Pelajar / Mahasiswa</option>
+            <option value="Pekerja/Karyawan">Pekerja / Karyawan</option>
+            <option value="Ibu Rumah Tangga">Ibu Rumah Tangga</option>
+            <option value="Wiraswasta">Wiraswasta</option>
+            <option value="Lainnya">Lainnya</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="NomorWhatsApp">Nomor WhatsApp <span class="req">*</span></label>
+          <input type="tel" id="NomorWhatsApp" name="NomorWhatsApp" placeholder="08xxxxxxxxxx" required>
+          <span class="hint">Diawali 08, 9–15 digit</span>
+        </div>
+
+        <div id="formMsg" class="form-msg" hidden></div>
+
+        <button type="submit" id="saveBtn" class="btn-submit">
+          <span class="btn-text">💾 Simpan Perubahan</span>
+          <span class="btn-loading" hidden>⏳ Menyimpan…</span>
+        </button>
+
+        <button type="button" id="cancelBtn" class="btn-submit btn-cancel">
+          ← Pilih member lain
+        </button>
+      </form>
+
+    </div>
+  </div>
+
+  <!-- PIN gate (dikelola ../admin-auth.js) -->
+  <div id="adminPinGate" class="pin-gate" hidden>
+    <div class="pin-gate-backdrop"></div>
+    <div class="pin-gate-sheet">
+      <p class="pin-gate-title">Akses Admin</p>
+      <p class="pin-gate-text">Masukkan PIN admin untuk membuka halaman ini.</p>
+      <input type="password" id="adminPinInput" class="pin-gate-input"
+             inputmode="numeric" autocomplete="off" placeholder="PIN admin">
+      <div id="adminPinMsg" class="pin-gate-msg" hidden></div>
+      <button type="button" id="adminPinSubmitBtn" class="btn-submit">Buka Halaman Admin</button>
+    </div>
+  </div>
+
+  <!-- Floater -->
+  <div class="floater-help">
+    <span>Ada kendala edit data?</span>
+    <a href="https://wa.me/6283156569954?text=Halo%20Admin,%20saya%20mau%20tanya%20soal%20edit%20data%20member.%20" target="_blank" rel="noopener">Hubungi Admin 📱</a>
+  </div>
+
+  <script src="../../config.js"></script>
+  <script src="../admin-auth.js"></script>
+  <script src="script.js"></script>
+</body>
+</html>
