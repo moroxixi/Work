@@ -68,6 +68,7 @@ let previewObjectUrl = null; // object URL preview di form (di-revoke saat ganti
 let reportObjectUrl = null;  // object URL foto di laporan (di-revoke saat "Buat Pesanan Baru")
 let reportKode = "";         // snapshot kode membership untuk nama file laporan
 let reportWaktu = null;      // snapshot waktu submit (Date)
+let lastOrderId = "";        // Order ID terakhir yang dikirim di POST (untuk recovery)
 
 // ─── INIT: fetch kode list + menu list ─────────────────────────────────────
 
@@ -407,6 +408,12 @@ orderForm.addEventListener("submit", async function (e) {
   setLoading(true);
   showOverlay();
 
+  // Generate Order ID unik untuk setiap attempt POST (BUKAN sekali per
+  // page-load). ID yang SAMA dipakai oleh recovery check kalau POST gagal.
+  lastOrderId = (typeof crypto !== "undefined" && crypto.randomUUID)
+    ? crypto.randomUUID()
+    : Date.now().toString(36) + "-" + Math.random().toString(36).slice(2, 10);
+
   // Snapshot untuk laporan — dibuat SEBELUM resetForm() mengosongkan state.
   // fotoBase64/fotoMimeType di sini adalah data terkompresi yang SAMA dengan
   // yang dikirim ke server; tidak ada kompresi ulang untuk laporan.
@@ -429,7 +436,8 @@ orderForm.addEventListener("submit", async function (e) {
       itemsJson: itemsJson,
       fotoBase64: compressedBase64,
       fotoMimeType: compressedMimeType,
-      fotoNamaFile: compressedFileName
+      fotoNamaFile: compressedFileName,
+      orderId: lastOrderId
     });
 
     var resp = await fetch(MAO_CONFIG.GAS_WEB_APP_URL, {
@@ -475,10 +483,35 @@ orderForm.addEventListener("submit", async function (e) {
 
   } catch (err) {
     console.error("Submit error:", err);
-    showError(
-      "Gagal mengirim pesanan. Periksa koneksi internet atau hubungi admin. (" +
-      err.message + ")"
-    );
+    // POST gagal di level network/parse. Data MUNGKIN sudah masuk ke sheet
+    // — cuma response yang hilang. Lakukan SATU kali cek read-only via GET
+    // dengan Order ID yang SAMA (lastOrderId). Kalau ditemukan → treat sebagai
+    // sukses. Tidak pernah ada retry POST otomatis.
+    var recovered = await tryRecoverByOrderId(lastOrderId);
+    if (recovered) {
+      // Order sudah ada di sheet → lanjut ke flow sukses normal.
+      // reportData sudah di-snapshot di atas (sebelum resetForm), termasuk
+      // fotoBase64 lokal yang identik dengan yang dikirim ke server.
+      try {
+        localStorage.setItem("mao_submit_result", JSON.stringify({
+          kodeMembership: reportData.kodeMembership,
+          items: reportData.items,
+          waktu: reportData.waktu.toISOString(),
+          fotoBase64: reportData.fotoBase64,
+          fotoMimeType: reportData.fotoMimeType,
+          _savedAt: Date.now()
+        }));
+      } catch (storageErr) {
+        console.error("localStorage save failed (recovery):", storageErr);
+      }
+      resetForm();
+      window.location.href = "../Hasil/index.html";
+    } else {
+      showError(
+        "Gagal mengirim pesanan. Periksa koneksi internet atau hubungi admin. (" +
+        err.message + ")"
+      );
+    }
   } finally {
     hideOverlay();
     setLoading(false);
@@ -716,6 +749,39 @@ newOrderBtn.addEventListener("click", function () {
 
   formSection.scrollIntoView({ behavior: "smooth" });
 });
+
+// ─── RECOVERY (POST gagal, tapi data mungkin sudah masuk) ─────────────────
+
+/**
+ * Cek apakah order dengan Order ID tertentu sudah ada di sheet.
+ * MURNI READ-ONLY via GET — satu kali fetch tanpa retry; kalau fetch/parse-
+ * nya sendiri gagal → return null → caller fallback ke tampilan error biasa.
+ * Tidak pernah melempar exception.
+ *
+ * CATATAN: backend lama (belum di-deploy ulang) tidak mengenal action ini
+ * → balas health-check JSON tanpa `found` → return null → aman sampai deploy.
+ *
+ * @param {string} orderId — Order ID yang barusan dikirim di POST pertama
+ * @returns {Promise<Object|null>} data pesanan atau null
+ */
+async function tryRecoverByOrderId(orderId) {
+  if (!orderId) return null;
+  try {
+    var resp = await fetch(
+      MAO_CONFIG.GAS_WEB_APP_URL +
+        "?action=getOrderByOrderId&orderId=" +
+        encodeURIComponent(orderId)
+    );
+    var json = await resp.json();
+    if (json && json.success && json.found && json.pesanan) {
+      return json.pesanan;
+    }
+    return null;
+  } catch (checkErr) {
+    console.error("Recovery check (Order ID) error:", checkErr);
+    return null;
+  }
+}
 
 // ─── HELPERS ────────────────────────────────────────────────────────────────
 

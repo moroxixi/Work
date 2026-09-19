@@ -42,12 +42,15 @@ var CHARSET = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
 var COLUMNS_DAFTAR_MENU = ["Nama Menu"];
 
 // Header untuk tab "Submit Pesanan"
+// Kolom "Order ID" (index 6) di-append di belakang supaya tidak menggeser
+// index kolom lama yang sudah diakses oleh kode existing via hardcoded index.
 var COLUMNS_SUBMIT_PESANAN = [
   "Timestamp",
   "Kode Membership",
   "Nama Menu",
   "Qty",
-  "Foto Produk (URL Drive)"
+  "Foto Produk (URL Drive)",
+  "Order ID"
 ];
 
 // Header untuk tab "Hadiah" — 3 kolom katalog + 2 kolom request (2026-09-18).
@@ -227,7 +230,16 @@ function setupSheetTambahanMembership() {
       return cell !== "" && cell !== null && cell !== undefined;
     });
     if (hasContent2) {
-      Logger.log("⚠️ Tab 'Submit Pesanan' sudah ada isi. Skip.");
+      // Header existing mungkin belum punya kolom "Order ID" (index 6).
+      // Kalau baris header kurang panjang dari COLUMNS_SUBMIT_PESANAN, extend
+      // supaya kolom "Order ID" ada header-nya. Data baris 2+ tidak disentuh.
+      var currentHeaderLen = firstRow2.length;
+      if (currentHeaderLen < COLUMNS_SUBMIT_PESANAN.length) {
+        sheetSubmit.getRange(1, 1, 1, COLUMNS_SUBMIT_PESANAN.length).setValues([COLUMNS_SUBMIT_PESANAN]);
+        Logger.log("✅ Header 'Submit Pesanan' di-extend ke " + COLUMNS_SUBMIT_PESANAN.length + " kolom (tambah 'Order ID').");
+      } else {
+        Logger.log("⚠️ Tab 'Submit Pesanan' sudah ada isi. Skip.");
+      }
     } else {
       sheetSubmit.getRange(1, 1, 1, COLUMNS_SUBMIT_PESANAN.length).setValues([COLUMNS_SUBMIT_PESANAN]);
       Logger.log("✅ Header 'Submit Pesanan' ditulis.");
@@ -479,6 +491,7 @@ function doPostSubmitOrder_(e) {
   var fotoBase64 = trim_(e.parameter.fotoBase64);
   var fotoMimeType = trim_(e.parameter.fotoMimeType);
   var fotoNamaFile = trim_(e.parameter.fotoNamaFile);
+  var orderId = trim_(e.parameter.orderId); // nullable — backward compat client lama
 
   // a. Validasi kode membership & cross-check ke sheet
   if (!kodeMembership) {
@@ -557,7 +570,8 @@ function doPostSubmitOrder_(e) {
       kodeMembership,      // Kode Membership
       String(items[j].namaMenu).trim(),  // Nama Menu
       parseInt(items[j].qty, 10),        // Qty
-      fotoUrl              // Foto Produk (URL Drive)
+      fotoUrl,             // Foto Produk (URL Drive)
+      orderId              // Order ID (kosong kalau client lama tidak mengirim)
     ];
     submitSheet.appendRow(row);
     jumlahItem++;
@@ -636,6 +650,10 @@ function doGet(e) {
 
   if (action === "getMemberByUsername") {
     return doGetMemberByUsername_(e);
+  }
+
+  if (action === "getOrderByOrderId") {
+    return doGetOrderByOrderId_(e);
   }
 
   // Default: health check
@@ -847,6 +865,70 @@ function doGetLeaderboard_(e) {
   });
 
   return json_({ success: true, leaderboard: result });
+}
+
+// ─── doGet: ORDER BY ORDER ID (read-only, recovery Submit) ───────────────
+
+/**
+ * Lookup satu pesanan berdasarkan Order ID. MURNI READ-ONLY — tidak ada
+ * appendRow/setValues/penulisan apa pun ke sheet.
+ *
+ * Tujuan utama: recovery di sisi client kalau POST Submit gagal/timeout
+ * PADAHAL data sebenarnya sudah masuk ke sheet (response yang hilang).
+ * Client memanggil endpoint ini sebelum menampilkan error; kalau Order ID
+ * ditemukan → treat sebagai sukses. Tidak pernah ada retry POST otomatis.
+ *
+ * Response: semua kolom tab "Submit Pesanan" (Timestamp, Kode Membership,
+ * Nama Menu, Qty, Foto URL, Order ID) supaya client bisa langsung lanjut
+ * ke flow sukses tanpa re-fetch lain.
+ *
+ * Endpoint TIDAK di-gate PIN admin — dipakai oleh halaman publik Submit.
+ * Risiko exposure rendah: hanya return data 1 order spesifik by exact-ID.
+ *
+ * Param: orderId (wajib, exact match case-sensitive).
+ */
+function doGetOrderByOrderId_(e) {
+  var orderId = trim_(e.parameter.orderId);
+
+  if (!orderId) {
+    return json_({ success: false, error: "Parameter orderId wajib diisi" });
+  }
+
+  var ss = SpreadsheetApp.openById(SHEET_ID);
+  var submitSheet = ss.getSheetByName("Submit Pesanan");
+  if (!submitSheet) {
+    return json_({ success: true, found: false });
+  }
+
+  var lastRow = submitSheet.getLastRow();
+  if (lastRow < 2) {
+    return json_({ success: true, found: false });
+  }
+
+  var orderIdCol = COLUMNS_SUBMIT_PESANAN.indexOf("Order ID") + 1; // 1-indexed
+  var data = submitSheet.getRange(2, 1, lastRow - 1, COLUMNS_SUBMIT_PESANAN.length).getValues();
+
+  for (var i = data.length - 1; i >= 0; i--) {
+    var row = data[i];
+    if (String(row[orderIdCol - 1]).trim() !== orderId) continue;
+
+    return json_({
+      success: true,
+      found: true,
+      pesanan: {
+        timestamp: row[COLUMNS_SUBMIT_PESANAN.indexOf("Timestamp")] instanceof Date
+          ? row[COLUMNS_SUBMIT_PESANAN.indexOf("Timestamp")].toISOString()
+          : String(row[COLUMNS_SUBMIT_PESANAN.indexOf("Timestamp")]),
+        kodeMembership: String(row[COLUMNS_SUBMIT_PESANAN.indexOf("Kode Membership")]).trim(),
+        namaMenu: String(row[COLUMNS_SUBMIT_PESANAN.indexOf("Nama Menu")]).trim(),
+        qty: row[COLUMNS_SUBMIT_PESANAN.indexOf("Qty")],
+        fotoUrl: String(row[COLUMNS_SUBMIT_PESANAN.indexOf("Foto Produk (URL Drive)")] || "").trim(),
+        orderId: String(row[COLUMNS_SUBMIT_PESANAN.indexOf("Order ID")] || "").trim()
+      }
+    });
+  }
+
+  return json_({ success: true, found: false });
 }
 
 // ─── doPost: REQUEST HADIAH ────────────────────────────────────────────────

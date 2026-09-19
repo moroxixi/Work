@@ -140,7 +140,10 @@
         '<div class="pesanan-kode">' + escapeHtml(p.kodeMembership) + '</div>' +
         '<div class="pesanan-menu">' + escapeHtml(p.namaMenu) + '</div>' +
         '<div class="pesanan-meta">× ' + escapeHtml(String(p.qty)) +
-        ' &nbsp;•&nbsp; ' + escapeHtml(formatWaktu(p.timestamp)) + '</div>';
+        ' &nbsp;•&nbsp; ' + escapeHtml(formatWaktu(p.timestamp)) + '</div>' +
+        (p.orderId
+          ? '<div class="pesanan-orderid">Order: ' + escapeHtml(p.orderId) + '</div>'
+          : '');
       card.appendChild(info);
 
       var delBtn = document.createElement('button');

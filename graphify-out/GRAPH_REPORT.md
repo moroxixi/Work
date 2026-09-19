@@ -1,16 +1,16 @@
 # Graph Report - Work  (2026-09-19)
 
 ## Corpus Check
-- 41 files · ~65,732 words
+- 41 files · ~66,485 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
-- 710 nodes · 990 edges · 49 communities (38 shown, 11 thin omitted)
+- 712 nodes · 995 edges · 49 communities (38 shown, 11 thin omitted)
 - Extraction: 99% EXTRACTED · 1% INFERRED · 0% AMBIGUOUS · INFERRED: 14 edges (avg confidence: 0.5)
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `820491cf`
+- Built from commit: `0621f96d`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -63,8 +63,8 @@
 - Check-Pesanan/script.js
 
 ## God Nodes (most connected - your core abstractions)
-1. `json_()` - 17 edges
-2. `trim_()` - 13 edges
+1. `json_()` - 18 edges
+2. `trim_()` - 14 edges
 3. `doPost()` - 12 edges
 4. `getMemberSheet_()` - 11 edges
 5. `Investigasi Mekanisme Ntfy — Pencatatan-Buku-Kas/Apps-Script/buku-kas.gs.js` - 10 edges
@@ -202,8 +202,8 @@ Cohesion: 0.05
 Nodes (32): backBtn, btnLoading, btnText, cardDomisili, cardFotoProfil, cardKode, cardNama, cardSection (+24 more)
 
 ### Community 36 - "code.gs.js"
-Cohesion: 0.27
-Nodes (24): checkAdminPin_(), doGet(), doGetFormData_(), doGetHadiah_(), doGetLeaderboard_(), doGetMemberByUsername_(), doPost(), doPostAdminDeletePesanan_() (+16 more)
+Cohesion: 0.26
+Nodes (25): checkAdminPin_(), doGet(), doGetFormData_(), doGetHadiah_(), doGetLeaderboard_(), doGetMemberByUsername_(), doGetOrderByOrderId_(), doPost() (+17 more)
 
 ### Community 37 - "Submit/script.js"
 Cohesion: 0.04
