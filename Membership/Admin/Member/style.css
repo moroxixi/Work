@@ -32,7 +32,7 @@ body {
   line-height: 1.5;
 }
 
-.page { width: 100%; max-width: 480px; padding-bottom: 90px; }
+.page { width: 100%; max-width: 480px; padding-bottom: 130px; }
 
 .form-card {
   background: var(--surface);
@@ -277,89 +277,10 @@ input[type="date"]::-webkit-calendar-picker-indicator {
   cursor: default;
 }
 
-/* ─── PIN gate (dikelola ../admin-auth.js) ───────────────────────────────── */
-.pin-gate {
-  position: fixed;
-  top: 0; left: 0; right: 0; bottom: 0;
-  z-index: 500;
-  display: flex;
-  align-items: flex-end;
-  justify-content: center;
-}
-
-.pin-gate[hidden] { display: none !important; }
-
-.pin-gate-backdrop {
-  position: absolute;
-  top: 0; left: 0; right: 0; bottom: 0;
-  background: rgba(0, 0, 0, 0.85);
-  backdrop-filter: blur(4px);
-  -webkit-backdrop-filter: blur(4px);
-}
-
-.pin-gate-sheet {
-  position: relative;
-  width: 100%;
-  max-width: 480px;
-  background: var(--surface);
-  border-radius: 16px 16px 0 0;
-  padding: 24px 16px;
-  padding-bottom: calc(24px + env(safe-area-inset-bottom));
-  animation: slideUp 0.2s ease-out;
-}
-
-@keyframes slideUp {
-  from { transform: translateY(100%); }
-  to { transform: translateY(0); }
-}
-
-.pin-gate-title {
-  text-align: center;
-  font-size: 0.95rem;
-  font-weight: 700;
-  color: var(--text);
-  margin-bottom: 6px;
-}
-
-.pin-gate-text {
-  text-align: center;
-  font-size: 0.85rem;
-  color: var(--text-dim);
-  margin-bottom: 16px;
-}
-
-.pin-gate-input {
-  width: 100%;
-  padding: 12px 14px;
-  font-size: 18px;
-  letter-spacing: 0.3em;
-  text-align: center;
-  background: var(--surface2);
-  border: 1px solid var(--border);
-  border-radius: 8px;
-  color: var(--text);
-  outline: none;
-  transition: border-color 0.2s, box-shadow 0.2s;
-  -webkit-appearance: none;
-}
-
-.pin-gate-input:focus {
-  border-color: var(--accent1);
-  box-shadow: 0 0 0 3px rgba(255, 77, 28, 0.15);
-}
-
-.pin-gate-msg {
-  margin-top: 12px;
-  padding: 12px 14px;
-  border-radius: 8px;
-  background: rgba(255, 68, 68, 0.1);
-  border: 1px solid rgba(255, 68, 68, 0.3);
-  color: var(--danger);
-  font-size: 0.85rem;
-  text-align: center;
-}
-
-.pin-gate .btn-submit { margin-top: 12px; }
+/* ─── Gate PIN embedded: DIHAPUS (2026-09-20) ───────────────────────────────
+   Login sekarang terpusat di Admin/index.html; halaman ini tidak lagi punya
+   overlay PIN sendiri (lihat Admin/admin-auth.js — MAO_ADMIN.onReady()).
+   CSS .pin-gate* lama ikut dihapus supaya tidak ada sisa mekanisme gate. */
 
 /* ─── Floater ────────────────────────────────────────────────────────────── */
 .floater-help {
@@ -502,17 +423,22 @@ input[type="date"]::-webkit-calendar-picker-indicator {
 /* ─── Admin nav ─────────────────────────────────────────────────────────── */
 .admin-nav {
   position: fixed;
-  bottom: 0;
+  /* TUGAS #2 — bar ini dulu `bottom: 0` sama seperti .floater-help (z-index 100)
+     sehingga tertimbun bar floater "Hubungi Admin". Sekarang dinaikkan
+     setinggi floater (52px + safe-area), mengikuti pola .quicknav di halaman
+     customer (Hadiah/Submit/Hasil). padding safe-area di dalam bar dihapus
+     karena bar sudah tidak menempel di tepi layar (menghindari celah ganda). */
+  bottom: calc(52px + env(safe-area-inset-bottom));
   left: 0;
   right: 0;
   display: flex;
   gap: 4px;
   padding: 6px 8px;
-  padding-bottom: calc(6px + env(safe-area-inset-bottom));
   background: rgba(10, 10, 10, 0.92);
   backdrop-filter: blur(8px);
   -webkit-backdrop-filter: blur(8px);
   border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
   z-index: 99;
 }
 

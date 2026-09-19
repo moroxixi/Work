@@ -23,6 +23,9 @@
   var listSection  = document.getElementById('listSection');
   var pesananCount = document.getElementById('pesananCount');
   var pesananList  = document.getElementById('pesananList');
+  var summaryValue = document.getElementById('summaryValue');
+  var summaryItems = document.getElementById('summaryItems');
+  var emptyState   = document.getElementById('emptyState');
 
   var lightbox      = document.getElementById('lightbox');
   var lightboxImg   = document.getElementById('lightboxImg');
@@ -80,13 +83,20 @@
     return tanggal + ', ' + jam + ':' + menit;
   }
 
+  /**
+   * URL gambar Drive dari kolom sheet. Ekstraksi ID + konversi URL dipusatkan
+   * di config.js (MAO_CONFIG.driveImageUrl) supaya logikanya sama persis dengan
+   * halaman Hadiah — varian link yang didukung: /file/d/<id>/view?usp=…,
+   * open?id=<id>, uc?id=<id>, /d/<id>, lh3.googleusercontent.com/d/<id>.
+   *
+   * @param {string} url - nilai kolom URL foto dari sheet
+   * @param {boolean} big - true untuk ukuran besar (lightbox)
+   */
   function driveImageUrl(url, big) {
-    var m = String(url || '').match(/\/file\/d\/([A-Za-z0-9_-]+)/);
-    if (!m) return String(url || '');
-    var id = m[1];
-    return big
-      ? 'https://drive.google.com/uc?export=view&id=' + id
-      : 'https://drive.google.com/thumbnail?id=' + id + '&sz=w400';
+    if (typeof MAO_CONFIG !== 'undefined' && MAO_CONFIG.driveImageUrl) {
+      return MAO_CONFIG.driveImageUrl(url, big ? 'big' : 'small');
+    }
+    return String(url || '');
   }
 
   // ─── GROUP BY ORDER ID ───────────────────────────────────────────────────
@@ -165,16 +175,24 @@
     var result = groupByOrderId(pesanan);
     var totalOrders = result.groups.length + result.legacy.length;
 
+    // Summary strip (pola .profit-summary di MoroDuit/Admin/Riwayat):
+    // angka besar + label kecil, bukan kalimat panjang seperti sebelumnya.
+    summaryValue.textContent = totalOrders;
+    summaryItems.textContent = pesanan.length;
+
     pesananCount.textContent =
-      totalOrders + ' pesanan tercatat (' +
-      result.groups.length + ' order, ' +
-      result.legacy.length + ' baris lama).';
+      result.groups.length + ' order · ' +
+      result.legacy.length + ' baris lama · ' +
+      pesanan.length + ' baris item';
 
     if (totalOrders === 0) {
-      pesananCount.textContent = 'Belum ada pesanan tercatat.';
+      pesananCount.textContent = '';
+      emptyState.hidden = false;
       showState('list');
       return;
     }
+
+    emptyState.hidden = true;
 
     // Render grouped orders (receipt format)
     result.groups.forEach(function (group) {
@@ -189,123 +207,180 @@
     showState('list');
   }
 
-  /** Build receipt-style card for a grouped order */
-  function buildReceiptCard(group) {
-    var items = group.items;
-    var first = items[0];
+  // ─── BUILDERS KARTU (anatomi kartu MoroDuit/Admin/Riwayat) ───────────────
+  // Urutan informasi tiap kartu mengikuti .riwayat-card di Riwayat:
+  //   baris 1 (header) : identitas utama (kiri, berwarna) + nilai ringkas (kanan)
+  //   baris 2 (meta)   : atribut sekunder (kiri) + waktu (kanan)
+  //   baris 3 (detail) : rincian item
+  //   baris 4 (foot)   : catatan ringkas
+  // Aksi (Edit/Hapus) ada di baris terpisah paling bawah.
 
-    var card = document.createElement('div');
-    card.className = 'pesanan-card receipt-card';
+  /** Foto bukti + lightbox. Klik foto TIDAK ikut membuka modal edit. */
+  function buildFotoWrap(row) {
+    var wrap = document.createElement('div');
+    wrap.className = 'pesanan-foto-wrap';
 
-    // Foto bukti (ambil dari baris pertama — semua baris 1 order punya foto sama)
-    var fotoWrap = document.createElement('div');
-    fotoWrap.className = 'pesanan-foto-wrap';
-    if (first.fotoUrl) {
+    if (row.fotoUrl) {
       var img = document.createElement('img');
       img.className = 'pesanan-foto';
-      img.alt = 'Foto bukti ' + first.kodeMembership;
+      img.alt = 'Foto bukti ' + row.kodeMembership;
       img.loading = 'lazy';
-      img.src = driveImageUrl(first.fotoUrl, false);
-      img.addEventListener('click', function () { openLightbox(first.fotoUrl); });
-      fotoWrap.appendChild(img);
+      img.src = driveImageUrl(row.fotoUrl, false);
+      img.addEventListener('click', function (e) {
+        e.stopPropagation(); // jangan sampai ikut membuka modal edit kartu
+        openLightbox(row.fotoUrl);
+      });
+      wrap.appendChild(img);
     } else {
       var ph = document.createElement('div');
       ph.className = 'pesanan-foto pesanan-foto-empty';
       ph.textContent = '📷';
-      fotoWrap.appendChild(ph);
+      wrap.appendChild(ph);
     }
-    card.appendChild(fotoWrap);
 
-    // Info: header + items list
-    var info = document.createElement('div');
-    info.className = 'pesanan-info';
+    return wrap;
+  }
 
-    // Header
-    var header = document.createElement('div');
-    header.className = 'receipt-header';
-    header.innerHTML =
-      '<div class="pesanan-kode">' + escapeHtml(first.kodeMembership) + '</div>' +
-      '<div class="pesanan-meta">' + escapeHtml(formatWaktu(first.timestamp)) + '</div>' +
-      '<div class="pesanan-orderid">Order: ' + escapeHtml(group.orderId.slice(0, 8)) + '…</div>';
-    info.appendChild(header);
+  /** Daftar item (baris 3). */
+  function buildItemsList(items) {
+    var list = document.createElement('ul');
+    list.className = 'card-items';
 
-    // Items list
-    var itemsList = document.createElement('div');
-    itemsList.className = 'receipt-items';
     items.forEach(function (item) {
-      var row = document.createElement('div');
-      row.className = 'receipt-item';
-      row.innerHTML =
-        '<span class="receipt-item-name">' + escapeHtml(item.namaMenu) + '</span>' +
-        '<span class="receipt-item-qty">× ' + escapeHtml(String(item.qty)) + '</span>';
-      itemsList.appendChild(row);
+      var li = document.createElement('li');
+      li.className = 'card-item';
+      li.innerHTML =
+        '<span class="card-item-name">' + escapeHtml(item.namaMenu) + '</span>' +
+        '<span class="card-item-qty">× ' + escapeHtml(String(item.qty)) + '</span>';
+      list.appendChild(li);
     });
-    info.appendChild(itemsList);
 
-    card.appendChild(info);
+    return list;
+  }
 
-    // Action buttons: Edit & Hapus (order-level)
+  /** Tombol aksi (Edit opsional + Hapus wajib). */
+  function buildCardActions(onEdit, onDelete) {
     var actions = document.createElement('div');
-    actions.className = 'receipt-actions';
+    actions.className = 'card-actions';
 
-    var editBtn = document.createElement('button');
-    editBtn.type = 'button';
-    editBtn.className = 'btn-edit';
-    editBtn.textContent = '✏️ Edit';
-    editBtn.addEventListener('click', function () { openEditModal(group); });
-    actions.appendChild(editBtn);
+    if (onEdit) {
+      var editBtn = document.createElement('button');
+      editBtn.type = 'button';
+      editBtn.className = 'btn-edit';
+      editBtn.textContent = '✏️ Edit';
+      editBtn.addEventListener('click', function (e) {
+        e.stopPropagation(); // kartu sendiri juga membuka edit — biar tidak dobel
+        onEdit();
+      });
+      actions.appendChild(editBtn);
+    }
 
     var delBtn = document.createElement('button');
     delBtn.type = 'button';
     delBtn.className = 'btn-delete';
     delBtn.textContent = '🗑️ Hapus';
-    delBtn.addEventListener('click', function () { openDeleteModal(group); });
+    delBtn.addEventListener('click', function (e) {
+      e.stopPropagation();
+      onDelete();
+    });
     actions.appendChild(delBtn);
 
-    card.appendChild(actions);
+    return actions;
+  }
+
+  /** Bikin kartu bisa diklik (pola card Riwayat: klik kartu = buka detail/edit). */
+  function makeCardClickable(card, onClick, label) {
+    card.setAttribute('role', 'button');
+    card.setAttribute('tabindex', '0');
+    card.setAttribute('aria-label', label);
+    card.addEventListener('click', onClick);
+    card.addEventListener('keydown', function (e) {
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        onClick();
+      }
+    });
+  }
+
+  /** Kartu 1 order (semua baris dengan Order ID sama digabung jadi 1 struk). */
+  function buildReceiptCard(group) {
+    var items = group.items;
+    var first = items[0];
+    var totalQty = items.reduce(function (acc, item) {
+      return acc + (parseInt(item.qty, 10) || 0);
+    }, 0);
+
+    var card = document.createElement('article');
+    card.className = 'pesanan-card';
+    makeCardClickable(card, function () { openEditModal(group); },
+      'Edit pesanan ' + first.kodeMembership);
+
+    var main = document.createElement('div');
+    main.className = 'card-main';
+    main.appendChild(buildFotoWrap(first));
+
+    var body = document.createElement('div');
+    body.className = 'card-body';
+    body.innerHTML =
+      '<div class="card-head">' +
+        '<span class="card-kode">' + escapeHtml(first.kodeMembership) + '</span>' +
+        '<span class="card-total">' + escapeHtml(String(totalQty)) + ' item</span>' +
+      '</div>' +
+      '<div class="card-meta">' +
+        '<span class="card-order">Order: ' +
+          escapeHtml(String(group.orderId).slice(0, 8)) + '…</span>' +
+        '<span class="card-time">' + escapeHtml(formatWaktu(first.timestamp)) + '</span>' +
+      '</div>';
+    body.appendChild(buildItemsList(items));
+
+    var foot = document.createElement('div');
+    foot.className = 'card-foot';
+    foot.innerHTML =
+      '<span class="card-foot-label">Jumlah baris</span>' +
+      '<span class="card-foot-label">' + items.length + ' baris</span>';
+    body.appendChild(foot);
+
+    main.appendChild(body);
+    card.appendChild(main);
+    card.appendChild(buildCardActions(
+      function () { openEditModal(group); },
+      function () { openDeleteModal(group); }
+    ));
 
     return card;
   }
 
-  /** Build legacy card (no orderId — 1 card per row, like before) */
+  /** Kartu baris lama (tanpa Order ID — 1 kartu per baris, tanpa Edit). */
   function buildLegacyCard(p) {
-    var card = document.createElement('div');
-    card.className = 'pesanan-card legacy-card';
+    var card = document.createElement('article');
+    card.className = 'pesanan-card';
 
-    var fotoWrap = document.createElement('div');
-    fotoWrap.className = 'pesanan-foto-wrap';
-    if (p.fotoUrl) {
-      var img = document.createElement('img');
-      img.className = 'pesanan-foto';
-      img.alt = 'Foto bukti ' + p.kodeMembership;
-      img.loading = 'lazy';
-      img.src = driveImageUrl(p.fotoUrl, false);
-      img.addEventListener('click', function () { openLightbox(p.fotoUrl); });
-      fotoWrap.appendChild(img);
-    } else {
-      var ph = document.createElement('div');
-      ph.className = 'pesanan-foto pesanan-foto-empty';
-      ph.textContent = '📷';
-      fotoWrap.appendChild(ph);
-    }
-    card.appendChild(fotoWrap);
+    var main = document.createElement('div');
+    main.className = 'card-main';
+    main.appendChild(buildFotoWrap(p));
 
-    var info = document.createElement('div');
-    info.className = 'pesanan-info';
-    info.innerHTML =
-      '<div class="pesanan-kode">' + escapeHtml(p.kodeMembership) + '</div>' +
-      '<div class="pesanan-menu">' + escapeHtml(p.namaMenu) + '</div>' +
-      '<div class="pesanan-meta">× ' + escapeHtml(String(p.qty)) +
-      ' &nbsp;•&nbsp; ' + escapeHtml(formatWaktu(p.timestamp)) + '</div>' +
-      '<div class="pesanan-legacy-label">order lama</div>';
-    card.appendChild(info);
+    var body = document.createElement('div');
+    body.className = 'card-body';
+    body.innerHTML =
+      '<div class="card-head">' +
+        '<span class="card-kode">' + escapeHtml(p.kodeMembership) + '</span>' +
+        '<span class="card-total">× ' + escapeHtml(String(p.qty)) + '</span>' +
+      '</div>' +
+      '<div class="card-meta">' +
+        '<span class="card-order">' + escapeHtml(p.namaMenu) + '</span>' +
+        '<span class="card-time">' + escapeHtml(formatWaktu(p.timestamp)) + '</span>' +
+      '</div>';
 
-    var delBtn = document.createElement('button');
-    delBtn.type = 'button';
-    delBtn.className = 'btn-delete';
-    delBtn.textContent = '🗑️ Hapus';
-    delBtn.addEventListener('click', function () { openDeleteModal(p); });
-    card.appendChild(delBtn);
+    var foot = document.createElement('div');
+    foot.className = 'card-foot';
+    foot.innerHTML =
+      '<span class="badge-legacy">order lama</span>' +
+      '<span class="card-foot-label">Baris #' + escapeHtml(String(p.rowIndex)) + '</span>';
+    body.appendChild(foot);
+
+    main.appendChild(body);
+    card.appendChild(main);
+    card.appendChild(buildCardActions(null, function () { openDeleteModal(p); }));
 
     return card;
   }
@@ -563,11 +638,15 @@
       btn.disabled = false;
       btn.textContent = '↻';
     });
-    var formCard = document.querySelector('.form-card');
-    if (formCard) { formCard.prepend(btn); }
+    // Tombol refresh ditempel di header halaman (dulu di .form-card yang
+    // sudah tidak dipakai lagi setelah redesign TUGAS #3).
+    var header = document.querySelector('.page-header');
+    if (header) { header.prepend(btn); }
   })();
 
-  // ─── INIT (lewat PIN gate) ───────────────────────────────────────────────
+  // ─── INIT (lewat guard login terpusat ../admin-auth.js) ───────────────────
+  // onReady() akan REDIRECT ke ../index.html kalau belum login (gate PIN
+  // embedded sudah dihapus), jadi loadMenuList/loadList hanya jalan authed.
 
   MAO_ADMIN.onReady(async function () {
     await loadMenuList();

@@ -318,20 +318,31 @@
           var div = document.createElement('div');
           div.className = 'hadiah-item';
 
-          // Foto with broken-image handling
+          // Foto hadiah — kolom "URL Foto" di sheet berisi LINK SHARE Google
+          // Drive (varian ?usp=drivesdk / ?usp=sharing / ?usp=drive_link), yang
+          // tidak bisa langsung dijadikan <img src>. MAO_CONFIG.driveImageUrl()
+          // mengekstrak file ID lalu mengubahnya ke /thumbnail?id=<ID>&sz=...
+          // (deteksi varian + fallback lh3 ada di ../config.js).
           var hasFoto = item.urlFoto && item.urlFoto.trim() !== '';
           if (hasFoto) {
             var img = document.createElement('img');
             img.className = 'hadiah-foto';
             img.alt = escapeHtml(item.judul);
-            img.src = item.urlFoto;
-            img.onerror = function () {
-              // Replace with placeholder
-              var ph = document.createElement('div');
-              ph.className = 'hadiah-foto-placeholder';
-              ph.textContent = '🎁';
-              div.replaceChild(ph, img);
-            };
+            img.loading = 'lazy';
+
+            // Fallback berlapis: thumbnail → lh3.googleusercontent → placeholder.
+            // (Gambar Drive tetap bisa gagal kalau file tidak di-share
+            // "Anyone with the link".)
+            MAO_CONFIG.attachDriveImageFallback(img, item.urlFoto, function () {
+              var parent = img.parentNode;
+              if (!parent) return;
+              var phBroken = document.createElement('div');
+              phBroken.className = 'hadiah-foto-placeholder';
+              phBroken.textContent = '🎁';
+              parent.replaceChild(phBroken, img);
+            });
+
+            img.src = MAO_CONFIG.driveImageUrl(item.urlFoto, 'small');
             div.appendChild(img);
           } else {
             var ph = document.createElement('div');

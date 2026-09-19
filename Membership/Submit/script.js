@@ -266,14 +266,24 @@ function renderMenuList(menuList) {
     return { namaMenu: nama, qty: 0 };
   });
 
+  // Container WAJIB dibersihkan dulu: renderMenuList() dipanggil berkali-kali
+  // dalam satu page-load (render dari cache MAO_CACHE → fetch fresh → tombol
+  // hard refresh). Tanpa ini, tiap render MENAMBAH satu set baris menu baru,
+  // jadi ada 2+ baris per menu dengan id qty yang sama — dan
+  // document.getElementById("qty-"+idx) selalu mengembalikan elemen PERTAMA
+  // (baris basi) sehingga tombol +/- tampak tidak berfungsi (TUGAS #7).
+  menuListEl.innerHTML = "";
+
   menuData.forEach(function (item, idx) {
     var div = document.createElement("div");
     div.className = "menu-item";
+    // Tanpa id: label qty diambil lewat barisnya sendiri (row.querySelector),
+    // supaya tidak mungkin lagi bentrok antar baris.
     div.innerHTML =
       '<span class="menu-name">' + escapeHtml(item.namaMenu) + "</span>" +
       '<div class="stepper">' +
         '<button type="button" class="btn-minus" data-idx="' + idx + '">−</button>' +
-        '<span class="qty-value" id="qty-' + idx + '">0</span>' +
+        '<span class="qty-value">0</span>' +
         '<button type="button" class="btn-plus" data-idx="' + idx + '">+</button>' +
       "</div>";
     menuListEl.appendChild(div);
@@ -286,13 +296,26 @@ function renderMenuList(menuList) {
 menuListEl.addEventListener("click", function (e) {
   var btn = e.target.closest(".btn-minus, .btn-plus");
   if (!btn) return;
+
+  // Ambil baris tempat tombol yang DIKLIK berada — tiap baris independen.
+  var row = btn.closest(".menu-item");
+  if (!row) return;
+
   var idx = parseInt(btn.getAttribute("data-idx"), 10);
+  if (isNaN(idx) || idx < 0 || idx >= menuData.length) return;
+
   if (btn.classList.contains("btn-plus")) {
     menuData[idx].qty++;
   } else {
     if (menuData[idx].qty > 0) menuData[idx].qty--;
   }
-  document.getElementById("qty-" + idx).textContent = menuData[idx].qty;
+
+  // Update label di BARIS YANG DIKLIK. Sebelumnya pakai
+  // document.getElementById("qty-" + idx) yang selalu mengembalikan elemen
+  // pertama dengan id itu di seluruh dokumen — kalau baris ter-render ganda,
+  // angka yang berubah ada di baris lain (yang tidak dilihat user).
+  var qtyEl = row.querySelector(".qty-value");
+  if (qtyEl) qtyEl.textContent = String(menuData[idx].qty);
 });
 
 // ─── PHOTO UPLOAD + COMPRESSION ─────────────────────────────────────────────
@@ -354,34 +377,7 @@ fotoInputCamera.addEventListener("change", async function () {
   fotoInputCamera.value = "";
   fotoInput.value = "";
 
-  if (file.size > 10 * 1024 * 1024) {
-    showError("Ukuran foto terlalu besar (maksimal 10MB). Silakan pilih foto lain.");
-    return;
-  }
-
-  hideError();
-  compressedBase64 = null;
-
-  try {
-    var result = await MAO_CONFIG.compressImageToBase64(file);
-    compressedBase64 = result.base64;
-    compressedMimeType = result.mimeType;
-    compressedFileName = (kodeHidden.value || "unknown") + "_" + Date.now() + ".jpg";
-  } catch (err) {
-    console.error("Compression error:", err);
-    try {
-      compressedBase64 = await blobToBase64(file);
-      compressedMimeType = file.type || "image/jpeg";
-      compressedFileName = file.name || "foto.jpg";
-    } catch (fallbackErr) {
-      console.error("Fallback base64 error:", fallbackErr);
-    }
-  }
-
-  if (previewObjectUrl) URL.revokeObjectURL(previewObjectUrl);
-  previewObjectUrl = URL.createObjectURL(file);
-  fotoPreview.src = previewObjectUrl;
-  uploadArea.classList.add("has-photo");
+  await processFotoFile(file);
 });
 
 // File selected
@@ -394,6 +390,38 @@ fotoInput.addEventListener("change", async function () {
   fotoInput.value = "";
   fotoInputCamera.value = "";
 
+  await processFotoFile(file);
+});
+
+/** Bersihkan state foto form (preview + payload siap-kirim). */
+function clearFotoState() {
+  compressedBase64 = null;
+  compressedMimeType = "";
+  compressedFileName = "";
+  if (previewObjectUrl) {
+    URL.revokeObjectURL(previewObjectUrl);
+    previewObjectUrl = null;
+  }
+  fotoPreview.removeAttribute("src");
+  uploadArea.classList.remove("has-photo");
+}
+
+/**
+ * SATU jalur untuk foto dari galeri MAUPUN kamera (dulu logika
+ * validasi+kompresi diduplikasi persis di kedua handler dan memakai
+ * `file.type` apa adanya — file dengan MIME kosong / "image/jpg" / HEIC hasil
+ * capture kamera ikut terkirim lalu ditolak server dengan pesan generik
+ * "Format foto tidak didukung").
+ *
+ * MAO_CONFIG.prepareFotoForUpload() (config.js) mendeteksi jenis gambar dari
+ * MAGIC BYTES lalu menjamin payload ber-byte JPEG/PNG — satu-satunya format
+ * yang diterima validateFotoBase64_() di code.gs.js. Kalau file tidak bisa
+ * dijadikan JPEG/PNG (mis. HEIC di browser non-Safari), pesannya muncul di
+ * sini sebelum request dikirim.
+ *
+ * @param {File} file
+ */
+async function processFotoFile(file) {
   // Validasi ukuran asli sebelum kompresi (max 10MB)
   if (file.size > 10 * 1024 * 1024) {
     showError("Ukuran foto terlalu besar (maksimal 10MB). Silakan pilih foto lain.");
@@ -401,32 +429,30 @@ fotoInput.addEventListener("change", async function () {
   }
 
   hideError();
-  compressedBase64 = null;
+  clearFotoState();
 
   try {
-    // Kompresi via shared function di ../config.js
-    var result = await MAO_CONFIG.compressImageToBase64(file);
+    var result = await MAO_CONFIG.prepareFotoForUpload(file);
     compressedBase64 = result.base64;
     compressedMimeType = result.mimeType;
-    compressedFileName = (kodeHidden.value || "unknown") + "_" + Date.now() + ".jpg";
+    compressedFileName = (kodeHidden.value || "unknown") + "_" + Date.now() +
+      (result.mimeType === "image/png" ? ".png" : ".jpg");
   } catch (err) {
-    console.error("Compression error:", err);
-    // Fallback: pakai file asli kalau canvas gagal
-    try {
-      compressedBase64 = await blobToBase64(file);
-      compressedMimeType = file.type || "image/jpeg";
-      compressedFileName = file.name || "foto.jpg";
-    } catch (fallbackErr) {
-      console.error("Fallback base64 error:", fallbackErr);
-    }
+    console.error("Foto gagal diproses:", err);
+    clearFotoState();
+    showError(
+      err && err.code === "unsupported_image_format"
+        ? err.message
+        : "Foto gagal diproses. Coba pilih foto JPG/PNG lain."
+    );
+    return;
   }
 
-  // Preview lokal (object URL lama di-revoke supaya tidak menumpuk / leak)
-  if (previewObjectUrl) URL.revokeObjectURL(previewObjectUrl);
+  // Preview lokal (object URL lama sudah di-revoke di clearFotoState)
   previewObjectUrl = URL.createObjectURL(file);
   fotoPreview.src = previewObjectUrl;
   uploadArea.classList.add("has-photo");
-});
+}
 
 // ─── SUBMIT HANDLER ─────────────────────────────────────────────────────────
 
@@ -832,18 +858,9 @@ async function tryRecoverByOrderId(orderId) {
 
 // ─── HELPERS ────────────────────────────────────────────────────────────────
 
-function blobToBase64(blob) {
-  return new Promise(function (resolve, reject) {
-    var reader = new FileReader();
-    reader.onload = function () {
-      // result = "data:image/jpeg;base64,xxxxx" → ambil bagian setelah koma
-      var base64 = reader.result.split(",")[1];
-      resolve(base64);
-    };
-    reader.onerror = function () { reject(new Error("Gagal convert blob ke base64")); };
-    reader.readAsDataURL(blob);
-  });
-}
+// CATATAN: helper blobToBase64() lokal DIHAPUS dari file ini — kompresi +
+// fallback foto kini satu pintu lewat MAO_CONFIG.prepareFotoForUpload() di
+// config.js (yang memakai MAO_CONFIG.blobToBase64). Tidak ada pemakai lain.
 
 /**
  * Bangun Blob dari base64 (tanpa prefix data URL) — byte identik dengan yang
@@ -907,25 +924,20 @@ function sanitizeFilePart(str) {
 }
 
 function resetForm() {
-  // Reset qty semua ke 0
+  // Reset qty semua ke 0 — lewat BARIS (menuListEl.children[idx]), bukan
+  // getElementById("qty-"+idx): id global itu rawan duplikat/basi (lihat
+  // catatan di renderMenuList()).
   menuData.forEach(function (item, idx) {
     item.qty = 0;
-    var el = document.getElementById("qty-" + idx);
+    var row = menuListEl.children[idx];
+    var el = row ? row.querySelector(".qty-value") : null;
     if (el) el.textContent = "0";
   });
 
   // Reset foto (revoke object URL preview form; reportObjectUrl TIDAK disentuh)
   fotoInput.value = "";
   fotoInputCamera.value = "";
-  compressedBase64 = null;
-  compressedMimeType = "";
-  compressedFileName = "";
-  if (previewObjectUrl) {
-    URL.revokeObjectURL(previewObjectUrl);
-    previewObjectUrl = null;
-  }
-  fotoPreview.removeAttribute("src");
-  uploadArea.classList.remove("has-photo");
+  clearFotoState();
 
   // Kode membership sengaja TIDAK direset di sini; "Buat Pesanan Baru"
   // yang mengembalikannya ke placeholder (biar tetap bisa submit ulang

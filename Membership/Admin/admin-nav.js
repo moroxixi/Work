@@ -4,7 +4,8 @@
  * Di-load oleh semua halaman di bawah Membership/Admin/ SEBELUM script.js
  * masing-masing, setelah admin-auth.js.
  *
- * Render SETELAH PIN gate lolos (via MAO_ADMIN.onReady) + DOM ready.
+ * Render SETELAH login terpusat lolos (via MAO_ADMIN.onReady) + DOM ready.
+ * onReady() di admin-auth.js akan redirect ke ../index.html kalau belum login.
  * Dark theme konsisten dengan nav.js publik.
  *
  * Markup minimum yang wajib ada di HTML:
@@ -55,7 +56,7 @@
     });
   }
 
-  // Wait for both DOM ready AND PIN gate verified
+  // Wait for both DOM ready AND login terverifikasi
   function whenReady(fn) {
     if (document.readyState !== 'loading') {
       fn();

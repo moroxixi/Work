@@ -1,7 +1,8 @@
 /**
  * MAO Admin — Member (client)
  *
- * Flow: PIN gate → daftar member ringkas → searchable dropdown → pilih member
+ * Flow: login terpusat (../index.html lewat admin-auth.js) → daftar member
+ * ringkas → searchable dropdown → pilih member
  * → adminGetMemberDetail → form edit (Kode Membership read-only) → Simpan.
  *
  * TUGAS 4: Tombol "Generate Kartu Member" — reuse render logic dari
@@ -102,6 +103,35 @@
     var m = String(d.getMonth() + 1).padStart(2, '0');
     var day = String(d.getDate()).padStart(2, '0');
     return y + '-' + m + '-' + day;
+  }
+
+  /**
+   * Set nilai <select> walau nilainya tidak ada di daftar option tetap:
+   * option sementara ditambahkan supaya nilai dari sheet tidak hilang / tidak
+   * terpaksa diubah admin. Dipakai untuk kolom Status, yang sejak 2026-09-20
+   * bisa berisi nilai bebas dari form Pendaftaran (opsi "Lainnya" →
+   * "Lainnya: <teks bebas>").
+   *
+   * @param {HTMLSelectElement} selectEl
+   * @param {string} value
+   */
+  function setSelectValue(selectEl, value) {
+    var v = String(value || '');
+    if (!v) { selectEl.value = ''; return; }
+
+    var found = false;
+    for (var i = 0; i < selectEl.options.length; i++) {
+      if (selectEl.options[i].value === v) { found = true; break; }
+    }
+
+    if (!found) {
+      var opt = document.createElement('option');
+      opt.value = v;
+      opt.textContent = v;
+      selectEl.appendChild(opt);
+    }
+
+    selectEl.value = v;
   }
 
   // ─── LOAD DAFTAR MEMBER ────────────────────────────────────────────────
@@ -220,7 +250,8 @@
     domisiliInput.value = member.domisili || '';
     tanggalInput.value = toInputDate(member.tanggalLahir);
     jkSelect.value = member.jenisKelamin || '';
-    statusSelect.value = member.status || '';
+    // Status bisa berisi nilai bebas ("Lainnya: <teks>") → lihat setSelectValue().
+    setSelectValue(statusSelect, member.status);
     waInput.value = member.nomorWhatsApp || '';
 
     formStatus.textContent =
@@ -512,7 +543,9 @@
     if (formCard) { formCard.prepend(btn); }
   })();
 
-  // ─── INIT (lewat PIN gate) ───────────────────────────────────────────────
+  // ─── INIT (lewat guard login terpusat ../admin-auth.js) ──────────────────
+  // onReady() akan REDIRECT ke ../index.html kalau belum login (gate PIN
+  // embedded sudah dihapus), jadi load data hanya jalan dalam kondisi authed.
 
   MAO_ADMIN.onReady(loadMemberList);
 })();

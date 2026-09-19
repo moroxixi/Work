@@ -34,6 +34,30 @@ const photoPickerModal = document.getElementById("photoPickerModal");
 const photoPickerCamera = document.getElementById("photoPickerCamera");
 const photoPickerGallery = document.getElementById("photoPickerGallery");
 const photoPickerCancel = document.getElementById("photoPickerCancel");
+const statusSelect        = document.getElementById("Status");
+const statusLainnyaGroup  = document.getElementById("statusLainnyaGroup");
+const statusLainnyaInput  = document.getElementById("StatusLainnya");
+
+// Nilai opsi "Lainnya" pada <select id="Status"> — dipakai sebagai penanda
+// untuk menampilkan input teks bebas (TUGAS: status custom).
+const STATUS_LAINNYA = "Lainnya";
+
+// ─── STATUS "LAINNYA" (input teks bebas) ────────────────────────────────────
+// Group input disembunyikan kalau opsi lain yang dipilih; nilainya dikosongkan
+// supaya tidak ada teks basi yang ikut terkirim. Dipanggil juga setelah
+// form.reset() (reset tidak memicu event change).
+function syncStatusLainnya() {
+  const isLainnya = statusSelect.value === STATUS_LAINNYA;
+  statusLainnyaGroup.hidden = !isLainnya;
+  if (!isLainnya) statusLainnyaInput.value = "";
+}
+
+statusSelect.addEventListener("change", function () {
+  syncStatusLainnya();
+  if (statusSelect.value === STATUS_LAINNYA) statusLainnyaInput.focus();
+});
+
+syncStatusLainnya(); // kondisi awal (opsi default belum tentu "Lainnya")
 
 // ─── STATE ──────────────────────────────────────────────────────────────
 let compressedBase64 = null;   // foto profil terkompresi (base64, via config.js)
@@ -56,12 +80,28 @@ let cardDownloaded = false;     // true setelah Download Kartu berhasil dipicu (
 // ─── CLIENT-SIDE VALIDATION ─────────────────────────────────────────────────
 
 function validateForm() {
+  // Status "Lainnya" → nilai yang dikirim = teks bebas user, dengan prefix
+  // "Lainnya: " supaya asal pilihan tetap terbaca di sheet. Backend
+  // (doPostPendaftaran_ di code.gs.js) cuma trim + cek non-kosong kemudian
+  // menyimpannya apa adanya — jadi TIDAK perlu perubahan backend.
+  const statusValue  = statusSelect.value;
+  const statusCustom = statusLainnyaInput.value.trim();
+
+  if (statusValue === STATUS_LAINNYA && !statusCustom) {
+    return {
+      ok: false,
+      msg: 'Status "Lainnya" dipilih — isi kolom "Status (isi sendiri)" dulu, atau pilih status lain.',
+    };
+  }
+
   const fields = {
     Nama:          document.getElementById("Nama").value.trim(),
     Domisili:      document.getElementById("Domisili").value.trim(),
     TanggalLahir:  document.getElementById("TanggalLahir").value,
     JenisKelamin:  document.getElementById("JenisKelamin").value,
-    Status:        document.getElementById("Status").value,
+    Status:        statusValue === STATUS_LAINNYA
+                     ? (STATUS_LAINNYA + ": " + statusCustom)
+                     : statusValue,
     NomorWhatsApp: document.getElementById("NomorWhatsApp").value.trim(),
     Username:      document.getElementById("Username").value.trim(),
   };
@@ -264,6 +304,7 @@ backBtn.addEventListener("click", function () {
     cardSection.hidden = true;
     formSection.hidden = false;
     form.reset();
+    syncStatusLainnya(); // reset() tidak memicu change → sembunyikan input custom
     resetFotoState();
     hideError();
 
@@ -330,33 +371,7 @@ fotoInputCamera.addEventListener("change", async function () {
   fotoInputCamera.value = "";
   fotoInput.value = "";
 
-  if (file.size > 10 * 1024 * 1024) {
-    showError("Ukuran foto terlalu besar (maksimal 10MB). Silakan pilih foto lain.");
-    return;
-  }
-
-  hideError();
-  resetFotoState(); // bersihkan state preview/kompresi LAMA (input sudah dikosongkan di atas)
-  fotoBlob = file;
-
-  try {
-    var result = await MAO_CONFIG.compressImageToBase64(file);
-    compressedBase64 = result.base64;
-    compressedMimeType = result.mimeType;
-    compressedFileName = (document.getElementById("Nama").value.trim() || "member") +
-      "_" + Date.now() + ".jpg";
-  } catch (err) {
-    console.error("Compression error:", err);
-    try {
-      compressedBase64 = await blobToBase64(file);
-      compressedMimeType = file.type || "image/jpeg";
-      compressedFileName = file.name || "foto.jpg";
-    } catch (fallbackErr) {
-      console.error("Fallback base64 error:", fallbackErr);
-    }
-  }
-
-  showFotoPreview(file);
+  await processFotoFile(file);
 });
 
 fotoInput.addEventListener("change", async function () {
@@ -368,6 +383,27 @@ fotoInput.addEventListener("change", async function () {
   fotoInput.value = "";
   fotoInputCamera.value = "";
 
+  await processFotoFile(file);
+});
+
+/**
+ * SATU jalur untuk foto dari galeri MAUPUN kamera.
+ *
+ * Sebelumnya logika validasi+kompresi diduplikasi persis di kedua handler
+ * (dan `file.type` dipakai apa adanya), sehingga file dengan MIME kosong/
+ * "image/jpg"/HEIC dari hasil capture kamera ikut terkirim ke server dan
+ * ditolak dengan pesan generik "Format foto tidak didukung".
+ *
+ * Sekarang: MAO_CONFIG.prepareFotoForUpload() (config.js) mendeteksi jenis
+ * gambar dari MAGIC BYTES (bukan File.type) lalu menjamin payload yang dikirim
+ * ber-byte JPEG atau PNG — satu-satunya format yang diterima
+ * validateFotoBase64_() di code.gs.js. Kalau file memang tidak bisa jadi
+ * JPEG/PNG (mis. HEIC di browser non-Safari), user dapat pesan jelas DI SINI
+ * sebelum request dikirim, bukan error server yang membingungkan.
+ *
+ * @param {File} file
+ */
+async function processFotoFile(file) {
   // Validasi ukuran asli sebelum kompresi (max 10MB)
   if (file.size > 10 * 1024 * 1024) {
     showError("Ukuran foto terlalu besar (maksimal 10MB). Silakan pilih foto lain.");
@@ -375,33 +411,32 @@ fotoInput.addEventListener("change", async function () {
   }
 
   hideError();
-  resetFotoState(); // bersihkan state preview/kompresi LAMA (input sudah dikosongkan di atas)
+  resetFotoState(); // bersihkan state preview/kompresi LAMA
 
   // Simpan referensi File/Blob utk dipakai ulang di kartu membership
   // (instance yang sama dengan yang di-compress & dikirim ke server).
   fotoBlob = file;
 
   try {
-    var result = await MAO_CONFIG.compressImageToBase64(file);
+    var result = await MAO_CONFIG.prepareFotoForUpload(file);
     compressedBase64 = result.base64;
     compressedMimeType = result.mimeType;
     compressedFileName = (document.getElementById("Nama").value.trim() || "member") +
-      "_" + Date.now() + ".jpg";
+      "_" + Date.now() + (result.mimeType === "image/png" ? ".png" : ".jpg");
   } catch (err) {
-    console.error("Compression error:", err);
-    // Fallback: pakai file asli kalau canvas gagal
-    try {
-      compressedBase64 = await blobToBase64(file);
-      compressedMimeType = file.type || "image/jpeg";
-      compressedFileName = file.name || "foto.jpg";
-    } catch (fallbackErr) {
-      console.error("Fallback base64 error:", fallbackErr);
-    }
+    console.error("Foto gagal diproses:", err);
+    resetFotoState();
+    showError(
+      err && err.code === "unsupported_image_format"
+        ? err.message
+        : "Foto gagal diproses. Coba pilih foto JPG/PNG lain."
+    );
+    return;
   }
 
   // Tampilkan preview (dari file asli — visual identik dengan hasil kompresi)
   showFotoPreview(file);
-});
+}
 
 /**
  * State terisi: ganti class .has-preview pada #uploadArea. CSS yang mengatur
@@ -432,17 +467,8 @@ function resetFotoState() {
   uploadArea.classList.remove("has-preview");
 }
 
-function blobToBase64(blob) {
-  return new Promise(function (resolve, reject) {
-    var reader = new FileReader();
-    reader.onload = function () {
-      var base64 = reader.result.split(",")[1];
-      resolve(base64);
-    };
-    reader.onerror = function () { reject(new Error("Gagal convert blob ke base64")); };
-    reader.readAsDataURL(blob);
-  });
-}
+// CATATAN: helper blobToBase64() lokal DIHAPUS — sekarang shared di config.js
+// (MAO_CONFIG.blobToBase64), dipakai oleh MAO_CONFIG.prepareFotoForUpload().
 
 // ─── UI HELPERS ─────────────────────────────────────────────────────────────
 

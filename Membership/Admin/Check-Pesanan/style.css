@@ -32,36 +32,86 @@ body {
   line-height: 1.5;
 }
 
-.page { width: 100%; max-width: 560px; padding-bottom: 90px; }
+.page { width: 100%; max-width: 560px; padding-bottom: 130px; }
 
-.form-card {
+/* ─── Header halaman (pola header MoroDuit/Admin/Riwayat) ────────────────── */
+/* Dulu halaman ini satu kartu besar (.form-card) dengan logo di tengah.
+   Sekarang: header terpisah + summary strip + list kartu, mengikuti struktur
+   Riwayat supaya hierarki informasi (judul → ringkasan → daftar) lebih jelas. */
+.page-header {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 18px 56px 18px 20px; /* kanan lega: tombol hard-refresh absolut */
+  margin-bottom: 16px;
+  background:
+    linear-gradient(135deg, rgba(255, 77, 28, 0.16), rgba(255, 179, 0, 0.05)),
+    var(--surface);
+  border: 1px solid var(--border);
+  border-top: 3px solid var(--accent1);
+  border-radius: var(--radius);
+  position: relative;
+}
+
+.header-logo {
+  width: 52px;
+  height: 52px;
+  object-fit: cover;
+  border-radius: 14px;
+  flex-shrink: 0;
+  background: var(--surface2);
+}
+
+.header-text { min-width: 0; }
+
+.header-title {
+  font-size: 1.05rem;
+  font-weight: 800;
+  letter-spacing: 0.02em;
+  line-height: 1.3;
+  color: var(--text);
+}
+
+.header-sub {
+  font-size: 0.78rem;
+  color: var(--text-dim);
+  margin-top: 3px;
+}
+
+/* Tombol hard refresh — ditempel di header oleh script.js. Sebelum redesign,
+   class ini dipakai tanpa CSS sama sekali (tombol tampil polos); sekarang
+   distyle konsisten dengan halaman Admin/Member. */
+.hard-refresh-btn {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  width: 36px;
+  height: 36px;
+  font-size: 1.1rem;
+  color: var(--text-dim);
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  cursor: pointer;
+  transition: color 0.2s, border-color 0.2s, transform 0.15s;
+  z-index: 10;
+}
+
+.hard-refresh-btn:hover { color: var(--accent1); border-color: var(--accent1); }
+.hard-refresh-btn:active { transform: scale(0.9); }
+.hard-refresh-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+
+/* ─── State msgs ─────────────────────────────────────────────────────────── */
+.state-card {
+  text-align: center;
+  padding: 36px 20px;
+  color: var(--text-dim);
   background: var(--surface);
   border: 1px solid var(--border);
   border-radius: var(--radius);
-  padding: 32px 28px;
-  box-shadow: 0 8px 32px rgba(255, 77, 28, 0.08);
 }
-
-.brand { text-align: center; margin-bottom: 28px; }
-
-.brand-logo {
-  display: block;
-  height: auto;
-  max-width: min(70%, 200px);
-  margin: 0 auto 14px;
-  border-radius: 18px;
-}
-
-.tagline {
-  color: var(--text-dim);
-  font-size: 0.85rem;
-  margin-top: 4px;
-  letter-spacing: 0.04em;
-}
-
-/* ─── State msgs ─────────────────────────────────────────────────────────── */
-.state-msg { text-align: center; padding: 40px 20px; color: var(--text-dim); }
-.state-msg p { margin-top: 12px; font-size: 0.9rem; }
+.state-card p { margin-top: 12px; font-size: 0.9rem; overflow-wrap: anywhere; }
+.state-icon { font-size: 2rem; }
 
 .spinner {
   width: 36px; height: 36px;
@@ -101,39 +151,188 @@ body {
   margin-top: 20px;
 }
 
+/* ─── Ringkasan (pola .profit-summary di Riwayat) ────────────────────────── */
+.summary-strip {
+  display: flex;
+  align-items: stretch;
+  justify-content: center;
+  gap: 14px;
+  padding: 14px 16px;
+  margin-bottom: 12px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+}
+
+.summary-block {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  flex: 1;
+  min-width: 0;
+}
+
+.summary-label {
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--text-dim);
+}
+
+.summary-value {
+  font-size: 1.3rem;
+  font-weight: 800;
+  line-height: 1.25;
+  color: var(--accent2);
+}
+
+.summary-sep { width: 1px; background: var(--border); }
+
 /* ─── List pesanan ───────────────────────────────────────────────────────── */
 .list-info {
-  font-size: 0.8rem;
+  font-size: 0.78rem;
   color: var(--text-dim);
   margin-bottom: 14px;
   text-align: center;
 }
 
+/* Empty state (pola .empty-state di Riwayat) */
+.empty-state {
+  text-align: center;
+  padding: 32px 20px;
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: var(--text-dim);
+  background: var(--surface);
+  border: 1px dashed var(--border);
+  border-radius: var(--radius);
+}
+
 .pesanan-list {
   display: flex;
   flex-direction: column;
-  gap: 14px;
+  gap: 12px;
 }
 
+/* ─── Kartu pesanan (anatomi kartu Riwayat: header → meta → detail → aksi) ── */
 .pesanan-card {
-  display: flex;
-  gap: 12px;
-  align-items: flex-start;
-  background: var(--surface2);
+  background: var(--surface);
   border: 1px solid var(--border);
-  border-radius: 10px;
-  padding: 12px;
+  border-radius: var(--radius);
+  padding: 14px 16px;
+  cursor: pointer;
+  transition: border-color 0.18s, background-color 0.18s, transform 0.12s;
 }
+
+/* Affordance klik seperti .riwayat-card:hover/focus di MoroDuit */
+.pesanan-card:hover {
+  border-color: var(--accent1);
+  background: rgba(255, 77, 28, 0.06);
+}
+.pesanan-card:active { transform: scale(0.995); }
+.pesanan-card:focus {
+  outline: none;
+  border-color: var(--accent1);
+  box-shadow: 0 0 0 3px rgba(255, 77, 28, 0.18);
+}
+
+.card-main { display: flex; gap: 12px; align-items: flex-start; }
+.card-body { flex: 1; min-width: 0; }
+
+.card-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 10px;
+  margin-bottom: 3px;
+}
+
+.card-kode {
+  font-size: 0.9rem;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  color: var(--accent2);
+  overflow-wrap: anywhere;
+}
+
+.card-total {
+  flex-shrink: 0;
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--text);
+}
+
+.card-meta {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 10px;
+  margin-bottom: 9px;
+}
+
+.card-order {
+  font-size: 0.72rem;
+  color: var(--text-dim);
+  overflow-wrap: anywhere;
+}
+
+.card-time { flex-shrink: 0; font-size: 0.72rem; color: var(--text-dim); }
+
+.card-items {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  border-top: 1px dashed var(--border);
+  padding-top: 8px;
+}
+
+.card-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 10px;
+  font-size: 0.85rem;
+}
+
+.card-item-name { color: var(--text); overflow-wrap: anywhere; }
+.card-item-qty { flex-shrink: 0; font-weight: 700; color: var(--accent2); }
+
+.card-foot {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.card-foot-label { font-size: 0.72rem; font-weight: 600; color: var(--text-dim); }
+
+.badge-legacy {
+  display: inline-block;
+  padding: 2px 8px;
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--accent2);
+  background: rgba(255, 179, 0, 0.1);
+  border: 1px solid rgba(255, 179, 0, 0.3);
+  border-radius: 999px;
+}
+
+.card-actions { display: flex; gap: 8px; margin-top: 12px; }
 
 .pesanan-foto-wrap { flex-shrink: 0; }
 
 .pesanan-foto {
   display: block;
-  width: 84px;
-  height: 84px;
+  width: 72px;
+  height: 72px;
   object-fit: cover;
-  border-radius: 8px;
-  background: var(--border);
+  border-radius: 10px;
+  background: var(--surface2);
   cursor: zoom-in;
 }
 
@@ -141,52 +340,34 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 1.6rem;
+  font-size: 1.5rem;
   cursor: default;
   border: 1px dashed var(--border);
 }
 
-.pesanan-info { flex: 1; min-width: 0; }
-
-.pesanan-kode {
-  font-size: 0.85rem;
-  font-weight: 700;
-  color: var(--accent2);
-  letter-spacing: 0.05em;
-  margin-bottom: 2px;
-}
-
-.pesanan-menu {
-  font-size: 0.95rem;
-  font-weight: 600;
-  color: var(--text);
-  margin-bottom: 4px;
-  overflow-wrap: anywhere;
-}
-
-.pesanan-meta {
-  font-size: 0.78rem;
-  color: var(--text-dim);
-}
-
-.pesanan-orderid {
-  font-size: 0.72rem;
-  color: var(--text-dim);
-  margin-top: 2px;
-  opacity: 0.7;
-}
-
+.btn-edit,
 .btn-delete {
-  flex-shrink: 0;
-  padding: 8px 12px;
+  flex: 1;
+  padding: 9px 12px;
   font-size: 0.8rem;
   font-weight: 700;
-  color: var(--danger);
-  background: rgba(255, 68, 68, 0.08);
-  border: 1px solid rgba(255, 68, 68, 0.3);
   border-radius: 8px;
   cursor: pointer;
   transition: background 0.15s;
+}
+
+.btn-edit {
+  color: var(--accent2);
+  background: rgba(255, 179, 0, 0.08);
+  border: 1px solid rgba(255, 179, 0, 0.3);
+}
+
+.btn-edit:hover { background: rgba(255, 179, 0, 0.18); }
+
+.btn-delete {
+  color: var(--danger);
+  background: rgba(255, 68, 68, 0.08);
+  border: 1px solid rgba(255, 68, 68, 0.3);
 }
 
 .btn-delete:hover { background: rgba(255, 68, 68, 0.18); }
@@ -315,84 +496,10 @@ body {
   margin-top: 4px;
 }
 
-/* ─── PIN gate (dikelola ../admin-auth.js) ───────────────────────────────── */
-.pin-gate {
-  position: fixed;
-  top: 0; left: 0; right: 0; bottom: 0;
-  z-index: 500;
-  display: flex;
-  align-items: flex-end;
-  justify-content: center;
-}
-
-.pin-gate[hidden] { display: none !important; }
-
-.pin-gate-backdrop {
-  position: absolute;
-  top: 0; left: 0; right: 0; bottom: 0;
-  background: rgba(0, 0, 0, 0.85);
-  backdrop-filter: blur(4px);
-  -webkit-backdrop-filter: blur(4px);
-}
-
-.pin-gate-sheet {
-  position: relative;
-  width: 100%;
-  max-width: 560px;
-  background: var(--surface);
-  border-radius: 16px 16px 0 0;
-  padding: 24px 16px;
-  padding-bottom: calc(24px + env(safe-area-inset-bottom));
-  animation: slideUp 0.2s ease-out;
-}
-
-.pin-gate-title {
-  text-align: center;
-  font-size: 0.95rem;
-  font-weight: 700;
-  color: var(--text);
-  margin-bottom: 6px;
-}
-
-.pin-gate-text {
-  text-align: center;
-  font-size: 0.85rem;
-  color: var(--text-dim);
-  margin-bottom: 16px;
-}
-
-.pin-gate-input {
-  width: 100%;
-  padding: 12px 14px;
-  font-size: 18px;
-  letter-spacing: 0.3em;
-  text-align: center;
-  background: var(--surface2);
-  border: 1px solid var(--border);
-  border-radius: 8px;
-  color: var(--text);
-  outline: none;
-  transition: border-color 0.2s, box-shadow 0.2s;
-  -webkit-appearance: none;
-}
-
-.pin-gate-input:focus {
-  border-color: var(--accent1);
-  box-shadow: 0 0 0 3px rgba(255, 77, 28, 0.15);
-}
-
-.pin-gate-msg {
-  margin-top: 12px;
-  padding: 12px 14px;
-  border-radius: 8px;
-  background: rgba(255, 68, 68, 0.1);
-  border: 1px solid rgba(255, 68, 68, 0.3);
-  color: var(--danger);
-  font-size: 0.85rem;
-  text-align: center;
-}
-
-.pin-gate .btn-submit { margin-top: 12px; }
+/* ─── Gate PIN embedded: DIHAPUS (2026-09-20) ───────────────────────────────
+   Login sekarang terpusat di Admin/index.html; halaman ini tidak lagi punya
+   overlay PIN sendiri (lihat Admin/admin-auth.js — MAO_ADMIN.onReady()).
+   CSS .pin-gate* lama ikut dihapus supaya tidak ada sisa mekanisme gate. */
 
 /* ─── Floater ────────────────────────────────────────────────────────────── */
 .floater-help {
@@ -424,77 +531,10 @@ body {
 
 .floater-help a:hover { text-decoration: underline; }
 
-/* ─── Receipt card (order grouped) ───────────────────────────────────────── */
-.receipt-card {
-  flex-direction: column;
-}
-
-.receipt-header {
-  margin-bottom: 8px;
-}
-
-.receipt-items {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-}
-
-.receipt-item {
-  display: flex;
-  justify-content: space-between;
-  align-items: baseline;
-  font-size: 0.88rem;
-  padding: 2px 0;
-}
-
-.receipt-item-name {
-  color: var(--text);
-  overflow-wrap: anywhere;
-}
-
-.receipt-item-qty {
-  flex-shrink: 0;
-  font-weight: 700;
-  color: var(--accent2);
-  margin-left: 8px;
-}
-
-.receipt-actions {
-  display: flex;
-  gap: 8px;
-  margin-top: 10px;
-}
-
-.btn-edit {
-  flex: 1;
-  padding: 8px 12px;
-  font-size: 0.8rem;
-  font-weight: 700;
-  color: var(--accent2);
-  background: rgba(255, 179, 0, 0.08);
-  border: 1px solid rgba(255, 179, 0, 0.3);
-  border-radius: 8px;
-  cursor: pointer;
-  transition: background 0.15s;
-}
-
-.btn-edit:hover { background: rgba(255, 179, 0, 0.18); }
-
-.receipt-actions .btn-delete {
-  flex: 1;
-}
-
-/* ─── Legacy card (no orderId) ──────────────────────────────────────────── */
-.legacy-card {
-  opacity: 0.85;
-}
-
-.pesanan-legacy-label {
-  font-size: 0.7rem;
-  color: var(--text-dim);
-  font-style: italic;
-  margin-top: 2px;
-}
+/* ─── Anatomi kartu lama (receipt-*/legacy-*): DIHAPUS (2026-09-20) ─────────
+   Sudah digantikan kelas .card-* di bagian "Kartu pesanan" di atas — semua
+   info struk (kode, order id, waktu, item × qty) kini dirender dengan pola
+   kartu Riwayat, jadi tidak ada dua set CSS kartu yang saling menimpa. */
 
 /* ─── Edit modal items ──────────────────────────────────────────────────── */
 .edit-items {
@@ -576,17 +616,22 @@ body {
 /* ─── Admin nav ─────────────────────────────────────────────────────────── */
 .admin-nav {
   position: fixed;
-  bottom: 0;
+  /* TUGAS #2 — bar ini dulu `bottom: 0` sama seperti .floater-help (z-index 100)
+     sehingga tertimbun bar floater "Hubungi Admin". Sekarang dinaikkan
+     setinggi floater (52px + safe-area), mengikuti pola .quicknav di halaman
+     customer (Hadiah/Submit/Hasil). padding safe-area di dalam bar dihapus
+     karena bar sudah tidak menempel di tepi layar (menghindari celah ganda). */
+  bottom: calc(52px + env(safe-area-inset-bottom));
   left: 0;
   right: 0;
   display: flex;
   gap: 4px;
   padding: 6px 8px;
-  padding-bottom: calc(6px + env(safe-area-inset-bottom));
   background: rgba(10, 10, 10, 0.92);
   backdrop-filter: blur(8px);
   -webkit-backdrop-filter: blur(8px);
   border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
   z-index: 99;
 }
 
@@ -629,6 +674,13 @@ body {
 }
 
 /* ─── Responsive ─────────────────────────────────────────────────────────── */
-@media (max-width: 480px) {
-  .form-card { padding: 24px 18px; }
+/* Baris header/meta kartu ditumpuk di layar sempit (pola media query
+   Riwayat: .riwayat-header/.riwayat-meta jadi kolom di ≤520px). */
+@media (max-width: 520px) {
+  .card-head,
+  .card-meta { flex-direction: column; align-items: flex-start; gap: 2px; }
+  .card-total,
+  .card-time { flex-shrink: 1; }
+  .page-header { gap: 12px; padding: 16px; }
+  .header-title { font-size: 1rem; }
 }

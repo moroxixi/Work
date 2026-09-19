@@ -70,6 +70,18 @@
           </select>
         </div>
 
+        <!-- Status "Lainnya": input teks bebas, muncul HANYA kalau opsi
+             "Lainnya" dipilih (di-toggle oleh script.js). Nilai yang dikirim
+             ke backend = "Lainnya: <teks>" supaya asal pilihannya tetap
+             terbaca di sheet; backend menyimpan status apa adanya. -->
+        <div class="form-group" id="statusLainnyaGroup" hidden>
+          <label for="StatusLainnya">Status (isi sendiri) <span class="req">*</span></label>
+          <input type="text" id="StatusLainnya" name="StatusLainnya"
+                 placeholder="contoh: Freelancer / Petani / Pensiunan"
+                 maxlength="40" autocomplete="off">
+          <span class="hint">Maksimal 40 karakter.</span>
+        </div>
+
         <!-- Nomor WhatsApp -->
         <div class="form-group">
           <label for="NomorWhatsApp">Nomor WhatsApp <span class="req">*</span></label>

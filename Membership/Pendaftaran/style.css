@@ -96,6 +96,11 @@ body {
   margin-bottom: 18px;
 }
 
+/* Group yang di-toggle JS (mis. #statusLainnyaGroup saat opsi "Lainnya"
+   dipilih) harus benar-benar hilang — eksplisit supaya tidak bergantung pada
+   default UA dan aman kalau nanti ada rule yang men-set display. */
+.form-group[hidden] { display: none !important; }
+
 label {
   display: block;
   font-size: 0.85rem;

@@ -452,18 +452,30 @@ function isUsernameTaken_(sheet, username) {
  *
  * Tipe dicek dari MAGIC BYTES hasil decode (bukan dari fotoMimeType yang
  * mudah dipalsukan client): whitelist JPEG (FFD8FF) & PNG (89504E47).
+ * Deteksi byte-nya ada di sniffFotoKind_() — lihat catatan di sana.
+ *
+ * CATATAN SISI CLIENT (2026-09-20): client sekarang TIDAK PERNAH mengirim foto
+ * non-JPEG/PNG — Pendaftaran/Submit memakai MAO_CONFIG.prepareFotoForUpload()
+ * (config.js) yang mendeteksi jenis dari magic bytes lalu mengompres ke JPEG
+ * (atau meneruskan byte asli kalau sudah JPEG/PNG), dan menampilkan pesan jelas
+ * sebelum request dikirim. Validasi di sini tetap dipertahankan sebagai
+ * pertahanan berlapis (client lama / request langsung).
  *
  * @param {string} fotoBase64 - raw base64 (atau data URI, ditoleransi)
  * @param {string} [fotoMimeType] - hanya informasi; keputusan dari magic bytes
- * @return {{ok: boolean, error: (string|undefined), errorType: (string|undefined), decodedBytes: number}}
+ * @return {{ok: boolean, error: (string|undefined), errorType: (string|undefined), decodedBytes: number, kind: (string|undefined)}}
  */
 function validateFotoBase64_(fotoBase64, fotoMimeType) {
   var raw = String(fotoBase64 || "").trim();
 
   // Toleran: kalau client mengirim data URI penuh, buang prefix-nya.
-  var dataUriMatch = raw.match(/^data:image\/(jpeg|jpg|png);base64,(.*)$/);
+  // Regex menerima SEMUA mime image/* — bukan cuma jpeg|jpg|png. Kalau prefix
+  // tipe lain (mis. image/heic) tidak ikut dibuang, Utilities.base64Decode()
+  // langsung gagal dan file yang sebenarnya bisa dinilai terlihat seperti
+  // "format tidak didukung".
+  var dataUriMatch = raw.match(/^data:image\/[a-z0-9.+-]+;base64,(.*)$/i);
   if (dataUriMatch) {
-    raw = dataUriMatch[2];
+    raw = dataUriMatch[1];
   }
 
   if (!raw) {
@@ -487,24 +499,15 @@ function validateFotoBase64_(fotoBase64, fotoMimeType) {
     };
   }
 
-  // Decode beberapa byte pertama untuk cek magic bytes (32 char base64 =
-  // kelipatan 4 → decode bersih jadi 24 byte).
-  var headBytes;
-  try {
-    headBytes = Utilities.base64Decode(b64.substring(0, 32));
-  } catch (err) {
-    headBytes = [];
-  }
+  var kind = sniffFotoKind_(b64);
 
-  var isJpeg =
-    headBytes.length >= 3 &&
-    headBytes[0] === 0xff && headBytes[1] === 0xd8 && headBytes[2] === 0xff;
-  var isPng =
-    headBytes.length >= 4 &&
-    headBytes[0] === 0x89 && headBytes[1] === 0x50 &&
-    headBytes[2] === 0x4e && headBytes[3] === 0x47;
-
-  if (!isJpeg && !isPng) {
+  if (kind !== "jpeg" && kind !== "png") {
+    // Diagnostik untuk Rofi: cukup untuk tahu APA yang dikirim client tanpa
+    // membocorkan isi foto (cuma potongan prefix + panjang).
+    Logger.log("⚠️ Foto ditolak: kind=" + (kind || "unknown") +
+      " | mime=" + String(fotoMimeType || "(kosong)") +
+      " | headB64=" + b64.substring(0, 16) +
+      " | len=" + b64.length + " chars");
     return {
       ok: false,
       error: "Format foto tidak didukung. Gunakan foto JPG atau PNG.",
@@ -512,7 +515,48 @@ function validateFotoBase64_(fotoBase64, fotoMimeType) {
     };
   }
 
-  return { ok: true, decodedBytes: decodedBytes };
+  return { ok: true, decodedBytes: decodedBytes, kind: kind };
+}
+
+/**
+ * Sniff jenis gambar dari string base64 (tanpa decode seluruh file).
+ *
+ * Dua jalur, supaya file valid tidak ikut ditolak karena masalah teknis:
+ *   1. Decode 32 char base64 pertama (= 24 byte, kelipatan 4 → decode bersih)
+ *      lalu cek magic bytes.
+ *   2. Kalau decode gagal (head terpotong / Utilities error), cek prefix base64
+ *      baku per format — nilainya deterministik terhadap byte awal file, jadi
+ *      tidak lebih mudah dipalsukan daripada magic bytes itu sendiri.
+ *
+ * @param {string} b64 - base64 bersih (prefix data URI sudah dibuang)
+ * @return {string} "jpeg"|"png"|"webp"|"gif"|"" (tidak dikenal)
+ */
+function sniffFotoKind_(b64) {
+  if (!b64) return "";
+
+  try {
+    var head = Utilities.base64Decode(b64.substring(0, 32));
+    if (head.length >= 3 &&
+        head[0] === 0xff && head[1] === 0xd8 && head[2] === 0xff) return "jpeg";
+    if (head.length >= 4 &&
+        head[0] === 0x89 && head[1] === 0x50 &&
+        head[2] === 0x4e && head[3] === 0x47) return "png";
+    if (head.length >= 12 &&
+        head[8] === 0x57 && head[9] === 0x45 &&
+        head[10] === 0x42 && head[11] === 0x50) return "webp";
+    if (head.length >= 3 &&
+        head[0] === 0x47 && head[1] === 0x49 && head[2] === 0x46) return "gif";
+  } catch (err) {
+    // → fallback prefix di bawah
+  }
+
+  var prefix = b64.substring(0, 8);
+  if (prefix.indexOf("/9j/") === 0) return "jpeg";
+  if (prefix.indexOf("iVBORw") === 0) return "png";
+  if (prefix.indexOf("UklGR") === 0) return "webp";
+  if (prefix.indexOf("R0lGOD") === 0) return "gif";
+
+  return "";
 }
 
 // ─── doPost ─────────────────────────────────────────────────────────────────
@@ -1286,7 +1330,7 @@ function doGetHadiah_(e) {
   return json_({ success: true, hadiah: hadiah });
 }
 
-// ─── ADMIN: PIN GATE (shared) ────────────────────────────────────────────────
+// ─── ADMIN: AUTENTIKASI (PIN + SESSION TOKEN) ───────────────────────────────
 //
 // PIN admin TIDAK PERNAH di-hardcode di source (client maupun server).
 // Nilainya di-set manual oleh Rofi lewat editor Apps Script:
@@ -1295,45 +1339,127 @@ function doGetHadiah_(e) {
 // Setiap action admin WAJIB memanggil checkAdminPin_() sebagai validasi
 // PERTAMA — bukan cuma sekali di gate awal halaman — supaya client yang
 // menembus gate UI tetap ditolak di level backend.
+//
+// SEJAK 2026-09-20: client (Admin/index.html + Admin/admin-auth.js) TIDAK
+// menyimpan PIN mentah di storage lagi. Alurnya:
+//   1. Login terpusat POST action=verifyAdminPin dengan PIN mentah SEKALI.
+//   2. Backend balas { success: true, token: "admin_sess_<acak>" }.
+//   3. Client simpan TOKEN itu (sessionStorage) → dipakai untuk SEMUA action
+//      admin berikutnya, lewat parameter "pin" yang sama.
+//   4. checkAdminPin_() menerima PIN mentah ATAU token sesi valid, jadi
+//      SELURUH caller lama (adminListPesanan, adminUpdateMember, dst.) TIDAK
+//      perlu diubah sama sekali.
+//
+// Token disimpan di CacheService (bukan Properties) supaya auto-expire dan
+// tidak menumpuk permanen. Per-tab: hilang saat tab ditutup (client hapus).
+
+// Prefix token sesi admin — memudahkan pembedaan dari PIN mentah tanpa perlu
+// menebak panjang/format PIN yang di-set Rofi.
+var ADMIN_TOKEN_PREFIX = "admin_sess_";
+// Maksimum yang diizinkan CacheService.getScriptCache().put() = 6 jam.
+var ADMIN_TOKEN_TTL_SECONDS = 21600;
 
 /**
- * Re-validasi PIN per request. Return null kalau PIN valid;
+ * Pemeriksaan PIN mentah terhadap Script Properties (fail-closed).
+ * Dipakai oleh checkAdminPin_() dan doPostVerifyAdminPin_().
+ *
+ * @param {string} pin - PIN mentah dari client
+ * @return {boolean} true = cocok dengan ADMIN_PIN
+ */
+function isAdminPinCorrect_(pin) {
+  var expected = PropertiesService.getScriptProperties().getProperty("ADMIN_PIN");
+
+  // Fail-closed: property belum di-set / kosong → tidak ada PIN yang cocok.
+  // String(expected) menjaga kalau ter-set sebagai angka dari UI properties.
+  if (!expected || String(expected).length === 0) return false;
+
+  return String(pin || "").trim() === String(expected);
+}
+
+/**
+ * Buat token sesi admin baru (acak, berlaku 6 jam) di script cache.
+ * @return {string} token yang harus disimpan client (BUKAN PIN-nya)
+ */
+function createAdminSessionToken_() {
+  var token = ADMIN_TOKEN_PREFIX +
+    Utilities.getUuid().replace(/-/g, "") +
+    Utilities.getUuid().replace(/-/g, "");
+  try {
+    CacheService.getScriptCache().put(token, "1", ADMIN_TOKEN_TTL_SECONDS);
+  } catch (err) {
+    // Cache gagal → token tidak tersimpan → login akan ditolak berikutnya.
+    // Jangan pernah fallback ke "selalu valid".
+    Logger.log("⚠️ Gagal menyimpan token sesi admin: " + err);
+  }
+  return token;
+}
+
+/**
+ * Cek token sesi admin masih valid (ada di script cache & belum expired).
+ * @param {string} token
+ * @return {boolean}
+ */
+function isAdminSessionTokenValid_(token) {
+  var t = String(token || "").trim();
+  if (t.indexOf(ADMIN_TOKEN_PREFIX) !== 0) return false;
+  try {
+    return CacheService.getScriptCache().get(t) !== null;
+  } catch (err) {
+    return false;
+  }
+}
+
+/**
+ * Re-validasi KREDENSIAL per request. Return null kalau valid;
  * return response JSON "PIN salah" (generik, tanpa detail) kalau gagal.
+ *
+ * Menerima DUA bentuk kredensial di parameter yang sama:
+ *   1. token sesi (`admin_sess_...`) hasil verifyAdminPin — jalur normal
+ *      sejak login terpusat; dicek lebih dulu karena murah (CacheService).
+ *   2. PIN mentah — untuk kompatibilitas mundur: client lama, atau login
+ *      saat backend yang ter-deploy belum versi token (Admin/index.html
+ *      sengaja punya fallback mode PIN mentah).
  *
  * CATATAN: kalau property ADMIN_PIN belum di-set sama sekali, SEMUA request
  * admin ditolak (fail-closed) — bukan di-bypass. Pesan error tetap generik.
  *
- * @param {string} pin - PIN yang dikirim client (string mentah)
+ * @param {string} pin - kredensial yang dikirim client (token ATAU PIN mentah)
  * @return {Object|null} null = lolos; object = response tolak siap-return
  */
 function checkAdminPin_(pin) {
-  var expected = PropertiesService.getScriptProperties().getProperty("ADMIN_PIN");
+  var credential = String(pin || "").trim();
 
-  // Fail-closed: property belum di-set / kosong → tolak semua.
-  // String(expected) menjaga kalau ter-set sebagai angka dari UI properties.
-  if (!expected || String(expected).length === 0) {
-    return json_({ success: false, error: "PIN salah", errorType: "unauthorized" });
-  }
+  var reject = json_({ success: false, error: "PIN salah", errorType: "unauthorized" });
 
-  if (String(pin || "").trim() !== String(expected)) {
-    return json_({ success: false, error: "PIN salah", errorType: "unauthorized" });
-  }
+  // Jalur 1: token sesi (login terpusat).
+  if (isAdminSessionTokenValid_(credential)) return null;
 
-  return null; // PIN valid
+  // Jalur 2: PIN mentah (login / client lama).
+  if (isAdminPinCorrect_(credential)) return null;
+
+  return reject;
 }
 
 /**
- * Action: verifyAdminPin — dipanggil admin-auth.js saat gate dibuka.
- * Sukses → client menyimpan flag di sessionStorage (client-side only).
- * Backend tetap re-validasi PIN di SETIAP action admin berikutnya.
+ * Action: verifyAdminPin — dipanggil Admin/index.html saat login terpusat.
+ * Sukses → client menyimpan TOKEN sesi di sessionStorage (client-side only);
+ * PIN mentah TIDAK pernah dikembalikan / tidak disimpan client.
+ * Backend tetap re-validasi kredensial di SETIAP action admin berikutnya.
  */
 function doPostVerifyAdminPin_(e) {
   var pin = trim_(e.parameter.pin);
-  var reject = checkAdminPin_(pin);
-  if (reject) return reject;
 
-  // TIDAK mengembalikan PIN-nya, dan tidak ada info lain yang bocor.
-  return json_({ success: true });
+  // Sengaja HANYA menerima PIN mentah di sini: token tidak boleh dipakai
+  // untuk mencetak token baru (tidak ada perpanjangan sesi otomatis).
+  if (!isAdminPinCorrect_(pin)) {
+    return json_({ success: false, error: "PIN salah", errorType: "unauthorized" });
+  }
+
+  var token = createAdminSessionToken_();
+
+  // Yang dikembalikan cuma token acak + status sukses — tidak ada PIN,
+  // tidak ada info lain yang bocor.
+  return json_({ success: true, token: token });
 }
 
 // ─── ADMIN: LIST PESANAN (Check-Pesanan) ───────────────────────────────────

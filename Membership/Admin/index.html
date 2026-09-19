@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="robots" content="noindex, nofollow">
+  <title>MAO Admin — Masuk</title>
+  <style>
+    :root {
+      --bg:        #0a0a0a;
+      --surface:   #141414;
+      --surface2:  #1c1c1c;
+      --border:    #2a2a2a;
+      --text:      #f0f0f0;
+      --text-dim:  #888;
+      --accent1:   #ff4d1c;
+      --accent2:   #ffb300;
+      --gradient:  linear-gradient(135deg, #ff4d1c, #ffb300);
+      --gradient-h: linear-gradient(90deg, #ff4d1c, #ffb300);
+      --danger:    #ff4444;
+      --radius:    14px;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+      background:
+        radial-gradient(1100px 500px at 50% -10%, rgba(255, 77, 28, 0.16), transparent 70%),
+        var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: calc(24px + env(safe-area-inset-top)) calc(16px + env(safe-area-inset-right))
+        calc(24px + env(safe-area-inset-bottom)) calc(16px + env(safe-area-inset-left));
+      line-height: 1.5;
+    }
+
+    .login-wrap { width: 100%; max-width: 420px; }
+
+    .login-card {
+      position: relative;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 34px 26px 28px;
+      box-shadow: 0 18px 50px rgba(0, 0, 0, 0.55), 0 0 0 1px rgba(255, 179, 0, 0.05);
+      overflow: hidden;
+    }
+
+    /* Aksen gradient tipis di atas kartu (brand MAO) */
+    .login-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 3px;
+      background: var(--gradient-h);
+    }
+
+    .brand { text-align: center; margin-bottom: 22px; }
+
+    .brand-logo {
+      display: block;
+      height: auto;
+      max-width: min(58%, 150px);
+      margin: 0 auto 14px;
+      border-radius: 16px;
+    }
+
+    .brand-title {
+      font-size: 1.35rem;
+      font-weight: 800;
+      letter-spacing: 0.02em;
+      background: var(--gradient);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .brand-sub {
+      color: var(--text-dim);
+      font-size: 0.82rem;
+      margin-top: 6px;
+      letter-spacing: 0.03em;
+    }
+
+    .divider {
+      height: 1px;
+      background: linear-gradient(90deg, transparent, var(--border), transparent);
+      margin: 20px 0;
+    }
+
+    .form-group { margin-bottom: 16px; text-align: left; }
+
+    label {
+      display: block;
+      font-size: 0.82rem;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      margin-bottom: 7px;
+      color: var(--text);
+      text-transform: uppercase;
+    }
+
+    .pin-input {
+      width: 100%;
+      padding: 14px;
+      font-size: 20px;
+      letter-spacing: 0.35em;
+      text-align: center;
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      color: var(--text);
+      outline: none;
+      transition: border-color 0.2s, box-shadow 0.2s;
+      -webkit-appearance: none;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, 'Courier New', monospace;
+    }
+
+    .pin-input:focus {
+      border-color: var(--accent1);
+      box-shadow: 0 0 0 3px rgba(255, 77, 28, 0.15);
+    }
+
+    .pin-input::placeholder { color: #4a4a4a; letter-spacing: 0.12em; font-size: 14px; }
+
+    .hint { display: block; font-size: 0.72rem; color: var(--text-dim); margin-top: 7px; text-align: center; }
+
+    .btn-primary {
+      width: 100%;
+      min-height: 50px;
+      padding: 14px;
+      font-size: 1rem;
+      font-weight: 700;
+      color: #fff;
+      background: var(--gradient-h);
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      letter-spacing: 0.02em;
+      transition: opacity 0.2s, transform 0.1s;
+    }
+    .btn-primary:hover { opacity: 0.92; }
+    .btn-primary:active { transform: scale(0.985); }
+    .btn-primary:disabled { opacity: 0.5; cursor: not-allowed; }
+
+    .msg {
+      margin-bottom: 14px;
+      padding: 12px 14px;
+      border-radius: 10px;
+      font-size: 0.83rem;
+      text-align: center;
+      overflow-wrap: anywhere;
+    }
+    .msg[hidden] { display: none !important; }
+    .msg-error {
+      background: rgba(255, 68, 68, 0.1);
+      border: 1px solid rgba(255, 68, 68, 0.32);
+      color: var(--danger);
+    }
+    .msg-warn {
+      background: rgba(255, 179, 0, 0.1);
+      border: 1px solid rgba(255, 179, 0, 0.32);
+      color: var(--accent2);
+      text-align: left;
+      font-size: 0.78rem;
+      line-height: 1.45;
+    }
+    .msg-ok {
+      background: rgba(255, 179, 0, 0.08);
+      border: 1px solid rgba(255, 179, 0, 0.28);
+      color: var(--accent2);
+      text-align: left;
+      font-size: 0.78rem;
+      line-height: 1.45;
+    }
+
+    .resume-row {
+      display: flex;
+      gap: 8px;
+      margin-top: 12px;
+    }
+
+    .btn-ghost {
+      flex: 1;
+      padding: 11px 12px;
+      font-size: 0.82rem;
+      font-weight: 700;
+      color: var(--text-dim);
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      cursor: pointer;
+      text-decoration: none;
+      text-align: center;
+      transition: border-color 0.15s, color 0.15s;
+    }
+    .btn-ghost:hover { border-color: var(--accent1); color: var(--text); }
+
+    .footer-link {
+      display: block;
+      text-align: center;
+      margin-top: 20px;
+      font-size: 0.78rem;
+      color: var(--text-dim);
+      text-decoration: none;
+    }
+    .footer-link:hover { color: var(--accent2); }
+
+    .lock-note {
+      margin-top: 18px;
+      padding-top: 14px;
+      border-top: 1px solid var(--border);
+      font-size: 0.7rem;
+      color: #666;
+      text-align: center;
+      line-height: 1.5;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="login-wrap">
+    <div class="login-card">
+      <div class="brand">
+        <img src="../assets/logo-mao.jpeg" alt="MAO" class="brand-logo">
+        <div class="brand-title">Admin MAO</div>
+        <p class="brand-sub">Masuk untuk mengelola member &amp; pesanan</p>
+      </div>
+
+      <div class="divider"></div>
+
+      <!-- Info kalau sesi admin di tab ini masih aktif -->
+      <div id="resumeMsg" class="msg msg-ok" hidden>
+        <strong>Sesi admin masih aktif di tab ini.</strong>
+        <div class="resume-row">
+          <a id="resumeLink" class="btn-ghost" href="#">Lanjut ke halaman admin</a>
+          <button type="button" id="logoutBtn" class="btn-ghost">Keluar / ganti sesi</button>
+        </div>
+      </div>
+
+      <!-- Peringatan mode kompatibilitas (backend belum versi token) -->
+      <div id="legacyMsg" class="msg msg-warn" hidden>
+        ⚠️ Backend Apps Script yang ter-deploy belum versi token sesi, jadi PIN
+        masih disimpan sementara di tab ini. Minta Rofi deploy ulang
+        <code>Apps-Script/code.gs.js</code> supaya PIN tidak lagi disimpan.
+      </div>
+
+      <div id="errorMsg" class="msg msg-error" hidden></div>
+
+      <form id="loginForm" novalidate autocomplete="off">
+        <div class="form-group">
+          <label for="adminPinInput">PIN Admin</label>
+          <!-- Anti-autofill: 'off' sering diabaikan browser untuk field
+               password, jadi dipakai 'new-password' + name yang tidak
+               menyerupai field login standar + atribut ignore password manager.
+               Input juga dikosongkan sekali saat load (lihat script di bawah). -->
+          <input type="password" id="adminPinInput" name="mao-admin-access-code"
+                 class="pin-input" placeholder="••••••"
+                 inputmode="numeric" pattern="[0-9]*" maxlength="24"
+                 autocomplete="new-password" autocapitalize="off" autocorrect="off"
+                 spellcheck="false" data-lpignore="true" data-1p-ignore="true"
+                 data-form-type="other" autofocus>
+          <span class="hint">PIN di-set Rofi lewat Script Properties Apps Script (ADMIN_PIN).</span>
+        </div>
+
+        <button type="submit" id="loginBtn" class="btn-primary">Buka Halaman Admin</button>
+      </form>
+
+      <a class="footer-link" href="../Submit/index.html">← Kembali ke halaman customer</a>
+
+      <p class="lock-note">
+        Halaman ini satu-satunya pintu masuk area admin.<br>
+        Kredensial tidak disimpan di browser sebagai PIN mentah.
+      </p>
+    </div>
+  </div>
+
+  <script src="../config.js"></script>
+  <script src="admin-auth.js"></script>
+  <script>
+  (function () {
+    'use strict';
+
+    var form        = document.getElementById('loginForm');
+    var pinInput    = document.getElementById('adminPinInput');
+    var loginBtn    = document.getElementById('loginBtn');
+    var errorMsg    = document.getElementById('errorMsg');
+    var resumeMsg   = document.getElementById('resumeMsg');
+    var resumeLink  = document.getElementById('resumeLink');
+    var logoutBtn   = document.getElementById('logoutBtn');
+    var legacyMsg   = document.getElementById('legacyMsg');
+
+    var busy = false;
+
+    // ─── ANTI-AUTOFILL BELT (selain atribut di markup) ─────────────────────
+    // Browser (terutama Chrome/Safari) kadang mengisi ulang value field
+    // password setelah load; pastikan benar-benar kosong sebelum user mengetik.
+    pinInput.setAttribute('autocomplete', 'new-password');
+    var userTouched = false;
+    pinInput.addEventListener('input', function () { userTouched = true; });
+    setTimeout(function () { if (!userTouched) pinInput.value = ''; }, 60);
+
+    function showError(msg) {
+      errorMsg.textContent = msg;
+      errorMsg.hidden = false;
+      resumeMsg.hidden = true;
+    }
+
+    function hideError() {
+      errorMsg.hidden = true;
+      errorMsg.textContent = '';
+    }
+
+    function setLoading(isLoading) {
+      busy = isLoading;
+      loginBtn.disabled = isLoading;
+      loginBtn.textContent = isLoading ? '⏳ Memeriksa…' : 'Buka Halaman Admin';
+    }
+
+    // ─── SUDAH LOGIN? tawarkan lanjut, jangan auto-redirect ────────────────
+    // (biar user masih bisa ganti sesi / lihat halaman ini kalau refresh)
+    if (MAO_ADMIN.isAuthed()) {
+      var target = MAO_ADMIN.consumeTarget();
+      resumeLink.setAttribute('href', target);
+      resumeMsg.hidden = false;
+    }
+
+    // Sesi aktif tapi kredensialnya PIN mentah → berarti backend yang
+    // ter-deploy masih versi lama (belum mengembalikan token).
+    if (MAO_ADMIN.authMode() === 'pin') {
+      legacyMsg.hidden = false;
+    }
+
+    logoutBtn.addEventListener('click', function () {
+      MAO_ADMIN.clearAuth();
+      try { sessionStorage.removeItem('adminPostLoginTarget'); } catch (e) { /* noop */ }
+      resumeMsg.hidden = true;
+      hideError();
+      pinInput.value = '';
+      pinInput.focus();
+    });
+
+    // ─── SUBMIT ────────────────────────────────────────────────────────────
+    form.addEventListener('submit', function (e) {
+      e.preventDefault();
+      if (busy) return;
+
+      var pin = pinInput.value.trim();
+      hideError();
+
+      if (!pin) {
+        showError('PIN wajib diisi.');
+        pinInput.focus();
+        return;
+      }
+
+      setLoading(true);
+
+      fetch(MAO_CONFIG.GAS_WEB_APP_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        // PIN mentah dikirim SEKALI di sini (HTTPS ke Google) — tidak pernah
+        // ditulis ke storage setelah backend membalas token.
+        body: new URLSearchParams({ action: 'verifyAdminPin', pin: pin }).toString()
+      })
+        .then(function (resp) { return resp.json(); })
+        .then(function (json) {
+          if (!json || !json.success) {
+            showError((json && json.error) ? json.error : 'PIN salah.');
+            pinInput.value = '';
+            pinInput.focus();
+            return;
+          }
+
+          if (json.token) {
+            // Jalur normal: simpan TOKEN sesi (bukan PIN).
+            MAO_ADMIN.markAuthed(json.token);
+          } else {
+            // Backend yang ter-deploy belum mengembalikan token (versi lama).
+            // Fallback sementara supaya area admin tetap bisa diakses — PIN
+            // mentah dihapus otomatis begitu backend versi token ter-deploy.
+            MAO_ADMIN.markAuthedWithPin(pin);
+          }
+
+          // Guard anti-infinite-loop: kalau storage diblokir (mis. mode privat
+          // tertentu), kredensial gagal disimpan → JANGAN redirect (halaman
+          // admin akan melempar balik ke sini = loop tak berujung).
+          if (!MAO_ADMIN.isAuthed()) {
+            showError('Gagal menyimpan sesi login: penyimpanan browser diblokir ' +
+              '(mode privat / cookie diblokir). Aktifkan storage lalu coba lagi.');
+            return;
+          }
+
+          window.location.replace(MAO_ADMIN.consumeTarget());
+        })
+        .catch(function (err) {
+          console.error('Login error:', err);
+          showError('Gagal memeriksa PIN. Periksa koneksi internet lalu coba lagi.');
+        })
+        .then(function () { setLoading(false); });
+    });
+  })();
+  </script>
+</body>
+</html>

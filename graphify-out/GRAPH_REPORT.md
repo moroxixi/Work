@@ -1,16 +1,16 @@
-# Graph Report - Work  (2026-09-19)
+# Graph Report - Work  (2026-09-20)
 
 ## Corpus Check
-- 43 files · ~72,021 words
+- 43 files · ~81,596 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
-- 737 nodes · 1051 edges · 49 communities (39 shown, 10 thin omitted)
-- Extraction: 99% EXTRACTED · 1% INFERRED · 0% AMBIGUOUS · INFERRED: 14 edges (avg confidence: 0.5)
+- 755 nodes · 1095 edges · 49 communities (40 shown, 9 thin omitted)
+- Extraction: 99% EXTRACTED · 1% INFERRED · 0% AMBIGUOUS · INFERRED: 13 edges (avg confidence: 0.5)
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `99997db7`
+- Built from commit: `7868eb63`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -50,7 +50,7 @@
 - Pendaftaran/script.js
 - code.gs.js
 - Submit/script.js
-- Membership/config.js
+- processFotoFile
 - showReport
 - admin-nav.js
 - applyFormData
@@ -67,24 +67,24 @@
 3. `doPost()` - 14 edges
 4. `getMemberSheet_()` - 12 edges
 5. `doPostPendaftaran_()` - 11 edges
-6. `Investigasi Mekanisme Ntfy — Pencatatan-Buku-Kas/Apps-Script/buku-kas.gs.js` - 10 edges
-7. `2. Daftar Lengkap Pemanggil `report_kirimNotif_()`` - 10 edges
-8. `doPostSubmitOrder_()` - 9 edges
-9. `checkAdminPin_()` - 9 edges
-10. `doPostAdminUpdateMember_()` - 9 edges
+6. `buildReceiptCard()` - 10 edges
+7. `checkAdminPin_()` - 10 edges
+8. `Investigasi Mekanisme Ntfy — Pencatatan-Buku-Kas/Apps-Script/buku-kas.gs.js` - 10 edges
+9. `2. Daftar Lengkap Pemanggil `report_kirimNotif_()`` - 10 edges
+10. `doPostSubmitOrder_()` - 9 edges
 
 ## Surprising Connections (you probably didn't know these)
-- `fetchList()` --calls--> `renderList()`  [EXTRACTED]
-  Pencatatan-Buku-Kas/Riwayat/script.js → Pencatatan-Buku-Kas/Riwayat/script.js  _Bridges community 10 → community 14_
-- `fetchMonthList()` --calls--> `monthKeyOf()`  [EXTRACTED]
-  Pencatatan-Buku-Kas/Riwayat/script.js → Pencatatan-Buku-Kas/Riwayat/script.js  _Bridges community 11 → community 14_
-- `goToMonth()` --calls--> `formatBulanLabel()`  [EXTRACTED]
-  Pencatatan-Buku-Kas/Riwayat/script.js → Pencatatan-Buku-Kas/Riwayat/script.js  _Bridges community 13 → community 11_
+- `processFotoFile()` --references--> `MAO_CONFIG`  [EXTRACTED]
+  Membership/Pendaftaran/script.js → Membership/config.js
+- `processFotoFile()` --references--> `MAO_CONFIG`  [EXTRACTED]
+  Membership/Submit/script.js → Membership/config.js
+- `driveImageUrl()` --references--> `MAO_CONFIG`  [EXTRACTED]
+  Membership/Admin/Check-Pesanan/script.js → Membership/config.js
 
 ## Import Cycles
 - None detected.
 
-## Communities (49 total, 10 thin omitted)
+## Communities (49 total, 9 thin omitted)
 
 ### Community 0 - "Riwayat/script.js"
 Cohesion: 0.04
@@ -196,15 +196,19 @@ Nodes (17): 1.1.1 `buku-kas.gs.js` (Kas Harian + Riwayat) — endpoint `ENDPOINT
 
 ### Community 35 - "Pendaftaran/script.js"
 Cohesion: 0.05
-Nodes (32): backBtn, btnLoading, btnText, cardDomisili, cardFotoProfil, cardKode, cardNama, cardSection (+24 more)
+Nodes (40): backBtn, btnLoading, btnText, cardDomisili, cardFotoProfil, cardKode, cardNama, cardSection (+32 more)
 
 ### Community 36 - "code.gs.js"
-Cohesion: 0.21
-Nodes (33): checkAdminPin_(), deleteOrderById_(), doGet(), doGetFormData_(), doGetHadiah_(), doGetLeaderboard_(), doGetMemberByUsername_(), doGetOrderByOrderId_() (+25 more)
+Cohesion: 0.18
+Nodes (37): checkAdminPin_(), createAdminSessionToken_(), deleteOrderById_(), doGet(), doGetFormData_(), doGetHadiah_(), doGetLeaderboard_(), doGetMemberByUsername_() (+29 more)
 
 ### Community 37 - "Submit/script.js"
 Cohesion: 0.04
 Nodes (35): btnLoading, btnText, downloadLaporanBtn, errorMsg, formSection, fotoInput, fotoInputCamera, fotoPreview (+27 more)
+
+### Community 38 - "processFotoFile"
+Cohesion: 0.40
+Nodes (5): clearFotoState(), hideError(), processFotoFile(), resetForm(), showError()
 
 ### Community 39 - "showReport"
 Cohesion: 0.22
@@ -215,36 +219,36 @@ Cohesion: 0.40
 Nodes (5): applyFormData(), escapeHtml(), renderKodeList(), renderKodeOptions(), renderMenuList()
 
 ### Community 46 - "Member/script.js"
-Cohesion: 0.20
-Nodes (9): closeDropdown(), fillForm(), hideFormMsg(), loadMemberList(), resetFotoUpload(), selectMember(), showError(), showState() (+1 more)
+Cohesion: 0.19
+Nodes (10): closeDropdown(), fillForm(), hideFormMsg(), loadMemberList(), resetFotoUpload(), selectMember(), setSelectValue(), showError() (+2 more)
 
 ### Community 47 - "admin-auth.js"
-Cohesion: 0.30
-Nodes (10): handlePinSubmit(), hideGate(), hideGateMsg(), init(), isAuthed(), markAuthed(), runReadyCallbacks(), showGate() (+2 more)
+Cohesion: 0.27
+Nodes (13): authMode(), clearAuth(), consumeTarget(), currentPageKey(), getCredential(), goToLogin(), isAuthed(), markAuthed() (+5 more)
 
 ### Community 48 - "Check-Pesanan/script.js"
-Cohesion: 0.23
-Nodes (14): addEditItemRow(), buildLegacyCard(), buildReceiptCard(), driveImageUrl(), escapeHtml(), formatWaktu(), groupByOrderId(), loadList() (+6 more)
+Cohesion: 0.16
+Nodes (19): addEditItemRow(), buildCardActions(), buildFotoWrap(), buildItemsList(), buildLegacyCard(), buildReceiptCard(), driveImageUrl(), escapeHtml() (+11 more)
 
 ## Knowledge Gaps
-- **312 isolated node(s):** `all`, `menuBtn`, `drawer`, `overlay`, `drawerClose` (+307 more)
+- **314 isolated node(s):** `all`, `menuBtn`, `drawer`, `overlay`, `drawerClose` (+309 more)
   These have ≤1 connection - possible missing edges or undocumented components.
-- **10 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
+- **9 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
 
 ## Suggested Questions
 _Questions this graph is uniquely positioned to answer:_
 
-- **Why does `Investigasi Mekanisme Ntfy — Pencatatan-Buku-Kas/Apps-Script/buku-kas.gs.js` connect `Investigasi Mekanisme Ntfy — Pencatatan-Buku-Kas/Apps-Script/buku-kas.gs.js` to `Detail Logic Pola Transaksi (follow-up)`?**
-  _High betweenness centrality (0.005) - this node is a cross-community bridge._
-- **Why does `Detail Logic Pola Transaksi (follow-up)` connect `Detail Logic Pola Transaksi (follow-up)` to `Investigasi Mekanisme Ntfy — Pencatatan-Buku-Kas/Apps-Script/buku-kas.gs.js`?**
-  _High betweenness centrality (0.002) - this node is a cross-community bridge._
+- **Why does `MAO_CONFIG` connect `Check-Pesanan/script.js` to `Pendaftaran/script.js`, `processFotoFile`?**
+  _High betweenness centrality (0.022) - this node is a cross-community bridge._
+- **Why does `processFotoFile()` connect `processFotoFile` to `Check-Pesanan/script.js`, `Submit/script.js`?**
+  _High betweenness centrality (0.018) - this node is a cross-community bridge._
+- **Why does `processFotoFile()` connect `Pendaftaran/script.js` to `Check-Pesanan/script.js`?**
+  _High betweenness centrality (0.016) - this node is a cross-community bridge._
 - **What connects `all`, `menuBtn`, `drawer` to the rest of the system?**
-  _312 weakly-connected nodes found - possible documentation gaps or missing edges._
+  _314 weakly-connected nodes found - possible documentation gaps or missing edges._
 - **Should `Riwayat/script.js` be split into smaller, more focused modules?**
   _Cohesion score 0.044444444444444446 - nodes in this community are weakly interconnected._
 - **Should `Pencatatan-Buku-Kas/script.js` be split into smaller, more focused modules?**
   _Cohesion score 0.08817204301075268 - nodes in this community are weakly interconnected._
 - **Should `Stok/script.js` be split into smaller, more focused modules?**
   _Cohesion score 0.07692307692307693 - nodes in this community are weakly interconnected._
-- **Should `2. Daftar Lengkap Pemanggil `report_kirimNotif_()`` be split into smaller, more focused modules?**
-  _Cohesion score 0.0425531914893617 - nodes in this community are weakly interconnected._

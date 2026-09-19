@@ -3,39 +3,62 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="robots" content="noindex, nofollow">
   <title>MAO Admin — Cek Pesanan</title>
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
   <div class="page">
-    <div class="form-card">
 
-      <div class="brand">
-        <img src="../../assets/logo-mao.jpeg" alt="MAO" class="brand-logo">
-        <p class="tagline">Admin — Verifikasi Pesanan</p>
+    <!-- Header halaman (pola MoroDuit/Admin/Riwayat: header block + subtitle) -->
+    <header class="page-header">
+      <img src="../../assets/logo-mao.jpeg" alt="MAO" class="header-logo">
+      <div class="header-text">
+        <h1 class="header-title">🧾 Verifikasi Pesanan</h1>
+        <p class="header-sub">Cek, edit, atau hapus pesanan yang masuk dari member</p>
       </div>
+    </header>
 
-      <!-- Loading state -->
-      <div id="loadingState" class="state-msg">
-        <div class="spinner"></div>
-        <p>Memuat daftar pesanan…</p>
-      </div>
-
-      <!-- Error state -->
-      <div id="errorState" class="state-msg" hidden>
-        <p style="font-size:2rem;">⚠️</p>
-        <p id="errorMsg"></p>
-        <button type="button" id="retryBtn" class="btn-submit btn-retry">Coba Lagi</button>
-      </div>
-
-      <!-- Daftar pesanan -->
-      <div id="listSection" hidden>
-        <p class="list-info" id="pesananCount"></p>
-        <div id="pesananList" class="pesanan-list"></div>
-      </div>
-
+    <!-- Loading state -->
+    <div id="loadingState" class="state-card">
+      <div class="spinner"></div>
+      <p>Memuat daftar pesanan…</p>
     </div>
+
+    <!-- Error state -->
+    <div id="errorState" class="state-card" hidden>
+      <p class="state-icon">⚠️</p>
+      <p id="errorMsg"></p>
+      <button type="button" id="retryBtn" class="btn-submit btn-retry">Coba Lagi</button>
+    </div>
+
+    <!-- Ringkasan + daftar pesanan -->
+    <section id="listSection" hidden>
+
+      <!-- Summary strip (pola .profit-summary di Riwayat) -->
+      <div class="summary-strip">
+        <div class="summary-block">
+          <span class="summary-label">Total pesanan</span>
+          <span id="summaryValue" class="summary-value">0</span>
+        </div>
+        <div class="summary-sep" aria-hidden="true"></div>
+        <div class="summary-block">
+          <span class="summary-label">Baris item</span>
+          <span id="summaryItems" class="summary-value">0</span>
+        </div>
+      </div>
+
+      <p class="list-info" id="pesananCount"></p>
+
+      <!-- Empty state (pola .empty-state di Riwayat) -->
+      <div id="emptyState" class="empty-state" hidden>
+        Belum ada pesanan tercatat
+      </div>
+
+      <div id="pesananList" class="pesanan-list"></div>
+    </section>
+
   </div>
 
   <!-- Lightbox: perbesar foto bukti -->
@@ -72,18 +95,9 @@
     </div>
   </div>
 
-  <!-- PIN gate (dikelola ../admin-auth.js) -->
-  <div id="adminPinGate" class="pin-gate" hidden>
-    <div class="pin-gate-backdrop"></div>
-    <div class="pin-gate-sheet">
-      <p class="pin-gate-title">Akses Admin</p>
-      <p class="pin-gate-text">Masukkan PIN admin untuk membuka halaman ini.</p>
-      <input type="password" id="adminPinInput" class="pin-gate-input"
-             inputmode="numeric" autocomplete="off" placeholder="PIN admin">
-      <div id="adminPinMsg" class="pin-gate-msg" hidden></div>
-      <button type="button" id="adminPinSubmitBtn" class="btn-submit">Buka Halaman Admin</button>
-    </div>
-  </div>
+  <!-- Catatan: gate PIN embedded SUDAH DIHAPUS (2026-09-20). Login terpusat
+       di ../index.html; halaman ini dijaga oleh ../admin-auth.js lewat
+       MAO_ADMIN.onReady() → redirect ke login kalau belum authed. -->
 
   <!-- Admin nav -->
   <nav class="admin-nav" aria-label="Navigasi admin"></nav>

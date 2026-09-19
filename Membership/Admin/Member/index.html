@@ -161,18 +161,9 @@
     </div>
   </div>
 
-  <!-- PIN gate (dikelola ../admin-auth.js) -->
-  <div id="adminPinGate" class="pin-gate" hidden>
-    <div class="pin-gate-backdrop"></div>
-    <div class="pin-gate-sheet">
-      <p class="pin-gate-title">Akses Admin</p>
-      <p class="pin-gate-text">Masukkan PIN admin untuk membuka halaman ini.</p>
-      <input type="password" id="adminPinInput" class="pin-gate-input"
-             inputmode="numeric" autocomplete="off" placeholder="PIN admin">
-      <div id="adminPinMsg" class="pin-gate-msg" hidden></div>
-      <button type="button" id="adminPinSubmitBtn" class="btn-submit">Buka Halaman Admin</button>
-    </div>
-  </div>
+  <!-- Catatan: gate PIN embedded SUDAH DIHAPUS (2026-09-20). Login terpusat
+       di ../index.html; halaman ini dijaga oleh ../admin-auth.js lewat
+       MAO_ADMIN.onReady() → redirect ke login kalau belum authed. -->
 
   <!-- Admin nav -->
   <nav class="admin-nav" aria-label="Navigasi admin"></nav>
