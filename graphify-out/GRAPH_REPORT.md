@@ -1,16 +1,16 @@
 # Graph Report - Work  (2026-09-19)
 
 ## Corpus Check
-- 43 files · ~70,620 words
+- 43 files · ~72,021 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
-- 732 nodes · 1035 edges · 49 communities (39 shown, 10 thin omitted)
+- 737 nodes · 1051 edges · 49 communities (39 shown, 10 thin omitted)
 - Extraction: 99% EXTRACTED · 1% INFERRED · 0% AMBIGUOUS · INFERRED: 14 edges (avg confidence: 0.5)
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `0c84e729`
+- Built from commit: `99997db7`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -62,16 +62,16 @@
 - Check-Pesanan/script.js
 
 ## God Nodes (most connected - your core abstractions)
-1. `json_()` - 20 edges
+1. `json_()` - 21 edges
 2. `trim_()` - 16 edges
-3. `doPost()` - 13 edges
-4. `getMemberSheet_()` - 11 edges
-5. `Investigasi Mekanisme Ntfy — Pencatatan-Buku-Kas/Apps-Script/buku-kas.gs.js` - 10 edges
-6. `2. Daftar Lengkap Pemanggil `report_kirimNotif_()`` - 10 edges
-7. `checkAdminPin_()` - 9 edges
-8. `hitungRekomendasiProduk()` - 9 edges
-9. `Investigasi Konsolidasi Notifikasi ntfy — `report.gs.js`` - 9 edges
-10. `Detail Mekanisme Kolom Z (follow-up)` - 9 edges
+3. `doPost()` - 14 edges
+4. `getMemberSheet_()` - 12 edges
+5. `doPostPendaftaran_()` - 11 edges
+6. `Investigasi Mekanisme Ntfy — Pencatatan-Buku-Kas/Apps-Script/buku-kas.gs.js` - 10 edges
+7. `2. Daftar Lengkap Pemanggil `report_kirimNotif_()`` - 10 edges
+8. `doPostSubmitOrder_()` - 9 edges
+9. `checkAdminPin_()` - 9 edges
+10. `doPostAdminUpdateMember_()` - 9 edges
 
 ## Surprising Connections (you probably didn't know these)
 - `fetchList()` --calls--> `renderList()`  [EXTRACTED]
@@ -199,8 +199,8 @@ Cohesion: 0.05
 Nodes (32): backBtn, btnLoading, btnText, cardDomisili, cardFotoProfil, cardKode, cardNama, cardSection (+24 more)
 
 ### Community 36 - "code.gs.js"
-Cohesion: 0.25
-Nodes (27): checkAdminPin_(), deleteOrderById_(), doGet(), doGetFormData_(), doGetHadiah_(), doGetLeaderboard_(), doGetMemberByUsername_(), doGetOrderByOrderId_() (+19 more)
+Cohesion: 0.21
+Nodes (33): checkAdminPin_(), deleteOrderById_(), doGet(), doGetFormData_(), doGetHadiah_(), doGetLeaderboard_(), doGetMemberByUsername_(), doGetOrderByOrderId_() (+25 more)
 
 ### Community 37 - "Submit/script.js"
 Cohesion: 0.04

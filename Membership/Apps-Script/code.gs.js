@@ -12,6 +12,20 @@
  * (COLUMNS_HADIAH). Untuk sheet yang SUDAH berjalan dengan header lama (3
  * kolom), jalankan setupSheetTambahanMembership() sekali dari editor — dia
  * akan meng-extend baris header tab "Hadiah" ke 5 kolom.
+ *
+ * 2026-09-19 (batch 7, BELUM dideploy):
+ * - BUG-04: doPostPendaftaran_ & doPostSubmitOrder_ dibungkus
+ *   LockService.getScriptLock() (via withScriptLock_) — appendRow + operasi
+ *   yang membaca ulang sheet setelah append jadi atomik antar request
+ *   konkuren. Pembacaan getLastRow() setelah append untuk format WA DIHAPUS
+ *   dari doPostPendaftaran_ — diganti format kolom penuh (di bawah).
+ * - Format kolom WA: setupFormatKolomWA() men-set kolom "Nomor WhatsApp"
+ *   tab Member sebagai TEXT ("@") untuk SELURUH kolom, sekali jalan.
+ *   Dipanggil otomatis SEKALI via ensureSetupKolomWA_() di awal doPost
+ *   (flag Script Properties WA_COL_FORMAT_DONE), atau manual dari editor.
+ * - BUG-05: validateFotoBase64_ — validasi ukuran (maks 5MB decoded) + tipe
+ *   (magic bytes JPEG/PNG) untuk fotoBase64 di doPostPendaftaran_,
+ *   doPostSubmitOrder_, dan doPostAdminUpdateMember_ (foto reupload).
  */
 
 // ─── KONFIGURASI ────────────────────────────────────────────────────────────
@@ -268,6 +282,57 @@ function setupSheetTambahanMembership() {
       Logger.log("✅ Header tab 'Hadiah' di-extend/diperbarui ke " + COLUMNS_HADIAH.length + " kolom.");
     }
   }
+
+  // ── Format kolom WA tab Member sebagai TEXT (BUG-04: akar masalah) ──
+  // Idempoten — dipanggil di sini supaya sekali jalan setup sheet sekaligus
+  // membetulkan format kolom; bisa juga dijalankan sendiri via
+  // setupFormatKolomWA() dari editor.
+  setupFormatKolomWA();
+}
+
+// ─── SETUP FORMAT KOLOM WA (BUG-04: akar masalah) ───────────────────────────
+
+/**
+ * Men-set kolom "Nomor WhatsApp" tab Member sebagai TEXT ("@") untuk SELURUH
+ * kolom (bukan per-baris). Setelah ini dijalankan sekali, appendRow cukup
+ * menulis string WA apa adanya — Sheets menyimpannya sebagai teks sehingga
+ * angka 0 di depan tidak hilang, dan doPostPendaftaran_ TIDAK PERLU lagi
+ * baca-balik row index (getLastRow) setelah append (sumber race BUG-04).
+ *
+ * Idempoten — aman dijalankan berulang. Dipanggil otomatis SEKALI oleh
+ * ensureSetupKolomWA_() di awal doPost (flag Script Properties), atau
+ * manual dari editor Apps Script.
+ */
+function setupFormatKolomWA() {
+  var sheet = getMemberSheet_();
+  var waCol = COLUMNS.indexOf("Nomor WhatsApp") + 1; // 1-indexed (kolom I)
+  var maxRows = sheet.getMaxRows();
+
+  sheet.getRange(1, waCol, maxRows, 1).setNumberFormat("@");
+
+  Logger.log(
+    "✅ Kolom 'Nomor WhatsApp' (kolom " + waCol + ") tab '" + sheet.getName() +
+    "' di-set sebagai TEXT untuk " + maxRows + " baris."
+  );
+}
+
+/**
+ * Dipanggil di awal doPost — memastikan format kolom WA sudah di-set TANPA
+ * overhead tiap request: setelah first-run cukup 1 getProperty (flag
+ * WA_COL_FORMAT_DONE di Script Properties). Kegagalan setup TIDAK memblokir
+ * request (flag tidak di-set → dicoba ulang di request berikutnya).
+ */
+function ensureSetupKolomWA_() {
+  try {
+    var props = PropertiesService.getScriptProperties();
+    if (props.getProperty("WA_COL_FORMAT_DONE")) return;
+
+    setupFormatKolomWA();
+    props.setProperty("WA_COL_FORMAT_DONE", "true");
+    Logger.log("✅ ensureSetupKolomWA_: format kolom WA di-set (first-run setelah deploy).");
+  } catch (err) {
+    Logger.log("⚠️ ensureSetupKolomWA_ gagal (dicoba ulang request berikutnya): " + err);
+  }
 }
 
 // ─── FOTO FOLDER ───────────────────────────────────────────────────────────
@@ -309,9 +374,154 @@ function getOrCreateFolder_(folderName, propKey) {
   return newFolder;
 }
 
+// ─── SCRIPT LOCK & VALIDASI FOTO (batch 7: BUG-04 & BUG-05) ─────────────────
+
+// Timeout tunggu script lock (ms). Kalau lock tidak didapat dalam waktu ini,
+// request ditolak dengan error yang jelas — TIDAK hang tanpa batas.
+var SCRIPT_LOCK_TIMEOUT_MS = 10000;
+
+// Batas ukuran foto DECODED yang diterima server (byte).
+// Client meng-compress foto ke JPEG ≤1280px quality 0.7
+// (MAO_CONFIG.compressImageToBase64) — hasil realistis ±200KB–1MB per foto.
+// 5MB ≈ 5–10x target compress → semua foto legit lolos, payload abuse ditolak.
+var MAX_FOTO_DECODED_BYTES = 5 * 1024 * 1024; // 5 MB
+
+/**
+ * Jalankan fn() di dalam critical section script lock (BUG-04).
+ *
+ * - waitLock dengan timeout: kalau lock gagal didapat, request ditolak dengan
+ *   error jelas (bukan hang tanpa batas).
+ * - releaseLock() SELALU di finally — lock tetap ke-release meskipun fn()
+ *   melempar error di tengah critical section.
+ * - Nilai kembalian fn() diteruskan apa adanya (harus response json_).
+ *
+ * @param {function(): Object} fn - critical section; return response json_
+ * @return {Object} response json_ dari fn(), atau response error lock_timeout
+ */
+function withScriptLock_(fn) {
+  var lock = LockService.getScriptLock();
+  try {
+    lock.waitLock(SCRIPT_LOCK_TIMEOUT_MS);
+  } catch (err) {
+    Logger.log("⚠️ Script lock tidak didapat dalam " + SCRIPT_LOCK_TIMEOUT_MS + "ms: " + err);
+    return json_({
+      success: false,
+      error: "Server sibuk, coba lagi sebentar.",
+      errorType: "lock_timeout"
+    });
+  }
+
+  try {
+    return fn();
+  } finally {
+    lock.releaseLock();
+  }
+}
+
+/**
+ * Cek apakah username sudah dipakai di tab Member (case-insensitive).
+ * Helper baca murni — dipakai untuk pre-check cepat (di luar lock) DAN
+ * check definitif di DALAM critical section doPostPendaftaran_ (TOCTOU fix).
+ *
+ * @param {Sheet} sheet - tab Member
+ * @param {string} username - username yang dicek
+ * @return {boolean} true kalau username sudah ada di sheet
+ */
+function isUsernameTaken_(sheet, username) {
+  var usernameCol = COLUMNS.indexOf("Username") + 1; // 1-indexed
+  var lastRow = sheet.getLastRow();
+  if (lastRow < 2) return false;
+
+  var existingUsernames = sheet
+    .getRange(2, usernameCol, lastRow - 1, 1)
+    .getValues()
+    .map(function (r) { return String(r[0]).trim().toLowerCase(); })
+    .filter(function (v) { return v !== ""; });
+
+  return existingUsernames.indexOf(String(username).toLowerCase()) !== -1;
+}
+
+/**
+ * Validasi fotoBase64 dari client (BUG-05): ukuran decoded + tipe gambar.
+ *
+ * Format aktual yang dikirim client adalah RAW base64 TANPA prefix data URI
+ * (MAO_CONFIG.compressImageToBase64 & blobToBase64 di Pendaftaran/Submit/
+ * Admin selalu membuang prefix "data:...;base64," sebelum kirim), dengan
+ * fotoMimeType dikirim terpisah. Data URI penuh yang kebetulan terkirim tetap
+ * diterima — prefix-nya dibuang dulu (defensif, tidak break client).
+ *
+ * Tipe dicek dari MAGIC BYTES hasil decode (bukan dari fotoMimeType yang
+ * mudah dipalsukan client): whitelist JPEG (FFD8FF) & PNG (89504E47).
+ *
+ * @param {string} fotoBase64 - raw base64 (atau data URI, ditoleransi)
+ * @param {string} [fotoMimeType] - hanya informasi; keputusan dari magic bytes
+ * @return {{ok: boolean, error: (string|undefined), errorType: (string|undefined), decodedBytes: number}}
+ */
+function validateFotoBase64_(fotoBase64, fotoMimeType) {
+  var raw = String(fotoBase64 || "").trim();
+
+  // Toleran: kalau client mengirim data URI penuh, buang prefix-nya.
+  var dataUriMatch = raw.match(/^data:image\/(jpeg|jpg|png);base64,(.*)$/);
+  if (dataUriMatch) {
+    raw = dataUriMatch[2];
+  }
+
+  if (!raw) {
+    return { ok: false, error: "Foto wajib diupload", errorType: "foto_kosong" };
+  }
+
+  // Buang whitespace/newline yang bukan bagian base64 (defensif).
+  var b64 = raw.replace(/\s+/g, "");
+
+  // Estimasi ukuran decoded dari panjang base64: (len - padding) * 3/4.
+  var padding = 0;
+  if (b64.charAt(b64.length - 1) === "=") padding++;
+  if (b64.length > 1 && b64.charAt(b64.length - 2) === "=") padding++;
+  var decodedBytes = Math.floor((b64.length - padding) * 3 / 4);
+
+  if (decodedBytes > MAX_FOTO_DECODED_BYTES) {
+    return {
+      ok: false,
+      error: "Ukuran foto terlalu besar (maksimal 5MB).",
+      errorType: "foto_terlalu_besar"
+    };
+  }
+
+  // Decode beberapa byte pertama untuk cek magic bytes (32 char base64 =
+  // kelipatan 4 → decode bersih jadi 24 byte).
+  var headBytes;
+  try {
+    headBytes = Utilities.base64Decode(b64.substring(0, 32));
+  } catch (err) {
+    headBytes = [];
+  }
+
+  var isJpeg =
+    headBytes.length >= 3 &&
+    headBytes[0] === 0xff && headBytes[1] === 0xd8 && headBytes[2] === 0xff;
+  var isPng =
+    headBytes.length >= 4 &&
+    headBytes[0] === 0x89 && headBytes[1] === 0x50 &&
+    headBytes[2] === 0x4e && headBytes[3] === 0x47;
+
+  if (!isJpeg && !isPng) {
+    return {
+      ok: false,
+      error: "Format foto tidak didukung. Gunakan foto JPG atau PNG.",
+      errorType: "format_foto_tidak_didukung"
+    };
+  }
+
+  return { ok: true, decodedBytes: decodedBytes };
+}
+
 // ─── doPost ─────────────────────────────────────────────────────────────────
 
 function doPost(e) {
+  // Setup format kolom WA — otomatis sekali jalan (idempoten, flag-based);
+  // setelah first-run overhead-nya cuma 1 getProperty per request.
+  ensureSetupKolomWA_();
+
   var action = trim_(e.parameter.action);
 
   // ── Routing: submitOrder / requestHadiah / daftar (default) ──
@@ -420,31 +630,28 @@ function doPostPendaftaran_(e) {
     return json_({ success: false, error: "Foto wajib diupload" });
   }
 
-  // Validasi username UNIK — cek ke seluruh kolom Username di sheet
-  var usernameCol = COLUMNS.indexOf("Username") + 1; // 1-indexed
-  var lastRow = sheet.getLastRow();
-  if (lastRow >= 2) {
-    var existingUsernames = sheet
-      .getRange(2, usernameCol, lastRow - 1, 1)
-      .getValues()
-      .map(function (r) { return String(r[0]).trim().toLowerCase(); })
-      .filter(function (v) { return v !== ""; });
-    if (existingUsernames.indexOf(username.toLowerCase()) !== -1) {
-      return json_({
-        success: false,
-        error: "Username \"" + username + "\" sudah dipakai. Silakan pilih username lain.",
-        errorType: "username_taken"
-      });
-    }
+  // BUG-05: validasi ukuran + tipe foto server-side (magic bytes — jangan
+  // percaya fotoMimeType yang dikirim client).
+  var fotoCheck = validateFotoBase64_(fotoBase64, fotoMimeType);
+  if (!fotoCheck.ok) {
+    return json_({ success: false, error: fotoCheck.error, errorType: fotoCheck.errorType });
   }
 
-  // Generate kode unik
-  var kodeMembership = generateKodeMembership_(sheet);
+  // Pre-check username (best-effort, di LUAR lock): fast-fail UX supaya
+  // foto tidak terlanjur ter-upload ke Drive untuk request yang jelas-jelas
+  // duplikat. BUKAN pengganti check definitif — yang menentukan ada di
+  // DALAM lock di bawah (TOCTOU fix).
+  if (isUsernameTaken_(sheet, username)) {
+    return json_({
+      success: false,
+      error: "Username \"" + username + "\" sudah dipakai. Silakan pilih username lain.",
+      errorType: "username_taken"
+    });
+  }
 
-  // Hitung umur server-side (single source of truth)
-  var umur = hitungUmur_(tanggalLahir);
-
-  // Upload foto profil ke folder Drive khusus (terpisah dari foto produk Submit)
+  // Upload foto profil ke folder Drive khusus (terpisah dari foto produk Submit).
+  // SENGAJA di LUAR script lock: upload Drive lambat (ratusan ms–detik) dan
+  // tidak menyentuh sheet — jangan memperpanjang waktu pegang lock.
   var fotoBlob = Utilities.newBlob(
     Utilities.base64Decode(fotoBase64),
     fotoMimeType || "image/jpeg",
@@ -455,45 +662,65 @@ function doPostPendaftaran_(e) {
   fotoFile.setSharing(DriveApp.Access.ANYONE_WITH_LINK, DriveApp.Permission.VIEW);
   var fotoUrl = fotoFile.getUrl();
 
-  // Timestamp
-  var timestamp = new Date();
+  // Hitung umur server-side (single source of truth)
+  var umur = hitungUmur_(tanggalLahir);
 
-  // Susun baris sesuai urutan COLUMNS
-  // WA disimpan sebagai teks (setNumberFormat "@") supaya Google Sheets
-  // TIDAK menghapus angka 0 di depan (mis. "0812xxx" jadi "812xxx").
-  var waCol = COLUMNS.indexOf("Nomor WhatsApp") + 1; // 1-indexed
-  // Kita tulis row dulu, lalu format kolom WA secara spesifik.
-  var row = [
-    timestamp,         // Timestamp
-    kodeMembership,    // Kode Membership
-    nama,              // Nama
-    domisili,          // Domisili
-    tanggalLahir,      // Tanggal Lahir
-    umur,              // Umur (dihitung server-side)
-    jenisKelamin,      // Jenis Kelamin
-    status,            // Status
-    nomorWhatsApp,     // Nomor WhatsApp — ditulis sebagai teks
-    fotoUrl,           // Foto Profil (URL Drive)
-    username           // Username
-  ];
+  // ── CRITICAL SECTION (BUG-04 + TOCTOU username) ──
+  // Check username (READ) dan appendRow (WRITE) HARUS di lock yang SAMA:
+  // kalau tidak, dua pendaftaran username sama yang submit bersamaan bisa
+  // lolos dua-duanya (keduanya selesai membaca SEBELUM salah satu menulis).
+  // generateKodeMembership_ ikut di dalam (uniqueness check-nya juga READ
+  // terhadap sheet — sekalian dijamin tidak balapan dengan append lain).
+  //
+  // appendRow di bawah TIDAK lagi baca-balik row index (getLastRow) untuk
+  // format WA: kolom "Nomor WhatsApp" sudah ber-format "@" (TEXT) untuk
+  // SELURUH kolom via setupFormatKolomWA() — nilai string yang di-append
+  // otomatis tersimpan sebagai teks (leading 0 aman), jadi jendela race
+  // append→getLastRow dihilangkan dari akarnya.
+  return withScriptLock_(function () {
+    // Check definitif username — dalam lock YANG SAMA dengan append:
+    // read-check dan write tidak bisa diselingi request lain (TOCTOU).
+    if (isUsernameTaken_(sheet, username)) {
+      return json_({
+        success: false,
+        error: "Username \"" + username + "\" sudah dipakai. Silakan pilih username lain.",
+        errorType: "username_taken"
+      });
+    }
 
-  sheet.appendRow(row);
+    // Generate kode unik
+    var kodeMembership = generateKodeMembership_(sheet);
 
-  // Setelah appendRow, format kolom WA baris terakhir sebagai TEXT
-  // supaya leading 0 tidak hilang.
-  var lastDataRow = sheet.getLastRow();
-  sheet.getRange(lastDataRow, waCol).setNumberFormat("@");
-  sheet.getRange(lastDataRow, waCol).setValue(nomorWhatsApp);
-  Logger.log("✅ Pendaftaran baru: " + nama + " (" + username + ") → " + kodeMembership);
+    // Susun baris sesuai urutan COLUMNS.
+    // WA ditulis sebagai string biasa — kolom ber-format "@" (lihat komentar
+    // di atas), leading 0 aman tanpa perlu format-per-baris setelah append.
+    var row = [
+      new Date(),        // Timestamp
+      kodeMembership,    // Kode Membership
+      nama,              // Nama
+      domisili,          // Domisili
+      tanggalLahir,      // Tanggal Lahir
+      umur,              // Umur (dihitung server-side)
+      jenisKelamin,      // Jenis Kelamin
+      status,            // Status
+      nomorWhatsApp,     // Nomor WhatsApp — teks (kolom ber-format "@")
+      fotoUrl,           // Foto Profil (URL Drive)
+      username           // Username
+    ];
 
-  return json_({
-    success: true,
-    kodeMembership: kodeMembership,
-    nama: nama,
-    domisili: domisili,
-    umur: umur,
-    fotoUrl: fotoUrl,
-    username: username
+    sheet.appendRow(row);
+
+    Logger.log("✅ Pendaftaran baru: " + nama + " (" + username + ") → " + kodeMembership);
+
+    return json_({
+      success: true,
+      kodeMembership: kodeMembership,
+      nama: nama,
+      domisili: domisili,
+      umur: umur,
+      fotoUrl: fotoUrl,
+      username: username
+    });
   });
 }
 
@@ -558,7 +785,14 @@ function doPostSubmitOrder_(e) {
     return json_({ success: false, error: "Foto wajib diupload" });
   }
 
-  // d. Decode & upload foto ke Drive
+  // BUG-05: validasi ukuran + tipe foto bukti pesanan (server-side,
+  // magic bytes — bukan percaya fotoMimeType dari client).
+  var fotoCheck = validateFotoBase64_(fotoBase64, fotoMimeType);
+  if (!fotoCheck.ok) {
+    return json_({ success: false, error: fotoCheck.error, errorType: fotoCheck.errorType });
+  }
+
+  // d. Decode & upload foto ke Drive (di luar lock — tidak menyentuh sheet)
   var fotoBlob = Utilities.newBlob(
     Utilities.base64Decode(fotoBase64),
     fotoMimeType || "image/jpeg",
@@ -575,32 +809,40 @@ function doPostSubmitOrder_(e) {
     return json_({ success: false, error: "Tab 'Submit Pesanan' belum dibuat. Jalankan setupSheetTambahanMembership() terlebih dahulu." });
   }
 
-  var timestamp = new Date();
-  var jumlahItem = 0;
+  // ── CRITICAL SECTION (BUG-04) ──
+  // Append N baris + hitungTotalPoin_ (yang membaca ulang sheet SETELAH
+  // append) dijadikan atomik terhadap submit lain: tanpa lock, dua order
+  // konkuren bisa saling menyela barisnya dan hitungan poin bisa menghitung
+  // data campuran (sebagian order milik request lain ikut / tertinggal).
+  return withScriptLock_(function () {
+    var timestamp = new Date();
+    var jumlahItem = 0;
 
-  for (var j = 0; j < items.length; j++) {
-    var row = [
-      timestamp,           // Timestamp
-      kodeMembership,      // Kode Membership
-      String(items[j].namaMenu).trim(),  // Nama Menu
-      parseInt(items[j].qty, 10),        // Qty
-      fotoUrl,             // Foto Produk (URL Drive)
-      orderId              // Order ID (kosong kalau client lama tidak mengirim)
-    ];
-    submitSheet.appendRow(row);
-    jumlahItem++;
-  }
+    for (var j = 0; j < items.length; j++) {
+      var row = [
+        timestamp,           // Timestamp
+        kodeMembership,      // Kode Membership
+        String(items[j].namaMenu).trim(),  // Nama Menu
+        parseInt(items[j].qty, 10),        // Qty
+        fotoUrl,             // Foto Produk (URL Drive)
+        orderId              // Order ID (kosong kalau client lama tidak mengirim)
+      ];
+      submitSheet.appendRow(row);
+      jumlahItem++;
+    }
 
-  // f. Hitung total poin KUMULATIF untuk kode ini — dipanggil SETELAH append
-  // di atas supaya submission yang baru saja masuk ikut terhitung.
-  var totalPoin = hitungTotalPoin_(submitSheet, kodeMembership);
+    // f. Hitung total poin KUMULATIF untuk kode ini — dipanggil SETELAH append
+    // di atas supaya submission yang baru saja masuk ikut terhitung (dan
+    // berkat lock, pembacaannya dijamin melihat set lengkap order ini).
+    var totalPoin = hitungTotalPoin_(submitSheet, kodeMembership);
 
-  Logger.log("✅ Pesanan diterima: " + kodeMembership + ", " + jumlahItem + " item, total " + totalPoin + " poin");
+    Logger.log("✅ Pesanan diterima: " + kodeMembership + ", " + jumlahItem + " item, total " + totalPoin + " poin");
 
-  return json_({
-    success: true,
-    jumlahItem: jumlahItem,
-    totalPoin: totalPoin
+    return json_({
+      success: true,
+      jumlahItem: jumlahItem,
+      totalPoin: totalPoin
+    });
   });
 }
 
@@ -1646,6 +1888,12 @@ function doPostAdminUpdateMember_(e) {
   var fotoMimeTypeNew = trim_(e.parameter.fotoMimeType);
   var fotoNamaFileNew = trim_(e.parameter.fotoNamaFile);
   if (fotoBase64New) {
+    // BUG-05: validasi ukuran + tipe foto reupload (server-side, magic bytes)
+    var fotoCheckNew = validateFotoBase64_(fotoBase64New, fotoMimeTypeNew);
+    if (!fotoCheckNew.ok) {
+      return json_({ success: false, error: fotoCheckNew.error, errorType: fotoCheckNew.errorType });
+    }
+
     var newFotoBlob = Utilities.newBlob(
       Utilities.base64Decode(fotoBase64New),
       fotoMimeTypeNew || "image/jpeg",
