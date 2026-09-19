@@ -215,6 +215,32 @@
   //   baris 4 (foot)   : catatan ringkas
   // Aksi (Edit/Hapus) ada di baris terpisah paling bawah.
 
+  /** Placeholder saat foto tidak ada / semua sumber gambar gagal dimuat. */
+  function buildFotoPlaceholder() {
+    var ph = document.createElement('div');
+    ph.className = 'pesanan-foto pesanan-foto-empty';
+    ph.textContent = '📷';
+    ph.title = 'Foto tidak bisa dimuat — pastikan file Drive di-share "Anyone with the link"';
+    return ph;
+  }
+
+  /**
+   * Pasang foto Drive pada <img> lewat jalur berlapis dari config.js:
+   *   thumbnail?id=<ID> → lh3.googleusercontent.com/d/<ID> → onFail().
+   * Listener dipasang SEBELUM src di-set supaya error pertama tertangkap.
+   *
+   * @param {HTMLImageElement} img
+   * @param {string} url - nilai kolom URL foto dari sheet
+   * @param {boolean} big - true untuk lightbox (w1600)
+   * @param {function} [onFail] - dipanggil kalau kedua URL gagal
+   */
+  function setFotoDrive(img, url, big, onFail) {
+    if (typeof MAO_CONFIG !== 'undefined' && MAO_CONFIG.attachDriveImageFallback) {
+      MAO_CONFIG.attachDriveImageFallback(img, url, onFail);
+    }
+    img.src = driveImageUrl(url, big);
+  }
+
   /** Foto bukti + lightbox. Klik foto TIDAK ikut membuka modal edit. */
   function buildFotoWrap(row) {
     var wrap = document.createElement('div');
@@ -225,17 +251,18 @@
       img.className = 'pesanan-foto';
       img.alt = 'Foto bukti ' + row.kodeMembership;
       img.loading = 'lazy';
-      img.src = driveImageUrl(row.fotoUrl, false);
       img.addEventListener('click', function (e) {
         e.stopPropagation(); // jangan sampai ikut membuka modal edit kartu
         openLightbox(row.fotoUrl);
       });
+      setFotoDrive(img, row.fotoUrl, false, function () {
+        // thumbnail & lh3 dua-duanya gagal (mis. file Drive belum di-share
+        // publik) → ganti dengan placeholder, bukan ikon gambar rusak.
+        if (img.parentNode) img.parentNode.replaceChild(buildFotoPlaceholder(), img);
+      });
       wrap.appendChild(img);
     } else {
-      var ph = document.createElement('div');
-      ph.className = 'pesanan-foto pesanan-foto-empty';
-      ph.textContent = '📷';
-      wrap.appendChild(ph);
+      wrap.appendChild(buildFotoPlaceholder());
     }
 
     return wrap;
@@ -388,7 +415,11 @@
   // ─── LIGHTBOX ────────────────────────────────────────────────────────────
 
   function openLightbox(url) {
-    lightboxImg.src = driveImageUrl(url, true);
+    setFotoDrive(lightboxImg, url, true, function () {
+      // Versi besar gagal dimuat → tutup lightbox daripada menampilkan kotak
+      // gambar rusak (foto di kartu sudah punya placeholder sendiri).
+      closeLightbox();
+    });
     lightbox.hidden = false;
   }
 

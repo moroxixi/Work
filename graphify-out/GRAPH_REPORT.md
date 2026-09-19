@@ -1,16 +1,16 @@
 # Graph Report - Work  (2026-09-20)
 
 ## Corpus Check
-- 43 files · ~81,596 words
+- 43 files · ~82,121 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
-- 755 nodes · 1095 edges · 49 communities (40 shown, 9 thin omitted)
+- 758 nodes · 1104 edges · 49 communities (40 shown, 9 thin omitted)
 - Extraction: 99% EXTRACTED · 1% INFERRED · 0% AMBIGUOUS · INFERRED: 13 edges (avg confidence: 0.5)
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `7868eb63`
+- Built from commit: `2c550fdd`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -74,11 +74,15 @@
 10. `doPostSubmitOrder_()` - 9 edges
 
 ## Surprising Connections (you probably didn't know these)
+- `setCardPhoto()` --references--> `MAO_CONFIG`  [EXTRACTED]
+  Membership/Admin/Member/script.js → Membership/config.js
 - `processFotoFile()` --references--> `MAO_CONFIG`  [EXTRACTED]
   Membership/Pendaftaran/script.js → Membership/config.js
 - `processFotoFile()` --references--> `MAO_CONFIG`  [EXTRACTED]
   Membership/Submit/script.js → Membership/config.js
 - `driveImageUrl()` --references--> `MAO_CONFIG`  [EXTRACTED]
+  Membership/Admin/Check-Pesanan/script.js → Membership/config.js
+- `setFotoDrive()` --references--> `MAO_CONFIG`  [EXTRACTED]
   Membership/Admin/Check-Pesanan/script.js → Membership/config.js
 
 ## Import Cycles
@@ -219,16 +223,16 @@ Cohesion: 0.40
 Nodes (5): applyFormData(), escapeHtml(), renderKodeList(), renderKodeOptions(), renderMenuList()
 
 ### Community 46 - "Member/script.js"
-Cohesion: 0.19
-Nodes (10): closeDropdown(), fillForm(), hideFormMsg(), loadMemberList(), resetFotoUpload(), selectMember(), setSelectValue(), showError() (+2 more)
+Cohesion: 0.18
+Nodes (12): closeDropdown(), fillForm(), hideFormMsg(), loadMemberList(), resetFotoUpload(), selectMember(), setCardPhoto(), setSelectValue() (+4 more)
 
 ### Community 47 - "admin-auth.js"
 Cohesion: 0.27
 Nodes (13): authMode(), clearAuth(), consumeTarget(), currentPageKey(), getCredential(), goToLogin(), isAuthed(), markAuthed() (+5 more)
 
 ### Community 48 - "Check-Pesanan/script.js"
-Cohesion: 0.16
-Nodes (19): addEditItemRow(), buildCardActions(), buildFotoWrap(), buildItemsList(), buildLegacyCard(), buildReceiptCard(), driveImageUrl(), escapeHtml() (+11 more)
+Cohesion: 0.15
+Nodes (22): addEditItemRow(), buildCardActions(), buildFotoPlaceholder(), buildFotoWrap(), buildItemsList(), buildLegacyCard(), buildReceiptCard(), closeLightbox() (+14 more)
 
 ## Knowledge Gaps
 - **314 isolated node(s):** `all`, `menuBtn`, `drawer`, `overlay`, `drawerClose` (+309 more)
@@ -238,12 +242,12 @@ Nodes (19): addEditItemRow(), buildCardActions(), buildFotoWrap(), buildItemsLis
 ## Suggested Questions
 _Questions this graph is uniquely positioned to answer:_
 
-- **Why does `MAO_CONFIG` connect `Check-Pesanan/script.js` to `Pendaftaran/script.js`, `processFotoFile`?**
-  _High betweenness centrality (0.022) - this node is a cross-community bridge._
+- **Why does `MAO_CONFIG` connect `Check-Pesanan/script.js` to `processFotoFile`, `Pendaftaran/script.js`, `Member/script.js`?**
+  _High betweenness centrality (0.032) - this node is a cross-community bridge._
 - **Why does `processFotoFile()` connect `processFotoFile` to `Check-Pesanan/script.js`, `Submit/script.js`?**
-  _High betweenness centrality (0.018) - this node is a cross-community bridge._
+  _High betweenness centrality (0.022) - this node is a cross-community bridge._
 - **Why does `processFotoFile()` connect `Pendaftaran/script.js` to `Check-Pesanan/script.js`?**
-  _High betweenness centrality (0.016) - this node is a cross-community bridge._
+  _High betweenness centrality (0.019) - this node is a cross-community bridge._
 - **What connects `all`, `menuBtn`, `drawer` to the rest of the system?**
   _314 weakly-connected nodes found - possible documentation gaps or missing edges._
 - **Should `Riwayat/script.js` be split into smaller, more focused modules?**

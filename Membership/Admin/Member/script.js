@@ -449,27 +449,84 @@
   // ini reuse pola yang SAMA: isi elemen kartu dari data adminGetMemberDetail,
   // render foto via object URL dari Drive URL, lalu download via html2canvas.
 
+  /**
+   * Pasang foto kartu member dari kolom "URL Foto" sheet (link share Drive).
+   *
+   * Sebelumnya fungsi ini menebak sendiri ID file dengan regex lokal lalu
+   * memasang `https://drive.google.com/uc?export=view&id=<ID>` — URL lama yang
+   * sudah tidak andal (Google balas halaman HTML/403, bukan byte gambar), dan
+   * gambarnya dipasang lintas-origin langsung ke <img>.
+   *
+   * Dua hal yang diperbaiki di sini:
+   *   1) URL diturunkan lewat MAO_CONFIG.driveImageUrl() — helper yang SAMA
+   *      dipakai halaman Hadiah & Admin/Check-Pesanan (satu sumber logika).
+   *   2) Byte gambar diambil via fetch() lalu dipasang sebagai object URL
+   *      (blob same-origin). Ini penting untuk tombol "Download Kartu":
+   *      html2canvas men-capture kartu ke <canvas>, dan gambar lintas-origin
+   *      tanpa header CORS membuat canvas ternoda → canvas.toDataURL()
+   *      melempar SecurityError dan download selalu gagal.
+   *
+   * Urutan sumber: thumbnail?id=<ID>&sz=w1600 → cadangan
+   * lh3.googleusercontent.com/d/<ID> → tanpa foto (kartu tetap bisa
+   * di-generate, hanya tanpa gambar).
+   *
+   * @param {string} url - nilai kolom URL foto dari sheet
+   */
+  async function setCardPhoto(url) {
+    if (cardObjectUrl) {
+      URL.revokeObjectURL(cardObjectUrl);
+      cardObjectUrl = null;
+    }
+    cardFotoProfil.removeAttribute('src');
+
+    if (!url) return;
+
+    var isDrive = (typeof MAO_CONFIG !== 'undefined' && MAO_CONFIG.extractDriveFileId)
+      ? !!MAO_CONFIG.extractDriveFileId(url)
+      : false;
+
+    // URL non-Drive (mis. link gambar langsung yang diisi manual di sheet):
+    // perilaku lama dipertahankan — dipasang apa adanya.
+    if (!isDrive) {
+      cardFotoProfil.src = String(url);
+      return;
+    }
+
+    var candidates = [];
+    if (typeof MAO_CONFIG !== 'undefined' && MAO_CONFIG.driveImageUrl) {
+      candidates.push(MAO_CONFIG.driveImageUrl(url, 'big'));
+      var alt = MAO_CONFIG.driveImageFallbackUrl ? MAO_CONFIG.driveImageFallbackUrl(url) : '';
+      if (alt) candidates.push(alt);
+    } else {
+      candidates.push(String(url));
+    }
+
+    for (var i = 0; i < candidates.length; i++) {
+      try {
+        var resp = await fetch(candidates[i], { mode: 'cors', credentials: 'omit' });
+        if (!resp.ok) continue;
+        var blob = await resp.blob();
+        if (!blob || !blob.size) continue;
+        cardObjectUrl = URL.createObjectURL(blob);
+        cardFotoProfil.src = cardObjectUrl;
+        return;
+      } catch (e) { /* kandidat berikutnya */ }
+    }
+    // Semua sumber gagal (mis. file Drive belum di-share "Anyone with the
+    // link") → kartu dirender tanpa foto, bukan dengan gambar rusak.
+  }
+
   function showMemberCard(member) {
     cardKode.textContent = member.kodeMembership;
     cardNama.textContent = member.nama;
     cardDomisili.textContent = member.domisili;
     cardUsername.textContent = '@' + (member.username || '');
 
-    // Foto profil: convert Drive URL ke gambar display
-    if (cardObjectUrl) {
-      URL.revokeObjectURL(cardObjectUrl);
-      cardObjectUrl = null;
-    }
-
-    if (member.fotoUrl) {
-      // Drive URL → direct image URL
-      var m = String(member.fotoUrl).match(/\/file\/d\/([A-Za-z0-9_-]+)/);
-      if (m) {
-        cardFotoProfil.src = 'https://drive.google.com/uc?export=view&id=' + m[1];
-      } else {
-        cardFotoProfil.src = member.fotoUrl;
-      }
-    }
+    // Foto profil: lewat helper bersama config.js (TIDAK lagi regex lokal +
+    // URL lama drive.google.com/uc?export=view — lihat setCardPhoto()).
+    setCardPhoto(member.fotoUrl).catch(function (err) {
+      console.error('Foto kartu gagal dimuat:', err);
+    });
 
     memberForm.hidden = true;
     searchSection.hidden = true;

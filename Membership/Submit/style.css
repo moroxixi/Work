@@ -713,7 +713,9 @@ select {
   padding: 0 6px;
   font-size: 0.72rem;
   line-height: 1.55;
-  color: #7a7a7a;
+  /* QA: #7a7a7a hanya 4.29:1 di atas --surface (#141414) — di bawah WCAG AA
+     (4.5:1) untuk teks <24px. Pakai token dim standar app (5.2:1). */
+  color: var(--text-dim);
   text-align: center;
 }
 
