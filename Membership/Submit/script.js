@@ -278,20 +278,22 @@ function renderMenuList(menuList) {
       "</div>";
     menuListEl.appendChild(div);
   });
-
-  // Event delegation for stepper buttons
-  menuListEl.addEventListener("click", function (e) {
-    var btn = e.target.closest(".btn-minus, .btn-plus");
-    if (!btn) return;
-    var idx = parseInt(btn.getAttribute("data-idx"), 10);
-    if (btn.classList.contains("btn-plus")) {
-      menuData[idx].qty++;
-    } else {
-      if (menuData[idx].qty > 0) menuData[idx].qty--;
-    }
-    document.getElementById("qty-" + idx).textContent = menuData[idx].qty;
-  });
 }
+
+// Event delegation for stepper buttons — di-attach SEKALI di load, bukan di
+// dalam renderMenuList(). renderMenuList() bisa dipanggil ulang (cache refresh)
+// dan kalau listener ada di dalamnya, akan menumpuk → qty berubah 2x per klik.
+menuListEl.addEventListener("click", function (e) {
+  var btn = e.target.closest(".btn-minus, .btn-plus");
+  if (!btn) return;
+  var idx = parseInt(btn.getAttribute("data-idx"), 10);
+  if (btn.classList.contains("btn-plus")) {
+    menuData[idx].qty++;
+  } else {
+    if (menuData[idx].qty > 0) menuData[idx].qty--;
+  }
+  document.getElementById("qty-" + idx).textContent = menuData[idx].qty;
+});
 
 // ─── PHOTO UPLOAD + COMPRESSION ─────────────────────────────────────────────
 //

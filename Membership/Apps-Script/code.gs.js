@@ -462,7 +462,6 @@ function doPostPendaftaran_(e) {
   // WA disimpan sebagai teks (setNumberFormat "@") supaya Google Sheets
   // TIDAK menghapus angka 0 di depan (mis. "0812xxx" jadi "812xxx").
   var waCol = COLUMNS.indexOf("Nomor WhatsApp") + 1; // 1-indexed
-  var waRange = sheet.getRange(1, 1, 2, COLUMNS.length); // dummy — akan di-extend
   // Kita tulis row dulu, lalu format kolom WA secara spesifik.
   var row = [
     timestamp,         // Timestamp
@@ -1279,17 +1278,11 @@ function deleteOrderById_(orderId, e) {
     });
   }
 
-  // Sort both arrays by namaMenu for comparison
-  var sortedSnap = snapParsed.slice().sort(function (a, b) {
-    return String(a.namaMenu).localeCompare(String(b.namaMenu));
-  });
-  var sortedCur = currentItems.slice().sort(function (a, b) {
-    return String(a.namaMenu).localeCompare(String(b.namaMenu));
-  });
-
-  for (var j = 0; j < sortedSnap.length; j++) {
-    if (String(sortedSnap[j].namaMenu).trim() !== String(sortedCur[j].namaMenu).trim() ||
-        String(sortedSnap[j].qty).trim() !== String(sortedCur[j].qty).trim()) {
+  // Bandingkan item tanpa sorting — urutan juga harus sama (persis).
+  // Kalau di-sort, reorder item tidak terdeteksi sebagai perubahan.
+  for (var j = 0; j < snapParsed.length; j++) {
+    if (String(snapParsed[j].namaMenu).trim() !== String(currentItems[j].namaMenu).trim() ||
+        String(snapParsed[j].qty).trim() !== String(currentItems[j].qty).trim()) {
       return json_({
         success: false,
         error: "Data order sudah berubah. Refresh list lalu ulangi.",
@@ -1397,15 +1390,9 @@ function doPostAdminUpdateOrder_(e) {
     return json_({ success: false, error: "Order tidak ditemukan.", errorType: "stale" });
   }
 
-  // Revalidasi: bandingkan item snapshot client vs current
-  var sortedSnap = snapItems.slice().sort(function (a, b) {
-    return String(a.namaMenu).localeCompare(String(b.namaMenu));
-  });
-  var sortedCur = currentItems.slice().sort(function (a, b) {
-    return String(a.namaMenu).localeCompare(String(b.namaMenu));
-  });
-
-  if (sortedSnap.length !== sortedCur.length) {
+  // Revalidasi: bandingkan item snapshot client vs current.
+  // Tanpa sorting — urutan juga harus persis (pola sama dgn deleteOrderById_).
+  if (snapItems.length !== currentItems.length) {
     return json_({
       success: false,
       error: "Data order sudah berubah. Refresh list lalu ulangi.",
@@ -1413,9 +1400,9 @@ function doPostAdminUpdateOrder_(e) {
     });
   }
 
-  for (var r = 0; r < sortedSnap.length; r++) {
-    if (String(sortedSnap[r].namaMenu).trim() !== String(sortedCur[r].namaMenu).trim() ||
-        String(sortedSnap[r].qty).trim() !== String(sortedCur[r].qty).trim()) {
+  for (var r = 0; r < snapItems.length; r++) {
+    if (String(snapItems[r].namaMenu).trim() !== String(currentItems[r].namaMenu).trim() ||
+        String(snapItems[r].qty).trim() !== String(currentItems[r].qty).trim()) {
       return json_({
         success: false,
         error: "Data order sudah berubah. Refresh list lalu ulangi.",

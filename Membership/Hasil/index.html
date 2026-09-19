@@ -604,9 +604,6 @@
       document.querySelector('.form-card').prepend(btn);
     })();
 
-    // Clean up localStorage after successful display (one-time read)
-    try { localStorage.removeItem(STORAGE_KEY); } catch (e) { /* ignore */ }
-
     // ─── Download handler ───────────────────────────────────────────────
     downloadBtn.addEventListener('click', async function () {
       try {
