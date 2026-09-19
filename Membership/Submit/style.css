@@ -505,7 +505,10 @@ select {
   padding: 14px;
   font-size: 1rem;
   font-weight: 700;
-  color: #fff;
+  /* Kontras (QA mobile): teks putih di atas gradien brand cuma 1.79:1–3.32:1
+     (gagal WCAG AA 4.5:1 untuk teks 16px). Tinta gelap = 5.87:1–10.7:1 dan
+     tetap ≥4.5:1 saat hover (opacity .9). Gradien brand tidak diubah. */
+  color: #120c00;
   background: var(--gradient-h);
   border: none;
   border-radius: 8px;
@@ -788,10 +791,28 @@ select {
   font-weight: 700;
   text-decoration: none;
   white-space: nowrap;
+  /* Area tap: teks link ini hanya 19px tinggi, di bawah ambang 44px.
+     Padding vertikal + margin negatif menaikkan area tap ke 45px TANPA
+     menambah tinggi bar floater (padding bar 12px tetap menentukan tinggi). */
+  padding: 13px 6px;
+  margin: -13px 0;
+  flex-shrink: 0;
 }
 
 .floater-help a:hover {
   text-decoration: underline;
+}
+
+/* Bar floater WAJIB satu baris: di lebar ≤360px teks panjangnya dulu wrap
+   jadi 2 baris sehingga bar tumbuh 44px → 63px. Karena .quicknav dipaku di
+   bottom:52px, bar yang tumbuh itu menabraknya (overlap 11px @320px).
+   Dengan nowrap + ellipsis tinggi bar tetap 44px di semua lebar, jadi jarak
+   8px ke .quicknav terjaga dan teks cukup dipotong, bukan tumpang tindih. */
+.floater-help span {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 /* ─── Quicknav ───────────────────────────────────────────────────────── */
@@ -872,8 +893,9 @@ select {
   position: absolute;
   top: 12px;
   right: 12px;
-  width: 36px;
-  height: 36px;
+  /* QA mobile: 36px di bawah ambang target sentuh 44px. */
+  width: 44px;
+  height: 44px;
   font-size: 1.1rem;
   color: var(--text-dim);
   background: var(--surface2);

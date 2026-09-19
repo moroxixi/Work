@@ -134,7 +134,10 @@
       padding: 14px;
       font-size: 1rem;
       font-weight: 700;
-      color: #fff;
+      /* Kontras (QA mobile): teks putih di atas gradien brand cuma 1.79:1–3.32:1
+         (gagal WCAG AA 4.5:1 untuk teks 16px). Tinta gelap = 5.87:1–10.7:1 dan
+         tetap ≥4.5:1 saat hover (opacity .9). Gradien brand tidak diubah. */
+      color: #120c00;
       background: var(--gradient-h);
       border: none;
       border-radius: 10px;
@@ -202,7 +205,11 @@
     .footer-link {
       display: block;
       text-align: center;
-      margin-top: 20px;
+      /* QA mobile: teks link hanya 19px tinggi. Padding vertikal + margin
+         negatif menaikkan area tap ke 45px (≥44px) tanpa menambah tinggi kartu
+         (padding dan margin saling meniadakan). */
+      margin: 7px -8px -13px;
+      padding: 13px 8px;
       font-size: 0.78rem;
       color: var(--text-dim);
       text-decoration: none;
@@ -219,6 +226,30 @@
       color: var(--text-dim);
       text-align: center;
       line-height: 1.5;
+    }
+
+    /* ─── Layar pendek (HP kecil, mis. 320x568) ───────────────────────────
+       Kartu login tadinya 740px tinggi sementara viewport hanya 568px,
+       sehingga tombol utama "Buka Halaman Admin" (yang berada di bawah
+       kolom PIN) jatuh DI BAWAH FOLD — user harus scroll dulu untuk bisa
+       menekan tombol masuk. Di sini padding/logo/teks dirapatkan supaya
+       seluruh alur (logo → PIN → tombol) tetap muat di satu layar.
+       Hanya berlaku di tinggi ≤700px; di 390x844 tampilan tidak berubah. */
+    @media (max-height: 700px) {
+      body { padding: calc(14px + env(safe-area-inset-top)) 14px
+             calc(14px + env(safe-area-inset-bottom)); }
+      .login-card { padding: 20px 18px 16px; }
+      .brand { margin-bottom: 12px; }
+      .brand-logo { max-width: min(40%, 96px); margin-bottom: 8px; }
+      .brand-title { font-size: 1.15rem; }
+      .brand-sub { font-size: 0.78rem; margin-top: 4px; }
+      .divider { margin: 12px 0; }
+      .form-group { margin-bottom: 12px; }
+      .pin-input { padding: 11px; font-size: 18px; }
+      .hint { margin-top: 5px; }
+      .btn-primary { min-height: 46px; padding: 12px; }
+      .footer-link { margin-top: 6px; }
+      .lock-note { margin-top: 10px; padding-top: 10px; }
     }
   </style>
 </head>

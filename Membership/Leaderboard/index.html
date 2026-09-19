@@ -68,7 +68,7 @@
     .state-msg p { margin-top: 12px; font-size: 0.9rem; }
     .state-msg a {
       display: inline-block; margin-top: 20px; padding: 12px 24px;
-      background: var(--gradient-h); color: #fff; text-decoration: none;
+      background: var(--gradient-h); color: #120c00; text-decoration: none;
       border-radius: 8px; font-weight: 700;
     }
     .spinner {
@@ -143,16 +143,28 @@
       border-top: 1px solid var(--border); font-size: 0.8rem;
       color: var(--text-dim); z-index: 100;
     }
-    .floater-help a { color: var(--accent2); font-weight: 700; text-decoration: none; white-space: nowrap; }
+    .floater-help a {
+      color: var(--accent2); font-weight: 700; text-decoration: none; white-space: nowrap;
+      /* Area tap 19px → 45px (≥44px) tanpa menambah tinggi bar. */
+      padding: 13px 6px; margin: -13px 0; flex-shrink: 0;
+    }
     .floater-help a:hover { text-decoration: underline; }
+
+    /* Bar floater WAJIB satu baris: di ≤360px teksnya dulu wrap jadi 2 baris
+       (bar 44px → 63px) sehingga menabrak .quicknav di bottom:52px (overlap
+       11px @320px). nowrap + ellipsis membuat tinggi bar tetap 44px. */
+    .floater-help span {
+      min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+    }
 
     /* Hard refresh button */
     .hard-refresh-btn {
       position: absolute;
       top: 12px;
       right: 12px;
-      width: 36px;
-      height: 36px;
+      /* QA mobile: naik ke ambang target sentuh 44px. */
+      width: 44px;
+      height: 44px;
       font-size: 1.1rem;
       color: var(--text-dim);
       background: var(--surface2);

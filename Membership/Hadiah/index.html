@@ -59,7 +59,7 @@
     .state-msg p { margin-top: 12px; font-size: 0.9rem; }
     .state-msg a {
       display: inline-block; margin-top: 20px; padding: 12px 24px;
-      background: var(--gradient-h); color: #fff; text-decoration: none;
+      background: var(--gradient-h); color: #120c00; text-decoration: none;
       border-radius: 8px; font-weight: 700;
     }
     .spinner {
@@ -129,7 +129,11 @@
        (halaman ini standalone dgn CSS inline, tidak load style.css) */
     .btn-submit {
       width: 100%; min-height: 48px; padding: 14px;
-      font-size: 1rem; font-weight: 700; color: #fff;
+      font-size: 1rem; font-weight: 700;
+      /* Kontras (QA mobile): teks putih di atas gradien brand cuma 1.79:1–3.32:1
+         (gagal WCAG AA 4.5:1 untuk teks 16px). Tinta gelap = 5.87:1–10.7:1 dan
+         tetap ≥4.5:1 saat hover (opacity .9). Gradien brand tidak diubah. */
+      color: #120c00;
       background: var(--gradient-h); border: none; border-radius: 8px;
       cursor: pointer; transition: opacity 0.2s, transform 0.1s;
       letter-spacing: 0.02em;
@@ -158,6 +162,14 @@
       background: var(--surface); border-radius: 16px 16px 0 0;
       padding: 20px 16px; padding-bottom: calc(20px + env(safe-area-inset-bottom));
       animation: slideUpReq 0.2s ease-out;
+      /* QA mobile: tinggi sheet bisa melebihi layar (HP landscape atau saat
+         keyboard virtual terbuka). Batasi tinggi + scroll internal supaya
+         judul, field, dan tombol Kirim/Batal tetap terjangkau.
+         dvh = tinggi viewport dinamis (fallback ke vh di browser lama). */
+      max-height: calc(100vh - 8px);
+      max-height: calc(100dvh - 8px);
+      overflow-y: auto;
+      -webkit-overflow-scrolling: touch;
     }
     @keyframes slideUpReq { from { transform: translateY(100%); } to { transform: translateY(0); } }
     .req-modal-title {
@@ -197,16 +209,28 @@
       border-top: 1px solid var(--border); font-size: 0.8rem;
       color: var(--text-dim); z-index: 100;
     }
-    .floater-help a { color: var(--accent2); font-weight: 700; text-decoration: none; white-space: nowrap; }
+    .floater-help a {
+      color: var(--accent2); font-weight: 700; text-decoration: none; white-space: nowrap;
+      /* Area tap 19px → 45px (≥44px) tanpa menambah tinggi bar. */
+      padding: 13px 6px; margin: -13px 0; flex-shrink: 0;
+    }
     .floater-help a:hover { text-decoration: underline; }
+
+    /* Bar floater WAJIB satu baris: di ≤360px teksnya dulu wrap jadi 2 baris
+       (bar 44px → 63px) sehingga menabrak .quicknav di bottom:52px (overlap
+       11px @320px). nowrap + ellipsis membuat tinggi bar tetap 44px. */
+    .floater-help span {
+      min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+    }
 
     /* Hard refresh button */
     .hard-refresh-btn {
       position: absolute;
       top: 12px;
       right: 12px;
-      width: 36px;
-      height: 36px;
+      /* QA mobile: naik ke ambang target sentuh 44px. */
+      width: 44px;
+      height: 44px;
       font-size: 1.1rem;
       color: var(--text-dim);
       background: var(--surface2);
