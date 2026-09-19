@@ -349,6 +349,10 @@ function doPost(e) {
     return doPostAdminUpdateMember_(e);
   }
 
+  if (action === "adminUpdateOrder") {
+    return doPostAdminUpdateOrder_(e);
+  }
+
   // Default: registrasi Pendaftaran — HANYA untuk request tanpa action
   // atau action="daftar" secara eksplisit. Action lain yang tidak dikenal
   // TIDAK boleh jatuh ke sini: kalau client lebih baru dari deployment
@@ -455,6 +459,11 @@ function doPostPendaftaran_(e) {
   var timestamp = new Date();
 
   // Susun baris sesuai urutan COLUMNS
+  // WA disimpan sebagai teks (setNumberFormat "@") supaya Google Sheets
+  // TIDAK menghapus angka 0 di depan (mis. "0812xxx" jadi "812xxx").
+  var waCol = COLUMNS.indexOf("Nomor WhatsApp") + 1; // 1-indexed
+  var waRange = sheet.getRange(1, 1, 2, COLUMNS.length); // dummy — akan di-extend
+  // Kita tulis row dulu, lalu format kolom WA secara spesifik.
   var row = [
     timestamp,         // Timestamp
     kodeMembership,    // Kode Membership
@@ -464,12 +473,18 @@ function doPostPendaftaran_(e) {
     umur,              // Umur (dihitung server-side)
     jenisKelamin,      // Jenis Kelamin
     status,            // Status
-    nomorWhatsApp,     // Nomor WhatsApp
+    nomorWhatsApp,     // Nomor WhatsApp — ditulis sebagai teks
     fotoUrl,           // Foto Profil (URL Drive)
     username           // Username
   ];
 
   sheet.appendRow(row);
+
+  // Setelah appendRow, format kolom WA baris terakhir sebagai TEXT
+  // supaya leading 0 tidak hilang.
+  var lastDataRow = sheet.getLastRow();
+  sheet.getRange(lastDataRow, waCol).setNumberFormat("@");
+  sheet.getRange(lastDataRow, waCol).setValue(nomorWhatsApp);
   Logger.log("✅ Pendaftaran baru: " + nama + " (" + username + ") → " + kodeMembership);
 
   return json_({
@@ -1121,7 +1136,8 @@ function doPostAdminListPesanan_(e) {
       kodeMembership: kode,
       namaMenu: namaMenu,
       qty: r[COLUMNS_SUBMIT_PESANAN.indexOf("Qty")],
-      fotoUrl: String(r[COLUMNS_SUBMIT_PESANAN.indexOf("Foto Produk (URL Drive)")] || "").trim()
+      fotoUrl: String(r[COLUMNS_SUBMIT_PESANAN.indexOf("Foto Produk (URL Drive)")] || "").trim(),
+      orderId: String(r[COLUMNS_SUBMIT_PESANAN.indexOf("Order ID")] || "").trim()
     });
   });
 
@@ -1152,13 +1168,19 @@ function doPostAdminDeletePesanan_(e) {
   var reject = checkAdminPin_(trim_(e.parameter.pin));
   if (reject) return reject;
 
+  // Mode 1: order-level delete (orderId dikirim)
+  var orderId = trim_(e.parameter.orderId);
+  if (orderId) {
+    return deleteOrderById_(orderId, e);
+  }
+
+  // Mode 2: single-row delete (backward compat — baris lama tanpa orderId)
   var rowIndex = parseInt(e.parameter.rowIndex, 10);
   var snapTimestamp = trim_(e.parameter.snapTimestamp);
   var snapKode = trim_(e.parameter.snapKode);
   var snapNamaMenu = trim_(e.parameter.snapNamaMenu);
   var snapQty = trim_(e.parameter.snapQty);
 
-  // Baris 1 = header → tidak boleh jadi target delete.
   if (isNaN(rowIndex) || rowIndex < 2) {
     return json_({ success: false, error: "rowIndex tidak valid" });
   }
@@ -1200,6 +1222,229 @@ function doPostAdminDeletePesanan_(e) {
   Logger.log("🗑️ Pesanan dihapus (admin): baris " + rowIndex + " — " + snapKode + " / " + snapNamaMenu);
 
   return json_({ success: true });
+}
+
+/**
+ * Hapus SEMUA baris dengan Order ID sama (order-level delete).
+ * Snapshot revalidation: client mengirim daftar item (namaMenu+qty) lama;
+ * backend memverifikasi bahwa item-item di sheet untuk orderId ini
+ * masih persis sama sebelum menghapus.
+ */
+function deleteOrderById_(orderId, e) {
+  var snapItems = trim_(e.parameter.snapItems); // JSON array: [{namaMenu, qty}]
+
+  var ss = SpreadsheetApp.openById(SHEET_ID);
+  var sheet = ss.getSheetByName("Submit Pesanan");
+  if (!sheet) {
+    return json_({ success: false, error: "Tab 'Submit Pesanan' belum dibuat." });
+  }
+
+  var lastRow = sheet.getLastRow();
+  if (lastRow < 2) {
+    return json_({ success: false, error: "Order tidak ditemukan.", errorType: "stale" });
+  }
+
+  var orderIdCol = COLUMNS_SUBMIT_PESANAN.indexOf("Order ID") + 1;
+  var data = sheet.getRange(2, 1, lastRow - 1, COLUMNS_SUBMIT_PESANAN.length).getValues();
+
+  // Kumpulkan baris yang cocok orderId
+  var rowsToDelete = []; // sheet row numbers (1-indexed, header = row 1)
+  var currentItems = []; // snapshot item untuk revalidasi
+  for (var i = 0; i < data.length; i++) {
+    if (String(data[i][orderIdCol - 1]).trim() !== orderId) continue;
+    rowsToDelete.push(i + 2); // +2 karena data mulai dari baris 2
+    currentItems.push({
+      namaMenu: String(data[i][COLUMNS_SUBMIT_PESANAN.indexOf("Nama Menu")]).trim(),
+      qty: String(data[i][COLUMNS_SUBMIT_PESANAN.indexOf("Qty")]).trim()
+    });
+  }
+
+  if (rowsToDelete.length === 0) {
+    return json_({ success: false, error: "Order tidak ditemukan.", errorType: "stale" });
+  }
+
+  // Revalidasi: bandingkan item snapshot client vs current
+  var snapParsed;
+  try {
+    snapParsed = JSON.parse(snapItems);
+  } catch (err) {
+    return json_({ success: false, error: "Format snapItems tidak valid" });
+  }
+
+  if (!Array.isArray(snapParsed) || snapParsed.length !== currentItems.length) {
+    return json_({
+      success: false,
+      error: "Data order sudah berubah. Refresh list lalu ulangi.",
+      errorType: "stale"
+    });
+  }
+
+  // Sort both arrays by namaMenu for comparison
+  var sortedSnap = snapParsed.slice().sort(function (a, b) {
+    return String(a.namaMenu).localeCompare(String(b.namaMenu));
+  });
+  var sortedCur = currentItems.slice().sort(function (a, b) {
+    return String(a.namaMenu).localeCompare(String(b.namaMenu));
+  });
+
+  for (var j = 0; j < sortedSnap.length; j++) {
+    if (String(sortedSnap[j].namaMenu).trim() !== String(sortedCur[j].namaMenu).trim() ||
+        String(sortedSnap[j].qty).trim() !== String(sortedCur[j].qty).trim()) {
+      return json_({
+        success: false,
+        error: "Data order sudah berubah. Refresh list lalu ulangi.",
+        errorType: "stale"
+      });
+    }
+  }
+
+  // Hapus dari belakang supaya index tidak bergeser
+  rowsToDelete.sort(function (a, b) { return b - a; });
+  for (var k = 0; k < rowsToDelete.length; k++) {
+    sheet.deleteRow(rowsToDelete[k]);
+  }
+
+  Logger.log("🗑️ Order dihapus (admin): " + orderId + " (" + rowsToDelete.length + " baris)");
+  return json_({ success: true, deletedRows: rowsToDelete.length });
+}
+
+// ─── ADMIN: UPDATE ORDER (edit item dalam 1 order) ──────────────────────
+
+/**
+ * Action: adminUpdateOrder — edit item-item dalam 1 order.
+ * Urutan: validasi PIN → revalidasi snapshot items lama → hapus semua baris
+ * lama order itu → tulis ulang baris baru sesuai hasil edit.
+ * Timestamp, Kode Membership, Order ID, Foto: READ-ONLY (tidak bisa diubah).
+ *
+ * Parameter: orderId (wajib), snapItems (JSON [{namaMenu, qty}] untuk reval),
+ *            newItems (JSON [{namaMenu, qty}] — daftar item hasil edit).
+ */
+function doPostAdminUpdateOrder_(e) {
+  var reject = checkAdminPin_(trim_(e.parameter.pin));
+  if (reject) return reject;
+
+  var orderId = trim_(e.parameter.orderId);
+  var snapItemsStr = trim_(e.parameter.snapItems);
+  var newItemsStr = trim_(e.parameter.newItems);
+
+  if (!orderId) {
+    return json_({ success: false, error: "orderId wajib diisi" });
+  }
+
+  // Parse items
+  var snapItems, newItems;
+  try {
+    snapItems = JSON.parse(snapItemsStr);
+    newItems = JSON.parse(newItemsStr);
+  } catch (err) {
+    return json_({ success: false, error: "Format items tidak valid" });
+  }
+
+  if (!Array.isArray(snapItems) || snapItems.length === 0) {
+    return json_({ success: false, error: "Snapshot items tidak valid" });
+  }
+  if (!Array.isArray(newItems) || newItems.length === 0) {
+    return json_({ success: false, error: "Minimal 1 item harus ada dalam order" });
+  }
+
+  // Validasi newItems
+  for (var v = 0; v < newItems.length; v++) {
+    if (!newItems[v].namaMenu || !String(newItems[v].namaMenu).trim()) {
+      return json_({ success: false, error: "Item ke-" + (v + 1) + " tidak memiliki nama menu" });
+    }
+    if (!newItems[v].qty || parseInt(newItems[v].qty, 10) <= 0) {
+      return json_({ success: false, error: "Item ke-" + (v + 1) + " memiliki qty tidak valid" });
+    }
+  }
+
+  var ss = SpreadsheetApp.openById(SHEET_ID);
+  var sheet = ss.getSheetByName("Submit Pesanan");
+  if (!sheet) {
+    return json_({ success: false, error: "Tab 'Submit Pesanan' belum dibuat." });
+  }
+
+  var lastRow = sheet.getLastRow();
+  if (lastRow < 2) {
+    return json_({ success: false, error: "Order tidak ditemukan.", errorType: "stale" });
+  }
+
+  var orderIdCol = COLUMNS_SUBMIT_PESANAN.indexOf("Order ID") + 1;
+  var data = sheet.getRange(2, 1, lastRow - 1, COLUMNS_SUBMIT_PESANAN.length).getValues();
+
+  // Kumpulkan baris order ini
+  var rowsToDelete = [];
+  var currentItems = [];
+  var orderTimestamp = null;
+  var orderKode = "";
+  var orderFotoUrl = "";
+
+  for (var i = 0; i < data.length; i++) {
+    if (String(data[i][orderIdCol - 1]).trim() !== orderId) continue;
+    rowsToDelete.push(i + 2);
+    currentItems.push({
+      namaMenu: String(data[i][COLUMNS_SUBMIT_PESANAN.indexOf("Nama Menu")]).trim(),
+      qty: String(data[i][COLUMNS_SUBMIT_PESANAN.indexOf("Qty")]).trim()
+    });
+    // Ambil metadata dari baris pertama order
+    if (orderTimestamp === null) {
+      orderTimestamp = data[i][COLUMNS_SUBMIT_PESANAN.indexOf("Timestamp")];
+      orderKode = String(data[i][COLUMNS_SUBMIT_PESANAN.indexOf("Kode Membership")]).trim();
+      orderFotoUrl = String(data[i][COLUMNS_SUBMIT_PESANAN.indexOf("Foto Produk (URL Drive)")] || "").trim();
+    }
+  }
+
+  if (rowsToDelete.length === 0) {
+    return json_({ success: false, error: "Order tidak ditemukan.", errorType: "stale" });
+  }
+
+  // Revalidasi: bandingkan item snapshot client vs current
+  var sortedSnap = snapItems.slice().sort(function (a, b) {
+    return String(a.namaMenu).localeCompare(String(b.namaMenu));
+  });
+  var sortedCur = currentItems.slice().sort(function (a, b) {
+    return String(a.namaMenu).localeCompare(String(b.namaMenu));
+  });
+
+  if (sortedSnap.length !== sortedCur.length) {
+    return json_({
+      success: false,
+      error: "Data order sudah berubah. Refresh list lalu ulangi.",
+      errorType: "stale"
+    });
+  }
+
+  for (var r = 0; r < sortedSnap.length; r++) {
+    if (String(sortedSnap[r].namaMenu).trim() !== String(sortedCur[r].namaMenu).trim() ||
+        String(sortedSnap[r].qty).trim() !== String(sortedCur[r].qty).trim()) {
+      return json_({
+        success: false,
+        error: "Data order sudah berubah. Refresh list lalu ulangi.",
+        errorType: "stale"
+      });
+    }
+  }
+
+  // Hapus baris lama (dari belakang)
+  rowsToDelete.sort(function (a, b) { return b - a; });
+  for (var d = 0; d < rowsToDelete.length; d++) {
+    sheet.deleteRow(rowsToDelete[d]);
+  }
+
+  // Tulis baris baru — Timestamp, Kode, Foto, Order ID disalin dari data lama
+  for (var n = 0; n < newItems.length; n++) {
+    var newRow = [
+      orderTimestamp,        // Timestamp (dari baris lama)
+      orderKode,             // Kode Membership (dari baris lama)
+      String(newItems[n].namaMenu).trim(), // Nama Menu (baru)
+      parseInt(newItems[n].qty, 10),       // Qty (baru)
+      orderFotoUrl,          // Foto (dari baris lama)
+      orderId                // Order ID (tetap)
+    ];
+    sheet.appendRow(newRow);
+  }
+
+  Logger.log("✏️ Order diupdate (admin): " + orderId + " — " + newItems.length + " item baru (" + rowsToDelete.length + " baris lama dihapus)");
+  return json_({ success: true, newRowCount: newItems.length });
 }
 
 // ─── ADMIN: LIST MEMBER (ringkas, untuk dropdown halaman Admin/Member) ────
@@ -1399,10 +1644,34 @@ function doPostAdminUpdateMember_(e) {
   sheet.getRange(rowIndex, namaCol, 1, 4).setValues([[nama, domisili, tglLahirDate, umur]]);
   sheet.getRange(rowIndex, COLUMNS.indexOf("Jenis Kelamin") + 1, 1, 2)
     .setValues([[jenisKelamin, status]]);
-  sheet.getRange(rowIndex, COLUMNS.indexOf("Nomor WhatsApp") + 1, 1, 1)
-    .setValues([[nomorWhatsApp]]);
+  // WA: format kolom sebagai TEXT dulu supaya leading 0 tidak hilang,
+  // lalu tulis nilai.
+  var waColIdx = COLUMNS.indexOf("Nomor WhatsApp") + 1;
+  sheet.getRange(rowIndex, waColIdx).setNumberFormat("@");
+  sheet.getRange(rowIndex, waColIdx).setValue(nomorWhatsApp);
   sheet.getRange(rowIndex, COLUMNS.indexOf("Username") + 1, 1, 1)
     .setValues([[username]]);
+
+  // ── Foto profil baru (opsional) ──
+  // Kalau client mengirim fotoBase64 → upload ke Drive, update kolom Foto.
+  // File lama di Drive TIDAK dihapus otomatis (orphan, dilaporkan ke admin).
+  var fotoBase64New = trim_(e.parameter.fotoBase64);
+  var fotoMimeTypeNew = trim_(e.parameter.fotoMimeType);
+  var fotoNamaFileNew = trim_(e.parameter.fotoNamaFile);
+  if (fotoBase64New) {
+    var newFotoBlob = Utilities.newBlob(
+      Utilities.base64Decode(fotoBase64New),
+      fotoMimeTypeNew || "image/jpeg",
+      fotoNamaFileNew || "foto.jpg"
+    );
+    var folder = getOrCreateFolder_("MAO Membership - Foto Profil", "FOTO_PROFIL_FOLDER_ID");
+    var newFotoFile = folder.createFile(newFotoBlob);
+    newFotoFile.setSharing(DriveApp.Access.ANYONE_WITH_LINK, DriveApp.Permission.VIEW);
+    var newFotoUrl = newFotoFile.getUrl();
+    sheet.getRange(rowIndex, COLUMNS.indexOf("Foto Profil (URL Drive)") + 1, 1, 1)
+      .setValues([[newFotoUrl]]);
+    Logger.log("📷 Foto profil diupdate (admin): " + snapKode + " → " + newFotoUrl);
+  }
 
   Logger.log("✏️ Member diupdate (admin): " + snapKode + " → " + username);
 

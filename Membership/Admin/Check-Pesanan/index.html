@@ -47,7 +47,7 @@
     </div>
   </div>
 
-  <!-- Modal konfirmasi hapus (destructive → wajib konfirmasi dulu) -->
+  <!-- Modal konfirmasi hapus (order-level) -->
   <div id="deleteModal" class="sheet-modal" hidden>
     <div class="sheet-modal-backdrop"></div>
     <div class="sheet-modal-sheet">
@@ -56,6 +56,19 @@
       <div id="deleteModalMsg" class="sheet-modal-msg" hidden></div>
       <button type="button" id="deleteConfirmBtn" class="btn-submit btn-danger">Ya, Hapus</button>
       <button type="button" id="deleteCancelBtn" class="sheet-modal-cancel">Batal</button>
+    </div>
+  </div>
+
+  <!-- Modal edit order -->
+  <div id="editModal" class="sheet-modal" hidden>
+    <div class="sheet-modal-backdrop"></div>
+    <div class="sheet-modal-sheet">
+      <p class="sheet-modal-title">Edit Pesanan</p>
+      <div id="editModalItems" class="edit-items"></div>
+      <button type="button" id="editAddItemBtn" class="btn-add-item">+ Tambah Item</button>
+      <div id="editModalMsg" class="sheet-modal-msg" hidden></div>
+      <button type="button" id="editConfirmBtn" class="btn-submit">Simpan Perubahan</button>
+      <button type="button" id="editCancelBtn" class="sheet-modal-cancel">Batal</button>
     </div>
   </div>
 
@@ -72,6 +85,9 @@
     </div>
   </div>
 
+  <!-- Admin nav -->
+  <nav class="admin-nav" aria-label="Navigasi admin"></nav>
+
   <!-- Floater -->
   <div class="floater-help">
     <span>Ada kendala verifikasi?</span>
@@ -80,6 +96,7 @@
 
   <script src="../../config.js"></script>
   <script src="../admin-auth.js"></script>
+  <script src="../admin-nav.js"></script>
   <script src="script.js"></script>
 </body>
 </html>

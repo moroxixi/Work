@@ -391,6 +391,190 @@ input[type="date"]::-webkit-calendar-picker-indicator {
 
 .floater-help a:hover { text-decoration: underline; }
 
+/* ─── Photo upload (TUGAS 5) ────────────────────────────────────────────── */
+.foto-upload-area {
+  width: 100%;
+  min-height: 100px;
+  border: 2px dashed var(--border);
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: border-color 0.2s;
+  overflow: hidden;
+  position: relative;
+}
+
+.foto-upload-area:hover { border-color: var(--accent1); }
+
+.foto-preview {
+  width: 100%;
+  max-height: 200px;
+  object-fit: contain;
+  border-radius: 8px;
+}
+
+.foto-placeholder {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  color: var(--text-dim);
+  font-size: 2rem;
+  padding: 20px;
+}
+
+.foto-placeholder-text {
+  font-size: 0.85rem;
+}
+
+/* ─── Member card (TUGAS 4) ─────────────────────────────────────────────── */
+.member-card {
+  background: #101010;
+  border: 1px solid var(--border);
+  border-top: 3px solid var(--accent1);
+  border-radius: var(--radius);
+  padding: 24px 20px 20px;
+  text-align: center;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, 'Courier New', monospace;
+  margin-bottom: 16px;
+}
+
+.member-card-logo {
+  display: block;
+  width: 64px;
+  height: auto;
+  margin: 0 auto 12px;
+  border-radius: 12px;
+}
+
+.member-card-title {
+  font-size: 1.05rem;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  background: var(--gradient);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  margin-bottom: 16px;
+}
+
+.member-card-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 12px;
+  padding: 5px 0;
+  font-size: 0.82rem;
+  text-align: left;
+}
+
+.member-card-label { color: var(--text-dim); flex-shrink: 0; }
+
+.member-card-value {
+  font-weight: 700;
+  color: var(--text);
+  text-align: right;
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.member-card-foto {
+  display: block;
+  width: 100px;
+  height: 100px;
+  object-fit: cover;
+  border-radius: 50%;
+  margin: 16px auto 0;
+  border: 2px solid var(--border);
+  background: var(--surface2);
+}
+
+.member-card-footer {
+  margin-top: 16px;
+  font-size: 0.7rem;
+  color: var(--text-dim);
+  letter-spacing: 0.06em;
+}
+
+/* ─── Admin nav ─────────────────────────────────────────────────────────── */
+.admin-nav {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  display: flex;
+  gap: 4px;
+  padding: 6px 8px;
+  padding-bottom: calc(6px + env(safe-area-inset-bottom));
+  background: rgba(10, 10, 10, 0.92);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border-top: 1px solid var(--border);
+  z-index: 99;
+}
+
+.admin-nav-item {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+  padding: 6px 2px 5px;
+  background: var(--surface);
+  border: 1.5px solid var(--border);
+  border-radius: 10px;
+  text-decoration: none;
+  color: var(--text-dim);
+  transition: background 0.12s, border-color 0.12s, transform 0.15s;
+  min-width: 0;
+}
+
+.admin-nav-item:active { transform: scale(0.95); }
+
+.admin-nav-item.is-active {
+  border-color: var(--accent1);
+  color: var(--text);
+  background: rgba(255, 77, 28, 0.1);
+}
+
+.admin-nav-icon { display: flex; width: 18px; height: 18px; flex-shrink: 0; }
+.admin-nav-icon svg { width: 100%; height: 100%; }
+
+.admin-nav-label {
+  font-size: 9px;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100%;
+  text-align: center;
+}
+
+/* ─── Hard refresh button ────────────────────────────────────────────────── */
+.hard-refresh-btn {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  width: 36px;
+  height: 36px;
+  font-size: 1.1rem;
+  color: var(--text-dim);
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  cursor: pointer;
+  transition: color 0.2s, border-color 0.2s, transform 0.15s;
+  z-index: 10;
+}
+
+.hard-refresh-btn:hover { color: var(--accent1); border-color: var(--accent1); }
+.hard-refresh-btn:active { transform: scale(0.9); }
+.hard-refresh-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+
 /* ─── Responsive ─────────────────────────────────────────────────────────── */
 @media (max-width: 480px) {
   .form-card { padding: 24px 18px; }

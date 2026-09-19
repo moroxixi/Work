@@ -199,6 +199,26 @@
     }
     .floater-help a { color: var(--accent2); font-weight: 700; text-decoration: none; white-space: nowrap; }
     .floater-help a:hover { text-decoration: underline; }
+
+    /* Hard refresh button */
+    .hard-refresh-btn {
+      position: absolute;
+      top: 12px;
+      right: 12px;
+      width: 36px;
+      height: 36px;
+      font-size: 1.1rem;
+      color: var(--text-dim);
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      cursor: pointer;
+      transition: color 0.2s, border-color 0.2s, transform 0.15s;
+      z-index: 10;
+    }
+    .hard-refresh-btn:hover { color: var(--accent1); border-color: var(--accent1); }
+    .hard-refresh-btn:active { transform: scale(0.9); }
+    .hard-refresh-btn:disabled { opacity: 0.4; cursor: not-allowed; }
   </style>
 </head>
 <body>
@@ -265,6 +285,7 @@
   </div>
 
   <script src="../config.js"></script>
+  <script src="../data-cache.js"></script>
   <script src="../nav.js"></script>
   <script>
   (function () {
@@ -289,20 +310,10 @@
       return div.innerHTML;
     }
 
-    async function loadHadiah() {
-      showState('loading');
-      try {
-        var resp = await fetch(MAO_CONFIG.GAS_WEB_APP_URL + '?action=getHadiah');
-        var json = await resp.json();
-        if (!json.success) throw new Error(json.error || 'Gagal memuat data');
+    var CACHE_KEY = 'hadiah_data';
 
-        var hadiah = json.hadiah || [];
-        if (hadiah.length === 0) {
-          showState('empty');
-          return;
-        }
-
-        hadiahList.innerHTML = '';
+    function renderHadiah(hadiah) {
+      hadiahList.innerHTML = '';
         hadiah.forEach(function (item) {
           var div = document.createElement('div');
           div.className = 'hadiah-item';
@@ -339,15 +350,62 @@
           hadiahList.appendChild(div);
         });
 
-        showState('list');
+      showState('list');
+    }
+
+    async function loadHadiah(forceFresh) {
+      // Render dari cache dulu (instan)
+      if (!forceFresh) {
+        var cached = MAO_CACHE.get(CACHE_KEY);
+        if (cached && cached.length > 0) {
+          renderHadiah(cached);
+          showState('list');
+        }
+      }
+
+      if (forceFresh) showState('loading');
+
+      try {
+        var resp = await fetch(MAO_CONFIG.GAS_WEB_APP_URL + '?action=getHadiah');
+        var json = await resp.json();
+        if (!json.success) throw new Error(json.error || 'Gagal memuat data');
+
+        var hadiah = json.hadiah || [];
+        MAO_CACHE.set(CACHE_KEY, hadiah);
+
+        if (hadiah.length === 0 && !forceFresh) {
+          showState('empty');
+        } else {
+          renderHadiah(hadiah);
+          showState('list');
+        }
       } catch (err) {
         console.error('Load hadiah error:', err);
-        errorMsg.textContent = 'Gagal memuat data: ' + err.message;
-        showState('error');
+        if (!MAO_CACHE.get(CACHE_KEY)) {
+          errorMsg.textContent = 'Gagal memuat data: ' + err.message;
+          showState('error');
+        }
       }
     }
 
     loadHadiah();
+
+    // Hard refresh button
+    var refreshBtn = document.createElement('button');
+    refreshBtn.type = 'button';
+    refreshBtn.className = 'hard-refresh-btn';
+    refreshBtn.textContent = '↻';
+    refreshBtn.title = 'Refresh data';
+    refreshBtn.addEventListener('click', async function () {
+      refreshBtn.disabled = true;
+      refreshBtn.textContent = '⏳';
+      MAO_CACHE.clear(CACHE_KEY);
+      await loadHadiah(true);
+      refreshBtn.disabled = false;
+      refreshBtn.textContent = '↻';
+    });
+    document.querySelector('.form-card').style.position = 'relative';
+    document.querySelector('.form-card').prepend(refreshBtn);
 
     // ─── Request Hadiah: modal + submit ke backend ────────────────────────
     // POST action=requestHadiah → doPostRequestHadiah_() di code.gs.js.

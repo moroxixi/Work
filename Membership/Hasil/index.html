@@ -391,6 +391,26 @@
 
     @keyframes spin { to { transform: rotate(360deg); } }
 
+    /* Hard refresh button */
+    .hard-refresh-btn {
+      position: absolute;
+      top: 12px;
+      right: 12px;
+      width: 36px;
+      height: 36px;
+      font-size: 1.1rem;
+      color: var(--text-dim);
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      cursor: pointer;
+      transition: color 0.2s, border-color 0.2s, transform 0.15s;
+      z-index: 10;
+    }
+    .hard-refresh-btn:hover { color: var(--accent1); border-color: var(--accent1); }
+    .hard-refresh-btn:active { transform: scale(0.9); }
+    .form-card { position: relative; }
+
     @media (max-width: 480px) { .form-card { padding: 24px 18px; } }
   </style>
 </head>
@@ -569,6 +589,20 @@
     }
 
     reportSection.hidden = false;
+
+    // Hard refresh button: hapus data & redirect ke Submit
+    (function () {
+      var btn = document.createElement('button');
+      btn.type = 'button';
+      btn.className = 'hard-refresh-btn';
+      btn.textContent = '↻';
+      btn.title = 'Refresh';
+      btn.addEventListener('click', function () {
+        try { localStorage.removeItem(STORAGE_KEY); } catch (e) { /* ignore */ }
+        window.location.href = '../Submit/index.html';
+      });
+      document.querySelector('.form-card').prepend(btn);
+    })();
 
     // Clean up localStorage after successful display (one-time read)
     try { localStorage.removeItem(STORAGE_KEY); } catch (e) { /* ignore */ }

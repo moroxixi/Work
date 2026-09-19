@@ -1,16 +1,16 @@
 # Graph Report - Work  (2026-09-19)
 
 ## Corpus Check
-- 41 files · ~66,485 words
+- 43 files · ~70,637 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
-- 712 nodes · 995 edges · 49 communities (38 shown, 11 thin omitted)
+- 732 nodes · 1035 edges · 49 communities (39 shown, 10 thin omitted)
 - Extraction: 99% EXTRACTED · 1% INFERRED · 0% AMBIGUOUS · INFERRED: 14 edges (avg confidence: 0.5)
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `0621f96d`
+- Built from commit: `1682527c`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -51,32 +51,29 @@
 - code.gs.js
 - Submit/script.js
 - Membership/config.js
-- buildLaporanFileName
 - showReport
-- escapeHtml
+- admin-nav.js
+- applyFormData
 - renderLaporanCanvas
 - Membership/nav.js
 - hideKodeDropdown
-- renderKodeList
 - Member/script.js
 - admin-auth.js
 - Check-Pesanan/script.js
 
 ## God Nodes (most connected - your core abstractions)
-1. `json_()` - 18 edges
-2. `trim_()` - 14 edges
-3. `doPost()` - 12 edges
+1. `json_()` - 20 edges
+2. `trim_()` - 16 edges
+3. `doPost()` - 13 edges
 4. `getMemberSheet_()` - 11 edges
 5. `Investigasi Mekanisme Ntfy — Pencatatan-Buku-Kas/Apps-Script/buku-kas.gs.js` - 10 edges
 6. `2. Daftar Lengkap Pemanggil `report_kirimNotif_()`` - 10 edges
-7. `hitungRekomendasiProduk()` - 9 edges
-8. `Investigasi Konsolidasi Notifikasi ntfy — `report.gs.js`` - 9 edges
-9. `Detail Mekanisme Kolom Z (follow-up)` - 9 edges
-10. `renderList()` - 8 edges
+7. `checkAdminPin_()` - 9 edges
+8. `hitungRekomendasiProduk()` - 9 edges
+9. `Investigasi Konsolidasi Notifikasi ntfy — `report.gs.js`` - 9 edges
+10. `Detail Mekanisme Kolom Z (follow-up)` - 9 edges
 
 ## Surprising Connections (you probably didn't know these)
-- `showReport()` --calls--> `formatWaktu()`  [EXTRACTED]
-  Membership/Submit/script.js → Membership/Submit/script.js  _Bridges community 40 → community 39_
 - `fetchList()` --calls--> `renderList()`  [EXTRACTED]
   Pencatatan-Buku-Kas/Riwayat/script.js → Pencatatan-Buku-Kas/Riwayat/script.js  _Bridges community 10 → community 14_
 - `fetchMonthList()` --calls--> `monthKeyOf()`  [EXTRACTED]
@@ -87,7 +84,7 @@
 ## Import Cycles
 - None detected.
 
-## Communities (49 total, 11 thin omitted)
+## Communities (49 total, 10 thin omitted)
 
 ### Community 0 - "Riwayat/script.js"
 Cohesion: 0.04
@@ -202,37 +199,37 @@ Cohesion: 0.05
 Nodes (32): backBtn, btnLoading, btnText, cardDomisili, cardFotoProfil, cardKode, cardNama, cardSection (+24 more)
 
 ### Community 36 - "code.gs.js"
-Cohesion: 0.26
-Nodes (25): checkAdminPin_(), doGet(), doGetFormData_(), doGetHadiah_(), doGetLeaderboard_(), doGetMemberByUsername_(), doGetOrderByOrderId_(), doPost() (+17 more)
+Cohesion: 0.25
+Nodes (27): checkAdminPin_(), deleteOrderById_(), doGet(), doGetFormData_(), doGetHadiah_(), doGetLeaderboard_(), doGetMemberByUsername_(), doGetOrderByOrderId_() (+19 more)
 
 ### Community 37 - "Submit/script.js"
 Cohesion: 0.04
 Nodes (35): btnLoading, btnText, downloadLaporanBtn, errorMsg, formSection, fotoInput, fotoInputCamera, fotoPreview (+27 more)
 
-### Community 39 - "buildLaporanFileName"
-Cohesion: 0.40
-Nodes (5): buildLaporanFileName(), formatStampFile(), formatWaktu(), pad2(), sanitizeFilePart()
+### Community 39 - "showReport"
+Cohesion: 0.22
+Nodes (9): base64ToBlob(), buildLaporanFileName(), formatStampFile(), formatWaktu(), hideReportError(), hideReportInfo(), pad2(), sanitizeFilePart() (+1 more)
 
-### Community 40 - "showReport"
-Cohesion: 0.50
-Nodes (4): base64ToBlob(), hideReportError(), hideReportInfo(), showReport()
+### Community 41 - "applyFormData"
+Cohesion: 0.40
+Nodes (5): applyFormData(), escapeHtml(), renderKodeList(), renderKodeOptions(), renderMenuList()
 
 ### Community 46 - "Member/script.js"
-Cohesion: 0.23
-Nodes (8): closeDropdown(), fillForm(), hideFormMsg(), loadMemberList(), selectMember(), showError(), showState(), toInputDate()
+Cohesion: 0.20
+Nodes (9): closeDropdown(), fillForm(), hideFormMsg(), loadMemberList(), resetFotoUpload(), selectMember(), showError(), showState() (+1 more)
 
 ### Community 47 - "admin-auth.js"
 Cohesion: 0.30
 Nodes (10): handlePinSubmit(), hideGate(), hideGateMsg(), init(), isAuthed(), markAuthed(), runReadyCallbacks(), showGate() (+2 more)
 
 ### Community 48 - "Check-Pesanan/script.js"
-Cohesion: 0.35
-Nodes (9): driveImageUrl(), escapeHtml(), formatWaktu(), loadList(), openDeleteModal(), openLightbox(), renderList(), showError() (+1 more)
+Cohesion: 0.23
+Nodes (14): addEditItemRow(), buildLegacyCard(), buildReceiptCard(), driveImageUrl(), escapeHtml(), formatWaktu(), groupByOrderId(), loadList() (+6 more)
 
 ## Knowledge Gaps
 - **312 isolated node(s):** `all`, `menuBtn`, `drawer`, `overlay`, `drawerClose` (+307 more)
   These have ≤1 connection - possible missing edges or undocumented components.
-- **11 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
+- **10 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
 
 ## Suggested Questions
 _Questions this graph is uniquely positioned to answer:_
@@ -240,7 +237,7 @@ _Questions this graph is uniquely positioned to answer:_
 - **Why does `Investigasi Mekanisme Ntfy — Pencatatan-Buku-Kas/Apps-Script/buku-kas.gs.js` connect `Investigasi Mekanisme Ntfy — Pencatatan-Buku-Kas/Apps-Script/buku-kas.gs.js` to `Detail Logic Pola Transaksi (follow-up)`?**
   _High betweenness centrality (0.005) - this node is a cross-community bridge._
 - **Why does `Detail Logic Pola Transaksi (follow-up)` connect `Detail Logic Pola Transaksi (follow-up)` to `Investigasi Mekanisme Ntfy — Pencatatan-Buku-Kas/Apps-Script/buku-kas.gs.js`?**
-  _High betweenness centrality (0.003) - this node is a cross-community bridge._
+  _High betweenness centrality (0.002) - this node is a cross-community bridge._
 - **What connects `all`, `menuBtn`, `drawer` to the rest of the system?**
   _312 weakly-connected nodes found - possible documentation gaps or missing edges._
 - **Should `Riwayat/script.js` be split into smaller, more focused modules?**

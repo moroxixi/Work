@@ -1,19 +1,15 @@
 /**
  * MAO Admin — Member (client)
  *
- * Flow: PIN gate (../admin-auth.js) → daftar member ringkas (kode +
- * username saja, via adminGetMemberList — data pribadi baru keluar lewat
- * adminGetMemberDetail setelah admin memilih, tetap di balik PIN) →
- * searchable dropdown (pola combobox Submit; dibuat versi sendiri karena
- * combobox Submit embedded di script halaman live — ekstraksi/reuse
- * berisiko regresi ke halaman produksi) → pilih member →
- * adminGetMemberDetail → form edit (Kode Membership read-only) →
- * Simpan → adminUpdateMember.
+ * Flow: PIN gate → daftar member ringkas → searchable dropdown → pilih member
+ * → adminGetMemberDetail → form edit (Kode Membership read-only) → Simpan.
  *
- * Backend yang revalidasi: PIN per request, snapshot rowIndex+kode saat
- * update, username unik (exclude member yang sedang diedit), dan Kode
- * Membership di backend SENGAJA tidak dibaca dari payload (tidak bisa
- * diubah lewat endpoint ini — defense-in-depth di sisi server).
+ * TUGAS 4: Tombol "Generate Kartu Member" — reuse render logic dari
+ * Pendaftaran/showCard() dengan data dari adminGetMemberDetail. Kartu
+ * dirender client-side dari data mentah (bukan file/URL di sheet).
+ *
+ * TUGAS 5: Upload foto profil baru — compress via MAO_CONFIG.compressImageToBase64,
+ * kirim ke backend bersama field lain. Backend upload ke Drive + update fotoUrl.
  */
 (function () {
   'use strict';
@@ -44,9 +40,30 @@
   var btnLoading   = saveBtn.querySelector('.btn-loading');
   var cancelBtn    = document.getElementById('cancelBtn');
 
+  // TUGAS 5: Photo upload elements
+  var fotoUploadArea = document.getElementById('fotoUploadArea');
+  var fotoInput      = document.getElementById('fotoInput');
+  var fotoPreview    = document.getElementById('fotoPreview');
+  var fotoPlaceholder = document.getElementById('fotoPlaceholder');
+  var newFotoBase64 = null;
+  var newFotoMimeType = '';
+  var newFotoFileName = '';
+
+  // TUGAS 4: Card elements
+  var cardSection     = document.getElementById('cardSection');
+  var membershipCard  = document.getElementById('membershipCard');
+  var cardKode        = document.getElementById('cardKode');
+  var cardNama        = document.getElementById('cardNama');
+  var cardDomisili    = document.getElementById('cardDomisili');
+  var cardUsername    = document.getElementById('cardUsername');
+  var cardFotoProfil  = document.getElementById('cardFotoProfil');
+  var downloadCardBtn = document.getElementById('downloadCardBtn');
+  var closeCardBtn    = document.getElementById('closeCardBtn');
+  var cardObjectUrl   = null;
+
   // ─── STATE ───────────────────────────────────────────────────────────────
-  var memberList = [];        // [{kode, username}] ringkas (tanpa data pribadi)
-  var currentDetail = null;   // hasil adminGetMemberDetail (termasuk rowIndex)
+  var memberList = [];
+  var currentDetail = null;
   var saveBusy = false;
 
   // ─── HELPERS ─────────────────────────────────────────────────────────────
@@ -78,10 +95,6 @@
     formMsg.textContent = '';
   }
 
-  /**
-   * Normalisasi tanggal dari sheet ke YYYY-MM-DD untuk <input type="date">.
-   * Sheet bisa memberi Date-serialize ("Sat Mar 01 2026 ...") atau ISO.
-   */
   function toInputDate(value) {
     var d = new Date(value);
     if (isNaN(d.getTime())) return '';
@@ -91,7 +104,7 @@
     return y + '-' + m + '-' + day;
   }
 
-  // ─── LOAD DAFTAR MEMBER (ringkas: kode + username saja) ─────────────────
+  // ─── LOAD DAFTAR MEMBER ────────────────────────────────────────────────
 
   async function loadMemberList() {
     showState('loading');
@@ -109,7 +122,7 @@
     }
   }
 
-  // ─── SEARCHABLE DROPDOWN (pola combobox Submit, versi halaman ini) ───────
+  // ─── SEARCHABLE DROPDOWN ────────────────────────────────────────────────
 
   function renderOptions(query) {
     var q = String(query || '').trim().toLowerCase();
@@ -160,12 +173,10 @@
     openDropdown();
   });
 
-  // Blur → tutup dropdown (delay 150ms fallback; jalur utama = mousedown)
   kodeSearch.addEventListener('blur', function () {
     setTimeout(closeDropdown, 150);
   });
 
-  // mousedown + preventDefault: input tidak kehilangan fokus sebelum pilih
   kodeDropdown.addEventListener('mousedown', function (e) {
     var opt = e.target.closest('.kode-option');
     if (!opt) return;
@@ -203,10 +214,7 @@
 
   function fillForm(member) {
     currentDetail = member;
-
-    // Kode Membership: READ-ONLY — hanya ditampilkan, tidak bisa diketik.
     kodeInput.value = member.kodeMembership;
-
     namaInput.value = member.nama || '';
     usernameInput.value = member.username || '';
     domisiliInput.value = member.domisili || '';
@@ -220,6 +228,9 @@
       (member.username ? ' (@' + member.username + ')' : '') +
       ' — baris sheet #' + member.rowIndex;
 
+    // Reset photo upload state
+    resetFotoUpload();
+
     hideFormMsg();
     showState('search');
     searchSection.hidden = true;
@@ -232,12 +243,72 @@
     memberForm.hidden = true;
     searchSection.hidden = false;
     hideFormMsg();
+    resetFotoUpload();
     kodeSearch.focus();
   });
 
+  // ─── PHOTO UPLOAD (TUGAS 5) ────────────────────────────────────────────
+
+  fotoUploadArea.addEventListener('click', function () {
+    fotoInput.click();
+  });
+
+  fotoInput.addEventListener('change', async function () {
+    var file = fotoInput.files[0];
+    if (!file) return;
+    fotoInput.value = '';
+
+    if (file.size > 10 * 1024 * 1024) {
+      showFormMsg('Ukuran foto terlalu besar (maksimal 10MB).');
+      return;
+    }
+
+    try {
+      var result = await MAO_CONFIG.compressImageToBase64(file);
+      newFotoBase64 = result.base64;
+      newFotoMimeType = result.mimeType;
+      newFotoFileName = (currentDetail ? currentDetail.kodeMembership : 'member') + '_' + Date.now() + '.jpg';
+
+      // Show preview
+      var blob = (function () {
+        var byteChars = atob(result.base64);
+        var sliceSize = 512;
+        var byteArrays = [];
+        for (var offset = 0; offset < byteChars.length; offset += sliceSize) {
+          var slice = byteChars.slice(offset, offset + sliceSize);
+          var bytes = new Uint8Array(slice.length);
+          for (var i = 0; i < slice.length; i++) bytes[i] = slice.charCodeAt(i);
+          byteArrays.push(bytes);
+        }
+        return new Blob(byteArrays, { type: result.mimeType || 'image/jpeg' });
+      })();
+
+      if (cardObjectUrl) URL.revokeObjectURL(cardObjectUrl);
+      cardObjectUrl = URL.createObjectURL(blob);
+      fotoPreview.src = cardObjectUrl;
+      fotoPreview.hidden = false;
+      fotoPlaceholder.hidden = true;
+    } catch (err) {
+      console.error('Compression error:', err);
+      showFormMsg('Gagal memproses foto. Coba lagi dengan foto lain.');
+    }
+  });
+
+  function resetFotoUpload() {
+    newFotoBase64 = null;
+    newFotoMimeType = '';
+    newFotoFileName = '';
+    fotoInput.value = '';
+    fotoPreview.hidden = true;
+    fotoPlaceholder.hidden = false;
+    if (cardObjectUrl) {
+      URL.revokeObjectURL(cardObjectUrl);
+      cardObjectUrl = null;
+    }
+  }
+
   // ─── SIMPAN PERUBAHAN ────────────────────────────────────────────────────
 
-  // Validasi client ringan (format saja); keputusan akhir selalu di backend.
   function validateClient() {
     var fields = {
       Nama: namaInput.value.trim(),
@@ -291,10 +362,9 @@
     btnLoading.hidden = false;
 
     try {
-      var json = await MAO_ADMIN.adminFetch('adminUpdateMember', {
+      var payload = {
         rowIndex: currentDetail.rowIndex,
         snapKode: currentDetail.kodeMembership,
-        // Kode Membership SENGAJA TIDAK dikirim — tidak bisa diubah.
         Nama: validation.data.Nama,
         Domisili: validation.data.Domisili,
         TanggalLahir: validation.data.TanggalLahir,
@@ -302,11 +372,20 @@
         Status: validation.data.Status,
         NomorWhatsApp: validation.data.NomorWhatsApp,
         Username: validation.data.Username
-      });
+      };
+
+      // Sertakan foto baru kalau ada
+      if (newFotoBase64) {
+        payload.fotoBase64 = newFotoBase64;
+        payload.fotoMimeType = newFotoMimeType;
+        payload.fotoNamaFile = newFotoFileName;
+      }
+
+      var json = await MAO_ADMIN.adminFetch('adminUpdateMember', payload);
 
       if (json.success) {
         showFormMsg('✅ Perubahan tersimpan.');
-        // Refresh list supaya dropdown pakai username terbaru.
+        resetFotoUpload();
         await refreshListQuietly();
       } else {
         if (MAO_ADMIN.isUnauthorized(json)) { MAO_ADMIN.relock(); return; }
@@ -323,7 +402,6 @@
     }
   });
 
-  /** Refresh list tanpa pindah state (form tetap terbuka). */
   async function refreshListQuietly() {
     try {
       var json = await MAO_ADMIN.adminFetch('adminGetMemberList');
@@ -333,7 +411,106 @@
     } catch (e) { /* list lama tetap dipakai */ }
   }
 
+  // ─── GENERATE KARTU MEMBER (TUGAS 4) ──────────────────────────────────
+  // Investigasi: kartu di Pendaftaran dirender murni CLIENT-SIDE dari data
+  // mentah (showCard: kode, nama, domisili, username, foto blob lokal via
+  // object URL). Tidak ada file/URL yang disimpan di sheet. Maka tombol
+  // ini reuse pola yang SAMA: isi elemen kartu dari data adminGetMemberDetail,
+  // render foto via object URL dari Drive URL, lalu download via html2canvas.
+
+  function showMemberCard(member) {
+    cardKode.textContent = member.kodeMembership;
+    cardNama.textContent = member.nama;
+    cardDomisili.textContent = member.domisili;
+    cardUsername.textContent = '@' + (member.username || '');
+
+    // Foto profil: convert Drive URL ke gambar display
+    if (cardObjectUrl) {
+      URL.revokeObjectURL(cardObjectUrl);
+      cardObjectUrl = null;
+    }
+
+    if (member.fotoUrl) {
+      // Drive URL → direct image URL
+      var m = String(member.fotoUrl).match(/\/file\/d\/([A-Za-z0-9_-]+)/);
+      if (m) {
+        cardFotoProfil.src = 'https://drive.google.com/uc?export=view&id=' + m[1];
+      } else {
+        cardFotoProfil.src = member.fotoUrl;
+      }
+    }
+
+    memberForm.hidden = true;
+    searchSection.hidden = true;
+    cardSection.hidden = false;
+    cardSection.scrollIntoView({ behavior: 'smooth' });
+  }
+
+  downloadCardBtn.addEventListener('click', async function () {
+    try {
+      downloadCardBtn.disabled = true;
+      downloadCardBtn.textContent = '⏳ Generating…';
+
+      await new Promise(function (resolve) {
+        if (cardFotoProfil.complete && cardFotoProfil.naturalWidth > 0) resolve();
+        else {
+          cardFotoProfil.addEventListener('load', resolve, { once: true });
+          cardFotoProfil.addEventListener('error', resolve, { once: true });
+        }
+      });
+
+      var canvas = await html2canvas(membershipCard, {
+        backgroundColor: '#0a0a0a',
+        scale: 2
+      });
+
+      var link = document.createElement('a');
+      link.download = 'Membership-' + cardKode.textContent + '.png';
+      link.href = canvas.toDataURL('image/png');
+      link.click();
+    } catch (err) {
+      console.error('Download card error:', err);
+      showFormMsg('Gagal membuat gambar kartu. Coba screenshot manual.');
+    } finally {
+      downloadCardBtn.disabled = false;
+      downloadCardBtn.textContent = '📥 Download Kartu';
+    }
+  });
+
+  closeCardBtn.addEventListener('click', function () {
+    if (cardObjectUrl) {
+      URL.revokeObjectURL(cardObjectUrl);
+      cardObjectUrl = null;
+    }
+    cardFotoProfil.removeAttribute('src');
+    cardSection.hidden = true;
+    memberForm.hidden = false;
+    memberForm.scrollIntoView({ behavior: 'smooth' });
+  });
+
+  // Expose showMemberCard for form submit flow (tombol Generate)
+  // We add a Generate button after save success
+  window._showMemberCard = showMemberCard;
+
   retryBtn.addEventListener('click', loadMemberList);
+
+  // ─── HARD REFRESH (TUGAS 10) ──────────────────────────────────────────
+  (function () {
+    var btn = document.createElement('button');
+    btn.type = 'button';
+    btn.className = 'hard-refresh-btn';
+    btn.textContent = '↻';
+    btn.title = 'Refresh data';
+    btn.addEventListener('click', async function () {
+      btn.disabled = true;
+      btn.textContent = '⏳';
+      await loadMemberList();
+      btn.disabled = false;
+      btn.textContent = '↻';
+    });
+    var formCard = document.querySelector('.form-card');
+    if (formCard) { formCard.prepend(btn); }
+  })();
 
   // ─── INIT (lewat PIN gate) ───────────────────────────────────────────────
 

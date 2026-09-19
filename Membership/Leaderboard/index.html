@@ -145,6 +145,27 @@
     }
     .floater-help a { color: var(--accent2); font-weight: 700; text-decoration: none; white-space: nowrap; }
     .floater-help a:hover { text-decoration: underline; }
+
+    /* Hard refresh button */
+    .hard-refresh-btn {
+      position: absolute;
+      top: 12px;
+      right: 12px;
+      width: 36px;
+      height: 36px;
+      font-size: 1.1rem;
+      color: var(--text-dim);
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      cursor: pointer;
+      transition: color 0.2s, border-color 0.2s, transform 0.15s;
+      z-index: 10;
+    }
+    .hard-refresh-btn:hover { color: var(--accent1); border-color: var(--accent1); }
+    .hard-refresh-btn:active { transform: scale(0.9); }
+    .hard-refresh-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+    .form-card { position: relative; }
   </style>
 </head>
 <body>
@@ -198,6 +219,7 @@
   </div>
 
   <script src="../config.js"></script>
+  <script src="../data-cache.js"></script>
   <script src="../nav.js"></script>
   <script>
   (function () {
@@ -239,11 +261,11 @@
 
     function renderList(data) {
       lbList.innerHTML = '';
-      data.forEach(function (item, idx) {
+      data.forEach(function (item) {
         var div = document.createElement('div');
         div.className = 'lb-item';
         div.innerHTML =
-          '<span class="lb-rank">' + (idx + 1) + '</span>' +
+          '<span class="lb-rank">' + (item.rank || '-') + '</span>' +
           '<div class="lb-info">' +
             '<div class="lb-username">@' + escapeHtml(item.username || '-') + '</div>' +
             '<div class="lb-kode">' + escapeHtml(item.kode) + '</div>' +
@@ -279,29 +301,76 @@
       filterList(searchInput.value);
     });
 
-    async function loadLeaderboard() {
-      showState('loading');
+    // ─── CACHE + STALE-WHILE-REVALIDATE ──────────────────────────────────
+    var CACHE_KEY = 'leaderboard_data';
+    var refreshBtn = null;
+
+    function processData(data) {
+      allData = data;
+      if (allData.length === 0) {
+        showState('empty');
+        return;
+      }
+      // Assign rank (1-based) SEBELUM filtering
+      allData.forEach(function (item, idx) {
+        item.rank = idx + 1;
+      });
+      renderList(allData);
+      showState('list');
+    }
+
+    async function loadLeaderboard(forceFresh) {
+      // Render dari cache dulu (instan, tanpa spinner)
+      if (!forceFresh) {
+        var cached = MAO_CACHE.get(CACHE_KEY);
+        if (cached && cached.length > 0) {
+          processData(cached);
+        }
+      }
+
+      if (forceFresh) showState('loading');
+
       try {
         var resp = await fetch(MAO_CONFIG.GAS_WEB_APP_URL + '?action=getLeaderboard');
         var json = await resp.json();
         if (!json.success) throw new Error(json.error || 'Gagal memuat data');
 
-        allData = json.leaderboard || [];
-        if (allData.length === 0) {
-          showState('empty');
-          return;
-        }
+        var freshData = json.leaderboard || [];
+        MAO_CACHE.set(CACHE_KEY, freshData);
 
-        renderList(allData);
-        showState('list');
+        // Kalau tidak ada cache sebelumnya, proses data fresh
+        if (forceFresh || !(MAO_CACHE.get(CACHE_KEY) && allData.length > 0)) {
+          processData(freshData);
+        } else {
+          // Stale-while-revalidate: update diam-diam tanpa flicker
+          processData(freshData);
+        }
       } catch (err) {
         console.error('Load leaderboard error:', err);
-        errorMsg.textContent = 'Gagal memuat data: ' + err.message;
-        showState('error');
+        if (allData.length === 0) {
+          errorMsg.textContent = 'Gagal memuat data: ' + err.message;
+          showState('error');
+        }
       }
     }
 
     loadLeaderboard();
+
+    // ─── HARD REFRESH (TUGAS 10) ──────────────────────────────────────────
+    refreshBtn = document.createElement('button');
+    refreshBtn.type = 'button';
+    refreshBtn.className = 'hard-refresh-btn';
+    refreshBtn.textContent = '↻';
+    refreshBtn.title = 'Refresh data';
+    refreshBtn.addEventListener('click', async function () {
+      refreshBtn.disabled = true;
+      refreshBtn.textContent = '⏳';
+      MAO_CACHE.clear(CACHE_KEY);
+      await loadLeaderboard(true);
+      refreshBtn.disabled = false;
+      refreshBtn.textContent = '↻';
+    });
+    document.querySelector('.form-card').prepend(refreshBtn);
   })();
   </script>
 </body>

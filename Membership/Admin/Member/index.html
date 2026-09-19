@@ -45,7 +45,7 @@
       <form id="memberForm" novalidate hidden>
         <p class="form-status" id="formStatus"></p>
 
-        <!-- Kode Membership: READ-ONLY (hanya info, tidak bisa diketik) -->
+        <!-- Kode Membership: READ-ONLY -->
         <div class="form-group">
           <label for="kodeMembership">Kode Membership (tidak bisa diubah)</label>
           <input type="text" id="kodeMembership" class="kode-readonly"
@@ -100,6 +100,20 @@
           <span class="hint">Diawali 08, 9–15 digit</span>
         </div>
 
+        <!-- Foto profil: upload baru (opsional) -->
+        <div class="form-group">
+          <label>Foto Profil (opsional — upload baru untuk ganti)</label>
+          <div class="foto-upload-area" id="fotoUploadArea">
+            <input type="file" id="fotoInput" accept="image/*" hidden>
+            <img id="fotoPreview" class="foto-preview" alt="Preview foto baru" hidden>
+            <div id="fotoPlaceholder" class="foto-placeholder">
+              <span>📷</span>
+              <span class="foto-placeholder-text">Tap untuk upload foto baru</span>
+            </div>
+          </div>
+          <span class="hint">Kosongkan jika tidak ingin mengganti foto. Format: JPG/PNG, max 10MB.</span>
+        </div>
+
         <div id="formMsg" class="form-msg" hidden></div>
 
         <button type="submit" id="saveBtn" class="btn-submit">
@@ -111,6 +125,38 @@
           ← Pilih member lain
         </button>
       </form>
+
+      <!-- Kartu member preview (hidden, ditampilkan saat Generate diklik) -->
+      <div id="cardSection" class="section" hidden>
+        <div id="membershipCard" class="member-card">
+          <img src="../../assets/logo-mao.jpeg" alt="MAO" class="member-card-logo">
+          <div class="member-card-title">KARTU MEMBER MAO</div>
+          <div class="member-card-row">
+            <span class="member-card-label">Kode</span>
+            <span class="member-card-value" id="cardKode"></span>
+          </div>
+          <div class="member-card-row">
+            <span class="member-card-label">Nama</span>
+            <span class="member-card-value" id="cardNama"></span>
+          </div>
+          <div class="member-card-row">
+            <span class="member-card-label">Domisili</span>
+            <span class="member-card-value" id="cardDomisili"></span>
+          </div>
+          <div class="member-card-row">
+            <span class="member-card-label">Username</span>
+            <span class="member-card-value" id="cardUsername"></span>
+          </div>
+          <img id="cardFotoProfil" class="member-card-foto" alt="Foto profil">
+          <div class="member-card-footer">Dokumen ini dibuat otomatis oleh sistem MAO</div>
+        </div>
+        <button type="button" id="downloadCardBtn" class="btn-submit">
+          📥 Download Kartu
+        </button>
+        <button type="button" id="closeCardBtn" class="btn-submit btn-cancel">
+          ← Kembali ke Form
+        </button>
+      </div>
 
     </div>
   </div>
@@ -128,14 +174,20 @@
     </div>
   </div>
 
+  <!-- Admin nav -->
+  <nav class="admin-nav" aria-label="Navigasi admin"></nav>
+
   <!-- Floater -->
   <div class="floater-help">
     <span>Ada kendala edit data?</span>
     <a href="https://wa.me/6283156569954?text=Halo%20Admin,%20saya%20mau%20tanya%20soal%20edit%20data%20member.%20" target="_blank" rel="noopener">Hubungi Admin 📱</a>
   </div>
 
+  <!-- html2canvas for card generation -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js" crossorigin="anonymous"></script>
   <script src="../../config.js"></script>
   <script src="../admin-auth.js"></script>
+  <script src="../admin-nav.js"></script>
   <script src="script.js"></script>
 </body>
 </html>

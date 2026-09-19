@@ -865,6 +865,27 @@ select {
   padding-bottom: 130px;
 }
 
+/* ─── Hard refresh button ────────────────────────────────────────────────── */
+.hard-refresh-btn {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  width: 36px;
+  height: 36px;
+  font-size: 1.1rem;
+  color: var(--text-dim);
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  cursor: pointer;
+  transition: color 0.2s, border-color 0.2s, transform 0.15s;
+  z-index: 10;
+}
+
+.hard-refresh-btn:hover { color: var(--accent1); border-color: var(--accent1); }
+.hard-refresh-btn:active { transform: scale(0.9); }
+.hard-refresh-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+
 /* ─── Responsive ───────────────────────────────────────────────────────── */
 @media (max-width: 480px) {
   .form-card {

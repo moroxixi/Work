@@ -72,7 +72,25 @@ let lastOrderId = "";        // Order ID terakhir yang dikirim di POST (untuk re
 
 // ─── INIT: fetch kode list + menu list ─────────────────────────────────────
 
+// ─── INIT: fetch kode list + menu list (dengan cache) ─────────────────
+var CACHE_KEY = 'submit_formData';
+
+function applyFormData(data) {
+  renderKodeList(data.memberList || []);
+  renderMenuList(data.menuList || []);
+  loadingState.hidden = true;
+  orderForm.hidden = false;
+}
+
 (async function init() {
+  // Render dari cache dulu (instan, tanpa spinner)
+  if (typeof MAO_CACHE !== 'undefined') {
+    var cached = MAO_CACHE.get(CACHE_KEY);
+    if (cached) {
+      applyFormData(cached);
+    }
+  }
+
   try {
     const resp = await fetch(MAO_CONFIG.GAS_WEB_APP_URL + "?action=getFormData");
     const json = await resp.json();
@@ -81,18 +99,45 @@ let lastOrderId = "";        // Order ID terakhir yang dikirim di POST (untuk re
       throw new Error(json.error || "Gagal memuat data");
     }
 
-    renderKodeList(json.memberList || []);
-    renderMenuList(json.menuList || []);
+    var data = { memberList: json.memberList || [], menuList: json.menuList || [] };
+    if (typeof MAO_CACHE !== 'undefined') MAO_CACHE.set(CACHE_KEY, data);
 
-    // Tampilkan form, sembunyikan loading
-    loadingState.hidden = true;
-    orderForm.hidden = false;
+    applyFormData(data);
 
   } catch (err) {
     console.error("Init error:", err);
-    loadingState.innerHTML =
-      '<p style="color:var(--danger)">Gagal memuat data: ' + escapeHtml(err.message) + "</p>";
+    if (typeof MAO_CACHE === 'undefined' || !MAO_CACHE.get(CACHE_KEY)) {
+      loadingState.innerHTML =
+        '<p style="color:var(--danger)">Gagal memuat data: ' + escapeHtml(err.message) + "</p>";
+    }
   }
+})();
+
+// ─── HARD REFRESH (TUGAS 10) ─────────────────────────────────────────────
+(function () {
+  var btn = document.createElement('button');
+  btn.type = 'button';
+  btn.className = 'hard-refresh-btn';
+  btn.textContent = '↻';
+  btn.title = 'Refresh data';
+  btn.addEventListener('click', async function () {
+    btn.disabled = true;
+    btn.textContent = '⏳';
+    if (typeof MAO_CACHE !== 'undefined') MAO_CACHE.clear(CACHE_KEY);
+    try {
+      var resp = await fetch(MAO_CONFIG.GAS_WEB_APP_URL + "?action=getFormData");
+      var json = await resp.json();
+      if (json.success) {
+        var data = { memberList: json.memberList || [], menuList: json.menuList || [] };
+        if (typeof MAO_CACHE !== 'undefined') MAO_CACHE.set(CACHE_KEY, data);
+        applyFormData(data);
+      }
+    } catch (e) { /* keep current state */ }
+    btn.disabled = false;
+    btn.textContent = '↻';
+  });
+  var formCard = document.querySelector('.form-card');
+  if (formCard) { formCard.style.position = 'relative'; formCard.prepend(btn); }
 })();
 
 // ─── RENDER KODE MEMBERSHIP: SEARCHABLE COMBOBOX ───────────────────────────
