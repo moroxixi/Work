@@ -635,6 +635,80 @@ body {
   padding-bottom: 70px;
 }
 
+/* ─── Modal konfirmasi tinggalkan kartu member ───────────────────────── */
+/* Pola sama dengan photo-picker modal: fixed backdrop + bottom sheet,
+   [hidden] diprioritaskan dengan !important supaya tidak kalah dari
+   display:flex. */
+.leave-card-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 300;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+}
+
+.leave-card-modal[hidden] {
+  display: none !important;
+}
+
+.leave-card-backdrop {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.6);
+}
+
+.leave-card-sheet {
+  position: relative;
+  width: 100%;
+  max-width: 480px;
+  background: var(--surface);
+  border-radius: 16px 16px 0 0;
+  padding: 24px 16px;
+  padding-bottom: calc(24px + env(safe-area-inset-bottom));
+  animation: slideUp 0.2s ease-out;
+}
+
+.leave-card-title {
+  text-align: center;
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--text);
+  margin-bottom: 8px;
+}
+
+.leave-card-text {
+  text-align: center;
+  font-size: 0.85rem;
+  color: var(--text-dim);
+  margin-bottom: 18px;
+}
+
+/* Tombol konfirmasi memakai .btn-submit (gradient); di sini hanya buang
+   margin-top default-nya supaya jarak sheet rapi. */
+.leave-card-confirm {
+  margin-top: 0;
+}
+
+.leave-card-cancel {
+  display: block;
+  width: 100%;
+  padding: 12px;
+  background: none;
+  border: none;
+  color: var(--text-dim);
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  margin-top: 4px;
+}
+
 /* ─── Responsive ───────────────────────────────────────────────────────── */
 @media (max-width: 480px) {
   .form-card {

@@ -177,9 +177,29 @@
         ← Kembali ke Form
       </button>
 
-      <a href="../Submit/index.html" class="btn-submit btn-submit-pesanan">
+      <a href="../Submit/index.html" class="btn-submit btn-submit-pesanan" id="submitPesananLink">
         🛒 Submit Pesanan Sekarang
       </a>
+
+      <!-- Modal konfirmasi sebelum meninggalkan kartu member tanpa download
+           (dibuka oleh requestLeaveCard() di script.js — guard #backBtn dan
+           #submitPesananLink). Kartu cuma bisa di-generate sekali. -->
+      <div id="leaveCardModal" class="leave-card-modal" hidden>
+        <div class="leave-card-backdrop"></div>
+        <div class="leave-card-sheet">
+          <p class="leave-card-title">Kamu sudah menyimpan kartu member?</p>
+          <p class="leave-card-text">
+            Kartu ini cuma bisa di-generate sekali. Kalau belum download,
+            download dulu supaya kamu punya salinannya.
+          </p>
+          <button type="button" id="leaveCardConfirmBtn" class="btn-submit leave-card-confirm">
+            Sudah, lanjutkan
+          </button>
+          <button type="button" id="leaveCardCancelBtn" class="leave-card-cancel">
+            Belum, kembali ke kartu
+          </button>
+        </div>
+      </div>
     </div>
   </div>
 
@@ -187,7 +207,7 @@
   <div id="loadingOverlay" class="loading-overlay" hidden>
     <div class="loading-overlay-content">
       <div class="loading-overlay-spinner"></div>
-      <p class="loading-overlay-text">Mengirim data…</p>
+      <p class="loading-overlay-text" id="loadingOverlayText">Mengirim data…</p>
     </div>
   </div>
 

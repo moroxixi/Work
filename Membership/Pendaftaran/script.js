@@ -42,6 +42,7 @@ let compressedFileName = "";
 let previewObjectUrl = null;    // object URL preview aktif (di-revoke saat ganti/reset)
 let fotoBlob = null;            // File asli terpilih — Blob SAMA yang di-compress & dikirim; dipakai ulang untuk foto di kartu
 let cardObjectUrl = null;       // object URL foto di kartu membership (di-revoke saat "Kembali ke Form")
+let cardDownloaded = false;     // true setelah Download Kartu berhasil dipicu (guard konfirmasi tinggalkan kartu)
 
 // ─── SET MAX DATE (tidak boleh masa depan) ──────────────────────────────────
 (function setMaxDate() {
@@ -125,6 +126,7 @@ form.addEventListener("submit", async function (e) {
 
   setLoading(true);
   showOverlay();
+  startLoadingTextRotation();
 
   try {
     const params = new URLSearchParams({
@@ -157,12 +159,25 @@ form.addEventListener("submit", async function (e) {
     }
   } catch (err) {
     console.error("Submit error:", err);
-    showError(
-      "Gagal mengirim data. Periksa koneksi internet atau hubungi admin. (" +
-        err.message +
-        ")"
-    );
+    // POST gagal di level network/parse (timeout, koneksi putus, response
+    // bukan JSON). Data MUNGKIN sudah masuk ke sheet — cuma response-nya
+    // yang tidak sampai (kasus nyata: submit ulang dapat "username telah
+    // dipakai"). SEBELUM menampilkan error, lakukan SATU kali cek read-only
+    // via GET: kalau username yang barusan disubmit sudah terdaftar, treat
+    // sebagai sukses dan tampilkan kartu seperti alur normal. Tidak pernah
+    // ada retry POST otomatis di sini — recovery murni via GET/read.
+    const recovered = await tryRecoverByUsername(validation.data.Username);
+    if (recovered) {
+      showCard(recovered);
+    } else {
+      showError(
+        "Gagal mengirim data. Periksa koneksi internet atau hubungi admin. (" +
+          err.message +
+          ")"
+      );
+    }
   } finally {
+    stopLoadingTextRotation();
     hideOverlay();
     setLoading(false);
   }
@@ -171,6 +186,9 @@ form.addEventListener("submit", async function (e) {
 // ─── DISPLAY MEMBERSHIP CARD ───────────────────────────────────────────────
 
 function showCard(data) {
+  // Kartu baru dirender → status download di-reset (dipakai guard konfirmasi
+  // "tinggalkan kartu member" — lihat requestLeaveCard di bawah).
+  cardDownloaded = false;
   cardKode.textContent = data.kodeMembership;
   cardNama.textContent = data.nama;
   cardDomisili.textContent = data.domisili;   // dari response doPost (Umur TIDAK ditampilkan)
@@ -215,6 +233,10 @@ downloadBtn.addEventListener("click", async function () {
     link.download = "Membership-" + cardKode.textContent + ".png";
     link.href = canvas.toDataURL("image/png");
     link.click();
+
+    // Download berhasil dipicu → user dianggap sudah menyimpan kartu;
+    // guard konfirmasi "tinggalkan kartu" tidak perlu muncul lagi.
+    cardDownloaded = true;
   } catch (err) {
     console.error("Download error:", err);
     showError("Gagal membuat gambar kartu. Coba screenshot manual.");
@@ -227,20 +249,27 @@ downloadBtn.addEventListener("click", async function () {
 // ─── BACK TO FORM ──────────────────────────────────────────────────────────
 
 backBtn.addEventListener("click", function () {
-  // Kartu sudah tidak dipakai → cabut object URL foto kartu (cegah memory leak).
-  // Baru di titik ini, bukan lebih awal, supaya foto tetap tampil saat render
-  // maupun saat user men-download kartu lebih dulu.
-  if (cardObjectUrl) {
-    URL.revokeObjectURL(cardObjectUrl);
-    cardObjectUrl = null;
-  }
-  cardFotoProfil.removeAttribute("src");
+  // Guard: kalau kartu BELUM di-download, tampilkan modal konfirmasi dulu;
+  // body handler hanya jalan setelah user konfirmasi (atau sudah download).
+  requestLeaveCard(function () {
+    // Kartu sudah tidak dipakai → cabut object URL foto kartu (cegah memory leak).
+    // Baru di titik ini, bukan lebih awal, supaya foto tetap tampil saat render
+    // maupun saat user men-download kartu lebih dulu.
+    if (cardObjectUrl) {
+      URL.revokeObjectURL(cardObjectUrl);
+      cardObjectUrl = null;
+    }
+    cardFotoProfil.removeAttribute("src");
 
-  cardSection.hidden = true;
-  formSection.hidden = false;
-  form.reset();
-  resetFotoState();
-  hideError();
+    cardSection.hidden = true;
+    formSection.hidden = false;
+    form.reset();
+    resetFotoState();
+    hideError();
+
+    // Kembali ke form → status download kartu lama tidak berlaku lagi.
+    cardDownloaded = false;
+  });
 });
 
 // ─── FOTO PROFIL: UPLOAD + KOMPRESI (shared fn di ../config.js) ───────────
@@ -417,7 +446,8 @@ function blobToBase64(blob) {
 
 // ─── UI HELPERS ─────────────────────────────────────────────────────────────
 
-const loadingOverlay = document.getElementById("loadingOverlay");
+const loadingOverlay     = document.getElementById("loadingOverlay");
+const loadingOverlayText = document.getElementById("loadingOverlayText");
 
 function showOverlay() {
   loadingOverlay.hidden = false;
@@ -426,6 +456,135 @@ function showOverlay() {
 function hideOverlay() {
   loadingOverlay.hidden = true;
 }
+
+// ─── ROTATING LOADING TEXT (overlay saat submit) ────────────────────────────
+// Teks overlay dirotasi tiap 2000ms selama request masih pending. Satu
+// interval global + stop() di awal start() supaya tidak pernah ada dua
+// interval jalan bersamaan (tombol submit juga sudah di-disable saat
+// loading, jadi tidak bisa dobel-submit). Semua jalur keluar submit handler
+// (sukses, gagal, gagal-tapi-recovery-sukses) lewat SATU blok `finally` yang
+// memanggil stopLoadingTextRotation() — `finally` tetap jalan meski ada
+// `return` di try/catch, jadi tidak ada teks/interval yang nyangkut.
+const LOADING_TEXTS = [
+  "Mengirim data…",
+  "Tunggu sebentar yaa…",
+  "Data sedang dikirimkan…",
+  "Jangan lupa nanti download/simpan kartu member kamu!",
+];
+
+let loadingTextTimer = null;
+let loadingTextIdx = 0;
+
+function startLoadingTextRotation() {
+  stopLoadingTextRotation(); // defensive: pastikan tidak ada interval kembar
+  loadingTextIdx = 0;
+  loadingOverlayText.textContent = LOADING_TEXTS[0];
+  loadingTextTimer = setInterval(function () {
+    loadingTextIdx = (loadingTextIdx + 1) % LOADING_TEXTS.length;
+    loadingOverlayText.textContent = LOADING_TEXTS[loadingTextIdx];
+  }, 2000);
+}
+
+function stopLoadingTextRotation() {
+  if (loadingTextTimer !== null) {
+    clearInterval(loadingTextTimer);
+    loadingTextTimer = null;
+  }
+  // Reset teks ke awal supaya submit berikutnya tidak mulai dari teks ke-N.
+  loadingOverlayText.textContent = LOADING_TEXTS[0];
+}
+
+// ─── RECOVERY CHECK (read-only) — POST gagal tapi data mungkin sudah masuk ─
+// Dipanggil HANYA dari catch submit handler (POST gagal di level
+// network/parse). Endpoint `getMemberByUsername` di backend MURNI read-only
+// (tanpa penulisan apa pun ke sheet). Berbatas: satu kali fetch TANPA retry;
+// kalau fetch/parse-nya sendiri gagal → return null → caller fallback ke
+// tampilan error biasa. Tidak pernah melempar exception, tidak pernah hang
+// lebih dari timeout fetch browser default.
+//
+// CATATAN VERSI: backend lama (belum di-deploy ulang) tidak mengenal action
+// ini → balas health-check JSON tanpa `success` → fungsi ini return null →
+// perilaku fallback tetap aman sampai Rofi deploy backend baru.
+async function tryRecoverByUsername(username) {
+  try {
+    const resp = await fetch(
+      MAO_CONFIG.GAS_WEB_APP_URL +
+        "?action=getMemberByUsername&username=" +
+        encodeURIComponent(username)
+    );
+    const json = await resp.json();
+    if (json && json.success && json.found && json.member) {
+      return json.member;
+    }
+    return null;
+  } catch (checkErr) {
+    console.error("Recovery check error:", checkErr);
+    return null;
+  }
+}
+
+// ─── GUARD: KONFIRMASI SEBELUM TINGGALKAN KARTU MEMBER ──────────────────────
+// Kartu member cuma bisa di-generate sekali → kalau user BELUM klik
+// "Download Kartu", kedua aksi navigasi keluar dari card-section wajib
+// melewati modal konfirmasi dulu. Sudah download → aksi langsung jalan.
+//
+// Navigasi yang ADA di UI card-section (yang dipasangi guard):
+//   1. #backBtn          — "← Kembali ke Form"
+//   2. #submitPesananLink — "🛒 Submit Pesanan Sekarang"
+// Tidak ada navigasi in-page lain di card-section (quicknav sengaja tidak
+// dipasang di halaman Pendaftaran; browser back button di luar scope —
+// lihat catatan OUTPUT).
+const leaveCardModal    = document.getElementById("leaveCardModal");
+const leaveCardConfirmBtn = document.getElementById("leaveCardConfirmBtn");
+const leaveCardCancelBtn  = document.getElementById("leaveCardCancelBtn");
+const submitPesananLink  = document.getElementById("submitPesananLink");
+
+let pendingLeaveCardAction = null; // aksi navigasi yang menunggu konfirmasi
+
+/**
+ * Jalankan actionFn langsung kalau kartu sudah di-download; kalau belum,
+ * tampilkan modal konfirmasi dan tahan aksinya sampai user konfirmasi.
+ */
+function requestLeaveCard(actionFn) {
+  if (cardDownloaded) {
+    actionFn();
+    return;
+  }
+  pendingLeaveCardAction = actionFn;
+  leaveCardModal.hidden = false;
+}
+
+// "Sudah, lanjutkan" → jalankan aksi navigasi yang tertunda
+leaveCardConfirmBtn.addEventListener("click", function () {
+  leaveCardModal.hidden = true;
+  var action = pendingLeaveCardAction;
+  pendingLeaveCardAction = null;
+  if (action) action();
+});
+
+// "Belum, kembali ke kartu" → batal: tetap di kartu, tidak ada navigasi
+leaveCardCancelBtn.addEventListener("click", function () {
+  leaveCardModal.hidden = true;
+  pendingLeaveCardAction = null;
+});
+
+// Tap backdrop = batal (pola sama dengan modal lain di codebase)
+leaveCardModal
+  .querySelector(".leave-card-backdrop")
+  .addEventListener("click", function () {
+    leaveCardModal.hidden = true;
+    pendingLeaveCardAction = null;
+  });
+
+// Link "Submit Pesanan Sekarang": intercept klik → kalau belum download,
+// cegah navigasi href dulu, lanjutkan lewat modal konfirmasi.
+submitPesananLink.addEventListener("click", function (e) {
+  if (cardDownloaded) return; // sudah download → biarkan href jalan normal
+  e.preventDefault();
+  requestLeaveCard(function () {
+    window.location.href = submitPesananLink.getAttribute("href");
+  });
+});
 
 function setLoading(isLoading) {
   submitBtn.disabled = isLoading;

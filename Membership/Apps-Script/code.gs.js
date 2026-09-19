@@ -311,8 +311,23 @@ function doPost(e) {
     return doPostRequestHadiah_(e);
   }
 
-  // Default: registrasi Pendaftaran (backward-compat tanpa action atau action=daftar)
-  return doPostPendaftaran_(e);
+  // Default: registrasi Pendaftaran — HANYA untuk request tanpa action
+  // atau action="daftar" secara eksplisit. Action lain yang tidak dikenal
+  // TIDAK boleh jatuh ke sini: kalau client lebih baru dari deployment
+  // (kasus nyata 2026-09-19: POST requestHadiah mendarat di backend lama
+  // yang belum punya routing-nya), handler Pendaftaran mengembalikan error
+  // "Field tidak lengkap: Nama wajib diisi; ..." yang tidak nyambung dengan
+  // form yang disubmit user (bug salah sasaran).
+  if (action === "" || action === "daftar") {
+    return doPostPendaftaran_(e);
+  }
+
+  return json_({
+    success: false,
+    error: "Action \"" + action + "\" tidak dikenal oleh backend yang ter-deploy. " +
+      "Kemungkinan backend perlu di-deploy ulang (versi client lebih baru dari versi backend).",
+    errorType: "unknown_action"
+  });
 }
 
 // ─── doPost: REGISTRASI PENDAFTARAN ────────────────────────────────────────
@@ -593,8 +608,72 @@ function doGet(e) {
     return doGetHadiah_(e);
   }
 
+  if (action === "getMemberByUsername") {
+    return doGetMemberByUsername_(e);
+  }
+
   // Default: health check
   return json_({ status: "MAO Membership API OK" });
+}
+
+// ─── doGet: CEK MEMBER BY USERNAME (read-only, recovery Pendaftaran) ───────
+
+/**
+ * Lookup satu member berdasarkan username. MURNI READ-ONLY — tidak ada
+ * appendRow/setValues/penulisan apa pun ke sheet.
+ *
+ * Tujuan utama: recovery di sisi client kalau POST Pendaftaran gagal/
+ * timeout PADAHAL data sebenarnya sudah masuk ke sheet (response yang
+ * hilang, bukan datanya). Client memanggil endpoint ini sebelum menampilkan
+ * error; kalau username ditemukan → alur sukses normal (kartu member).
+ *
+ * Response DIKANALISASI dengan struktur kartu member yang dirender client
+ * (showCard): kodeMembership, nama, domisili, umur, fotoUrl, username —
+ * sama persis dengan response sukses doPostPendaftaran_.
+ *
+ * Param: username (wajib, case-insensitive).
+ */
+function doGetMemberByUsername_(e) {
+  var username = trim_(e.parameter.username);
+
+  if (!username) {
+    return json_({ success: false, error: "Parameter username wajib diisi" });
+  }
+
+  var sheet = getMemberSheet_();
+  var usernameCol = COLUMNS.indexOf("Username") + 1; // 1-indexed
+  var lastRow = sheet.getLastRow();
+
+  if (lastRow < 2) {
+    return json_({ success: true, found: false });
+  }
+
+  // Ambil SEMUA kolom sekaligus (A..K = 11 kolom, dari baris 2) supaya
+  // cukup satu getRange untuk lookup + ambil data lengkap member.
+  var data = sheet.getRange(2, 1, lastRow - 1, COLUMNS.length).getValues();
+  var target = username.toLowerCase();
+
+  // Scan dari baris TERAKHIR: yang paling baru mendaftar yang menang kalau
+  // (anehnya) ada duplikat username di sheet.
+  for (var i = data.length - 1; i >= 0; i--) {
+    var row = data[i];
+    if (String(row[usernameCol - 1]).trim().toLowerCase() !== target) continue;
+
+    return json_({
+      success: true,
+      found: true,
+      member: {
+        kodeMembership: String(row[COLUMNS.indexOf("Kode Membership")]).trim(),
+        nama: String(row[COLUMNS.indexOf("Nama")]).trim(),
+        domisili: String(row[COLUMNS.indexOf("Domisili")]).trim(),
+        umur: row[COLUMNS.indexOf("Umur")],
+        fotoUrl: String(row[COLUMNS.indexOf("Foto Profil (URL Drive)")]).trim(),
+        username: String(row[COLUMNS.indexOf("Username")]).trim()
+      }
+    });
+  }
+
+  return json_({ success: true, found: false });
 }
 
 // ─── doGet: FORM DATA (kode list + menu list) ──────────────────────────────

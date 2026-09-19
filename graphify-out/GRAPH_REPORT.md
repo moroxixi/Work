@@ -1,16 +1,16 @@
-# Graph Report - Work  (2026-09-18)
+# Graph Report - Work  (2026-09-19)
 
 ## Corpus Check
-- 38 files · ~59,027 words
+- 38 files · ~60,301 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
-- 653 nodes · 870 edges · 46 communities (35 shown, 11 thin omitted)
+- 664 nodes · 887 edges · 46 communities (35 shown, 11 thin omitted)
 - Extraction: 99% EXTRACTED · 1% INFERRED · 0% AMBIGUOUS · INFERRED: 13 edges (avg confidence: 0.5)
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `60da4b97`
+- Built from commit: `e445bd6c`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -60,16 +60,16 @@
 - renderKodeList
 
 ## God Nodes (most connected - your core abstractions)
-1. `Investigasi Mekanisme Ntfy — Pencatatan-Buku-Kas/Apps-Script/buku-kas.gs.js` - 10 edges
-2. `2. Daftar Lengkap Pemanggil `report_kirimNotif_()`` - 10 edges
-3. `hitungRekomendasiProduk()` - 9 edges
-4. `Investigasi Konsolidasi Notifikasi ntfy — `report.gs.js`` - 9 edges
-5. `Detail Mekanisme Kolom Z (follow-up)` - 9 edges
-6. `doPostPendaftaran_()` - 8 edges
-7. `json_()` - 8 edges
-8. `cek_dan_kirim_total_harian()` - 8 edges
-9. `simpanDataTempura()` - 8 edges
-10. `simpanDataWonton()` - 8 edges
+1. `json_()` - 10 edges
+2. `Investigasi Mekanisme Ntfy — Pencatatan-Buku-Kas/Apps-Script/buku-kas.gs.js` - 10 edges
+3. `2. Daftar Lengkap Pemanggil `report_kirimNotif_()`` - 10 edges
+4. `hitungRekomendasiProduk()` - 9 edges
+5. `Investigasi Konsolidasi Notifikasi ntfy — `report.gs.js`` - 9 edges
+6. `Detail Mekanisme Kolom Z (follow-up)` - 9 edges
+7. `getMemberSheet_()` - 8 edges
+8. `doPostPendaftaran_()` - 8 edges
+9. `cek_dan_kirim_total_harian()` - 8 edges
+10. `simpanDataTempura()` - 8 edges
 
 ## Surprising Connections (you probably didn't know these)
 - `showReport()` --calls--> `formatWaktu()`  [EXTRACTED]
@@ -195,12 +195,12 @@ Cohesion: 0.11
 Nodes (17): 1.1.1 `buku-kas.gs.js` (Kas Harian + Riwayat) — endpoint `ENDPOINT_URL`, 1.1.2 `scan-struk.gs` (Scan Struk) — endpoint `SCRIPT_URL`, 1.1.3 `report.gs.js` (Report/Stok) — endpoint `STOK_SCRIPT_URL`, 1.1 Inventaris backend & handler yang return data sheet, 1.2 Apakah ada fungsi yang sudah return tabel "Rekap Pengeluaran Harian"?, 1.3 `config.js` & `shared-utils.js` — fungsi fetch generik yang bisa dipakai ulang?, 1. Sumber Data "Rekap Pengeluaran Harian", 2.1 `nav.js` = 1 komponen shared, dirender DYNAMIC di semua 5 halaman (+9 more)
 
 ### Community 35 - "Pendaftaran/script.js"
-Cohesion: 0.06
-Nodes (24): backBtn, btnLoading, btnText, cardDomisili, cardFotoProfil, cardKode, cardNama, cardSection (+16 more)
+Cohesion: 0.05
+Nodes (32): backBtn, btnLoading, btnText, cardDomisili, cardFotoProfil, cardKode, cardNama, cardSection (+24 more)
 
 ### Community 36 - "code.gs.js"
 Cohesion: 0.30
-Nodes (16): doGet(), doGetFormData_(), doGetHadiah_(), doGetLeaderboard_(), doPost(), doPostPendaftaran_(), doPostRequestHadiah_(), doPostSubmitOrder_() (+8 more)
+Nodes (17): doGet(), doGetFormData_(), doGetHadiah_(), doGetLeaderboard_(), doGetMemberByUsername_(), doPost(), doPostPendaftaran_(), doPostRequestHadiah_() (+9 more)
 
 ### Community 37 - "Submit/script.js"
 Cohesion: 0.04
@@ -215,7 +215,7 @@ Cohesion: 0.50
 Nodes (4): base64ToBlob(), hideReportError(), hideReportInfo(), showReport()
 
 ## Knowledge Gaps
-- **306 isolated node(s):** `all`, `menuBtn`, `drawer`, `overlay`, `drawerClose` (+301 more)
+- **312 isolated node(s):** `all`, `menuBtn`, `drawer`, `overlay`, `drawerClose` (+307 more)
   These have ≤1 connection - possible missing edges or undocumented components.
 - **11 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
 
@@ -227,7 +227,7 @@ _Questions this graph is uniquely positioned to answer:_
 - **Why does `Detail Logic Pola Transaksi (follow-up)` connect `Detail Logic Pola Transaksi (follow-up)` to `Investigasi Mekanisme Ntfy — Pencatatan-Buku-Kas/Apps-Script/buku-kas.gs.js`?**
   _High betweenness centrality (0.003) - this node is a cross-community bridge._
 - **What connects `all`, `menuBtn`, `drawer` to the rest of the system?**
-  _306 weakly-connected nodes found - possible documentation gaps or missing edges._
+  _312 weakly-connected nodes found - possible documentation gaps or missing edges._
 - **Should `Riwayat/script.js` be split into smaller, more focused modules?**
   _Cohesion score 0.044444444444444446 - nodes in this community are weakly interconnected._
 - **Should `Pencatatan-Buku-Kas/script.js` be split into smaller, more focused modules?**
