@@ -9,7 +9,7 @@
  * setelah deploy (format: https://script.google.com/macros/s/.../exec).
  */
 const MAO_CONFIG = {
-  GAS_WEB_APP_URL: "https://script.google.com/macros/s/AKfycbyg2riL55LTv-tiJcm-AhfGcyN0VaVN7HvkwXc6wyTxIw7NWbxZflES9PGdO0ry4a-Q/exec"
+  GAS_WEB_APP_URL: "https://script.google.com/macros/s/AKfycbwICLQwGehigRM2RSsnjY_3w3LUuOGoGEguSsI8S5W-YQxbl4M_yELpqDYAaz_Msxcp/exec"
 };
 
 /**
