@@ -493,9 +493,9 @@ function hideOverlay() {
 // `return` di try/catch, jadi tidak ada teks/interval yang nyangkut.
 const LOADING_TEXTS = [
   "Mengirim data…",
+  "Jangan lupa nanti download kartu member kamu!",
   "Tunggu sebentar yaa…",
   "Data sedang dikirimkan…",
-  "Jangan lupa nanti download/simpan kartu member kamu!",
 ];
 
 let loadingTextTimer = null;
