@@ -2,9 +2,19 @@
   "success": true,
   "hadiah": [
     {
-      "judul": "CONTOH HADIAH (GANTI DENGAN DATA ASLI)",
-      "poinDibutuhkan": 100,
-      "urlFoto": "URL_GAMBAR_DI_SINI"
+      "judul": "Kipas Karakter",
+      "poinDibutuhkan": 25000,
+      "urlFoto": "https://moroxixi.github.io/Work/Membership/Hadiah/assets/Kipas-Karakter.webp"
+    },
+    {
+      "judul": "Cermin Bunga",
+      "poinDibutuhkan": 4000,
+      "urlFoto": "https://moroxixi.github.io/Work/Membership/Hadiah/assets/Cermin-Bunga.webp"
+    },
+    {
+      "judul": "Jarum Pentul",
+      "poinDibutuhkan": 750,
+      "urlFoto": "https://moroxixi.github.io/Work/Membership/Hadiah/assets/Jarum-Pentul.webp"
     }
   ]
 }
