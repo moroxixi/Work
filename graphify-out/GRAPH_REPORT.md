@@ -1,16 +1,16 @@
-# Graph Report - Work  (2026-09-20)
+# Graph Report - Work  (2026-09-27)
 
 ## Corpus Check
-- 43 files · ~82,121 words
+- 44 files · ~85,795 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
-- 758 nodes · 1104 edges · 49 communities (40 shown, 9 thin omitted)
+- 781 nodes · 1126 edges · 50 communities (41 shown, 9 thin omitted)
 - Extraction: 99% EXTRACTED · 1% INFERRED · 0% AMBIGUOUS · INFERRED: 13 edges (avg confidence: 0.5)
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `2c550fdd`
+- Built from commit: `02710383`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -60,6 +60,7 @@
 - Member/script.js
 - admin-auth.js
 - Check-Pesanan/script.js
+- Investigasi — Alur Data Membership (Submit & Hadiah) untuk Migrasi ke JSON Statis
 
 ## God Nodes (most connected - your core abstractions)
 1. `json_()` - 21 edges
@@ -88,7 +89,7 @@
 ## Import Cycles
 - None detected.
 
-## Communities (49 total, 9 thin omitted)
+## Communities (50 total, 9 thin omitted)
 
 ### Community 0 - "Riwayat/script.js"
 Cohesion: 0.04
@@ -234,8 +235,12 @@ Nodes (13): authMode(), clearAuth(), consumeTarget(), currentPageKey(), getCrede
 Cohesion: 0.15
 Nodes (22): addEditItemRow(), buildCardActions(), buildFotoPlaceholder(), buildFotoWrap(), buildItemsList(), buildLegacyCard(), buildReceiptCard(), closeLightbox() (+14 more)
 
+### Community 49 - "Investigasi — Alur Data Membership (Submit & Hadiah) untuk Migrasi ke JSON Statis"
+Cohesion: 0.09
+Nodes (22): 0. Ringkasan eksekutif, 1.1 Ringkasan alur fetch data, 1.2 Struktur response backend (persis), 1.3 Pemakaian `MAO_CONFIG` & cache, 1.4 Titik kode yang perlu diubah untuk migrasi ke JSON lokal (Submit), 1.5 Potensi kejutan/risiko (Submit), 1. HALAMAN SUBMIT (`Membership/Submit/`), 2.1 Ringkasan alur fetch data (+14 more)
+
 ## Knowledge Gaps
-- **314 isolated node(s):** `all`, `menuBtn`, `drawer`, `overlay`, `drawerClose` (+309 more)
+- **332 isolated node(s):** `all`, `menuBtn`, `drawer`, `overlay`, `drawerClose` (+327 more)
   These have ≤1 connection - possible missing edges or undocumented components.
 - **9 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
 
@@ -243,13 +248,13 @@ Nodes (22): addEditItemRow(), buildCardActions(), buildFotoPlaceholder(), buildF
 _Questions this graph is uniquely positioned to answer:_
 
 - **Why does `MAO_CONFIG` connect `Check-Pesanan/script.js` to `processFotoFile`, `Pendaftaran/script.js`, `Member/script.js`?**
-  _High betweenness centrality (0.032) - this node is a cross-community bridge._
+  _High betweenness centrality (0.031) - this node is a cross-community bridge._
 - **Why does `processFotoFile()` connect `processFotoFile` to `Check-Pesanan/script.js`, `Submit/script.js`?**
-  _High betweenness centrality (0.022) - this node is a cross-community bridge._
+  _High betweenness centrality (0.021) - this node is a cross-community bridge._
 - **Why does `processFotoFile()` connect `Pendaftaran/script.js` to `Check-Pesanan/script.js`?**
-  _High betweenness centrality (0.019) - this node is a cross-community bridge._
+  _High betweenness centrality (0.018) - this node is a cross-community bridge._
 - **What connects `all`, `menuBtn`, `drawer` to the rest of the system?**
-  _314 weakly-connected nodes found - possible documentation gaps or missing edges._
+  _332 weakly-connected nodes found - possible documentation gaps or missing edges._
 - **Should `Riwayat/script.js` be split into smaller, more focused modules?**
   _Cohesion score 0.044444444444444446 - nodes in this community are weakly interconnected._
 - **Should `Pencatatan-Buku-Kas/script.js` be split into smaller, more focused modules?**
