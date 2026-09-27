@@ -67,6 +67,9 @@
 <div class="container" id="mainArea">
     <h2>MAO WONTON & MIE JEBEW</h2>
 
+    <!-- Tombol Reset: DI ATAS form — pakai class .btn-calc yang sudah ada (tanpa style baru) -->
+    <button type="button" class="btn-calc" id="btnReset" onclick="resetFormDraft()">RESET FORM</button>
+
     <div class="form-group">
         <label>Cabang :</label>
         <input type="text" id="cabang" placeholder="Nama Cabang...">
@@ -315,6 +318,71 @@
             return;
         }
     });
+
+    // === DRAFT PERSISTENCE (sessionStorage) + TOMBOL RESET ===
+    // (Penambahan murni client-side — logic submit/fetch ke backend TIDAK berubah.)
+    // - Auto-save : tiap event input/change di semua field user → sessionStorage.
+    // - Auto-restore: event 'load', SETELAH window.onload me-render input
+    //   berangkat/pulang dinamis (id deterministik b_<item> / p_<item>).
+    // - Struktur "baris dinamis" di halaman ini BUKAN repeatable rows (tak ada
+    //   tombol tambah baris; id lahir dari array `items`) → serialisasi cukup
+    //   flat key-value {idInput: value}.
+    // - Dikecualikan dari save/restore: type=file (tak bisa direstore),
+    //   readOnly/disabled (kalkulasi otomatis), elemen display-only (report,
+    //   rep_*, status — bukan <input>, otomatis ikut terkecuali).
+    const DRAFT_KEY = 'wonton_form_draft';
+
+    const draftInputs = () => Array.from(document.querySelectorAll('#mainArea input'));
+
+    const isDraftInput = inp => !!inp.id && inp.type !== 'file' && !inp.readOnly && !inp.disabled;
+
+    function saveDraft() {
+        try {
+            const draft = {};
+            draftInputs().forEach(inp => { if (isDraftInput(inp)) draft[inp.id] = inp.value; });
+            sessionStorage.setItem(DRAFT_KEY, JSON.stringify(draft));
+        } catch (e) { /* storage penuh/blokir → draft tidak kritis */ }
+    }
+
+    function restoreDraft() {
+        let raw;
+        try { raw = sessionStorage.getItem(DRAFT_KEY); } catch (e) { return; }
+        if (!raw) return; // tidak ada draft → default halaman dipertahankan
+        let draft;
+        try { draft = JSON.parse(raw); } catch (e) { return; }
+        if (!draft || typeof draft !== 'object') return;
+        draftInputs().forEach(inp => {
+            // Field tanpa entri draft (belum pernah diisi) TIDAK disentuh —
+            // value default/generate-otomatis halaman tetap.
+            if (isDraftInput(inp) && Object.prototype.hasOwnProperty.call(draft, inp.id)) {
+                inp.value = draft[inp.id];
+            }
+        });
+    }
+
+    // Urutan penting: generator input dinamis memakai window.onload yang sudah
+    // terdaftar lebih dulu di skrip ini → listener 'load' ini jalan SESUDAH-nya.
+    window.addEventListener('load', restoreDraft);
+
+    // Auto-save tiap perubahan (input/change meng-bubble ke document,
+    // termasuk input dinamis yang dibuat belakangan)
+    document.addEventListener('input', saveDraft);
+    document.addEventListener('change', saveDraft);
+
+    function resetFormDraft() {
+        if (!confirm('Kosongkan semua isian form?')) return;
+        draftInputs().forEach(inp => {
+            if (inp.type === 'file') { inp.value = ''; return; } // visual saja
+            if (inp.readOnly) return; // field kalkulasi otomatis → biarkan
+            inp.value = '';
+        });
+        try { sessionStorage.removeItem(DRAFT_KEY); } catch (e) { /* noop */ }
+        // Area report = display-only → kembalikan ke kondisi default (tersembunyi)
+        document.getElementById('reportModal').style.display = '';
+        document.getElementById('btnKirim').style.display = '';
+        document.getElementById('btnSS').style.display = '';
+        document.getElementById('status').innerText = '';
+    }
 </script>
 </body>
 </html>
