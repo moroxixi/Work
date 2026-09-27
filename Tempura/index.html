@@ -10,6 +10,10 @@
         body { font-family: 'Segoe UI', sans-serif; background: var(--bg); margin: 0; padding: 10px; color: #333; }
         .container { max-width: 450px; margin: auto; background: white; padding: 20px; border-radius: 15px; box-shadow: 0 5px 15px rgba(0,0,0,0.1); }
         h2 { text-align: center; color: var(--primary); margin-bottom: 20px; }
+        /* Header row: judul (kiri) + tombol Reset kecil (kanan) — sejajar baris */
+        .header-row { display: flex; justify-content: space-between; align-items: center; gap: 10px; margin-bottom: 20px; }
+        .header-row h2 { flex: 1; min-width: 0; margin-bottom: 0; }
+        .btn-reset-sm { flex-shrink: 0; white-space: nowrap; width: auto; padding: 6px 10px; font-size: 12px; background: #34495e; color: white; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; }
         .section-title { font-size: 0.85em; font-weight: bold; color: #7f8c8d; text-transform: uppercase; margin: 15px 0 10px; display: block; border-left: 4px solid var(--primary); padding-left: 8px; }
         .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
         .form-group { margin-bottom: 10px; }
@@ -19,6 +23,7 @@
             body { padding: 6px; }
             .container { padding: 14px; border-radius: 10px; }
             h2 { font-size: 1.1em; margin-bottom: 14px; }
+            .header-row { margin-bottom: 14px; }
             .section-title { margin: 10px 0 8px; font-size: 0.8em; }
             .grid { gap: 6px; }
             input { padding: 12px 10px; min-height: 44px; font-size: 16px; }
@@ -54,10 +59,11 @@
 <body>
 
 <div class="container" id="mainArea">
-    <h2>MAO TEMPURA</h2>
-
-    <!-- Tombol Reset: DI ATAS form — pakai class .btn-calc yang sudah ada (tanpa style baru) -->
-    <button type="button" class="btn-calc" id="btnReset" onclick="resetFormDraft()">RESET FORM</button>
+    <!-- Header row: judul (kiri) + tombol Reset kecil (kanan) sejajar baris, di DALAM container yang sama -->
+    <div class="header-row">
+        <h2>MAO TEMPURA</h2>
+        <button type="button" class="btn-reset-sm" id="btnReset" onclick="resetFormDraft()">RESET FORM</button>
+    </div>
 
     <div class="form-group">
         <label>Cabang :</label>
