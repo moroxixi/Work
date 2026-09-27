@@ -250,8 +250,8 @@
     "semantic_hash": ""
   },
   "Membership/Submit/script.js": {
-    "mtime": 1789839772.3655932,
-    "ast_hash": "ea879fb5cbe278fb9b7197fe3603ea4b",
+    "mtime": 1790491674.0831728,
+    "ast_hash": "6a813f9847df8ff300db53955db48ecc",
     "semantic_hash": ""
   },
   "Membership/Submit/index.html": {
@@ -280,8 +280,8 @@
     "semantic_hash": ""
   },
   "Membership/Hadiah/index.html": {
-    "mtime": 1790490826.756474,
-    "ast_hash": "82060e583536b494dd3430830b3f7b49",
+    "mtime": 1790491693.0698402,
+    "ast_hash": "aa0544e08d09fbc3c403ac2a4582f681",
     "semantic_hash": ""
   },
   "Membership/Leaderboard/index.html": {
@@ -347,6 +347,16 @@
   "Script/investigasi-membership-json-migration.md": {
     "mtime": 1790489951.2964408,
     "ast_hash": "4e27865ccdafc4cf72c71e79baa73c2d",
+    "semantic_hash": ""
+  },
+  "Membership/Hadiah/data.json": {
+    "mtime": 1790491693.0865068,
+    "ast_hash": "3367c48dcedb8863b17434ef5a905e78",
+    "semantic_hash": ""
+  },
+  "Membership/Submit/data.json": {
+    "mtime": 1790491693.0765069,
+    "ast_hash": "e48347f9517c6c4f0fb2d8c32149af06",
     "semantic_hash": ""
   }
 }

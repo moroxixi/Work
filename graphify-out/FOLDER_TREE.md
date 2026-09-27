@@ -1,4 +1,4 @@
-# Folder Tree (70 files tracked)
+# Folder Tree (72 files tracked)
 
 > Auto-generated dari manifest.json — jangan edit manual. Regenerate: gen-folder-tree.py <path-manifest.json>
 
@@ -28,6 +28,7 @@
 │   │   │   ├── Cermin-Bunga.webp
 │   │   │   ├── Jarum-Pentul.webp
 │   │   │   └── Kipas-Karakter.webp
+│   │   ├── data.json
 │   │   └── index.html
 │   ├── Hasil/
 │   │   └── index.html
@@ -37,6 +38,7 @@
 │   │   ├── index.html
 │   │   └── script.js
 │   ├── Submit/
+│   │   ├── data.json
 │   │   ├── index.html
 │   │   └── script.js
 │   ├── assets/

@@ -1,7 +1,8 @@
 /**
  * MAO Membership — Submit Pesanan (Client-side)
  *
- * Fetches kode membership + menu list from GAS on load,
+ * Fetches kode membership (kodeList + memberList) from GAS on load;
+ * menu list now comes from LOCAL static ./data.json (manual, no GAS call),
  * renders menu stepper, compresses photo client-side via
  * MAO_CONFIG.compressImageToBase64 (shared, di ../config.js),
  * and POSTs order data via URLSearchParams.
@@ -70,7 +71,7 @@ let reportKode = "";         // snapshot kode membership untuk nama file laporan
 let reportWaktu = null;      // snapshot waktu submit (Date)
 let lastOrderId = "";        // Order ID terakhir yang dikirim di POST (untuk recovery)
 
-// ─── INIT: fetch kode list + menu list ─────────────────────────────────────
+// ─── INIT: fetch kode list (GAS) + menu list (data.json lokal) ─────────────
 
 // ─── INIT: fetch kode list + menu list (dengan cache) ─────────────────
 var CACHE_KEY = 'submit_formData';
@@ -80,6 +81,32 @@ function applyFormData(data) {
   renderMenuList(data.menuList || []);
   loadingState.hidden = true;
   orderForm.hidden = false;
+}
+
+// ─── SUMBER menuList: JSON STATIS LOKAL (./data.json) ──────────────────────
+// Keputusan final (Rofi): menuList dipindah ke file JSON statis per folder,
+// diisi & di-maintain MANUAL — TIDAK di-fetch dari GAS, TIDAK digenerate dari
+// Sheet. Envelope data.json disamakan dgn response GAS ({success:true,
+// menuList}) supaya pengecekan json.success tetap konsisten dgn kode lama.
+// kodeList & memberList TETAP live dari ?action=getFormData (lihat init()).
+//
+// @param {boolean} bustCache - true = tambah ?t=<timestamp> (dipakai hard
+//   refresh) supaya perubahan data.json selama tab terbuka tetap kebaca walau
+//   HTTP cache hosting masih menyimpan versi lama.
+// @returns {Promise<string[]>} selalu berupa array; gagal fetch/parse → []
+//   (TIDAK melempar — menu kosong cukup memunculkan #menuEmptyMsg, memberList
+//   dari getFormData tetap dirender normal).
+async function fetchMenuListLocal_(bustCache) {
+  try {
+    var resp = await fetch("./data.json" + (bustCache ? "?t=" + Date.now() : ""));
+    var json = await resp.json();
+    if (json && json.success) return json.menuList || [];
+    console.error("data.json: envelope tidak valid (success !== true)");
+    return [];
+  } catch (err) {
+    console.error("Fetch ./data.json error:", err);
+    return [];
+  }
 }
 
 (async function init() {
@@ -99,7 +126,10 @@ function applyFormData(data) {
       throw new Error(json.error || "Gagal memuat data");
     }
 
-    var data = { memberList: json.memberList || [], menuList: json.menuList || [] };
+    // menuList di-re-route ke JSON statis lokal (./data.json) — fetch
+    // getFormData di atas TETAP apa adanya, khusus untuk kodeList & memberList.
+    var menuList = await fetchMenuListLocal_(false);
+    var data = { memberList: json.memberList || [], menuList: menuList };
     if (typeof MAO_CACHE !== 'undefined') MAO_CACHE.set(CACHE_KEY, data);
 
     applyFormData(data);
@@ -128,7 +158,10 @@ function applyFormData(data) {
       var resp = await fetch(MAO_CONFIG.GAS_WEB_APP_URL + "?action=getFormData");
       var json = await resp.json();
       if (json.success) {
-        var data = { memberList: json.memberList || [], menuList: json.menuList || [] };
+        // menuList ikut di-refetch dari ./data.json (dgn cache-buster ?t=)
+        // supaya update manual file selama tab terbuka tetap kebaca saat refresh.
+        var menuList = await fetchMenuListLocal_(true);
+        var data = { memberList: json.memberList || [], menuList: menuList };
         if (typeof MAO_CACHE !== 'undefined') MAO_CACHE.set(CACHE_KEY, data);
         applyFormData(data);
       }

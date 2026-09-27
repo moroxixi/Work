@@ -1,16 +1,16 @@
 # Graph Report - Work  (2026-09-27)
 
 ## Corpus Check
-- 44 files · ~85,795 words
+- 46 files · ~87,275 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
-- 781 nodes · 1126 edges · 50 communities (41 shown, 9 thin omitted)
+- 782 nodes · 1127 edges · 56 communities (47 shown, 9 thin omitted)
 - Extraction: 99% EXTRACTED · 1% INFERRED · 0% AMBIGUOUS · INFERRED: 13 edges (avg confidence: 0.5)
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `02710383`
+- Built from commit: `9676ad4d`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -61,6 +61,12 @@
 - admin-auth.js
 - Check-Pesanan/script.js
 - Investigasi — Alur Data Membership (Submit & Hadiah) untuk Migrasi ke JSON Statis
+- 1. Fungsi Pengirim Ntfy: `pola_kirimNotif_(pesan)`
+- 2. Detail Lengkap `checkPolaTransaksi()`, `checkPolaPagi()`, `checkPolaMalam()`
+- 7. Ringkasan Temuan
+- 1. Definisi "Pola" yang Dicek
+- 4. Trigger Apps Script
+- 6. Pembanding dengan `notif_total_harian.py`
 
 ## God Nodes (most connected - your core abstractions)
 1. `json_()` - 21 edges
@@ -89,7 +95,7 @@
 ## Import Cycles
 - None detected.
 
-## Communities (50 total, 9 thin omitted)
+## Communities (56 total, 9 thin omitted)
 
 ### Community 0 - "Riwayat/script.js"
 Cohesion: 0.04
@@ -188,12 +194,12 @@ Cohesion: 0.11
 Nodes (22): btnHariIni, btnKemarin, btnRefresh, cacheTimestamps, currentDate, datePicker, emptyMsg, errorMsg (+14 more)
 
 ### Community 32 - "Investigasi Mekanisme Ntfy — Pencatatan-Buku-Kas/Apps-Script/buku-kas.gs.js"
-Cohesion: 0.05
-Nodes (39): 1. Fungsi Pengirim Ntfy: `pola_kirimNotif_(pesan)`, 2.1 `checkPolaTransaksi(tanggalTarget, DRY_RUN)` — GOD NODE #1 (12 edges), 2.2 `checkPolaPagi()` — Trigger 07:00, 2.3 `checkPolaMalam()` — Trigger 21:00, 2.4 Status keterhubungan ketiga fungsi, 2. Detail Lengkap `checkPolaTransaksi()`, `checkPolaPagi()`, `checkPolaMalam()`, 3.1 Direct Callers (2 situs), 3.2 Internal Dependencies (memanggil checkPolaTransaksi / dipanggil oleh checkPolaTransaksi) (+31 more)
+Cohesion: 0.25
+Nodes (7): 3.1 Direct Callers (2 situs), 3.2 Internal Dependencies (memanggil checkPolaTransaksi / dipanggil oleh checkPolaTransaksi), 3.3 Cross-check dengan GRAPH_REPORT.md, 3. Daftar Lengkap Pemanggil `checkPolaTransaksi()`, 5. Fungsi yang TIDAK Berhubungan dengan Ntfy/Pola Transaksi (Irrelevant), Investigasi Mekanisme Ntfy — Pencatatan-Buku-Kas/Apps-Script/buku-kas.gs.js, Validasi Git Diff
 
 ### Community 33 - "Detail Logic Pola Transaksi (follow-up)"
-Cohesion: 0.13
-Nodes (15): 1. Definisi "Pola" yang Dicek, 2. Perbedaan `checkPolaPagi()` vs `checkPolaMalam()`, 3. Sheet dan Kolom yang Dibaca, 4. Peran Masing-Masing Helper Function, 5. Contoh Skenario Hipotetis, Detail Logic Pola Transaksi (follow-up), Eksekusi Fungsi Selama Investigasi (Section Ini), Keputusan Akhir: Kirim atau Tidak (+7 more)
+Cohesion: 0.20
+Nodes (10): 2. Perbedaan `checkPolaPagi()` vs `checkPolaMalam()`, 3. Sheet dan Kolom yang Dibaca, 4. Peran Masing-Masing Helper Function, 5. Contoh Skenario Hipotetis, Detail Logic Pola Transaksi (follow-up), Eksekusi Fungsi Selama Investigasi (Section Ini), Ringkasan Cepat: Kapan Notif Dikirim vs Tidak, Skenario 1: Pola rutin terdeteksi → NOTIFIKASI DIKIRIM (+2 more)
 
 ### Community 34 - "Investigasi — Sumber Data "Rekap Pengeluaran Harian" & Struktur Quicknav (Pencatatan-Buku-Kas)"
 Cohesion: 0.11
@@ -238,6 +244,30 @@ Nodes (22): addEditItemRow(), buildCardActions(), buildFotoPlaceholder(), buildF
 ### Community 49 - "Investigasi — Alur Data Membership (Submit & Hadiah) untuk Migrasi ke JSON Statis"
 Cohesion: 0.09
 Nodes (22): 0. Ringkasan eksekutif, 1.1 Ringkasan alur fetch data, 1.2 Struktur response backend (persis), 1.3 Pemakaian `MAO_CONFIG` & cache, 1.4 Titik kode yang perlu diubah untuk migrasi ke JSON lokal (Submit), 1.5 Potensi kejutan/risiko (Submit), 1. HALAMAN SUBMIT (`Membership/Submit/`), 2.1 Ringkasan alur fetch data (+14 more)
+
+### Community 50 - "1. Fungsi Pengirim Ntfy: `pola_kirimNotif_(pesan)`"
+Cohesion: 0.25
+Nodes (8): 1. Fungsi Pengirim Ntfy: `pola_kirimNotif_(pesan)`, Auth / Token, Endpoint & URL, Method, Payload & Headers, Retry Logic, Status: ✅ DITEMUKAN — ada fungsi pengirim ntfy di file ini, Token Sensitive
+
+### Community 51 - "2. Detail Lengkap `checkPolaTransaksi()`, `checkPolaPagi()`, `checkPolaMalam()`"
+Cohesion: 0.25
+Nodes (8): 2.1 `checkPolaTransaksi(tanggalTarget, DRY_RUN)` — GOD NODE #1 (12 edges), 2.2 `checkPolaPagi()` — Trigger 07:00, 2.3 `checkPolaMalam()` — Trigger 21:00, 2.4 Status keterhubungan ketiga fungsi, 2. Detail Lengkap `checkPolaTransaksi()`, `checkPolaPagi()`, `checkPolaMalam()`, Apa yang dicek, Input/Output, Konstanta pendukung
+
+### Community 52 - "7. Ringkasan Temuan"
+Cohesion: 0.29
+Nodes (7): 7. Ringkasan Temuan, Eksekusi Fungsi Selama Investigasi, Fungsi Irrelevant (aman tidak disentuh), God Node `checkPolaTransaksi()`, Graph Freshness, Status Ntfy, Trigger
+
+### Community 53 - "1. Definisi "Pola" yang Dicek"
+Cohesion: 0.40
+Nodes (5): 1. Definisi "Pola" yang Dicek, Keputusan Akhir: Kirim atau Tidak, Mekanisme A — Pola Rutin (Statistical), Mekanisme B — Kategori Wajib (Hardcoded Rule), Mekanisme C — Kombinasi Kategori+Toko Wajib
+
+### Community 54 - "4. Trigger Apps Script"
+Cohesion: 0.40
+Nodes (5): 4.1 Trigger terkait checkPola*, 4.2 Trigger LAIN di file ini (terpisah, tidak terkait ntfy/pola), 4.3 Status Trigger, 4.4 ⚠️ JANGAN jalankan trigger apapun selama investigasi ini, 4. Trigger Apps Script
+
+### Community 55 - "6. Pembanding dengan `notif_total_harian.py`"
+Cohesion: 0.50
+Nodes (4): 6.1 Perbandingan Endpoint & Mekanisme Ntfy, 6.2 Perbandingan Logic Business, 6.3 Catatan Relevan untuk Migrasi, 6. Pembanding dengan `notif_total_harian.py`
 
 ## Knowledge Gaps
 - **332 isolated node(s):** `all`, `menuBtn`, `drawer`, `overlay`, `drawerClose` (+327 more)
