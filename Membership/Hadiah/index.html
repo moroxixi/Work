@@ -199,6 +199,46 @@
       font-size: 0.9rem; font-weight: 600; cursor: pointer;
     }
 
+    /* ─── Autocomplete member: suggestion list di bawah #reqKode ───────────
+       Visual mengikuti pola yang SUDAH ada di form modal ini: .req-input
+       (radius 8px, warna --surface2/--border, teks --text, ukuran font sama).
+       [hidden] di-prioritaskan (pola sama dgn .req-modal[hidden]) supaya
+       display:block/span tidak menimpa atribut hidden. */
+    .kode-suggest-wrap { position: relative; }
+    .kode-suggest {
+      position: absolute;
+      top: calc(100% + 4px);
+      left: 0;
+      right: 0;
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      max-height: 200px;
+      overflow-y: auto;
+      -webkit-overflow-scrolling: touch;
+      z-index: 210;
+      box-shadow: 0 10px 28px rgba(0, 0, 0, 0.5);
+    }
+    .kode-suggest[hidden] { display: none !important; }
+    .kode-suggest-item {
+      padding: 11px 14px;
+      font-size: 0.9rem;
+      color: var(--text);
+      cursor: pointer;
+      border-bottom: 1px solid var(--border);
+      overflow-wrap: anywhere;
+    }
+    .kode-suggest-item:last-child { border-bottom: none; }
+    .kode-suggest-item:hover { background: rgba(255, 77, 28, 0.12); }
+    .kode-suggest-item:active { background: rgba(255, 77, 28, 0.2); }
+    .kode-suggest-empty {
+      display: block;
+      margin-top: 6px;
+      font-size: 0.78rem;
+      color: var(--text-dim);
+    }
+    .kode-suggest-empty[hidden] { display: none !important; }
+
     /* Floater */
     .floater-help {
       position: fixed; bottom: 0; left: 0; right: 0;
@@ -298,7 +338,17 @@
         <p class="req-modal-title">Request List Hadiah</p>
         <div class="form-group">
           <label for="reqKode">Kode Membership <span class="req">*</span></label>
-          <input type="text" id="reqKode" class="req-input" placeholder="MAO-XXXXXX" autocomplete="off">
+          <!-- Autocomplete member: ketik kode/username → suggestion list muncul
+               di bawah input. Data memberList dari cache sessionStorage
+               'submit_formData' (dibagikan dgn halaman Submit), fallback fetch
+               ?action=getFormData. Value yang dikirim ke backend TETAP kode
+               member murni — kontrak field 'kodeMembership' tidak berubah. -->
+          <div class="kode-suggest-wrap">
+            <input type="text" id="reqKode" class="req-input" placeholder="MAO-XXXXXX" autocomplete="off"
+                   role="combobox" aria-autocomplete="list" aria-controls="reqKodeSuggest" aria-expanded="false">
+            <div id="reqKodeSuggest" class="kode-suggest" role="listbox" hidden></div>
+          </div>
+          <span id="reqKodeNotFound" class="kode-suggest-empty" hidden>Member tidak ditemukan</span>
         </div>
         <div class="form-group">
           <label for="reqText">Hadiah yang diinginkan <span class="req">*</span></label>
@@ -467,6 +517,162 @@
     var reqCancelBtn      = document.getElementById('reqCancelBtn');
     var reqMsg            = document.getElementById('reqMsg');
 
+    // ─── Autocomplete member (kode / username) ─────────────────────────────
+    // Sumber daftar member (sesuai keputusan Rofi — TIDAK menambah endpoint
+    // baru):
+    //   1) cache sessionStorage key 'submit_formData' — key & bentuk yang SAMA
+    //      persis dengan Submit/script.js, dipakai kalau user pernah membuka
+    //      halaman Submit di sesi tab ini (TANPA fetch).
+    //   2) Fallback kalau cache kosong: fetch ?action=getFormData (endpoint
+    //      existing yang return memberList:[{kode, username}]), lalu cache
+    //      ditulis dgn bentuk {memberList, menuList} — identik dgn yang Submit
+    //      tulis, supaya kedua halaman saling memakai cache yang sama.
+    // Kontrak POST requestHadiah TIDAK berubah: field 'kodeMembership' = kode
+    // member murni (hasil trim), sama seperti perilaku input teks sebelumnya.
+    var reqKodeSuggest   = document.getElementById('reqKodeSuggest');
+    var reqKodeNotFound  = document.getElementById('reqKodeNotFound');
+    var reqKodeWrap      = document.querySelector('.kode-suggest-wrap');
+    var MEMBER_CACHE_KEY = 'submit_formData'; // sama dgn Submit/script.js
+    var memberData = [];        // [{kode, username}] — hasil normalisasi memberList
+    var memberLoadPromise = null; // dedupe fetch antar event (focus+input bersamaan)
+
+    /** Buang baris kosong/header-like, samakan bentuk jadi {kode, username}. */
+    function normalizeMemberList(list) {
+      return (list || []).filter(function (m) {
+        var kode = m && m.kode != null ? String(m.kode).trim() : '';
+        return kode !== '' && kode !== 'Kode Membership';
+      }).map(function (m) {
+        return {
+          kode: String(m.kode).trim(),
+          username: String(m.username || '').trim()
+        };
+      });
+    }
+
+    /**
+     * Ambil daftar member (sekali per load halaman; retry kalau gagal).
+     * @returns {Promise<Array<{kode: string, username: string}>>}
+     */
+    function loadMemberData() {
+      if (memberData.length > 0) return Promise.resolve(memberData);
+      if (memberLoadPromise) return memberLoadPromise;
+
+      // 1) Cache dari halaman Submit — tanpa fetch
+      var cached = (typeof MAO_CACHE !== 'undefined') ? MAO_CACHE.get(MEMBER_CACHE_KEY) : null;
+      if (cached && (cached.memberList || []).length > 0) {
+        memberData = normalizeMemberList(cached.memberList);
+        return Promise.resolve(memberData);
+      }
+
+      // 2) Fallback: fetch getFormData (endpoint yang sama dengan Submit)
+      memberLoadPromise = fetch(MAO_CONFIG.GAS_WEB_APP_URL + '?action=getFormData')
+        .then(function (resp) { return resp.json(); })
+        .then(function (json) {
+          if (json && json.success) {
+            var data = { memberList: json.memberList || [], menuList: json.menuList || [] };
+            if (typeof MAO_CACHE !== 'undefined') MAO_CACHE.set(MEMBER_CACHE_KEY, data);
+            memberData = normalizeMemberList(data.memberList);
+          } else {
+            memberLoadPromise = null; // response tak terduga → boleh coba lagi
+          }
+          return memberData;
+        })
+        .catch(function (err) {
+          console.error('Load member list error:', err);
+          memberLoadPromise = null; // gagal → boleh coba lagi pada event berikutnya
+          return memberData;
+        });
+      return memberLoadPromise;
+    }
+
+    /** Substring match case-insensitive di KODE ATAU username. Query kosong = semua. */
+    function filterMembers(query) {
+      var q = String(query || '').trim().toLowerCase();
+      if (!q) return memberData.slice();
+      return memberData.filter(function (m) {
+        return m.kode.toLowerCase().indexOf(q) !== -1 ||
+          m.username.toLowerCase().indexOf(q) !== -1;
+      });
+    }
+
+    /** Cari member persis berdasarkan kode (case-sensitive — backend juga case-sensitive). */
+    function findMemberByKode(kode) {
+      for (var i = 0; i < memberData.length; i++) {
+        if (memberData[i].kode === kode) return memberData[i];
+      }
+      return null;
+    }
+
+    function hideKodeSuggest() {
+      reqKodeSuggest.hidden = true;
+      reqKodeSuggest.innerHTML = '';
+      reqKode.setAttribute('aria-expanded', 'false');
+    }
+
+    function renderKodeSuggest(matches, query) {
+      var hasQuery = String(query || '').trim() !== '';
+      reqKodeSuggest.innerHTML = '';
+
+      // Daftar kosong / belum termuat → tutup suggestion.
+      // Pesan "Member tidak ditemukan" HANYA saat user mengetik TAPI tidak ada
+      // yang cocok (dan daftar member sudah berhasil dimuat).
+      if (memberData.length === 0 || matches.length === 0) {
+        hideKodeSuggest();
+        reqKodeNotFound.hidden = !(hasQuery && memberData.length > 0);
+        return;
+      }
+
+      reqKodeNotFound.hidden = true;
+      matches.forEach(function (m) {
+        var row = document.createElement('div');
+        row.className = 'kode-suggest-item';
+        row.setAttribute('role', 'option');
+        row.setAttribute('data-kode', m.kode);
+        // Tampilan per baris: "MAO-AB12CD — budi123" (kode + username)
+        row.textContent = m.username ? m.kode + ' — ' + m.username : m.kode;
+        reqKodeSuggest.appendChild(row);
+      });
+      reqKodeSuggest.hidden = false;
+      reqKode.setAttribute('aria-expanded', 'true');
+    }
+
+    // Klik suggestion → isi input dgn KODE member murni (value final yang
+    // dikirim ke backend). mousedown + preventDefault (pola combobox halaman
+    // Submit): input tidak kehilangan fokus sebelum click selesai.
+    reqKodeSuggest.addEventListener('mousedown', function (e) {
+      var item = e.target.closest('.kode-suggest-item');
+      if (!item) return;
+      e.preventDefault();
+      reqKode.value = item.getAttribute('data-kode');
+      hideKodeSuggest();
+      reqKodeNotFound.hidden = true;
+    });
+
+    // Ngetik → filter real-time (case-insensitive substring, kode ATAU username)
+    reqKode.addEventListener('input', async function () {
+      await loadMemberData();
+      renderKodeSuggest(filterMembers(reqKode.value), reqKode.value);
+    });
+
+    // Fokus → tampilkan suggestion (query kosong = semua member, pola sama
+    // dgn combobox halaman Submit)
+    reqKode.addEventListener('focus', async function () {
+      await loadMemberData();
+      renderKodeSuggest(filterMembers(reqKode.value), reqKode.value);
+    });
+
+    // Blur → tutup suggestion (delay 150ms sbg fallback; selection pakai
+    // mousedown sehingga blur tidak pernah terjadi sebelum item terklik)
+    reqKode.addEventListener('blur', function () {
+      setTimeout(hideKodeSuggest, 150);
+    });
+
+    // Klik di luar area input/suggestion → tutup suggestion
+    document.addEventListener('mousedown', function (e) {
+      if (reqKodeSuggest.hidden || !reqKodeWrap) return;
+      if (!reqKodeWrap.contains(e.target)) hideKodeSuggest();
+    });
+
     function showReqMsg(msg) {
       reqMsg.textContent = msg;
       reqMsg.hidden = false;
@@ -480,6 +686,7 @@
     function openReqModal() {
       hideReqMsg();
       requestHadiahModal.hidden = false;
+      loadMemberData(); // panaskan daftar member (tidak di-await — modal langsung tampil)
     }
 
     function closeReqModal() {
@@ -497,6 +704,19 @@
       hideReqMsg();
       if (!kode) { showReqMsg('Kode membership wajib diisi.'); return; }
       if (!teks) { showReqMsg('Tulis hadiah yang diinginkan.'); return; }
+
+      // Validasi member PERSIS SEBELUM submit: value akhir harus match persis
+      // (case-sensitive) satu kode di memberList — value sembarangan DIBLOKIR
+      // di sini, jangan sampai lolos ke backend.
+      await loadMemberData();
+      if (memberData.length === 0) {
+        showReqMsg('Daftar member belum tersedia. Coba lagi sebentar.');
+        return;
+      }
+      if (!findMemberByKode(kode)) {
+        showReqMsg('Kode membership tidak ditemukan. Pilih dari daftar saran.');
+        return;
+      }
 
       reqSubmitBtn.disabled = true;
       reqSubmitBtn.textContent = '⏳ Mengirim…';
@@ -516,6 +736,8 @@
         if (json.success) {
           reqKode.value = '';
           reqText.value = '';
+          hideKodeSuggest();
+          reqKodeNotFound.hidden = true;
           showReqMsg('✅ Request terkirim! Admin akan meninjaunya.');
         } else {
           showReqMsg(json.error || 'Gagal mengirim request. Coba lagi.');
