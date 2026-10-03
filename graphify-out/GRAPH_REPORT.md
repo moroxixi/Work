@@ -1,16 +1,16 @@
-# Graph Report - Work  (2026-09-27)
+# Graph Report - Work  (2026-10-04)
 
 ## Corpus Check
-- 46 files · ~87,275 words
+- 50 files · ~90,791 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
-- 782 nodes · 1127 edges · 56 communities (47 shown, 9 thin omitted)
+- 811 nodes · 1176 edges · 60 communities (51 shown, 9 thin omitted)
 - Extraction: 99% EXTRACTED · 1% INFERRED · 0% AMBIGUOUS · INFERRED: 13 edges (avg confidence: 0.5)
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `9676ad4d`
+- Built from commit: `40503916`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -67,6 +67,9 @@
 - 1. Definisi "Pola" yang Dicek
 - 4. Trigger Apps Script
 - 6. Pembanding dengan `notif_total_harian.py`
+- Tempura/format-angka.js
+- Wonton/format-angka.js
+- sections.js
 
 ## God Nodes (most connected - your core abstractions)
 1. `json_()` - 21 edges
@@ -95,7 +98,7 @@
 ## Import Cycles
 - None detected.
 
-## Communities (56 total, 9 thin omitted)
+## Communities (60 total, 9 thin omitted)
 
 ### Community 0 - "Riwayat/script.js"
 Cohesion: 0.04
@@ -118,8 +121,8 @@ Cohesion: 0.14
 Nodes (19): allItems, applyFilters(), buildTokoColors(), emptyMsg, errorMsg, fetchItems(), formatRp(), listEl (+11 more)
 
 ### Community 5 - "Dashboard/script.js"
-Cohesion: 0.19
-Nodes (13): all, bmGroupHTML(), bmHTML(), cardHTML(), catColor(), catIcon(), drawer, drawerClose (+5 more)
+Cohesion: 0.20
+Nodes (15): all, bmGroupHTML(), bmHTML(), cardHTML(), catColor(), catIcon(), drawer, drawerClose (+7 more)
 
 ### Community 6 - "Karyawan-Baru/script.js"
 Cohesion: 0.20
@@ -269,6 +272,18 @@ Nodes (5): 4.1 Trigger terkait checkPola*, 4.2 Trigger LAIN di file ini (terpisa
 Cohesion: 0.50
 Nodes (4): 6.1 Perbandingan Endpoint & Mekanisme Ntfy, 6.2 Perbandingan Logic Business, 6.3 Catatan Relevan untuk Migrasi, 6. Pembanding dengan `notif_total_harian.py`
 
+### Community 56 - "Tempura/format-angka.js"
+Cohesion: 0.38
+Nodes (9): attach(), caretAfterDigits(), countDigits(), formatDigits(), formatElement(), getValue(), normalizeDigits(), parseDisplay() (+1 more)
+
+### Community 57 - "Wonton/format-angka.js"
+Cohesion: 0.38
+Nodes (9): attach(), caretAfterDigits(), countDigits(), formatDigits(), formatElement(), getValue(), normalizeDigits(), parseDisplay() (+1 more)
+
+### Community 58 - "sections.js"
+Cohesion: 0.70
+Nodes (4): buildSections(), compareTitle(), fallbackKeyOf(), titleOf()
+
 ## Knowledge Gaps
 - **332 isolated node(s):** `all`, `menuBtn`, `drawer`, `overlay`, `drawerClose` (+327 more)
   These have ≤1 connection - possible missing edges or undocumented components.
@@ -278,11 +293,11 @@ Nodes (4): 6.1 Perbandingan Endpoint & Mekanisme Ntfy, 6.2 Perbandingan Logic Bu
 _Questions this graph is uniquely positioned to answer:_
 
 - **Why does `MAO_CONFIG` connect `Check-Pesanan/script.js` to `processFotoFile`, `Pendaftaran/script.js`, `Member/script.js`?**
-  _High betweenness centrality (0.031) - this node is a cross-community bridge._
+  _High betweenness centrality (0.029) - this node is a cross-community bridge._
 - **Why does `processFotoFile()` connect `processFotoFile` to `Check-Pesanan/script.js`, `Submit/script.js`?**
-  _High betweenness centrality (0.021) - this node is a cross-community bridge._
+  _High betweenness centrality (0.020) - this node is a cross-community bridge._
 - **Why does `processFotoFile()` connect `Pendaftaran/script.js` to `Check-Pesanan/script.js`?**
-  _High betweenness centrality (0.018) - this node is a cross-community bridge._
+  _High betweenness centrality (0.017) - this node is a cross-community bridge._
 - **What connects `all`, `menuBtn`, `drawer` to the rest of the system?**
   _332 weakly-connected nodes found - possible documentation gaps or missing edges._
 - **Should `Riwayat/script.js` be split into smaller, more focused modules?**

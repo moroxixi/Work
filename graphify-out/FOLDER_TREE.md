@@ -1,11 +1,14 @@
-# Folder Tree (72 files tracked)
+# Folder Tree (76 files tracked)
 
 > Auto-generated dari manifest.json — jangan edit manual. Regenerate: gen-folder-tree.py <path-manifest.json>
 
 ```
 ├── Dashboard/
+│   ├── Apps-Script/
+│   │   └── code.gs.js
 │   ├── index.html
-│   └── script.js
+│   ├── script.js
+│   └── sections.js
 ├── Formulir/
 │   └── Karyawan-Baru/
 │       ├── index.html
@@ -94,6 +97,7 @@
 │   ├── report-gs-doGet-addition.gs.txt
 │   └── test_checker_poller.py
 ├── Tempura/
+│   ├── format-angka.js
 │   └── index.html
 ├── Wonton/
 │   ├── Apps-Script/
@@ -103,6 +107,7 @@
 │   ├── Stok/
 │   │   ├── index.html
 │   │   └── kantong.py
+│   ├── format-angka.js
 │   └── index.html
 ├── Reqrutment.txt
 └── work-push.sh

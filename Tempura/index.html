@@ -83,12 +83,12 @@
 
     <span class="section-title">Keuangan</span>
     <div class="grid">
-        <div class="form-group"><label>QRIS</label><input type="number" id="qris" placeholder="0"></div>
-        <div class="form-group"><label>Gaji</label><input type="number" id="gaji" placeholder="0"></div>
-        <div class="form-group"><label>Pengeluaran</label><input type="number" id="pengeluaran" placeholder="0"></div>
-        <div class="form-group"><label>Uang Modal</label><input type="number" id="uModal" placeholder="0"></div>
-        <div class="form-group"><label>Sterofoam</label><input type="number" id="sterofoam" placeholder="0"></div>
-        <div class="form-group"><label>Uang Tunai</label><input type="number" id="uTunai" placeholder="0"></div>
+        <div class="form-group"><label>QRIS</label><input type="text" inputmode="numeric" autocomplete="off" class="input-angka" id="qris" placeholder="0"></div>
+        <div class="form-group"><label>Gaji</label><input type="text" inputmode="numeric" autocomplete="off" class="input-angka" id="gaji" placeholder="0"></div>
+        <div class="form-group"><label>Pengeluaran</label><input type="text" inputmode="numeric" autocomplete="off" class="input-angka" id="pengeluaran" placeholder="0"></div>
+        <div class="form-group"><label>Uang Modal</label><input type="text" inputmode="numeric" autocomplete="off" class="input-angka" id="uModal" placeholder="0"></div>
+        <div class="form-group"><label>Sterofoam</label><input type="text" inputmode="numeric" autocomplete="off" class="input-angka" id="sterofoam" placeholder="0"></div>
+        <div class="form-group"><label>Uang Tunai</label><input type="text" inputmode="numeric" autocomplete="off" class="input-angka" id="uTunai" placeholder="0"></div>
     </div>
 
     <button class="btn-calc" onclick="hitungReport()">1. CEK HASIL PENJUALAN</button>
@@ -131,6 +131,7 @@
     <p id="status"></p>
 </div>
 
+<script src="format-angka.js"></script>
 <script src="../Wonton/Config/config.js"></script>
 <script>
 
@@ -153,12 +154,18 @@
         const b = document.getElementById('inputs_berangkat');
         const p = document.getElementById('inputs_pulang');
         items.forEach(item => {
-            b.innerHTML += `<div class="form-group"><label>${item}</label><input type="number" id="b_${item}" placeholder="0"></div>`;
-            p.innerHTML += `<div class="form-group"><label>${item}</label><input type="number" id="p_${item}" placeholder="0"></div>`;
+            b.innerHTML += `<div class="form-group"><label>${item}</label><input type="text" inputmode="numeric" autocomplete="off" class="input-angka" id="b_${item}" placeholder="0"></div>`;
+            p.innerHTML += `<div class="form-group"><label>${item}</label><input type="text" inputmode="numeric" autocomplete="off" class="input-angka" id="p_${item}" placeholder="0"></div>`;
         });
+        // Pasang formatter ke field dinamis (idempoten; statis dipasang sekali di bawah)
+        document.querySelectorAll('#mainArea .input-angka').forEach(el => attach(el));
     };
 
     let globalPayload = {}; // Untuk menyimpan data yang siap kirim
+
+    // Pasang formatter ribuan (1.000) ke semua field angka statis;
+    // field dinamis b_*/p_* dipasang di window.onload sesudah di-render.
+    document.querySelectorAll('#mainArea .input-angka').forEach(el => attach(el));
 
  function hitungReport() {
     let totalKotor = 0;
@@ -167,8 +174,8 @@
 
     // 1. Hitung Laku per Item
 	 items.forEach(item => {
-	    let berangkat = parseInt(document.getElementById(`b_${item}`).value) || 0;
-	    let pulang = parseInt(document.getElementById(`p_${item}`).value) || 0; // Ini adalah Sisa
+	    let berangkat = getValue(document.getElementById(`b_${item}`));
+	    let pulang = getValue(document.getElementById(`p_${item}`)); // Ini adalah Sisa
 	    let laku = berangkat - pulang;
 	    if (laku < 0) laku = 0;
 
@@ -196,12 +203,12 @@
 	});
 
 	 // 2. Ambil Nilai Keuangan
-    const qris = parseInt(document.getElementById('qris').value) || 0;
-    const gaji = parseInt(document.getElementById('gaji').value) || 0;
-    const pengeluaran = parseInt(document.getElementById('pengeluaran').value) || 0;
-    const tunaiModal = parseInt(document.getElementById('uModal').value) || 0;
-    const sterofoam = parseInt(document.getElementById('sterofoam').value) || 0;
-    const tunaiFisik = parseInt(document.getElementById('uTunai').value) || 0;
+    const qris = getValue(document.getElementById('qris'));
+    const gaji = getValue(document.getElementById('gaji'));
+    const pengeluaran = getValue(document.getElementById('pengeluaran'));
+    const tunaiModal = getValue(document.getElementById('uModal'));
+    const sterofoam = getValue(document.getElementById('sterofoam'));
+    const tunaiFisik = getValue(document.getElementById('uTunai'));
 
     // Pengurang: yang bikin kas berkurang (sudah dibayar via metode lain / keluar)
     const totalPengurang = qris + gaji + pengeluaran;
@@ -370,7 +377,10 @@
             // Field tanpa entri draft (belum pernah diisi) TIDAK disentuh —
             // value default/generate-otomatis halaman tetap.
             if (isDraftInput(inp) && Object.prototype.hasOwnProperty.call(draft, inp.id)) {
-                inp.value = draft[inp.id];
+                // Field terformat: draft lama ("10000") & baru ("10.000") sama-sama
+                // di-normalisasi lalu di-format ulang lewat setValue.
+                if (inp.classList.contains('input-angka')) setValue(inp, draft[inp.id]);
+                else inp.value = draft[inp.id];
             }
         });
     }
@@ -389,6 +399,7 @@
         draftInputs().forEach(inp => {
             if (inp.type === 'file') { inp.value = ''; return; } // visual saja
             if (inp.readOnly) return; // field kalkulasi otomatis → biarkan
+            if (inp.classList.contains('input-angka')) { setValue(inp, ''); return; } // lewat setValue (hasilnya tetap kosong)
             inp.value = '';
         });
         try { sessionStorage.removeItem(DRAFT_KEY); } catch (e) { /* noop */ }

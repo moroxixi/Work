@@ -1,4 +1,4 @@
-const GAS = "https://script.google.com/macros/s/AKfycbyDNzy0wf5MxcafkRuAW1icXq5oKdUPMM9Lfxy_U5CsGtQ7luBPZcdYss4ItWXrQBNE/exec";
+const GAS = "https://script.google.com/macros/s/AKfycbxSaQNq16c4jy_7SiUCCEivCr7fEydOMdpwcBgXCbtcuRF_9qlxL1gDu9HIi5EaXqSn/exec";
 let all = [];
 
 setInterval(() => {
@@ -63,16 +63,32 @@ function catIcon(cat, title) {
   return 'ti-apps';
 }
 
+/** Escape data Sheet sebelum masuk template string (HTML aman). */
+function esc(s) {
+  return String(s === undefined || s === null ? '' : s)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+}
+
+/** href hanya http/https; selainnya jadi '#'. */
+function safeUrl(u) {
+  const s = String(u || '').trim();
+  return /^https?:\/\//i.test(s) ? s : '#';
+}
+
 function cardHTML(projects, offset) {
   return projects.map((p, idx) => {
     const i = offset + idx;
     const col = catColor(p.category, i);
     const ico = catIcon(p.category || '', p.title || '');
-    return `<a class="card ${col}" href="${p.url || '#'}" target="_blank">
+    return `<a class="card ${col}" href="${esc(safeUrl(p.url))}" target="_blank">
       <div class="card-icon-m"><i class="ti ${ico}"></i></div>
       <div class="card-body" style="flex:1;min-width:0">
-        <div class="card-title">${p.title || '—'}</div>
-        <div class="card-desc">${p.description || '—'}</div>
+        <div class="card-title">${esc(p.title) || '—'}</div>
+        <div class="card-desc">${esc(p.description) || '—'}</div>
       </div>
     </a>`;
   }).join('');
@@ -83,28 +99,33 @@ function render(projects) {
   document.getElementById('cnt').textContent = projects.length + ' apps';
   if (!projects.length) { wrap.innerHTML = '<div class="empty">no results found</div>'; return; }
 
-  const business = projects.filter(p => isBusiness(p.category));
-  const others = projects.filter(p => !isBusiness(p.category));
+  // Section dinamis (sections.js): key = kolom `section` (opsional di Sheet),
+  // kosong -> fallback business/projects seperti aturan lama.
+  const sections = DashboardSections.buildSections(
+    projects,
+    p => isBusiness(p.category) ? 'business' : 'projects'
+  );
 
   let html = '';
-  if (business.length) {
-    html += `<div class="proj-group"><div class="sec-label">business</div><div class="grid">${cardHTML(business, 0)}</div></div>`;
-  }
-  if (others.length) {
-    html += `<div class="proj-group"><div class="sec-label">projects</div><div class="grid">${cardHTML(others, business.length)}</div></div>`;
-  }
+  let offset = 0;
+  sections.forEach(sec => {
+    if (!sec.items.length) return; // section kosong tidak dirender
+    html += `<div class="proj-group"><div class="sec-label">${esc(sec.label)}</div><div class="grid">${cardHTML(sec.items, offset)}</div></div>`;
+    offset += sec.items.length;
+  });
   wrap.innerHTML = html;
 }
 
 function bmGroupHTML(items) {
-  return items.map(b => `<a class="bm-item" href="${b.url}" target="_blank"><div class="bm-dot"></div><span>${b.title}</span></a>`).join('');
+  return items.map(b => `<a class="bm-item" href="${esc(safeUrl(b.url))}" target="_blank"><div class="bm-dot"></div><span>${esc(b.title)}</span></a>`).join('');
 }
 
 function bmHTML(bms) {
   if (!bms || !bms.length) return '<div class="bm-item"><div class="bm-dot"></div><span style="color:#3d4466">empty</span></div>';
 
-  const business = bms.filter(b => isBusiness(b.category));
-  const others = bms.filter(b => !isBusiness(b.category));
+  // Struktur grup TIDAK berubah; hanya isi grup yang diurut A-Z per judul.
+  const business = bms.filter(b => isBusiness(b.category)).sort(DashboardSections.compareTitle);
+  const others = bms.filter(b => !isBusiness(b.category)).sort(DashboardSections.compareTitle);
 
   let html = '';
   if (business.length) {
