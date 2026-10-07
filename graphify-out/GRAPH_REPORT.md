@@ -1,16 +1,16 @@
-# Graph Report - Work  (2026-10-04)
+# Graph Report - Work  (2026-10-07)
 
 ## Corpus Check
-- 50 files · ~90,791 words
+- 50 files · ~90,835 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
-- 811 nodes · 1176 edges · 60 communities (51 shown, 9 thin omitted)
-- Extraction: 99% EXTRACTED · 1% INFERRED · 0% AMBIGUOUS · INFERRED: 13 edges (avg confidence: 0.5)
+- 812 nodes · 1179 edges · 60 communities (51 shown, 9 thin omitted)
+- Extraction: 99% EXTRACTED · 1% INFERRED · 0% AMBIGUOUS · INFERRED: 15 edges (avg confidence: 0.5)
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `40503916`
+- Built from commit: `296c9615`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -121,8 +121,8 @@ Cohesion: 0.14
 Nodes (19): allItems, applyFilters(), buildTokoColors(), emptyMsg, errorMsg, fetchItems(), formatRp(), listEl (+11 more)
 
 ### Community 5 - "Dashboard/script.js"
-Cohesion: 0.20
-Nodes (15): all, bmGroupHTML(), bmHTML(), cardHTML(), catColor(), catIcon(), drawer, drawerClose (+7 more)
+Cohesion: 0.19
+Nodes (16): all, bmGroupHTML(), bmHTML(), cardHTML(), catColor(), catIcon(), drawer, drawerClose (+8 more)
 
 ### Community 6 - "Karyawan-Baru/script.js"
 Cohesion: 0.20

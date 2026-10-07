@@ -94,6 +94,14 @@ function cardHTML(projects, offset) {
   }).join('');
 }
 
+/**
+ * Fallback key section saat kolom `section` kosong — SATU aturan untuk
+ * project (area utama) DAN bookmark (sidebar) supaya konsisten.
+ */
+function sectionFallback(p) {
+  return isBusiness(p.category) ? 'business' : 'projects';
+}
+
 function render(projects) {
   const wrap = document.getElementById('projWrap');
   document.getElementById('cnt').textContent = projects.length + ' apps';
@@ -101,10 +109,7 @@ function render(projects) {
 
   // Section dinamis (sections.js): key = kolom `section` (opsional di Sheet),
   // kosong -> fallback business/projects seperti aturan lama.
-  const sections = DashboardSections.buildSections(
-    projects,
-    p => isBusiness(p.category) ? 'business' : 'projects'
-  );
+  const sections = DashboardSections.buildSections(projects, sectionFallback);
 
   let html = '';
   let offset = 0;
@@ -123,17 +128,17 @@ function bmGroupHTML(items) {
 function bmHTML(bms) {
   if (!bms || !bms.length) return '<div class="bm-item"><div class="bm-dot"></div><span style="color:#3d4466">empty</span></div>';
 
-  // Struktur grup TIDAK berubah; hanya isi grup yang diurut A-Z per judul.
-  const business = bms.filter(b => isBusiness(b.category)).sort(DashboardSections.compareTitle);
-  const others = bms.filter(b => !isBusiness(b.category)).sort(DashboardSections.compareTitle);
+  // Grup sidebar memakai helper YANG SAMA dengan project (buildSections):
+  // key = kolom `section` (case-insensitive, urut A-Z), label = penulisan
+  // pertama (di-CSS uppercase persis gaya BUSINESS/BOOKMARK lama), section
+  // kosong -> sectionFallback (business/projects), item per grup urut A-Z.
+  const sections = DashboardSections.buildSections(bms, sectionFallback);
 
   let html = '';
-  if (business.length) {
-    html += `<div class="bm-group"><div class="bm-group-label">business</div>${bmGroupHTML(business)}</div>`;
-  }
-  if (others.length) {
-    html += `<div class="bm-group"><div class="bm-group-label">bookmark</div>${bmGroupHTML(others)}</div>`;
-  }
+  sections.forEach(sec => {
+    if (!sec.items.length) return; // section kosong tidak dirender
+    html += `<div class="bm-group"><div class="bm-group-label">${esc(sec.label)}</div>${bmGroupHTML(sec.items)}</div>`;
+  });
   return html;
 }
 
