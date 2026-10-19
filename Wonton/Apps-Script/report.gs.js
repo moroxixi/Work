@@ -16,7 +16,7 @@ const SHEET_NAME_TEMPURA = "Input_Tempura";
 const SHEET_GID_TEMPURA = "60039558";
 
 const ITEMS_WONTON = [
-  "Wonton", "WontonLebih", "Mie", "Creamy", "Cirawang", "Baso", "Pilus", "Balungan"
+  "Wonton", "WontonLebih", "Mie", "Creamy", "Cirawang", "Baso", "Pilus", "Balungan", "MieKuahSapi"
 ];
 const SHEET_NAME_WONTON = "Input_Wonton";
 const SHEET_GID_WONTON = "76341395";
